@@ -18,12 +18,12 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 	// json
 	{
 		//
-		class ScriptMethodJSONSerialize: public MiniScript::ScriptMethod {
+		class MethodJSONSerialize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodJSONSerialize(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodJSONSerialize(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false },
 					},
@@ -33,26 +33,26 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "json.serialize";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				//
-				if (argumentValues.size() != 1) {
+				if (arguments.size() != 1) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(argumentValues[0].getValueAsString(false, true));
+					returnValue.setValue(arguments[0].getValueAsString(false, true));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodJSONSerialize(miniScript));
+		miniScript->registerMethod(new MethodJSONSerialize(miniScript));
 	}
 	{
 		//
-		class ScriptMethodJSONDeserialize: public MiniScript::ScriptMethod {
+		class MethodJSONDeserialize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodJSONDeserialize(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodJSONDeserialize(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "json", .optional = false, .reference = false, .nullable = false },
 					},
@@ -62,9 +62,9 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "json.deserialize";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string json;
-				if (MiniScript::getStringValue(argumentValues, 0, json, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, json, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -80,6 +80,6 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodJSONDeserialize(miniScript));
+		miniScript->registerMethod(new MethodJSONDeserialize(miniScript));
 	}
 }

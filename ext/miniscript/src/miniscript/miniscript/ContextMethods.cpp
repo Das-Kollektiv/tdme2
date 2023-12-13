@@ -16,12 +16,12 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 	if (miniScript->getContext() == nullptr) return;
 	{
 		//
-		class ScriptMethodContextScriptHasCallable: public MiniScript::ScriptMethod {
+		class MethodContextScriptHasCallable: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodContextScriptHasCallable(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodContextScriptHasCallable(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "scriptId", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
@@ -32,11 +32,11 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "context.script.hasCallable";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string scriptId;
 				string callable;
-				if (MiniScript::getStringValue(argumentValues, 0, scriptId) == false ||
-					MiniScript::getStringValue(argumentValues, 1, callable) == false) {
+				if (MiniScript::getStringValue(arguments, 0, scriptId) == false ||
+					MiniScript::getStringValue(arguments, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -45,7 +45,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setValue(false);
 					} else {
 						auto scriptIdx = script->getFunctionScriptIdx(callable);
-						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || script->getScripts()[scriptIdx].callable == false) {
+						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || script->getScripts()[scriptIdx].callableFunction == false) {
 							returnValue.setValue(false);
 						} else {
 							returnValue.setValue(true);
@@ -54,16 +54,16 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodContextScriptHasCallable(miniScript));
+		miniScript->registerMethod(new MethodContextScriptHasCallable(miniScript));
 	}
 	{
 		//
-		class ScriptMethodContextScriptCall: public MiniScript::ScriptMethod {
+		class MethodContextScriptCall: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodContextScriptCall(MiniScript* miniScript):
-				ScriptMethod(
+			MethodContextScriptCall(MiniScript* miniScript):
+				Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "scriptId", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
@@ -74,11 +74,11 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "context.script.call";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string scriptId;
 				string callable;
-				if (MiniScript::getStringValue(argumentValues, 0, scriptId) == false ||
-					MiniScript::getStringValue(argumentValues, 1, callable) == false) {
+				if (MiniScript::getStringValue(arguments, 0, scriptId) == false ||
+					MiniScript::getStringValue(arguments, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -88,22 +88,22 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 						miniScript->startErrorScript();
 					} else {
 						auto scriptIdx = script->getFunctionScriptIdx(callable);
-						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || script->getScripts()[scriptIdx].callable == false) {
+						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || script->getScripts()[scriptIdx].callableFunction == false) {
 							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
-							#if defined (__APPLE__)
-								// MACOSX currently does not support initializing span using begin and end iterators,
-								vector<MiniScript::ScriptVariable> callArgumentValues(argumentValues.size() - 2);
-								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues[i - 2] = move(argumentValues[i]);
+							#if defined (__clang__)
+								// Clang currently does not support initializing span using begin and end iterators,
+								vector<MiniScript::Variable> callArguments(arguments.size() - 2);
+								for (auto i = 2; i < arguments.size(); i++) callArguments[i - 2] = move(arguments[i]);
 								// call
-								span callArgumentValuesSpan(callArgumentValues);
-								script->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								span callArgumentsSpan(callArguments);
+								script->call(scriptIdx, callArgumentsSpan, returnValue);
 								// move back arguments
-								for (auto i = 2; i < argumentValues.size(); i++) argumentValues[i] = move(callArgumentValues[i - 2]);
+								for (auto i = 2; i < arguments.size(); i++) arguments[i] = move(callArguments[i - 2]);
 							#else
-								span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
-								script->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								span callArgumentsSpan(arguments.begin() + 2, arguments.end());
+								script->call(scriptIdx, callArgumentsSpan, returnValue);
 							#endif
 						}
 					}
@@ -113,16 +113,16 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodContextScriptCall(miniScript));
+		miniScript->registerMethod(new MethodContextScriptCall(miniScript));
 	}
 	{
 		//
-		class ScriptMethodContextScriptLoadScript: public MiniScript::ScriptMethod {
+		class MethodContextScriptLoadScript: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodContextScriptLoadScript(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodContextScriptLoadScript(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "scriptId", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
@@ -135,15 +135,15 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "context.script.loadScript";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string scriptId;
 				string pathName;
 				string fileName;
 				bool verbose = false;
-				if (MiniScript::getStringValue(argumentValues, 0, scriptId) == false ||
-					MiniScript::getStringValue(argumentValues, 1, pathName) == false ||
-					MiniScript::getStringValue(argumentValues, 2, fileName) == false ||
-					MiniScript::getBooleanValue(argumentValues, 3, verbose, true) == false) {
+				if (MiniScript::getStringValue(arguments, 0, scriptId) == false ||
+					MiniScript::getStringValue(arguments, 1, pathName) == false ||
+					MiniScript::getStringValue(arguments, 2, fileName) == false ||
+					MiniScript::getBooleanValue(arguments, 3, verbose, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -166,16 +166,16 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodContextScriptLoadScript(miniScript));
+		miniScript->registerMethod(new MethodContextScriptLoadScript(miniScript));
 	}
 	{
 		//
-		class ScriptMethodContextScriptRemoveScript: public MiniScript::ScriptMethod {
+		class MethodContextScriptRemoveScript: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodContextScriptRemoveScript(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodContextScriptRemoveScript(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "scriptId", .optional = false, .reference = false, .nullable = false }
 					},
@@ -185,9 +185,9 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "context.script.removeScript";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string scriptId;
-				if (MiniScript::getStringValue(argumentValues, 0, scriptId) == false) {
+				if (MiniScript::getStringValue(arguments, 0, scriptId) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -195,26 +195,26 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodContextScriptRemoveScript(miniScript));
+		miniScript->registerMethod(new MethodContextScriptRemoveScript(miniScript));
 	}
 	{
 		//
-		class ScriptMethodContextScriptGetScriptIds: public MiniScript::ScriptMethod {
+		class MethodContextScriptGetScriptIds: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodContextScriptGetScriptIds(MiniScript* miniScript):
-				MiniScript::ScriptMethod({}, MiniScript::TYPE_ARRAY),
+			MethodContextScriptGetScriptIds(MiniScript* miniScript):
+				MiniScript::Method({}, MiniScript::TYPE_ARRAY),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "context.script.getScriptIds";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto scriptIds = miniScript->getContext()->getScriptIds();
 				returnValue.setType(MiniScript::TYPE_ARRAY);
 				for (const auto& scriptId: scriptIds) returnValue.pushArrayEntry(scriptId);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodContextScriptGetScriptIds(miniScript));
+		miniScript->registerMethod(new MethodContextScriptGetScriptIds(miniScript));
 	}
 }

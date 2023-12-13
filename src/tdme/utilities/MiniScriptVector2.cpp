@@ -19,26 +19,25 @@ using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::MiniScriptVector2;
 
-const string MiniScriptVector2::CLASS_NAME = "vec2";
 const string MiniScriptVector2::TYPE_NAME = "Vector2";
 
 void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	{
 		//
-		class ScriptMethodVec2: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR2
 				),
@@ -47,9 +46,9 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2";
+				return "Vector2";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				float xValue;
 				float yValue;
 				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
@@ -67,29 +66,29 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2ComputeLength: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2ComputeLength: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2ComputeLength(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR2(TYPE_VECTOR2) {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.computeLength";
+				return "Vector2::computeLength";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2, false) == true) {
 					auto length = vec2.computeLength();
@@ -104,29 +103,29 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2ComputeLengthSquared: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2ComputeLengthSquared: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2ComputeLengthSquared(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR2(TYPE_VECTOR2) {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.computeLengthSquared";
+				return "Vector2::computeLengthSquared";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.computeLengthSquared());
@@ -140,30 +139,30 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2ComputeDotProduct: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2ComputeDotProduct: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2ComputeDotProduct(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "a", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR2, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR2(TYPE_VECTOR2) {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.computeDotProduct";
+				return "Vector2::computeDotProduct";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 a;
 				Vector2 b;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, a, false) == true &&
@@ -179,16 +178,16 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2Normalize: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2Normalize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2Normalize(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
@@ -199,9 +198,9 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.normalize";
+				return "Vector2::normalize";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2, false) == true) {
 					auto length = vec2.computeLength();
@@ -218,29 +217,29 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2GetX: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2GetX: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2GetX(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR2(TYPE_VECTOR2) {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.getX";
+				return "Vector2::getX";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getX());
@@ -254,29 +253,29 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodVec2GetY: public MiniScript::ScriptMethod {
+		class ScriptMethodVec2GetY: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR2;
+			MiniScript::VariableType TYPE_VECTOR2;
 		public:
 			ScriptMethodVec2GetY(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR2
+				MiniScript::VariableType TYPE_VECTOR2
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR2(TYPE_VECTOR2) {
 				//
 			}
 			const string getMethodName() override {
-				return "vec2.getY";
+				return "Vector2::getY";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2;
 				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getY());
@@ -290,7 +289,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	}
 }
 
-void MiniScriptVector2::unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const {
+void MiniScriptVector2::unsetVariableValue(MiniScript::Variable& variable) const {
 	if (variable.getType() != getType()) return;
 	if (variable.getValuePtr() == 0ll) return;
 	//
@@ -298,7 +297,7 @@ void MiniScriptVector2::unsetScriptVariableValue(MiniScript::ScriptVariable& var
 	variable.setValuePtr(0ll);
 }
 
-void MiniScriptVector2::setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const {
+void MiniScriptVector2::setVariableValue(MiniScript::Variable& variable, const void* value) const {
 	if (variable.getType() != getType()) return;
 	//
 	Vector2 vector2Value;
@@ -314,20 +313,20 @@ void MiniScriptVector2::setScriptVariableValue(MiniScript::ScriptVariable& varia
 	variable.setValuePtr((uint64_t)(new Vector2(vector2Value)));
 }
 
-void MiniScriptVector2::copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const {
+void MiniScriptVector2::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	//
 	Vector2 vector2Value;
 	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
 		vector2Value = *static_cast<Vector2*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_VECTOR2);
 	*static_cast<Vector2*>((void*)to.getValuePtr()) = vector2Value;
 }
 
-bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR2) == true) {
 		float f;
@@ -368,8 +367,8 @@ bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Scrip
 	return false;
 }
 
-bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (argumentValues[0].getType() == TYPE_VECTOR2) {
 		Vector2 a;
@@ -401,8 +400,8 @@ bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::Scrip
 	return false;
 }
 
-bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR2) == true) {
 		Vector2 a;
@@ -426,8 +425,8 @@ bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::Scrip
 	return false;
 }
 
-bool MiniScriptVector2::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+bool MiniScriptVector2::sub(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR2) == true) {
 		Vector2 a;
@@ -451,15 +450,11 @@ bool MiniScriptVector2::sub(MiniScript* miniScript, const span<MiniScript::Scrip
 	return false;
 }
 
-const string& MiniScriptVector2::getClassName() const {
-	return CLASS_NAME;
-}
-
 const string& MiniScriptVector2::getTypeAsString() const {
 	return TYPE_NAME;
 }
 
-const string MiniScriptVector2::getValueAsString(const MiniScript::ScriptVariable& variable) const {
+const string MiniScriptVector2::getValueAsString(const MiniScript::Variable& variable) const {
 	//
 	Vector2 vector2Value;
 	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {

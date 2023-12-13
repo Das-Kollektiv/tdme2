@@ -470,7 +470,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		string argumentsString;
 		switch(script.scriptType) {
 			case EngineMiniScript::Script::SCRIPTTYPE_FUNCTION: {
-				for (const auto& argument: script.arguments) {
+				for (const auto& argument: script.functionArguments) {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
 					if (argument.reference == true) argumentsString+= "=";
 					argumentsString+= argument.name;

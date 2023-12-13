@@ -179,7 +179,7 @@ private:
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
 
-	EngineMiniScript::ScriptVariable miniScriptArguments;
+	EngineMiniScript::Variable miniScriptArguments;
 
 	Context* context { nullptr };
 
@@ -385,7 +385,7 @@ public:
 		bool scrollable,
 		bool popUp,
 		const string& scriptFileName,
-		const EngineMiniScript::ScriptVariable& miniScriptArguments,
+		const EngineMiniScript::Variable& miniScriptArguments,
 		Context* context
 	);
 

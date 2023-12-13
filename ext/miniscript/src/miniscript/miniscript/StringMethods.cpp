@@ -8,75 +8,33 @@
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Float.h>
 #include <miniscript/utilities/Integer.h>
-#include <miniscript/utilities/StringTools.h>
+#include <miniscript/utilities/UTF8StringTokenizer.h>
+#include <miniscript/utilities/UTF8StringTools.h>
 #include <miniscript/utilities/UTF8CharacterIterator.h>
 
 using std::span;
 
-using miniscript::utilities::StringTools;
+using miniscript::miniscript::StringMethods;
 
 using miniscript::math::Math;
 using miniscript::miniscript::MiniScript;
-using miniscript::miniscript::StringMethods;
 using miniscript::utilities::Character;
 using miniscript::utilities::Console;
 using miniscript::utilities::Float;
 using miniscript::utilities::Integer;
+using miniscript::utilities::UTF8StringTools;
 using miniscript::utilities::UTF8CharacterIterator;
-
-inline vector<string> StringMethods::tokenize(const string& stringValue, const string& delimiters, bool emptyTokens) {
-	vector<string> tokens;
-	//
-	string token;
-	//
-	UTF8CharacterIterator u8It(stringValue);
-	UTF8CharacterIterator delimiterU8It(delimiters);
-	// iterate string value
-	for (; u8It.hasNext(); ) {
-		auto c = u8It.next();
-		// iterate delimiters
-		delimiterU8It.reset();
-		//
-		auto foundDelimiter = false;
-		for (; delimiterU8It.hasNext(); ) {
-			// check if delimiter character is our current string value char
-			auto dc = delimiterU8It.next();
-			// got a delimiter?
-			if (c == dc) {
-				foundDelimiter = true;
-				// yep, add token to elements if we have any
-				if (emptyTokens == true || token.empty() == false) {
-					tokens.push_back(token);
-					token.clear();
-				}
-				//
-				break;
-			}
-		}
-		//
-		if (foundDelimiter == false) {
-			// no delimiter, add char to token
-			token+= Character::toString(c);
-		}
-	}
-	// do we have a token still? add it to elements
-	if (emptyTokens == true || token.empty() == false) {
-		tokens.push_back(token);
-	}
-	//
-	return tokens;
-}
 
 void StringMethods::registerMethods(MiniScript* miniScript) {
 	// string functions
 	{
 		//
-		class ScriptMethodString: public MiniScript::ScriptMethod {
+		class MethodString: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodString(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodString(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -84,11 +42,11 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string";
+				return "String";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
 					returnValue.setValue(stringValue);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -96,16 +54,16 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodString(miniScript));
+		miniScript->registerMethod(new MethodString(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringLength: public MiniScript::ScriptMethod {
+		class MethodStringLength: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringLength(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringLength(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -113,32 +71,28 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.length";
+				return "String::length";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(2147483647); // 2 ^ 31 - 1
-					//
-					returnValue.setValue(static_cast<int64_t>(u8It.getCharacterPosition()));
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
+					returnValue.setValue(static_cast<int64_t>(UTF8StringTools::getLength(stringValue, arguments[0].getStringValueCache())));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringLength(miniScript));
+		miniScript->registerMethod(new MethodStringLength(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringCharAt: public MiniScript::ScriptMethod {
+		class MethodStringCharAt: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringCharAt(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringCharAt(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
@@ -147,34 +101,30 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.charAt";
+				return "String::charAt";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				int64_t index;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getIntegerValue(arguments, 1, index, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(index);
-					//
-					returnValue.setValue(u8It.hasNext() == true?Character::toString(u8It.next()):string());
+					returnValue.setValue(UTF8StringTools::getCharAt(stringValue, index, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringCharAt(miniScript));
+		miniScript->registerMethod(new MethodStringCharAt(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringStartsWith: public MiniScript::ScriptMethod {
+		class MethodStringStartsWith: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringStartsWith(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringStartsWith(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "prefix", .optional = false, .reference = false, .nullable = false }
@@ -183,30 +133,30 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.startsWith";
+				return "String::startsWith";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string prefix;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, prefix, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, prefix, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::startsWith(stringValue, prefix));
+					returnValue.setValue(UTF8StringTools::startsWith(stringValue, prefix));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringStartsWith(miniScript));
+		miniScript->registerMethod(new MethodStringStartsWith(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringEndsWith: public MiniScript::ScriptMethod {
+		class MethodStringEndsWith: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringEndsWith(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringEndsWith(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "suffix", .optional = false, .reference = false, .nullable = false }
@@ -215,30 +165,30 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.endsWith";
+				return "String::endsWith";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string suffix;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, suffix, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, suffix, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::endsWith(stringValue, suffix));
+					returnValue.setValue(UTF8StringTools::endsWith(stringValue, suffix));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringEndsWith(miniScript));
+		miniScript->registerMethod(new MethodStringEndsWith(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringReplace: public MiniScript::ScriptMethod {
+		class MethodStringReplace: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringReplace(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringReplace(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
@@ -249,38 +199,34 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.replace";
+				return "String::replace";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string what;
 				string by;
 				int64_t beginIndex = 0;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
-					MiniScript::getStringValue(argumentValues, 2, by, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 3, beginIndex, true) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getStringValue(arguments, 2, by, false) == false ||
+					MiniScript::getIntegerValue(arguments, 3, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(beginIndex);
-					//
-					returnValue.setValue(StringTools::replace(stringValue, what, by, u8It.getBinaryPosition()));
+					returnValue.setValue(UTF8StringTools::replace(stringValue, what, by, beginIndex, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringReplace(miniScript));
+		miniScript->registerMethod(new MethodStringReplace(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringIndexOf: public MiniScript::ScriptMethod {
+		class MethodStringIndexOf: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringIndexOf(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringIndexOf(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
@@ -290,42 +236,32 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.indexOf";
+				return "String::indexOf";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string what;
 				int64_t beginIndex = 0;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(beginIndex);
-					//
-					auto index = StringTools::indexOf(stringValue, what, u8It.getBinaryPosition());
-					if (index == string::npos) {
-						returnValue.setValue(static_cast<int64_t>(-1));
-					} else {
-						u8It.seekBinaryPosition(index);
-						returnValue.setValue(static_cast<int64_t>(u8It.getCharacterPosition()));
-					}
+					returnValue.setValue(UTF8StringTools::indexOf(stringValue, what, beginIndex, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringIndexOf(miniScript));
+		miniScript->registerMethod(new MethodStringIndexOf(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringFirstIndexOf: public MiniScript::ScriptMethod {
+		class MethodStringFirstIndexOf: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringFirstIndexOf(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringFirstIndexOf(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
@@ -335,50 +271,32 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.firstIndexOf";
+				return "String::firstIndexOf";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string what;
 				int64_t beginIndex = 0;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(beginIndex);
-					// utf8 character iterator
-					UTF8CharacterIterator whatU8It(what, argumentValues[1].getStringValueCache());
-					//
-					auto index = Integer::MAX_VALUE;
-					while (whatU8It.hasNext() == true) {
-						auto whatChar = Character::toString(whatU8It.next());
-						auto whatIndex = StringTools::indexOf(stringValue, whatChar, u8It.getBinaryPosition());
-						if (whatIndex != string::npos) index = Math::min(index, whatIndex);
-					}
-					//
-					if (index == string::npos) {
-						returnValue.setValue(static_cast<int64_t>(-1));
-					} else {
-						u8It.seekBinaryPosition(index);
-						returnValue.setValue(static_cast<int64_t>(u8It.getCharacterPosition()));
-					}
+					returnValue.setValue(UTF8StringTools::firstIndexOf(stringValue, what, beginIndex, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringFirstIndexOf(miniScript));
+		miniScript->registerMethod(new MethodStringFirstIndexOf(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringLastIndexOf: public MiniScript::ScriptMethod {
+		class MethodStringLastIndexOf: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringLastIndexOf(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringLastIndexOf(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
@@ -388,50 +306,122 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.lastIndexOf";
+				return "String::lastIndexOf";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string what;
-				int64_t beginIndex = -1;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+				int64_t beginIndex = 0;
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(beginIndex);
-					// utf8 character iterator
-					UTF8CharacterIterator whatU8It(what, argumentValues[1].getStringValueCache());
-					//
-					auto index = Integer::MIN_VALUE;
-					while (whatU8It.hasNext() == true) {
-						auto whatChar = Character::toString(whatU8It.next());
-						auto whatIndex = StringTools::indexOf(stringValue, whatChar, u8It.getBinaryPosition());
-						if (whatIndex != string::npos) index = Math::max(index, whatIndex);
-					}
-					//
-					if (index == string::npos) {
-						returnValue.setValue(static_cast<int64_t>(-1));
-					} else {
-						u8It.seekBinaryPosition(index);
-						returnValue.setValue(static_cast<int64_t>(u8It.getCharacterPosition()));
-					}
+					returnValue.setValue(UTF8StringTools::lastIndexOf(stringValue, what, beginIndex, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringLastIndexOf(miniScript));
+		miniScript->registerMethod(new MethodStringLastIndexOf(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringSubString: public MiniScript::ScriptMethod {
+		class MethodStringFirstIndexOfChars: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringSubString(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringFirstIndexOfChars(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
+					},
+					MiniScript::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "String::firstIndexOfChars";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string stringValue;
+				string what;
+				int64_t beginIndex = 0;
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(
+						static_cast<int64_t>(
+							UTF8StringTools::firstIndexOfChars(
+								stringValue,
+								what,
+								beginIndex,
+								arguments[0].getStringValueCache(),
+								arguments[1].getStringValueCache()
+							)
+						)
+					);
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodStringFirstIndexOfChars(miniScript));
+	}
+	{
+		//
+		class MethodStringLastIndexOfChars: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodStringLastIndexOfChars(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "endIndex", .optional = true, .reference = false, .nullable = false }
+					},
+					MiniScript::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "String::lastIndexOfChars";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string stringValue;
+				string what;
+				int64_t endIndex = -1;
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, endIndex, true) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(
+						static_cast<int64_t>(
+							UTF8StringTools::lastIndexOfChars(
+								stringValue,
+								what,
+								endIndex,
+								arguments[0].getStringValueCache(),
+								arguments[1].getStringValueCache()
+							)
+						)
+					);
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodStringLastIndexOfChars(miniScript));
+	}
+	{
+		//
+		class MethodStringSubString: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodStringSubString(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false, .nullable = false },
@@ -441,44 +431,33 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.substring";
+				return "String::substring";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				int64_t beginIndex;
-				int64_t endIndex = -1;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 1, beginIndex, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, endIndex, true) == false) {
+				int64_t endIndex = string::npos;
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getIntegerValue(arguments, 1, beginIndex, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, endIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					// utf8 character iterator
-					UTF8CharacterIterator u8It(stringValue, argumentValues[0].getStringValueCache());
-					u8It.seekCharacterPosition(beginIndex);
-					auto u8BeginIndex = u8It.getBinaryPosition();
-					//
-					if (endIndex == -1) {
-						returnValue.setValue(StringTools::substring(stringValue, u8BeginIndex));
-					} else {
-						u8It.seekCharacterPosition(endIndex);
-						auto u8EndIndex = u8It.getBinaryPosition();
-						//
-						returnValue.setValue(StringTools::substring(stringValue, u8BeginIndex, u8EndIndex));
-					}
+					returnValue.setValue(UTF8StringTools::substring(stringValue, beginIndex, endIndex));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringSubString(miniScript));
+		miniScript->registerMethod(new MethodStringSubString(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringEqualsIgnoreCase: public MiniScript::ScriptMethod {
+		class MethodStringEqualsIgnoreCase: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringEqualsIgnoreCase(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringEqualsIgnoreCase(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "other", .optional = false, .reference = false, .nullable = false },
@@ -487,30 +466,30 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.equalsIgnoreCase";
+				return "String::equalsIgnoreCase";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string other;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, other, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, other, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::equalsIgnoreCase(stringValue, other));
+					returnValue.setValue(UTF8StringTools::equalsIgnoreCase(stringValue, other, arguments[0].getStringValueCache(), arguments[1].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringEqualsIgnoreCase(miniScript));
+		miniScript->registerMethod(new MethodStringEqualsIgnoreCase(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringTrim: public MiniScript::ScriptMethod {
+		class MethodStringTrim: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringTrim(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringTrim(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 					},
@@ -518,28 +497,28 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.trim";
+				return "String::trim";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::trim(stringValue));
+					returnValue.setValue(UTF8StringTools::trim(stringValue, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringTrim(miniScript));
+		miniScript->registerMethod(new MethodStringTrim(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringRegexMatch: public MiniScript::ScriptMethod {
+		class MethodStringRegexMatch: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringRegexMatch(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringRegexMatch(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
@@ -548,30 +527,30 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.regexMatch";
+				return "String::regexMatch";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string pattern;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, pattern, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, pattern, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::regexMatch(stringValue, pattern));
+					returnValue.setValue(UTF8StringTools::regexMatch(stringValue, pattern));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringRegexMatch(miniScript));
+		miniScript->registerMethod(new MethodStringRegexMatch(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringRegexReplace: public MiniScript::ScriptMethod {
+		class MethodStringRegexReplace: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringRegexReplace(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringRegexReplace(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
@@ -581,32 +560,32 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.regexReplace";
+				return "String::regexReplace";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string pattern;
 				string by;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, pattern, false) == false ||
-					MiniScript::getStringValue(argumentValues, 2, by, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, pattern, false) == false ||
+					MiniScript::getStringValue(arguments, 2, by, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::regexReplace(stringValue, pattern, by));
+					returnValue.setValue(UTF8StringTools::regexReplace(stringValue, pattern, by));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringRegexReplace(miniScript));
+		miniScript->registerMethod(new MethodStringRegexReplace(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringTokenize: public MiniScript::ScriptMethod {
+		class MethodStringTokenize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringTokenize(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringTokenize(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "delimiters", .optional = false, .reference = false, .nullable = false },
@@ -615,17 +594,17 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.tokenize";
+				return "String::tokenize";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string delimiters;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, delimiters, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, delimiters, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					auto tokenizedStringVector = StringMethods::tokenize(stringValue, delimiters);
+					auto tokenizedStringVector = UTF8StringTools::tokenize(stringValue, delimiters);
 					//
 					returnValue.setType(MiniScript::TYPE_ARRAY);
 					for (const auto& tokenizedString: tokenizedStringVector) {
@@ -634,53 +613,93 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringTokenize(miniScript));
+		miniScript->registerMethod(new MethodStringTokenize(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringSpace: public MiniScript::ScriptMethod {
+		class MethodStringGenerate: public MiniScript::Method {
 		private:
-			MiniScript* miniScript { nullptr };
+			MiniScript *miniScript { nullptr };
 		public:
-			ScriptMethodStringSpace(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringGenerate(MiniScript *miniScript) :
+				MiniScript::Method(
 					{
-						{ .type = MiniScript::TYPE_INTEGER, .name = "spaces", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "count", .optional = true, .reference = false, .nullable = false }
 					},
 					MiniScript::TYPE_STRING
 				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "string.space";
+				miniScript(miniScript) {
+				//
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				int64_t spaces = 1;
-				if (MiniScript::getIntegerValue(argumentValues, 0, spaces, true) == false) {
+			const string getMethodName() override {
+				return "String::generate";
+			}
+			void executeMethod(span<MiniScript::Variable> &arguments, MiniScript::Variable &returnValue, const MiniScript::Statement &statement) override {
+				string what;
+				int64_t count = 1;
+				if (MiniScript::getStringValue(arguments, 0, what, false) == false ||
+					MiniScript::getIntegerValue(arguments, 1, count, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					string spacesString;
-					for (auto i = 0; i < spaces; i++) spacesString+= " ";
-					returnValue.setValue(spacesString);
+					returnValue.setValue(UTF8StringTools::generate(what, count));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringSpace(miniScript));
+		miniScript->registerMethod(new MethodStringGenerate(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringConcatenate: public MiniScript::ScriptMethod {
+		class MethodStringIndent: public MiniScript::Method {
+		private:
+			MiniScript *miniScript { nullptr };
+		public:
+			MethodStringIndent(MiniScript *miniScript) :
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_STRING, .name = "src", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "with", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "count", .optional = false, .reference = false, .nullable = false }
+					},
+					MiniScript::TYPE_STRING
+				),
+				miniScript(miniScript) {
+				//
+			}
+			const string getMethodName() override {
+				return "String::indent";
+			}
+			void executeMethod(span<MiniScript::Variable> &arguments, MiniScript::Variable &returnValue, const MiniScript::Statement &statement) override {
+				string src;
+				string with;
+				int64_t count = 1;
+				if (MiniScript::getStringValue(arguments, 0, src, false) == false ||
+					MiniScript::getStringValue(arguments, 1, with, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, count, true) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(UTF8StringTools::indent(src, with, count));
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodStringIndent(miniScript));
+	}
+	{
+		//
+		class MethodStringConcatenate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringConcatenate(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::TYPE_STRING), miniScript(miniScript) {}
+			MethodStringConcatenate(MiniScript* miniScript): MiniScript::Method({}, MiniScript::TYPE_STRING), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.concatenate";
+				return "String::concatenate";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string result;
-				for (const auto& argumentValue: argumentValues) {
-					result+= argumentValue.getValueAsString();
+				for (const auto& argument: arguments) {
+					result+= argument.getValueAsString();
 				}
 				returnValue.setValue(result);
 			}
@@ -688,16 +707,16 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringConcatenate(miniScript));
+		miniScript->registerMethod(new MethodStringConcatenate(miniScript));
 	}
 	{
 		//
-		class ScriptMethodToStringUpperCase: public MiniScript::ScriptMethod {
+		class MethodToStringUpperCase: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodToStringUpperCase(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodToStringUpperCase(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -705,28 +724,28 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.toUpperCase";
+				return "String::toUpperCase";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
-					returnValue.setValue(StringTools::toUpperCase(stringValue));
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
+					returnValue.setValue(UTF8StringTools::toUpperCase(stringValue, arguments[0].getStringValueCache()));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodToStringUpperCase(miniScript));
+		miniScript->registerMethod(new MethodToStringUpperCase(miniScript));
 	}
 	{
 		//
-		class ScriptMethodToStringLowerCase: public MiniScript::ScriptMethod {
+		class MethodToStringLowerCase: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodToStringLowerCase(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodToStringLowerCase(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -734,28 +753,28 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.toLowerCase";
+				return "String::toLowerCase";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
-					returnValue.setValue(StringTools::toLowerCase(stringValue));
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
+					returnValue.setValue(UTF8StringTools::toLowerCase(stringValue, arguments[0].getStringValueCache()));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodToStringLowerCase(miniScript));
+		miniScript->registerMethod(new MethodToStringLowerCase(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringIsEmpty: public MiniScript::ScriptMethod {
+		class MethodStringIsEmpty: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringIsEmpty(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringIsEmpty(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -763,11 +782,11 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.isEmpty";
+				return "String::isEmpty";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
 					returnValue.setValue(stringValue.empty());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -775,16 +794,16 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringIsEmpty(miniScript));
+		miniScript->registerMethod(new MethodStringIsEmpty(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringIsFloat: public MiniScript::ScriptMethod {
+		class MethodStringIsFloat: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringIsFloat(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringIsFloat(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -792,11 +811,11 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.isFloat";
+				return "String::isFloat";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
 					returnValue.setValue(Float::is(stringValue));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -804,16 +823,16 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringIsFloat(miniScript));
+		miniScript->registerMethod(new MethodStringIsFloat(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringIsInteger: public MiniScript::ScriptMethod {
+		class MethodStringIsInteger: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringIsInteger(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringIsInteger(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
@@ -821,11 +840,11 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.isInteger";
+				return "String::isInteger";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == true) {
 					returnValue.setValue(Integer::is(stringValue));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -833,16 +852,16 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringIsInteger(miniScript));
+		miniScript->registerMethod(new MethodStringIsInteger(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringPadLeft: public MiniScript::ScriptMethod {
+		class MethodStringPadLeft: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringPadLeft(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringPadLeft(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
@@ -852,36 +871,32 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.padLeft";
+				return "String::padLeft";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string by;
 				int64_t toLength;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, toLength, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, by, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, toLength, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					//
-					auto result = stringValue;
-					while (StringMethods::getLength(result) < toLength) result = by + result;
-					//
-					returnValue.setValue(result);
+					returnValue.setValue(UTF8StringTools::padLeft(stringValue, by, toLength, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringPadLeft(miniScript));
+		miniScript->registerMethod(new MethodStringPadLeft(miniScript));
 	}
 	{
 		//
-		class ScriptMethodStringPadRight: public MiniScript::ScriptMethod {
+		class MethodStringPadRight: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringPadRight(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodStringPadRight(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
@@ -891,26 +906,84 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "string.padRight";
+				return "String::padRight";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				string by;
 				int64_t toLength;
-				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, toLength, false) == false) {
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(arguments, 1, by, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, toLength, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					//
-					auto result = stringValue;
-					while (StringMethods::getLength(result) < toLength) result = result + by;
-					//
-					returnValue.setValue(result);
+					returnValue.setValue(UTF8StringTools::padRight(stringValue, by, toLength, arguments[0].getStringValueCache()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodStringPadRight(miniScript));
+		miniScript->registerMethod(new MethodStringPadRight(miniScript));
+	}
+	{
+		//
+		class MethodStringToByteArray: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodStringToByteArray(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+					},
+					MiniScript::TYPE_BYTEARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "String::toByteArray";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(arguments, 0, stringValue, false) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setType(MiniScript::TYPE_BYTEARRAY);
+					for (auto i = 0; i < stringValue.size(); i++) returnValue.pushByteArrayEntry(stringValue[i]);
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodStringToByteArray(miniScript));
+	}
+	{
+		//
+		class MethodStringFromByteArray: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodStringFromByteArray(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_BYTEARRAY, .name = "byteArray", .optional = false, .reference = false, .nullable = false },
+					},
+					MiniScript::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "String::fromByteArray";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string stringValue;
+				if (arguments.size() != 1 || arguments[0].getType() != MiniScript::TYPE_BYTEARRAY) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					auto byteArrayPointer = arguments[0].getByteArrayPointer();
+					if (byteArrayPointer != nullptr) {
+						returnValue.setValue(string((const char*)(byteArrayPointer->data()), byteArrayPointer->size()));
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodStringFromByteArray(miniScript));
 	}
 }

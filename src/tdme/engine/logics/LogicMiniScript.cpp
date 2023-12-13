@@ -131,142 +131,142 @@ void LogicMiniScript::registerMethods() {
 	EngineMiniScript::registerMethods();
 	{
 		//
-		class ScriptMethodApplicationRunsInEditor: public ScriptMethod {
+		class MethodApplicationRunsInEditor: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodApplicationRunsInEditor(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodApplicationRunsInEditor(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "application.runsInEditor";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->isRunningInEditor());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodApplicationRunsInEditor(this));
+		registerMethod(new MethodApplicationRunsInEditor(this));
 	}
 	{
 		//
-		class ScriptMethodApplicationIsFullScreen: public ScriptMethod {
+		class MethodApplicationIsFullScreen: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodApplicationIsFullScreen(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodApplicationIsFullScreen(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "application.isFullScreen";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodApplicationIsFullScreen(this));
+		registerMethod(new MethodApplicationIsFullScreen(this));
 	}
 	{
 		//
-		class ScriptMethodLogicGetId: public ScriptMethod {
+		class MethodLogicGetId: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicGetId(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodLogicGetId(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.getId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodLogicGetId(this));
+		registerMethod(new MethodLogicGetId(this));
 	}
 	{
 		//
-		class ScriptMethodLogicGetHierarchyId: public ScriptMethod {
+		class MethodLogicGetHierarchyId: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicGetHierarchyId(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodLogicGetHierarchyId(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.getHierarchyId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getHierarchyId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodLogicGetHierarchyId(this));
+		registerMethod(new MethodLogicGetHierarchyId(this));
 	}
 	{
 		//
-		class ScriptMethodLogicGetHierarchyParentId: public ScriptMethod {
+		class MethodLogicGetHierarchyParentId: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicGetHierarchyParentId(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodLogicGetHierarchyParentId(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.getHierarchyParentId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getHierarchyParentId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodLogicGetHierarchyParentId(this));
+		registerMethod(new MethodLogicGetHierarchyParentId(this));
 	}
 	{
 		//
-		class ScriptMethodLogicGetLogicIds: public ScriptMethod {
+		class MethodLogicGetLogicIds: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicGetLogicIds(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_ARRAY),
+			MethodLogicGetLogicIds(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_ARRAY),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.getLogicIds";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				const auto& contextLogics = miniScript->logic->getContext()->getLogics();
 				returnValue.setType(EngineMiniScript::TYPE_ARRAY);
 				for (auto contextLogic: contextLogics) {
-					returnValue.pushArrayEntry(EngineMiniScript::ScriptVariable(contextLogic->getId()));
+					returnValue.pushArrayEntry(EngineMiniScript::Variable(contextLogic->getId()));
 				}
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodLogicGetLogicIds(this));
+		registerMethod(new MethodLogicGetLogicIds(this));
 	}
 	{
 		//
-		class ScriptMethodAudioGetListenerPosition: public ScriptMethod {
+		class MethodAudioGetListenerPosition: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioGetListenerPosition(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioGetListenerPosition(LogicMiniScript* miniScript):
+				Method(
 					{},
 					TYPE_VECTOR3
 				),
@@ -274,33 +274,33 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "audio.getListenerPosition";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerPosition());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioGetListenerPosition(this));
+		registerMethod(new MethodAudioGetListenerPosition(this));
 	}
 	{
 		//
-		class ScriptMethodAudioSetListenerPosition: public ScriptMethod {
+		class MethodAudioSetListenerPosition: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioSetListenerPosition(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioSetListenerPosition(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.setListenerPosition";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 position;
 				if (miniScript->getVector3Value(argumentValues, 0, position) == true) {
 					miniScript->logic->getContext()->getAudio()->setListenerPosition(position);
@@ -313,16 +313,16 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioSetListenerPosition(this));
+		registerMethod(new MethodAudioSetListenerPosition(this));
 	}
 	{
 		//
-		class ScriptMethodAudioGetListenerOrientationUp: public ScriptMethod {
+		class MethodAudioGetListenerOrientationUp: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioGetListenerOrientationUp(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioGetListenerOrientationUp(LogicMiniScript* miniScript):
+				Method(
 					{},
 					TYPE_VECTOR3
 				),
@@ -330,33 +330,33 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "audio.getListenerOrientationUp";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerOrientationUp());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioGetListenerOrientationUp(this));
+		registerMethod(new MethodAudioGetListenerOrientationUp(this));
 	}
 	{
 		//
-		class ScriptMethodAudioSetListenerOrientationUp: public ScriptMethod {
+		class MethodAudioSetListenerOrientationUp: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioSetListenerOrientationUp(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioSetListenerOrientationUp(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.setListenerOrientationUp";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 orientation;
 				if (miniScript->getVector3Value(argumentValues, 0, orientation) == true) {
 					miniScript->logic->getContext()->getAudio()->setListenerOrientationUp(orientation);
@@ -369,16 +369,16 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioSetListenerOrientationUp(this));
+		registerMethod(new MethodAudioSetListenerOrientationUp(this));
 	}
 	{
 		//
-		class ScriptMethodAudioGetListenerOrientationAt: public ScriptMethod {
+		class MethodAudioGetListenerOrientationAt: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioGetListenerOrientationAt(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioGetListenerOrientationAt(LogicMiniScript* miniScript):
+				Method(
 					{},
 					TYPE_VECTOR3
 				),
@@ -386,33 +386,33 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "audio.getListenerOrientationAt";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerOrientationAt());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioGetListenerOrientationAt(this));
+		registerMethod(new MethodAudioGetListenerOrientationAt(this));
 	}
 	{
 		//
-		class ScriptMethodAudioSetListenerOrientationAt: public ScriptMethod {
+		class MethodAudioSetListenerOrientationAt: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioSetListenerOrientationAt(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioSetListenerOrientationAt(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.setListenerOrientationAt";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 orientation;
 				if (miniScript->getVector3Value(argumentValues, 0, orientation) == true) {
 					miniScript->logic->getContext()->getAudio()->setListenerOrientationAt(orientation);
@@ -425,30 +425,30 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioSetListenerOrientationAt(this));
+		registerMethod(new MethodAudioSetListenerOrientationAt(this));
 	}
 	{
 		//
-		class ScriptMethodAudioPlaySound: public ScriptMethod {
+		class MethodAudioPlaySound: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioPlaySound(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioPlaySound(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "delay", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "gain", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "delay", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "gain", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.play";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string id;
 				int64_t delay = 0;
 				auto gain = 1.0f;
@@ -469,31 +469,31 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioPlaySound(this));
+		registerMethod(new MethodAudioPlaySound(this));
 	}
 	{
 		//
-		class ScriptMethodAudioPlaySoundAtPosition: public ScriptMethod {
+		class MethodAudioPlaySoundAtPosition: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAudioPlaySoundAtPosition(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodAudioPlaySoundAtPosition(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "delay", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "gain", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "delay", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "gain", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.playAtPosition";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string id;
 				Vector3 position;
 				int64_t delay = 0;
@@ -516,24 +516,24 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodAudioPlaySoundAtPosition(this));
+		registerMethod(new MethodAudioPlaySoundAtPosition(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalSend: public ScriptMethod {
+		class MethodLogicSignalSend: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalSend(LogicMiniScript* miniScript):
-				ScriptMethod({
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .reference = false, .nullable = false }
+			MethodLogicSignalSend(LogicMiniScript* miniScript):
+				Method({
+					{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+					{ .type = VariableType::TYPE_STRING, .name = "signal", .optional = false, .reference = false, .nullable = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.send";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string logicId;
 				string signal;
 				if (miniScript->getStringValue(argumentValues, 0, logicId) == true &&
@@ -543,7 +543,7 @@ void LogicMiniScript::registerMethods() {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 						miniScript->startErrorScript();
 					} else {
-						vector<ScriptVariable> arguments(argumentValues.size() - 2);
+						vector<Variable> arguments(argumentValues.size() - 2);
 						for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
 						logic->addSignal(signal, arguments);
 					}
@@ -559,27 +559,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalSend(this));
+		registerMethod(new MethodLogicSignalSend(this));
 	}
 	{
 		//
-		class ScriptMethodLogicHas: public ScriptMethod {
+		class MethodLogicHas: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicHas(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodLogicHas(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.has";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string logicId;
 				string callable;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
@@ -593,7 +593,7 @@ void LogicMiniScript::registerMethods() {
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
 						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
-						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callableFunction == false) {
 							miniScript->setValue(returnValue, false);
 						} else {
 							miniScript->setValue(returnValue, true);
@@ -602,27 +602,27 @@ void LogicMiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodLogicHas(this));
+		registerMethod(new MethodLogicHas(this));
 	}
 	{
 		//
-		class ScriptMethodLogicCall: public ScriptMethod {
+		class MethodLogicCall: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicCall(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodLogicCall(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
+					VariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.call";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string logicId;
 				string callable;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
@@ -637,13 +637,13 @@ void LogicMiniScript::registerMethods() {
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
 						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
-						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callableFunction == false) {
 							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
 							#if defined (__APPLE__)
 								// MACOSX currently does not support initializing span using begin and end iterators,
-								vector<ScriptVariable> callArgumentValues(argumentValues.size() - 2);
+								vector<Variable> callArgumentValues(argumentValues.size() - 2);
 								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues[i - 2] = move(argumentValues[i]);
 								// call
 								span callArgumentValuesSpan(callArgumentValues);
@@ -662,68 +662,68 @@ void LogicMiniScript::registerMethods() {
 				return true;
 			}
 		};
-		registerMethod(new ScriptMethodLogicCall(this));
+		registerMethod(new MethodLogicCall(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalHas: public ScriptMethod {
+		class MethodLogicSignalHas: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalHas(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodLogicSignalHas(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.has";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->hasSignal());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalHas(this));
+		registerMethod(new MethodLogicSignalHas(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalGetName: public ScriptMethod {
+		class MethodLogicSignalGetName: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalGetName(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodLogicSignalGetName(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.getName";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->logic->getSignalName());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalGetName(this));
+		registerMethod(new MethodLogicSignalGetName(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalGetArgument: public ScriptMethod {
+		class MethodLogicSignalGetArgument: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalGetArgument(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodLogicSignalGetArgument(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
+					VariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.getArgument";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t argumentIndex;
 				if (miniScript->getIntegerValue(argumentValues, 0, argumentIndex) == true) {
 					returnValue = miniScript->logic->getSignalArgument(argumentIndex);
@@ -736,573 +736,573 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalGetArgument(this));
+		registerMethod(new MethodLogicSignalGetArgument(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalNext: public ScriptMethod {
+		class MethodLogicSignalNext: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalNext(LogicMiniScript* miniScript):
-				ScriptMethod(),
+			MethodLogicSignalNext(LogicMiniScript* miniScript):
+				Method(),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.next";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->logic->removeSignal();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalNext(this));
+		registerMethod(new MethodLogicSignalNext(this));
 	}
 	// keyboard input
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_LEFT: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_LEFT: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_LEFT(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_LEFT(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_LEFT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_LEFT(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_LEFT(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_RIGHT: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_RIGHT: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_RIGHT(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_RIGHT(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RIGHT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RIGHT(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_RIGHT(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_UP: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_UP: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_UP(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_UP(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_UP";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_UP(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_UP(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_DOWN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_DOWN: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_DOWN(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_DOWN(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DOWN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DOWN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_DOWN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_POS1: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_POS1: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_POS1(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_POS1(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_POS1";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_POS1(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_POS1(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_END: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_END: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_END(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_END(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_END";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_END(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_END(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_PAGEUP: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_PAGEUP: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_PAGEUP(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_PAGEUP(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEUP";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEUP(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_PAGEUP(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_PAGEDOWN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_PAGEDOWN: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_PAGEDOWN(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEDOWN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_PAGEDOWN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_BACKSPACE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_BACKSPACE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_BACKSPACE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_BACKSPACE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_BACKSPACE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_BACKSPACE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_BACKSPACE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_DELETE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_DELETE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_DELETE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_DELETE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DELETE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DELETE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_DELETE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_SPACE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_SPACE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_SPACE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_SPACE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_SPACE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_SPACE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_SPACE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_RETURN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_RETURN: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_RETURN(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_RETURN(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RETURN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RETURN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_RETURN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_ESCAPE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_ESCAPE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_ESCAPE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_ESCAPE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_ESCAPE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_ESCAPE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F1: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F1: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F1(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F1(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F1";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F1(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F1(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F2: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F2: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F2(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F2(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F2";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F2(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F2(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F3: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F3: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F3(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F3(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F3";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F3(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F3(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F4: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F4: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F4(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F4(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F4";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F4(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F4(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F5: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F5: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F5(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F5(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F5";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F5(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F5(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F6: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F6: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F6(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F6(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F6";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F6(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F6(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F7: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F7: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F7(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F7(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F7";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F7(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F7(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F8: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F8: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F8(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F8(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F8";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F8(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F8(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F9: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F9: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F9(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F9(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F9";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F9(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F9(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F10: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F10: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F10(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F10(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F10";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F10(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F10(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F11: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F11: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F11(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F11(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F11";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F11(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F11(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F12: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F12: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F12(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F12(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F12";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F12(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F12(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsKeyDown: public ScriptMethod {
+		class MethodInputKeyboardIsKeyDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsKeyDown(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputKeyboardIsKeyDown(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isKeyDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t keyCode;
 				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
 					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
@@ -1315,26 +1315,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsKeyDown(this));
+		registerMethod(new MethodInputKeyboardIsKeyDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsCharDown: public ScriptMethod {
+		class MethodInputKeyboardIsCharDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsCharDown(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputKeyboardIsCharDown(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "charAsString", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "charAsString", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isCharDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string charAsString;
 				if (miniScript->getStringValue(argumentValues, 0, charAsString) == true) {
 					UTF8CharacterIterator u8It(charAsString);
@@ -1349,194 +1349,194 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsCharDown(this));
+		registerMethod(new MethodInputKeyboardIsCharDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardGetTypedString: public ScriptMethod {
+		class MethodInputKeyboardGetTypedString: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardGetTypedString(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodInputKeyboardGetTypedString(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.getTypedString";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardTypedChars;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardGetTypedString(this));
+		registerMethod(new MethodInputKeyboardGetTypedString(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsControlDown: public ScriptMethod {
+		class MethodInputKeyboardIsControlDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsControlDown(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsControlDown(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isControlDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsControlDown(this));
+		registerMethod(new MethodInputKeyboardIsControlDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsMetaDown: public ScriptMethod {
+		class MethodInputKeyboardIsMetaDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsMetaDown(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsMetaDown(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isMetaDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsMetaDown(this));
+		registerMethod(new MethodInputKeyboardIsMetaDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsAltDown: public ScriptMethod {
+		class MethodInputKeyboardIsAltDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsAltDown(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsAltDown(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isAltDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardAltDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsAltDown(this));
+		registerMethod(new MethodInputKeyboardIsAltDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsShiftDown: public ScriptMethod {
+		class MethodInputKeyboardIsShiftDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsShiftDown(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsShiftDown(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isShiftDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardShiftDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsShiftDown(this));
+		registerMethod(new MethodInputKeyboardIsShiftDown(this));
 	}
 	// mouse input
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_LEFT: public ScriptMethod {
+		class MethodInputMouseBUTTON_LEFT: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_LEFT(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_LEFT(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_LEFT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_LEFT(this));
+		registerMethod(new MethodInputMouseBUTTON_LEFT(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_MIDDLE: public ScriptMethod {
+		class MethodInputMouseBUTTON_MIDDLE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_MIDDLE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_MIDDLE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_MIDDLE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_MIDDLE(this));
+		registerMethod(new MethodInputMouseBUTTON_MIDDLE(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_RIGHT: public ScriptMethod {
+		class MethodInputMouseBUTTON_RIGHT: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_RIGHT(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_RIGHT(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_RIGHT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_RIGHT(this));
+		registerMethod(new MethodInputMouseBUTTON_RIGHT(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsButtonDown: public ScriptMethod {
+		class MethodInputMouseIsButtonDown: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsButtonDown(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsButtonDown(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isButtonDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
@@ -1549,25 +1549,25 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsButtonDown(this));
+		registerMethod(new MethodInputMouseIsButtonDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsButtonUp: public ScriptMethod {
+		class MethodInputMouseIsButtonUp: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsButtonUp(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsButtonUp(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isButtonUp";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
@@ -1580,25 +1580,25 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsButtonUp(this));
+		registerMethod(new MethodInputMouseIsButtonUp(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsDragging: public ScriptMethod {
+		class MethodInputMouseIsDragging: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsDragging(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsDragging(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isDragging";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
@@ -1611,216 +1611,216 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsDragging(this));
+		registerMethod(new MethodInputMouseIsDragging(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseHasMoved: public ScriptMethod {
+		class MethodInputMouseHasMoved: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseHasMoved(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputMouseHasMoved(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.hasMoved";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseMoved;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseHasMoved(this));
+		registerMethod(new MethodInputMouseHasMoved(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetX: public ScriptMethod {
+		class MethodInputMouseGetX: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetX(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetX(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseX);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetX(this));
+		registerMethod(new MethodInputMouseGetX(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetXUnscaled: public ScriptMethod {
+		class MethodInputMouseGetXUnscaled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetXUnscaled(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetXUnscaled(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getXUnscaled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetXUnscaled(this));
+		registerMethod(new MethodInputMouseGetXUnscaled(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetY: public ScriptMethod {
+		class MethodInputMouseGetY: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetY(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetY(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getY";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseY);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetY(this));
+		registerMethod(new MethodInputMouseGetY(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetYUnscaled: public ScriptMethod {
+		class MethodInputMouseGetYUnscaled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetYUnscaled(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetYUnscaled(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getYUnscaled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetYUnscaled(this));
+		registerMethod(new MethodInputMouseGetYUnscaled(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelX: public ScriptMethod {
+		class MethodInputMouseGetWheelX: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelX(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelX(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelX;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelX(this));
+		registerMethod(new MethodInputMouseGetWheelX(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelY: public ScriptMethod {
+		class MethodInputMouseGetWheelY: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelY(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelY(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelY";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelY;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelY(this));
+		registerMethod(new MethodInputMouseGetWheelY(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelZ: public ScriptMethod {
+		class MethodInputMouseGetWheelZ: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelZ(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelZ(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelZ";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelZ;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
+		registerMethod(new MethodInputMouseGetWheelZ(this));
 	}
 	// camera
 	{
 		//
-		class ScriptMethodCameraGetLookFrom: public ScriptMethod {
+		class MethodCameraGetLookFrom: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraGetLookFrom(LogicMiniScript* miniScript):
-				ScriptMethod({}, TYPE_VECTOR3),
+			MethodCameraGetLookFrom(LogicMiniScript* miniScript):
+				Method({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getLookFrom";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getLookFrom());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraGetLookFrom(this));
+		registerMethod(new MethodCameraGetLookFrom(this));
 	}
 	{
 		//
-		class ScriptMethodCameraSetLookFrom: public ScriptMethod {
+		class MethodCameraSetLookFrom: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraSetLookFrom(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodCameraSetLookFrom(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.setLookFrom";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 lookFrom;
 				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true) {
 					miniScript->context->getEngine()->getCamera()->setLookFrom(lookFrom);
@@ -1833,47 +1833,47 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraSetLookFrom(this));
+		registerMethod(new MethodCameraSetLookFrom(this));
 	}
 	{
 		//
-		class ScriptMethodCameraGetLookAt: public ScriptMethod {
+		class MethodCameraGetLookAt: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraGetLookAt(LogicMiniScript* miniScript):
-				ScriptMethod({}, TYPE_VECTOR3),
+			MethodCameraGetLookAt(LogicMiniScript* miniScript):
+				Method({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getLookAt";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getLookAt());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraGetLookAt(this));
+		registerMethod(new MethodCameraGetLookAt(this));
 	}
 	{
 		//
-		class ScriptMethodCameraSetLookAt: public ScriptMethod {
+		class MethodCameraSetLookAt: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraSetLookAt(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodCameraSetLookAt(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.setLookAt";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 lookAt;
 				if (miniScript->getVector3Value(argumentValues, 0, lookAt) == true) {
 					miniScript->context->getEngine()->getCamera()->setLookAt(lookAt);
@@ -1886,47 +1886,47 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraSetLookAt(this));
+		registerMethod(new MethodCameraSetLookAt(this));
 	}
 	{
 		//
-		class ScriptMethodCameraGetUpVector: public ScriptMethod {
+		class MethodCameraGetUpVector: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraGetUpVector(LogicMiniScript* miniScript):
-				ScriptMethod({}, TYPE_VECTOR3),
+			MethodCameraGetUpVector(LogicMiniScript* miniScript):
+				Method({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getUpVector";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getUpVector());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraGetUpVector(this));
+		registerMethod(new MethodCameraGetUpVector(this));
 	}
 	{
 		//
-		class ScriptMethodCameraSetUpVector: public ScriptMethod {
+		class MethodCameraSetUpVector: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraSetUpVector(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodCameraSetUpVector(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "upVector", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.setUpVector";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 upVector;
 				if (miniScript->getVector3Value(argumentValues, 0, upVector) == true) {
 					miniScript->context->getEngine()->getCamera()->setUpVector(upVector);
@@ -1939,16 +1939,16 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraSetUpVector(this));
+		registerMethod(new MethodCameraSetUpVector(this));
 	}
 	{
 		//
-		class ScriptMethodCameraComputeUpVector: public ScriptMethod {
+		class MethodCameraComputeUpVector: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraComputeUpVector(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodCameraComputeUpVector(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
@@ -1959,7 +1959,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.camera.computeUpVector";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 lookFrom;
 				Vector3 lookAt;
 				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true &&
@@ -1974,47 +1974,47 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraComputeUpVector(this));
+		registerMethod(new MethodCameraComputeUpVector(this));
 	}
 	{
 		//
-		class ScriptMethodCameraGetFovX: public ScriptMethod {
+		class MethodCameraGetFovX: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraGetFovX(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodCameraGetFovX(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getFovX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getEngine()->getCamera()->getFovX();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraGetFovX(this));
+		registerMethod(new MethodCameraGetFovX(this));
 	}
 	{
 		//
-		class ScriptMethodCameraSetFovX: public ScriptMethod {
+		class MethodCameraSetFovX: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodCameraSetFovX(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodCameraSetFovX(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_FLOAT, .name = "fovX", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.setFovX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				float fovX;
 				if (miniScript->getFloatValue(argumentValues, 0, fovX) == true) {
 					miniScript->context->getEngine()->getCamera()->setFovX(fovX);
@@ -2027,112 +2027,112 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodCameraSetFovX(this));
+		registerMethod(new MethodCameraSetFovX(this));
 	}
 	// timing
 	{
 		//
-		class ScriptMethodTimingGetDeltaTime: public ScriptMethod {
+		class MethodTimingGetDeltaTime: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTimingGetDeltaTime(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodTimingGetDeltaTime(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.timing.getDeltaTime";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTime();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodTimingGetDeltaTime(this));
+		registerMethod(new MethodTimingGetDeltaTime(this));
 	}
 	{
 		//
-		class ScriptMethodTimingGetDeltaTimeSeconds: public ScriptMethod {
+		class MethodTimingGetDeltaTimeSeconds: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTimingGetDeltaTimeSeconds(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodTimingGetDeltaTimeSeconds(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.timing.getDeltaTimeSeconds";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTimeSeconds();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodTimingGetDeltaTimeSeconds(this));
+		registerMethod(new MethodTimingGetDeltaTimeSeconds(this));
 	}
 	{
 		//
-		class ScriptMethodTimingGetAvarageFPS: public ScriptMethod {
+		class MethodTimingGetAvarageFPS: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTimingGetAvarageFPS(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodTimingGetAvarageFPS(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.timing.getAvarageFPS";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getEngine()->getTiming()->getAvarageFPS();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodTimingGetAvarageFPS(this));
+		registerMethod(new MethodTimingGetAvarageFPS(this));
 	}
 	// engine
 	{
 		//
-		class ScriptMethodEngineGetAnimationComputationReduction1Distance: public ScriptMethod {
+		class MethodEngineGetAnimationComputationReduction1Distance: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineGetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodEngineGetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.getAnimationComputationReduction1Distance";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, Engine::getAnimationComputationReduction1Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction1Distance(this));
+		registerMethod(new MethodEngineGetAnimationComputationReduction1Distance(this));
 	}
 	{
 		//
-		class ScriptMethodEngineSetAnimationComputationReduction1Distance: public ScriptMethod {
+		class MethodEngineSetAnimationComputationReduction1Distance: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineSetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEngineSetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction1Distance", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_FLOAT, .name = "animationComputationReduction1Distance", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.setAnimationComputationReduction1Distance";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				float animationComputationReduction1Distance;
 				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction1Distance) == true) {
 					Engine::setAnimationComputationReduction1Distance(animationComputationReduction1Distance);
@@ -2146,47 +2146,47 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction1Distance(this));
+		registerMethod(new MethodEngineSetAnimationComputationReduction1Distance(this));
 	}
 	{
 		//
-		class ScriptMethodEngineGetAnimationComputationReduction2Distance: public ScriptMethod {
+		class MethodEngineGetAnimationComputationReduction2Distance: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineGetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodEngineGetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.getAnimationComputationReduction2Distance";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, Engine::getAnimationComputationReduction2Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction2Distance(this));
+		registerMethod(new MethodEngineGetAnimationComputationReduction2Distance(this));
 	}
 	{
 		//
-		class ScriptMethodEngineSetAnimationComputationReduction2Distance: public ScriptMethod {
+		class MethodEngineSetAnimationComputationReduction2Distance: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineSetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEngineSetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction2Distance", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_FLOAT, .name = "animationComputationReduction2Distance", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.setAnimationComputationReduction2Distance";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				float animationComputationReduction2Distance;
 				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction2Distance) == true) {
 					Engine::setAnimationComputationReduction2Distance(animationComputationReduction2Distance);
@@ -2200,111 +2200,111 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction2Distance(this));
+		registerMethod(new MethodEngineSetAnimationComputationReduction2Distance(this));
 	}
 	{
 		//
-		class ScriptMethodEngineGetWidth: public ScriptMethod {
+		class MethodEngineGetWidth: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineGetWidth(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodEngineGetWidth(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.getWidth";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getWidth());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineGetWidth(this));
+		registerMethod(new MethodEngineGetWidth(this));
 	}
 	{
 		//
-		class ScriptMethodEngineGetHeight: public ScriptMethod {
+		class MethodEngineGetHeight: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineGetHeight(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodEngineGetHeight(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.getHeight";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getHeight());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineGetHeight(this));
+		registerMethod(new MethodEngineGetHeight(this));
 	}
 	{
 		//
-		class ScriptMethodEngineDumpEntities: public ScriptMethod {
+		class MethodEngineDumpEntities: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineDumpEntities(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+			MethodEngineDumpEntities(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_NULL),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.dumpEntities";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->context->getEngine()->dumpEntities();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineDumpEntities(this));
+		registerMethod(new MethodEngineDumpEntities(this));
 	}
 	{
 		//
-		class ScriptMethodEngineDumpShaders: public ScriptMethod {
+		class MethodEngineDumpShaders: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineDumpShaders(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+			MethodEngineDumpShaders(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_NULL),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.dumpShaders";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->context->getEngine()->dumpShaders();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineDumpShaders(this));
+		registerMethod(new MethodEngineDumpShaders(this));
 	}
 	{
 		//
-		class ScriptMethodEngineGetEntityIdByMousePosition: public ScriptMethod {
+		class MethodEngineGetEntityIdByMousePosition: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineGetEntityIdByMousePosition(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEngineGetEntityIdByMousePosition(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.getEntityIdByMousePosition";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t mouseX;
 				int64_t mouseY;
 				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
@@ -2320,19 +2320,19 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineGetEntityIdByMousePosition(this));
+		registerMethod(new MethodEngineGetEntityIdByMousePosition(this));
 	}
 	{
 		//
-		class ScriptMethodEngineComputeWorldCoordinateByMousePosition: public ScriptMethod {
+		class MethodEngineComputeWorldCoordinateByMousePosition: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineComputeWorldCoordinateByMousePosition(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEngineComputeWorldCoordinateByMousePosition(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR3
 				),
@@ -2340,7 +2340,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.computeWorldCoordinateByMousePosition";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t mouseX;
 				int64_t mouseY;
 				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
@@ -2355,27 +2355,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineComputeWorldCoordinateByMousePosition(this));
+		registerMethod(new MethodEngineComputeWorldCoordinateByMousePosition(this));
 	}
 	{
 		//
-		class ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate: public ScriptMethod {
+		class MethodEngineComputeScreenCoordinateByWorldCoordinate: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEngineComputeScreenCoordinateByWorldCoordinate(LogicMiniScript* miniScript):
+				Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "worldCoodinate", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR2, .name = "screenCoordinate", .optional = false, .reference = true, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.computeScreenCoordinateByWorldCoordinate";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				Vector3 worldCoodinate;
 				if (argumentValues.size() == 2 &&
 					miniScript->getVector3Value(argumentValues, 0, worldCoodinate) == true) {
@@ -2395,19 +2395,19 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate(this));
+		registerMethod(new MethodEngineComputeScreenCoordinateByWorldCoordinate(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetTransform: public ScriptMethod {
+		class MethodEntityGetTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					TYPE_TRANSFORM
 				),
@@ -2415,7 +2415,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.entity.getTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2435,28 +2435,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetTransform(this));
+		registerMethod(new MethodEntityGetTransform(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetTransform: public ScriptMethod {
+		class MethodEntitySetTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				Transform transform;
 				string childEntityId;
@@ -2478,27 +2478,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetTransform(this));
+		registerMethod(new MethodEntitySetTransform(this));
 	}
 	{
 		//
-		class ScriptMethodEntityIsEnabled: public ScriptMethod {
+		class MethodEntityIsEnabled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityIsEnabled(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityIsEnabled(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.isEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2518,28 +2518,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityIsEnabled(this));
+		registerMethod(new MethodEntityIsEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetEnabled: public ScriptMethod {
+		class MethodEntitySetEnabled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetEnabled(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetEnabled(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				bool enabled;
 				string childEntityId;
@@ -2561,27 +2561,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetEnabled(this));
+		registerMethod(new MethodEntitySetEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodEntityIsPickable: public ScriptMethod {
+		class MethodEntityIsPickable: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityIsPickable(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityIsPickable(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.isPickable";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2601,28 +2601,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityIsPickable(this));
+		registerMethod(new MethodEntityIsPickable(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetPickable: public ScriptMethod {
+		class MethodEntitySetPickable: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetPickable(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetPickable(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setPickable";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				bool pickable;
 				string childEntityId;
@@ -2644,19 +2644,19 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetPickable(this));
+		registerMethod(new MethodEntitySetPickable(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetEffectColorMul: public ScriptMethod {
+		class MethodEntityGetEffectColorMul: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetEffectColorMul(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetEffectColorMul(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR4
 				),
@@ -2664,7 +2664,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.entity.getEffectColorMul";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2685,28 +2685,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetEffectColorMul(this));
+		registerMethod(new MethodEntityGetEffectColorMul(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetEffectColorMul: public ScriptMethod {
+		class MethodEntitySetEffectColorMul: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetEffectColorMul(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetEffectColorMul(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setEffectColorMul";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				Vector4 effectColorMul;
 				string childEntityId;
@@ -2728,19 +2728,19 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetEffectColorMul(this));
+		registerMethod(new MethodEntitySetEffectColorMul(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetEffectColorAdd: public ScriptMethod {
+		class MethodEntityGetEffectColorAdd: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetEffectColorAdd(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetEffectColorAdd(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR4
 				),
@@ -2748,7 +2748,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.entity.getEffectColorAdd";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2769,28 +2769,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetEffectColorAdd(this));
+		registerMethod(new MethodEntityGetEffectColorAdd(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetEffectColorAdd: public ScriptMethod {
+		class MethodEntitySetEffectColorAdd: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetEffectColorAdd(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetEffectColorAdd(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setEffectColorAdd";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				Vector4 effectColorAdd;
 				string childEntityId;
@@ -2812,27 +2812,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetEffectColorAdd(this));
+		registerMethod(new MethodEntitySetEffectColorAdd(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetAnimation: public ScriptMethod {
+		class MethodEntityGetAnimation: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetAnimation(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetAnimation(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.getAnimation";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2852,29 +2852,29 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetAnimation(this));
+		registerMethod(new MethodEntityGetAnimation(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetAnimation: public ScriptMethod {
+		class MethodEntitySetAnimation: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetAnimation(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetAnimation(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "speed", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setAnimation";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string animation;
 				float speed = 1.0f;
@@ -2898,28 +2898,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetAnimation(this));
+		registerMethod(new MethodEntitySetAnimation(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetAnimationSpeed: public ScriptMethod {
+		class MethodEntitySetAnimationSpeed: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetAnimationSpeed(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetAnimationSpeed(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "speed", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setAnimationSpeed";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				float speed;
 				string childEntityId;
@@ -2941,27 +2941,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetAnimationSpeed(this));
+		registerMethod(new MethodEntitySetAnimationSpeed(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetAnimationTime: public ScriptMethod {
+		class MethodEntityGetAnimationTime: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetAnimationTime(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetAnimationTime(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_FLOAT
+					VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.getAnimationTime";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -2981,28 +2981,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetAnimationTime(this));
+		registerMethod(new MethodEntityGetAnimationTime(this));
 	}
 	{
 		//
-		class ScriptMethodEntityHasOverlayAnimation: public ScriptMethod {
+		class MethodEntityHasOverlayAnimation: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityHasOverlayAnimation(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityHasOverlayAnimation(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.hasOverlayAnimation";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string animation;
 				string childEntityId;
@@ -3024,28 +3024,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityHasOverlayAnimation(this));
+		registerMethod(new MethodEntityHasOverlayAnimation(this));
 	}
 	{
 		//
-		class ScriptMethodEntityAddOverlayAnimation: public ScriptMethod {
+		class MethodEntityAddOverlayAnimation: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityAddOverlayAnimation(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityAddOverlayAnimation(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.addOverlayAnimation";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string animation;
 				string childEntityId;
@@ -3067,28 +3067,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityAddOverlayAnimation(this));
+		registerMethod(new MethodEntityAddOverlayAnimation(this));
 	}
 	{
 		//
-		class ScriptMethodEntityRemoveOverlayAnimation: public ScriptMethod {
+		class MethodEntityRemoveOverlayAnimation: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityRemoveOverlayAnimation(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityRemoveOverlayAnimation(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.removeOverlayAnimation";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string animation;
 				string childEntityId;
@@ -3110,27 +3110,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityRemoveOverlayAnimation(this));
+		registerMethod(new MethodEntityRemoveOverlayAnimation(this));
 	}
 	{
 		//
-		class ScriptMethodEntityRemoveFinishedOverlayAnimations: public ScriptMethod {
+		class MethodEntityRemoveFinishedOverlayAnimations: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityRemoveFinishedOverlayAnimations(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityRemoveFinishedOverlayAnimations(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.removeFinishedOverlayAnimations";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -3150,27 +3150,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityRemoveFinishedOverlayAnimations(this));
+		registerMethod(new MethodEntityRemoveFinishedOverlayAnimations(this));
 	}
 	{
 		//
-		class ScriptMethodEntityRemoveOverlayAnimations: public ScriptMethod {
+		class MethodEntityRemoveOverlayAnimations: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityRemoveOverlayAnimations(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityRemoveOverlayAnimations(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.removeOverlayAnimations";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -3190,28 +3190,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityRemoveOverlayAnimations(this));
+		registerMethod(new MethodEntityRemoveOverlayAnimations(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetOverlayAnimationTime: public ScriptMethod {
+		class MethodEntityGetOverlayAnimationTime: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetOverlayAnimationTime(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetOverlayAnimationTime(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "animation", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_FLOAT
+					VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.getOverlayAnimationTime";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string animation;
 				string childEntityId;
@@ -3233,20 +3233,20 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetOverlayAnimationTime(this));
+		registerMethod(new MethodEntityGetOverlayAnimationTime(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetNodeTransformMatrix: public ScriptMethod {
+		class MethodEntityGetNodeTransformMatrix: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetNodeTransformMatrix(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetNodeTransformMatrix(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX4x4
 				),
@@ -3254,7 +3254,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.entity.getNodeTransformMatrix";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				string childEntityId;
@@ -3276,20 +3276,20 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetNodeTransformMatrix(this));
+		registerMethod(new MethodEntityGetNodeTransformMatrix(this));
 	}
 	{
 		//
-		class ScriptMethodEntityGetNodeTransform: public ScriptMethod {
+		class MethodEntityGetNodeTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityGetNodeTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityGetNodeTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
 					TYPE_TRANSFORM
 				),
@@ -3297,7 +3297,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "engine.entity.getNodeTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				string childEntityId;
@@ -3321,29 +3321,29 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityGetNodeTransform(this));
+		registerMethod(new MethodEntityGetNodeTransform(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetNodeTransformMatrix: public ScriptMethod {
+		class MethodEntitySetNodeTransformMatrix: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetNodeTransformMatrix(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetNodeTransformMatrix(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_MATRIX4x4, .name = "matrix", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setNodeTransformMatrix";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				Matrix4x4 matrix;
@@ -3367,29 +3367,29 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetNodeTransformMatrix(this));
+		registerMethod(new MethodEntitySetNodeTransformMatrix(this));
 	}
 	{
 		//
-		class ScriptMethodEntitySetNodeTransform: public ScriptMethod {
+		class MethodEntitySetNodeTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntitySetNodeTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntitySetNodeTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.setNodeTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				Transform transform;
@@ -3413,28 +3413,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntitySetNodeTransform(this));
+		registerMethod(new MethodEntitySetNodeTransform(this));
 	}
 	{
 		//
-		class ScriptMethodEntityUnsetNodeTransformMatrix: public ScriptMethod {
+		class MethodEntityUnsetNodeTransformMatrix: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityUnsetNodeTransformMatrix(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityUnsetNodeTransformMatrix(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.unsetNodeTransformMatrix";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				string childEntityId;
@@ -3456,28 +3456,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityUnsetNodeTransformMatrix(this));
+		registerMethod(new MethodEntityUnsetNodeTransformMatrix(this));
 	}
 	{
 		//
-		class ScriptMethodEntityUnsetNodeTransform: public ScriptMethod {
+		class MethodEntityUnsetNodeTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityUnsetNodeTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityUnsetNodeTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.unsetNodeTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string nodeId;
 				string childEntityId;
@@ -3499,27 +3499,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityUnsetNodeTransform(this));
+		registerMethod(new MethodEntityUnsetNodeTransform(this));
 	}
 	{
 		//
-		class ScriptMethodEntityEmitParticles: public ScriptMethod {
+		class MethodEntityEmitParticles: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEntityEmitParticles(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodEntityEmitParticles(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_INTEGER
+					VariableType::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.entity.emitParticles";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string entityId;
 				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
@@ -3539,468 +3539,468 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_ENGINE;
 			}
 		};
-		registerMethod(new ScriptMethodEntityEmitParticles(this));
+		registerMethod(new MethodEntityEmitParticles(this));
 	}
 	// physics
 	{
 		//
-		class ScriptMethodBodyTYPE_STATIC: public ScriptMethod {
+		class MethodBodyTYPE_STATIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyTYPE_STATIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyTYPE_STATIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.TYPE_STATIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::BODYTYPE_STATIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyTYPE_STATIC(this));
+		registerMethod(new MethodBodyTYPE_STATIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyTYPE_DYNAMIC: public ScriptMethod {
+		class MethodBodyTYPE_DYNAMIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyTYPE_DYNAMIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyTYPE_DYNAMIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.TYPE_DYNAMIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::BODYTYPE_DYNAMIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyTYPE_DYNAMIC(this));
+		registerMethod(new MethodBodyTYPE_DYNAMIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyTYPE_COLLISIONSTATIC: public ScriptMethod {
+		class MethodBodyTYPE_COLLISIONSTATIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyTYPE_COLLISIONSTATIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyTYPE_COLLISIONSTATIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.TYPE_COLLISION_STATIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_STATIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyTYPE_COLLISIONSTATIC(this));
+		registerMethod(new MethodBodyTYPE_COLLISIONSTATIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyTYPE_COLLISIONDYNAMIC: public ScriptMethod {
+		class MethodBodyTYPE_COLLISIONDYNAMIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyTYPE_COLLISIONDYNAMIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyTYPE_COLLISIONDYNAMIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.TYPE_COLLISION_DYNAMIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_DYNAMIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyTYPE_COLLISIONDYNAMIC(this));
+		registerMethod(new MethodBodyTYPE_COLLISIONDYNAMIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_STATIC: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_STATIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_STATIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_STATIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_STATIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_STATIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_STATIC(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_STATIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_DYNAMIC: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_DYNAMIC(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_DYNAMIC";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_DYNAMIC);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_DYNAMIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_3: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_3: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_3(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_3(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_3";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_3);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_3(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_3(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_4: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_4: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_4(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_4(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_4";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_4);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_4(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_4(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_5: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_5: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_5(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_5(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_5";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_5);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_5(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_5(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_6: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_6: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_6(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_6(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_6";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_6);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_6(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_6(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_7: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_7: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_7(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_7(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_7";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_7);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_7(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_7(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_8: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_8: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_8(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_8(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_8";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_8);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_8(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_8(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_9: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_9: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_9(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_9(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_9";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_9);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_9(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_9(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_10: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_10: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_10(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_10(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_10";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_10);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_10(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_10(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_11: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_11: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_11(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_11(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_11";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_11);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_11(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_11(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_12: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_12: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_12(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_12(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_12";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_12);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_12(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_12(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_13: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_13: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_13(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_13(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_13";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_13);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_13(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_13(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_14: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_14: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_14(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_14(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_14";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_14);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_14(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_14(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_15: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_15: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_15(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_15(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_15";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_15);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_15(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_15(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_16: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_16: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_16(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_16(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_16";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_16);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_16(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_16(this));
 	}
 	{
 		//
-		class ScriptMethodBodyCOLLISION_TYPEID_ALL: public ScriptMethod {
+		class MethodBodyCOLLISION_TYPEID_ALL: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyCOLLISION_TYPEID_ALL(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodBodyCOLLISION_TYPEID_ALL(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.COLLISION_TYPEID_ALL";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_ALL);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_ALL(this));
+		registerMethod(new MethodBodyCOLLISION_TYPEID_ALL(this));
 	}
 	{
 		//
-		class ScriptMethodBodyIsEnabled: public ScriptMethod {
+		class MethodBodyIsEnabled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyIsEnabled(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyIsEnabled(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.isEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4018,27 +4018,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyIsEnabled(this));
+		registerMethod(new MethodBodyIsEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetEnabled: public ScriptMethod {
+		class MethodBodySetEnabled: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetEnabled(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetEnabled(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				bool enabled;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4058,26 +4058,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetEnabled(this));
+		registerMethod(new MethodBodySetEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetType: public ScriptMethod {
+		class MethodBodyGetType: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetType(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetType(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_INTEGER
+					VariableType::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.getType";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4095,26 +4095,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetType(this));
+		registerMethod(new MethodBodyGetType(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetCollisionTypeId: public ScriptMethod {
+		class MethodBodyGetCollisionTypeId: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetCollisionTypeId(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetCollisionTypeId(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_INTEGER
+					VariableType::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.getCollisionTypeId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4132,27 +4132,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetCollisionTypeId(this));
+		registerMethod(new MethodBodyGetCollisionTypeId(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetCollisionTypeId: public ScriptMethod {
+		class MethodBodySetCollisionTypeId: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetCollisionTypeId(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetCollisionTypeId(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setCollisionTypeId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				int64_t collisionTypeId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4172,26 +4172,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetCollisionTypeId(this));
+		registerMethod(new MethodBodySetCollisionTypeId(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetCollisionTypeIds: public ScriptMethod {
+		class MethodBodyGetCollisionTypeIds: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetCollisionTypeIds(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetCollisionTypeIds(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_INTEGER
+					VariableType::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.getCollisionTypeIds";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4209,27 +4209,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetCollisionTypeIds(this));
+		registerMethod(new MethodBodyGetCollisionTypeIds(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetCollisionTypeIds: public ScriptMethod {
+		class MethodBodySetCollisionTypeIds: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetCollisionTypeIds(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetCollisionTypeIds(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setCollisionTypeIds";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				int64_t collisionTypeIds;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4249,26 +4249,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetCollisionTypeIds(this));
+		registerMethod(new MethodBodySetCollisionTypeIds(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetLinearDamping: public ScriptMethod {
+		class MethodBodyGetLinearDamping: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetLinearDamping(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetLinearDamping(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_FLOAT
+					VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.getLinearDamping";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4286,27 +4286,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetLinearDamping(this));
+		registerMethod(new MethodBodyGetLinearDamping(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetLinearDamping: public ScriptMethod {
+		class MethodBodySetLinearDamping: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetLinearDamping(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetLinearDamping(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setLinearDamping";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				float linearDamping;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4326,26 +4326,26 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetLinearDamping(this));
+		registerMethod(new MethodBodySetLinearDamping(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetAngularDamping: public ScriptMethod {
+		class MethodBodyGetAngularDamping: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetAngularDamping(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetAngularDamping(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_FLOAT
+					VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.getAngularDamping";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4363,27 +4363,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetAngularDamping(this));
+		registerMethod(new MethodBodyGetAngularDamping(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetAngularDamping: public ScriptMethod {
+		class MethodBodySetAngularDamping: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetAngularDamping(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetAngularDamping(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setAngularDamping";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				float angularDamping;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4403,18 +4403,18 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetAngularDamping(this));
+		registerMethod(new MethodBodySetAngularDamping(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetLinearVelocity: public ScriptMethod {
+		class MethodBodyGetLinearVelocity: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetLinearVelocity(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetLinearVelocity(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR3
 				),
@@ -4422,7 +4422,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "world.body.getLinearVelocity";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4440,27 +4440,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetLinearVelocity(this));
+		registerMethod(new MethodBodyGetLinearVelocity(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetLinearVelocity: public ScriptMethod {
+		class MethodBodySetLinearVelocity: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetLinearVelocity(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetLinearVelocity(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setLinearVelocity";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				Vector3 linearVelocity;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4480,18 +4480,18 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetLinearVelocity(this));
+		registerMethod(new MethodBodySetLinearVelocity(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetAngularVelocity: public ScriptMethod {
+		class MethodBodyGetAngularVelocity: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetAngularVelocity(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetAngularVelocity(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_VECTOR3
 				),
@@ -4499,7 +4499,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "world.body.getAngularVelocity";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4517,27 +4517,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetAngularVelocity(this));
+		registerMethod(new MethodBodyGetAngularVelocity(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetAngularVelocity: public ScriptMethod {
+		class MethodBodySetAngularVelocity: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetAngularVelocity(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetAngularVelocity(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setAngularVelocity";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				Vector3 angularVelocity;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4557,28 +4557,28 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetAngularVelocity(this));
+		registerMethod(new MethodBodySetAngularVelocity(this));
 	}
 	{
 		//
-		class ScriptMethodBodyAddForce: public ScriptMethod {
+		class MethodBodyAddForce: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyAddForce(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyAddForce(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "force", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "origin", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.addForce";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				Vector3 force;
 				Vector3 forceOrigin;
@@ -4608,27 +4608,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyAddForce(this));
+		registerMethod(new MethodBodyAddForce(this));
 	}
 	{
 		//
-		class ScriptMethodBodyAddTorque: public ScriptMethod {
+		class MethodBodyAddTorque: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyAddTorque(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyAddTorque(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "torque", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.addTorque";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				Vector3 torque;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4648,18 +4648,18 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyAddTorque(this));
+		registerMethod(new MethodBodyAddTorque(this));
 	}
 	{
 		//
-		class ScriptMethodBodyGetTransform: public ScriptMethod {
+		class MethodBodyGetTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyGetTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodyGetTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_TRANSFORM
 				),
@@ -4667,7 +4667,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "world.body.getTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
@@ -4697,27 +4697,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodyGetTransform(this));
+		registerMethod(new MethodBodyGetTransform(this));
 	}
 	{
 		//
-		class ScriptMethodBodySetTransform: public ScriptMethod {
+		class MethodBodySetTransform: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodySetTransform(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodBodySetTransform(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.body.setTransform";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId;
 				Transform transform;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
@@ -4737,32 +4737,32 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodBodySetTransform(this));
+		registerMethod(new MethodBodySetTransform(this));
 	}
 	{
 		//
-		class ScriptMethodWorldDetermineHeight: public ScriptMethod {
+		class MethodWorldDetermineHeight: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodWorldDetermineHeight(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodWorldDetermineHeight(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "point", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "heightPoint", .optional = false, .reference = true, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "minHeight", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "minHeight", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.determineHeight";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t collisionTypeIds;
 				float stepUpMax;
 				Vector3 point;
@@ -4792,31 +4792,31 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodWorldDetermineHeight(this));
+		registerMethod(new MethodWorldDetermineHeight(this));
 	}
 	{
 		//
-		class ScriptMethodWorldDoRayCasting: public ScriptMethod {
+		class MethodWorldDoRayCasting: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodWorldDoRayCasting(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodWorldDoRayCasting(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "start", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "end", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "hitPoint", .optional = false, .reference = true, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "actorId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "actorId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.doRayCasting";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t collisionTypeIds;
 				Vector3 start;
 				Vector3 end;
@@ -4843,27 +4843,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodWorldDoRayCasting(this));
+		registerMethod(new MethodWorldDoRayCasting(this));
 	}
 	{
 		//
-		class ScriptMethodWorldDoCollide: public ScriptMethod {
+		class MethodWorldDoCollide: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodWorldDoCollide(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodWorldDoCollide(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId1", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId2", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId1", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId2", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.doCollide";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string bodyId1;
 				string bodyId2;
 				if (miniScript->getStringValue(argumentValues, 0, bodyId1) == true &&
@@ -4887,27 +4887,27 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodWorldDoCollide(this));
+		registerMethod(new MethodWorldDoCollide(this));
 	}
 	{
 		//
-		class ScriptMethodWorldDoesCollideWith: public ScriptMethod {
+		class MethodWorldDoesCollideWith: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodWorldDoesCollideWith(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodWorldDoesCollideWith(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_ARRAY
+					VariableType::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "world.doesCollideWith";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t collisionTypeIds;
 				string bodyId;
 				if (miniScript->getIntegerValue(argumentValues, 0, collisionTypeIds) == true &&
@@ -4932,156 +4932,156 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodWorldDoesCollideWith(this));
+		registerMethod(new MethodWorldDoesCollideWith(this));
 	}
 	// path finding
 	{
 		//
-		class ScriptMethodPathFindingSTATE_IDLE: public ScriptMethod {
+		class MethodPathFindingSTATE_IDLE: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_IDLE(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_IDLE(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_IDLE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_IDLE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_IDLE(this));
+		registerMethod(new MethodPathFindingSTATE_IDLE(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingSTATE_TRYLOCK_FAILED: public ScriptMethod {
+		class MethodPathFindingSTATE_TRYLOCK_FAILED: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_TRYLOCK_FAILED(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_TRYLOCK_FAILED(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_TRYLOCK_FAILED";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_TRYLOCK_FAILED);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_TRYLOCK_FAILED(this));
+		registerMethod(new MethodPathFindingSTATE_TRYLOCK_FAILED(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingSTATE_PATHFINDING_OTHER: public ScriptMethod {
+		class MethodPathFindingSTATE_PATHFINDING_OTHER: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_PATHFINDING_OTHER(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_PATHFINDING_OTHER(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_PATHFINDING_OTHER";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_OTHER);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_OTHER(this));
+		registerMethod(new MethodPathFindingSTATE_PATHFINDING_OTHER(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingSTATE_PATHFINDING: public ScriptMethod {
+		class MethodPathFindingSTATE_PATHFINDING: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_PATHFINDING(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_PATHFINDING(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_PATHFINDING";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING(this));
+		registerMethod(new MethodPathFindingSTATE_PATHFINDING(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingSTATE_PATHFINDING_FAILED: public ScriptMethod {
+		class MethodPathFindingSTATE_PATHFINDING_FAILED: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_PATHFINDING_FAILED(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_PATHFINDING_FAILED(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_PATHFINDING_FAILED";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_FAILED);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_FAILED(this));
+		registerMethod(new MethodPathFindingSTATE_PATHFINDING_FAILED(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS: public ScriptMethod {
+		class MethodPathFindingSTATE_PATHFINDING_SUCCESS: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodPathFindingSTATE_PATHFINDING_SUCCESS(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.STATE_PATHFINDING_SUCCESS";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_SUCCESS);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS(this));
+		registerMethod(new MethodPathFindingSTATE_PATHFINDING_SUCCESS(this));
 	}
 	{
 		//
-		class ScriptMethodPathFindingFindPath: public ScriptMethod {
+		class MethodPathFindingFindPath: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPathFindingFindPath(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodPathFindingFindPath(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "startPosition", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "endPosition", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "path", .optional = false, .reference = true, .nullable = false },
+						{ .type = VariableType::TYPE_ARRAY, .name = "path", .optional = false, .reference = true, .nullable = false },
 					},
-					ScriptVariableType::TYPE_INTEGER
+					VariableType::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "pathfinding.findPath";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string logicId;
 				Vector3 startPosition;
 				Vector3 endPosition;
@@ -5094,7 +5094,7 @@ void LogicMiniScript::registerMethods() {
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
 					returnValue = static_cast<int64_t>(pathFindingState);
 					for (const auto& position: path) {
-						MiniScript::ScriptVariable positionVariable;
+						MiniScript::Variable positionVariable;
 						miniScript->setValue(positionVariable, position);
 						argumentValues[3].pushArrayEntry(positionVariable);
 					};
@@ -5107,96 +5107,96 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodPathFindingFindPath(this));
+		registerMethod(new MethodPathFindingFindPath(this));
 	}
 	// scene
 	{
 		//
-		class ScriptMethodSceneGetWidth: public ScriptMethod {
+		class MethodSceneGetWidth: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneGetWidth(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodSceneGetWidth(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "scene.getWidth";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->setValue(returnValue, miniScript->context->getScene()->getBoundingBox()->getDimensions().getX());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodSceneGetWidth(this));
+		registerMethod(new MethodSceneGetWidth(this));
 	}
 	{
 		//
-		class ScriptMethodSceneGetHeight: public ScriptMethod {
+		class MethodSceneGetHeight: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneGetHeight(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodSceneGetHeight(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "scene.getHeight";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getY();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodSceneGetHeight(this));
+		registerMethod(new MethodSceneGetHeight(this));
 	}
 	{
 		//
-		class ScriptMethodSceneGetDepth: public ScriptMethod {
+		class MethodSceneGetDepth: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneGetDepth(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodSceneGetDepth(LogicMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "scene.getDepth";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getZ();
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
 			}
 		};
-		registerMethod(new ScriptMethodSceneGetDepth(this));
+		registerMethod(new MethodSceneGetDepth(this));
 	}
 	// sceneconnector
 	{
 		//
-		class ScriptMethodSceneConnectorSpawnPrototype: public ScriptMethod {
+		class MethodSceneConnectorSpawnPrototype: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneConnectorSpawnPrototype(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodSceneConnectorSpawnPrototype(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "sceneconnector.spawnPrototype";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string pathName;
 				string fileName;
 				string id;
@@ -5248,7 +5248,7 @@ void LogicMiniScript::registerMethods() {
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
-						Console::println("ScriptMethodSceneConnectorSpawnPrototype::executeMethod(): An error occurred: " + string(exception.what()));
+						Console::println("MethodSceneConnectorSpawnPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 					miniScript->prototypesToAddMutex.unlock();
@@ -5261,31 +5261,31 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodSceneConnectorSpawnPrototype(this));
+		registerMethod(new MethodSceneConnectorSpawnPrototype(this));
 	}
 	{
 		//
-		class ScriptMethodSceneConnectorAttachPrototype: public ScriptMethod {
+		class MethodSceneConnectorAttachPrototype: public Method {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneConnectorAttachPrototype(LogicMiniScript* miniScript):
-				ScriptMethod(
+			MethodSceneConnectorAttachPrototype(LogicMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentId", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "parentId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "sceneconnector.attachPrototype";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string pathName;
 				string fileName;
 				string id;
@@ -5337,7 +5337,7 @@ void LogicMiniScript::registerMethods() {
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
-						Console::println("ScriptMethodSceneConnectorAttachPrototype::executeMethod(): An error occurred: " + string(exception.what()));
+						Console::println("MethodSceneConnectorAttachPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 					miniScript->prototypesToAddMutex.unlock();
@@ -5350,7 +5350,7 @@ void LogicMiniScript::registerMethods() {
 				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
-		registerMethod(new ScriptMethodSceneConnectorAttachPrototype(this));
+		registerMethod(new MethodSceneConnectorAttachPrototype(this));
 	}
 }
 

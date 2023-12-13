@@ -1445,7 +1445,7 @@ void SceneEditorTabView::runScene() {
 				Tools::getPathName(scene->getGUIFileName()),
 				Tools::getFileName(scene->getGUIFileName()),
 				{},
-				MiniScript::ScriptVariable(),
+				MiniScript::Variable(),
 				applicationClient->getContext()
 			);
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);

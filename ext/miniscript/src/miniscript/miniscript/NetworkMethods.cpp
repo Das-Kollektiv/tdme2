@@ -23,12 +23,12 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 	// network
 	{
 		//
-		class ScriptMethodNetworkHTTPClientHEAD: public MiniScript::ScriptMethod {
+		class MethodNetworkHTTPClientHEAD: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNetworkHTTPClientHEAD(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodNetworkHTTPClientHEAD(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "url", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_MAP, .name = "queryParameters", .optional = true, .reference = false, .nullable = true },
@@ -41,16 +41,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "network.httpclient.head";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string url;
-				if (argumentValues.size() <= 3 &&
-					MiniScript::getStringValue(argumentValues, 0, url, false) == true &&
-					(argumentValues.size() <= 1 || argumentValues[1].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 2 || argumentValues[2].getType() == MiniScript::TYPE_MAP)) {
+				if (arguments.size() <= 3 &&
+					MiniScript::getStringValue(arguments, 0, url, false) == true &&
+					(arguments.size() <= 1 || arguments[1].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 2 || arguments[2].getType() == MiniScript::TYPE_MAP)) {
 					// GET parameters
 					unordered_map<string, string> getParameters;
-					if (argumentValues.size() >= 2) {
-						auto getParameterMapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						auto getParameterMapPtr = arguments[1].getMapPointer();
 						if (getParameterMapPtr != nullptr) {
 							for (const auto& [key, value]: *getParameterMapPtr) {
 								getParameters[key] = value->getValueAsString();
@@ -59,8 +59,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// headers
 					unordered_map<string, string> headers;
-					if (argumentValues.size() >= 3) {
-						auto headersMapPtr = argumentValues[2].getMapPointer();
+					if (arguments.size() >= 3) {
+						auto headersMapPtr = arguments[2].getMapPointer();
 						if (headersMapPtr != nullptr) {
 							for (const auto& [key, value]: *headersMapPtr) {
 								headers[key] = value->getValueAsString();
@@ -79,7 +79,7 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setType(MiniScript::TYPE_MAP);
 						returnValue.setMapEntry("status", static_cast<int64_t>(httpClient.getStatusCode()));
 						//
-						MiniScript::ScriptVariable responseHeaders;
+						MiniScript::Variable responseHeaders;
 						responseHeaders.setType(MiniScript::TYPE_MAP);
 						for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
 							responseHeaders.setMapEntry(headerName, headerValue);
@@ -94,16 +94,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodNetworkHTTPClientHEAD(miniScript));
+		miniScript->registerMethod(new MethodNetworkHTTPClientHEAD(miniScript));
 	}
 	{
 		//
-		class ScriptMethodNetworkHTTPClientGET: public MiniScript::ScriptMethod {
+		class MethodNetworkHTTPClientGET: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNetworkHTTPClientGET(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodNetworkHTTPClientGET(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "url", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_MAP, .name = "queryParameters", .optional = true, .reference = false, .nullable = true },
@@ -116,16 +116,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "network.httpclient.get";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string url;
-				if (argumentValues.size() <= 3 &&
-					MiniScript::getStringValue(argumentValues, 0, url, false) == true &&
-					(argumentValues.size() <= 1 || argumentValues[1].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 2 || argumentValues[2].getType() == MiniScript::TYPE_MAP)) {
+				if (arguments.size() <= 3 &&
+					MiniScript::getStringValue(arguments, 0, url, false) == true &&
+					(arguments.size() <= 1 || arguments[1].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 2 || arguments[2].getType() == MiniScript::TYPE_MAP)) {
 					// GET parameters
 					unordered_map<string, string> getParameters;
-					if (argumentValues.size() >= 2) {
-						auto getParameterMapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						auto getParameterMapPtr = arguments[1].getMapPointer();
 						if (getParameterMapPtr != nullptr) {
 							for (const auto& [key, value]: *getParameterMapPtr) {
 								getParameters[key] = value->getValueAsString();
@@ -135,8 +135,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// headers
 					unordered_map<string, string> headers;
-					if (argumentValues.size() >= 3) {
-						auto headersMapPtr = argumentValues[2].getMapPointer();
+					if (arguments.size() >= 3) {
+						auto headersMapPtr = arguments[2].getMapPointer();
 						if (headersMapPtr != nullptr) {
 							for (const auto& [key, value]: *headersMapPtr) {
 								headers[key] = value->getValueAsString();
@@ -162,7 +162,7 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setMapEntry("status", static_cast<int64_t>(httpClient.getStatusCode()));
 						returnValue.setMapEntry("response", response);
 						//
-						MiniScript::ScriptVariable responseHeaders;
+						MiniScript::Variable responseHeaders;
 						responseHeaders.setType(MiniScript::TYPE_MAP);
 						for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
 							responseHeaders.setMapEntry(headerName, headerValue);
@@ -177,16 +177,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodNetworkHTTPClientGET(miniScript));
+		miniScript->registerMethod(new MethodNetworkHTTPClientGET(miniScript));
 	}
 	{
 		//
-		class ScriptMethodNetworkHTTPClientPOST: public MiniScript::ScriptMethod {
+		class MethodNetworkHTTPClientPOST: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNetworkHTTPClientPOST(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodNetworkHTTPClientPOST(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "url", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "data", .optional = false, .reference = false, .nullable = false },
@@ -200,19 +200,19 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "network.httpclient.post";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string url;
 				string dataString;
-				if (argumentValues.size() >= 2 && argumentValues.size() <= 4 &&
-					MiniScript::getStringValue(argumentValues, 0, url, false) == true &&
-					(MiniScript::getStringValue(argumentValues, 1, dataString, true) == true || argumentValues[2].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 2 || argumentValues[2].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 3 || argumentValues[3].getType() == MiniScript::TYPE_MAP)) {
+				if (arguments.size() >= 2 && arguments.size() <= 4 &&
+					MiniScript::getStringValue(arguments, 0, url, false) == true &&
+					(MiniScript::getStringValue(arguments, 1, dataString, true) == true || arguments[2].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 2 || arguments[2].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 3 || arguments[3].getType() == MiniScript::TYPE_MAP)) {
 					// post parameters
 					unordered_map<string, string> postParameters;
-					if (argumentValues.size() >= 2) {
-						if (argumentValues[1].getType() == MiniScript::TYPE_MAP) {
-							auto postParameterMapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						if (arguments[1].getType() == MiniScript::TYPE_MAP) {
+							auto postParameterMapPtr = arguments[1].getMapPointer();
 							if (postParameterMapPtr != nullptr) {
 								for (const auto& [key, value]: *postParameterMapPtr) {
 									postParameters[key] = value->getValueAsString();
@@ -222,8 +222,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// GET parameters
 					unordered_map<string, string> getParameters;
-					if (argumentValues.size() >= 3) {
-						auto getParameterMapPtr = argumentValues[2].getMapPointer();
+					if (arguments.size() >= 3) {
+						auto getParameterMapPtr = arguments[2].getMapPointer();
 						if (getParameterMapPtr != nullptr) {
 							for (const auto& [key, value]: *getParameterMapPtr) {
 								getParameters[key] = value->getValueAsString();
@@ -232,8 +232,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// headers
 					unordered_map<string, string> headers;
-					if (argumentValues.size() >= 4) {
-						auto headersMapPtr = argumentValues[3].getMapPointer();
+					if (arguments.size() >= 4) {
+						auto headersMapPtr = arguments[3].getMapPointer();
 						if (headersMapPtr != nullptr) {
 							for (const auto& [key, value]: *headersMapPtr) {
 								headers[key] = value->getValueAsString();
@@ -264,7 +264,7 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setMapEntry("status", static_cast<int64_t>(httpClient.getStatusCode()));
 						returnValue.setMapEntry("response", response);
 						//
-						MiniScript::ScriptVariable responseHeaders;
+						MiniScript::Variable responseHeaders;
 						responseHeaders.setType(MiniScript::TYPE_MAP);
 						for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
 							responseHeaders.setMapEntry(headerName, headerValue);
@@ -279,16 +279,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodNetworkHTTPClientPOST(miniScript));
+		miniScript->registerMethod(new MethodNetworkHTTPClientPOST(miniScript));
 	}
 	{
 		//
-		class ScriptMethodNetworkHTTPClientPUT: public MiniScript::ScriptMethod {
+		class MethodNetworkHTTPClientPUT: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNetworkHTTPClientPUT(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodNetworkHTTPClientPUT(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "url", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "data", .optional = false, .reference = false, .nullable = false },
@@ -302,19 +302,19 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "network.httpclient.put";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string url;
 				string dataString;
-				if (argumentValues.size() >= 2 && argumentValues.size() <= 4 &&
-					MiniScript::getStringValue(argumentValues, 0, url, false) == true &&
-					(MiniScript::getStringValue(argumentValues, 1, dataString, true) == true || argumentValues[2].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 2 || argumentValues[2].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 3 || argumentValues[3].getType() == MiniScript::TYPE_MAP)) {
+				if (arguments.size() >= 2 && arguments.size() <= 4 &&
+					MiniScript::getStringValue(arguments, 0, url, false) == true &&
+					(MiniScript::getStringValue(arguments, 1, dataString, true) == true || arguments[2].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 2 || arguments[2].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 3 || arguments[3].getType() == MiniScript::TYPE_MAP)) {
 					// post parameters
 					unordered_map<string, string> postParameters;
-					if (argumentValues.size() >= 2) {
-						if (argumentValues[1].getType() == MiniScript::TYPE_MAP) {
-							auto postParameterMapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						if (arguments[1].getType() == MiniScript::TYPE_MAP) {
+							auto postParameterMapPtr = arguments[1].getMapPointer();
 							if (postParameterMapPtr != nullptr) {
 								for (const auto& [key, value]: *postParameterMapPtr) {
 									postParameters[key] = value->getValueAsString();
@@ -324,8 +324,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// GET parameters
 					unordered_map<string, string> getParameters;
-					if (argumentValues.size() >= 3) {
-						auto getParameterMapPtr = argumentValues[2].getMapPointer();
+					if (arguments.size() >= 3) {
+						auto getParameterMapPtr = arguments[2].getMapPointer();
 						if (getParameterMapPtr != nullptr) {
 							for (const auto& [key, value]: *getParameterMapPtr) {
 								getParameters[key] = value->getValueAsString();
@@ -334,8 +334,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// headers
 					unordered_map<string, string> headers;
-					if (argumentValues.size() >= 4) {
-						auto headersMapPtr = argumentValues[3].getMapPointer();
+					if (arguments.size() >= 4) {
+						auto headersMapPtr = arguments[3].getMapPointer();
 						if (headersMapPtr != nullptr) {
 							for (const auto& [key, value]: *headersMapPtr) {
 								headers[key] = value->getValueAsString();
@@ -366,7 +366,7 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setMapEntry("status", static_cast<int64_t>(httpClient.getStatusCode()));
 						returnValue.setMapEntry("response", response);
 						//
-						MiniScript::ScriptVariable responseHeaders;
+						MiniScript::Variable responseHeaders;
 						responseHeaders.setType(MiniScript::TYPE_MAP);
 						for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
 							responseHeaders.setMapEntry(headerName, headerValue);
@@ -381,16 +381,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodNetworkHTTPClientPUT(miniScript));
+		miniScript->registerMethod(new MethodNetworkHTTPClientPUT(miniScript));
 	}
 	{
 		//
-		class ScriptMethodNetworkHTTPClientDELETE: public MiniScript::ScriptMethod {
+		class MethodNetworkHTTPClientDELETE: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNetworkHTTPClientDELETE(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodNetworkHTTPClientDELETE(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "url", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_MAP, .name = "queryParameters", .optional = true, .reference = false, .nullable = true },
@@ -403,16 +403,16 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "network.httpclient.delete";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string url;
-				if (argumentValues.size() <= 3 &&
-					MiniScript::getStringValue(argumentValues, 0, url, false) == true &&
-					(argumentValues.size() <= 1 || argumentValues[1].getType() == MiniScript::TYPE_MAP) &&
-					(argumentValues.size() <= 2 || argumentValues[2].getType() == MiniScript::TYPE_MAP)) {
+				if (arguments.size() <= 3 &&
+					MiniScript::getStringValue(arguments, 0, url, false) == true &&
+					(arguments.size() <= 1 || arguments[1].getType() == MiniScript::TYPE_MAP) &&
+					(arguments.size() <= 2 || arguments[2].getType() == MiniScript::TYPE_MAP)) {
 					// GET parameters
 					unordered_map<string, string> getParameters;
-					if (argumentValues.size() >= 2) {
-						auto getParameterMapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						auto getParameterMapPtr = arguments[1].getMapPointer();
 						if (getParameterMapPtr != nullptr) {
 							for (const auto& [key, value]: *getParameterMapPtr) {
 								getParameters[key] = value->getValueAsString();
@@ -421,8 +421,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					// headers
 					unordered_map<string, string> headers;
-					if (argumentValues.size() >= 3) {
-						auto headersMapPtr = argumentValues[2].getMapPointer();
+					if (arguments.size() >= 3) {
+						auto headersMapPtr = arguments[2].getMapPointer();
 						if (headersMapPtr != nullptr) {
 							for (const auto& [key, value]: *headersMapPtr) {
 								headers[key] = value->getValueAsString();
@@ -441,7 +441,7 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						returnValue.setType(MiniScript::TYPE_MAP);
 						returnValue.setMapEntry("status", static_cast<int64_t>(httpClient.getStatusCode()));
 						//
-						MiniScript::ScriptVariable responseHeaders;
+						MiniScript::Variable responseHeaders;
 						responseHeaders.setType(MiniScript::TYPE_MAP);
 						for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
 							responseHeaders.setMapEntry(headerName, headerValue);
@@ -456,6 +456,6 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodNetworkHTTPClientDELETE(miniScript));
+		miniScript->registerMethod(new MethodNetworkHTTPClientDELETE(miniScript));
 	}
 }

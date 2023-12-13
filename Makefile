@@ -869,7 +869,9 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/utilities/Properties.cpp \
 	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
 	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
-	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp
+	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp \
+	ext/miniscript/src/miniscript/utilities/UTF8StringTools.cpp \
+	ext/miniscript/src/miniscript/utilities/UTF8StringTokenizer.cpp
 
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \

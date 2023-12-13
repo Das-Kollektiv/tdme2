@@ -16,39 +16,39 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 	// array methods
 	{
 		//
-		class ScriptMethodArray: public MiniScript::ScriptMethod {
+		class MethodArray: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArray(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArray(MiniScript* miniScript):
+				MiniScript::Method(
 					{},
 					MiniScript::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array";
+				return "Array";
 			}
 			bool isVariadic() const override {
 				return true;
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				returnValue.setType(MiniScript::TYPE_ARRAY);
-				for (const auto& argumentValue: argumentValues) {
-					returnValue.pushArrayEntry(argumentValue);
+				for (const auto& argument: arguments) {
+					returnValue.pushArrayEntry(argument);
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArray(miniScript));
+		miniScript->registerMethod(new MethodArray(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayLength: public MiniScript::ScriptMethod {
+		class MethodArrayLength: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayLength(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayLength(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false }
 					},
@@ -56,27 +56,27 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.length";
+				return "Array::length";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				if (argumentValues.size() != 1 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (arguments.size() != 1 || arguments[0].getType() != MiniScript::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(static_cast<int64_t>(argumentValues[0].getArraySize()));
+					returnValue.setValue(static_cast<int64_t>(arguments[0].getArraySize()));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayLength(miniScript));
+		miniScript->registerMethod(new MethodArrayLength(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayPush: public MiniScript::ScriptMethod {
+		class MethodArrayPush: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayPush(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayPush(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false }
 					},
@@ -84,33 +84,33 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.push";
+				return "Array::push";
 			}
 			bool isVariadic() const override {
 				return true;
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				//
-				if (argumentValues.size() < 1 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) {
+				if (arguments.size() < 1 || arguments[0].getType() != MiniScript::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					for (auto i = 1; i < argumentValues.size(); i++) {
-						argumentValues[0].pushArrayEntry(argumentValues[i]);
+					for (auto i = 1; i < arguments.size(); i++) {
+						arguments[0].pushArrayEntry(arguments[i]);
 					}
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayPush(miniScript));
+		miniScript->registerMethod(new MethodArrayPush(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayGet: public MiniScript::ScriptMethod {
+		class MethodArrayGet: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayGet(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayGet(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
@@ -119,29 +119,29 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.get";
+				return "Array::get";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t index;
-				if ((argumentValues.size() <= 1 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) ||
-					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+				if ((arguments.size() <= 1 || arguments[0].getType() != MiniScript::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(arguments, 1, index, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue = argumentValues[0].getArrayEntry(index);
+					returnValue = arguments[0].getArrayEntry(index);
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayGet(miniScript));
+		miniScript->registerMethod(new MethodArrayGet(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArraySet: public MiniScript::ScriptMethod {
+		class MethodArraySet: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArraySet(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArraySet(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false },
@@ -151,29 +151,29 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.set";
+				return "Array::set";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t index;
-				if ((argumentValues.size() <= 2 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) ||
-					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+				if ((arguments.size() <= 2 || arguments[0].getType() != MiniScript::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(arguments, 1, index, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].setArrayEntry(index, argumentValues[2]);
+					arguments[0].setArrayEntry(index, arguments[2]);
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArraySet(miniScript));
+		miniScript->registerMethod(new MethodArraySet(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayRemove: public MiniScript::ScriptMethod {
+		class MethodArrayRemove: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayRemove(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayRemove(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
@@ -182,29 +182,29 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.remove";
+				return "Array::remove";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t index;
-				if ((argumentValues.size() < 2 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) ||
-					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+				if ((arguments.size() < 2 || arguments[0].getType() != MiniScript::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(arguments, 1, index, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].removeArrayEntry(index);
+					arguments[0].removeArrayEntry(index);
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayRemove(miniScript));
+		miniScript->registerMethod(new MethodArrayRemove(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayRemoveOf: public MiniScript::ScriptMethod {
+		class MethodArrayRemoveOf: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayRemoveOf(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayRemoveOf(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false },
@@ -214,19 +214,19 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.removeOf";
+				return "Array::removeOf";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				int64_t beginIndex = 0;
-				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::TYPE_ARRAY ||
-					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+				if (arguments.size() < 2 ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY ||
+					MiniScript::getStringValue(arguments, 1, stringValue, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					auto& array = argumentValues[0];
+					auto& array = arguments[0];
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
 						auto arrayValue = array.getArrayEntry(i);
 						if (arrayValue.getValueAsString() == stringValue) {
@@ -237,16 +237,16 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayRemoveOf(miniScript));
+		miniScript->registerMethod(new MethodArrayRemoveOf(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayIndexOf: public MiniScript::ScriptMethod {
+		class MethodArrayIndexOf: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayIndexOf(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayIndexOf(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false },
@@ -256,19 +256,19 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.indexOf";
+				return "Array::indexOf";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string stringValue;
 				int64_t beginIndex = 0;
-				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::TYPE_ARRAY ||
-					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
-					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+				if (arguments.size() < 2 ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY ||
+					MiniScript::getStringValue(arguments, 1, stringValue, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					const auto& array = argumentValues[0];
+					const auto& array = arguments[0];
 					returnValue.setValue(static_cast<int64_t>(-1));
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
 						auto arrayValue = array.getArrayEntry(i);
@@ -280,36 +280,36 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayIndexOf(miniScript));
+		miniScript->registerMethod(new MethodArrayIndexOf(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArraySort: public MiniScript::ScriptMethod {
+		class MethodArraySort: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArraySort(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArraySort(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_FUNCTION_ASSIGNMENT, .name = "function", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.sort";
+				return "Array::sort";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string function;
-				if (argumentValues.size() != 2 ||
-					argumentValues[0].getType() != MiniScript::TYPE_ARRAY ||
-					MiniScript::getStringValue(argumentValues, 1, function, false) == false) {
+				if (arguments.size() != 2 ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY ||
+					MiniScript::getStringValue(arguments, 1, function, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					//
-					auto arrayPtr = argumentValues[0].getArrayPointer();
+					auto arrayPtr = arguments[0].getArrayPointer();
 					if (arrayPtr != nullptr) {
 						class SortClass {
 							private:
@@ -318,11 +318,11 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 							public:
 								SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
 								}
-								bool operator()(const MiniScript::ScriptVariable* a, const MiniScript::ScriptVariable* b) const {
-									vector<MiniScript::ScriptVariable> sortArgumentValues { *a, *b };
-									span sortArgumentValuesSpan(sortArgumentValues);
-									MiniScript::ScriptVariable sortReturnValue;
-									miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
+								bool operator()(const MiniScript::Variable* a, const MiniScript::Variable* b) const {
+									vector<MiniScript::Variable> sortArguments { MiniScript::Variable::createReferenceVariable(a), MiniScript::Variable::createReferenceVariable(b) };
+									span sortArgumentsSpan(sortArguments);
+									MiniScript::Variable sortReturnValue;
+									miniScript->call(function, sortArgumentsSpan, sortReturnValue);
 									bool result = false;
 									sortReturnValue.getBooleanValue(result, false);
 									return result;
@@ -333,16 +333,16 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArraySort(miniScript));
+		miniScript->registerMethod(new MethodArraySort(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayReverse: public MiniScript::ScriptMethod {
+		class MethodArrayReverse: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayReverse(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayReverse(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false }
 					},
@@ -350,32 +350,32 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.reverse";
+				return "Array::reverse";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				if (argumentValues.size() != 1 ||
-					argumentValues[0].getType() != MiniScript::TYPE_ARRAY) {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (arguments.size() != 1 ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					//
-					auto arrayPtr = argumentValues[0].getArrayPointer();
+					auto arrayPtr = arguments[0].getArrayPointer();
 					if (arrayPtr != nullptr) {
 						reverse(arrayPtr->begin(), arrayPtr->end());
 					}
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayReverse(miniScript));
+		miniScript->registerMethod(new MethodArrayReverse(miniScript));
 	}
 	{
 		//
-		class ScriptMethodArrayClear: public MiniScript::ScriptMethod {
+		class MethodArrayClear: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodArrayClear(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodArrayClear(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false }
 					},
@@ -383,19 +383,123 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "array.clear";
+				return "Array::clear";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				int64_t index;
-				if ((argumentValues.size() < 2 || argumentValues[0].getType() != MiniScript::TYPE_ARRAY) ||
-					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (arguments.size() != 1 || arguments[0].getType() != MiniScript::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].clearArray();
+					arguments[0].clearArray();
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodArrayClear(miniScript));
+		miniScript->registerMethod(new MethodArrayClear(miniScript));
+	}
+	{
+		//
+		class MethodArrayForEach: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodArrayForEach(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_FUNCTION_ASSIGNMENT, .name = "function", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "cookie", .optional = true, .reference = true, .nullable = false }
+					},
+					MiniScript::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "Array::forEach";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string function;
+				if ((arguments.size() != 2 && arguments.size() != 3) ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY ||
+					MiniScript::getStringValue(arguments, 1, function, false) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					auto arrayPtr = arguments[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						for (auto arrayEntry: *arrayPtr) {
+							vector<MiniScript::Variable> functionArguments { MiniScript::Variable::createReferenceVariable(arrayEntry) };
+							if (arguments.size() == 3) functionArguments.push_back(arguments[2]);
+							span functionArgumentsSpan(functionArguments);
+							MiniScript::Variable functionReturnValue;
+							miniScript->call(function, functionArgumentsSpan, functionReturnValue);
+							// exit condition
+							bool result = false;
+							functionReturnValue.getBooleanValue(result, false);
+							if (result == true) break;
+						}
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodArrayForEach(miniScript));
+	}
+	{
+		//
+		class MethodArrayForRange: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodArrayForRange(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_FUNCTION_ASSIGNMENT, .name = "function", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "count", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "step", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "cookie", .optional = true, .reference = true, .nullable = false }
+					},
+					MiniScript::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "Array::forRange";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				string function;
+				int64_t beginIndex;
+				int64_t count = -1ll;
+				int64_t step = 1ll;
+				if (arguments.size() < 3 ||
+					arguments.size() > 6 ||
+					arguments[0].getType() != MiniScript::TYPE_ARRAY ||
+					MiniScript::getStringValue(arguments, 1, function, false) == false ||
+					MiniScript::getIntegerValue(arguments, 2, beginIndex, true) == false ||
+					MiniScript::getIntegerValue(arguments, 3, count, true) == false ||
+					MiniScript::getIntegerValue(arguments, 4, step, true) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					auto arrayPtr = arguments[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						auto counter = 0;
+						for (auto i = beginIndex; i >= 0 && counter < count && i < arrayPtr->size(); i+= step) {
+							auto arrayEntry = (*arrayPtr)[i];
+							vector<MiniScript::Variable> functionArguments { MiniScript::Variable::createReferenceVariable(arrayEntry) };
+							if (arguments.size() == 6) functionArguments.push_back(arguments[5]);
+							span functionArgumentsSpan(functionArguments);
+							MiniScript::Variable functionReturnValue;
+							miniScript->call(function, functionArgumentsSpan, functionReturnValue);
+							// exit condition
+							bool result = false;
+							functionReturnValue.getBooleanValue(result, false);
+							if (result == true) break;
+							//
+							counter++;
+						}
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodArrayForRange(miniScript));
 	}
 }

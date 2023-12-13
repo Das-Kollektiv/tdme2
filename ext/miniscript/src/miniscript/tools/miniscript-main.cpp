@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <cstdio>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -14,10 +16,14 @@
 #include <miniscript/os/filesystem/FileSystem.h>
 #include <miniscript/os/network/Network.h>
 #include <miniscript/utilities/Console.h>
+#include <miniscript/utilities/Exception.h>
+#include <miniscript/utilities/StringTools.h>
 
+using std::cin;
 using std::exit;
 using std::make_unique;
 using std::string;
+using std::tmpnam;
 using std::unique_ptr;
 
 using miniscript::miniscript::Context;
@@ -26,12 +32,17 @@ using miniscript::miniscript::Version;
 using miniscript::os::filesystem::FileSystem;
 using miniscript::os::network::Network;
 using miniscript::utilities::Console;
+using miniscript::utilities::Exception;
+using miniscript::utilities::StringTools;
 
 static void printInformation() {
 	Console::println(string("miniscript ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
-	Console::println("Usage: miniscript [--version] [--verbose] path_to_script");
+	Console::println("Usage: miniscript [--version] [--verbose] [path_to_script | < path_to_script]");
+	Console::println();
+	Console::println("If you do not provide a path to the script or do not pipe a script into the standard input stream,");
+	Console::println("you get a prompt to enter your script. You can finish inputting by hitting Ctrl-D on Unix or Ctrl-Z on Windows.");
 	exit(EXIT_FAILURE);
 }
 
@@ -73,8 +84,48 @@ int main(int argc, char** argv)
 	// EngineMiniScript::registerDataTypes();
 	unique_ptr<MiniScript> script;
 	unique_ptr<Context> context;
+	// if no file given, then read from input stream until Ctrl+D(Unix) or Ctrl+Z(Windows) was hit
+	//	which is the standard behaviour of those kind of CLI apps
+	//	we store the file as temporary one and reuse it for execution
+	string tmpFile;
+	if (pathToScript.empty() == true) {
+		// read from standard input
+		auto statementsOnly = true;
+		string scriptCode;
+		string line;
+		while (cin.eof() == false && getline(cin, line)) {
+			if (StringTools::startsWith(line, "on:") == true ||
+				StringTools::startsWith(line, "on-enabled:") == true ||
+				StringTools::startsWith(line, "function:") == true ||
+				StringTools::startsWith(line, "callable:") == true) statementsOnly = false;
+			scriptCode+= line + "\n";
+		}
+		pathToScript = tmpnam(nullptr);
+		// create the script
+		try {
+			if (statementsOnly == true) {
+				scriptCode = StringTools::replace(
+					FileSystem::getContentAsString("resources/templates/cli", "statements.tscript"),
+					"{$statements}",
+					scriptCode
+				);
+			}
+			//
+			FileSystem::setContentFromString(
+				FileSystem::getPathName(pathToScript),
+				FileSystem::getFileName(pathToScript),
+				scriptCode
+			);
+			// we want to delete the script later
+			tmpFile = pathToScript;
+		} catch (Exception& exception) {
+			pathToScript.clear();
+			Console::println("An error occurred: " + string(exception.what()));
+		}
+	}
+	// do we have a script to run?
 	if (pathToScript.empty() == false) {
-		//
+		// yes, go
 		context = make_unique<Context>();
 		script = make_unique<MiniScript>();
 		script->setContext(context.get());
@@ -108,6 +159,19 @@ int main(int argc, char** argv)
 	if (version == false) {
 		printInformation();
 		exit(EXIT_SUCCESS);
+	}
+
+	// delete temporary file if we have created any
+	if (tmpFile.empty() == false) {
+		try {
+			FileSystem::removeFile(
+				FileSystem::getPathName(tmpFile),
+				FileSystem::getFileName(tmpFile)
+			);
+		} catch (Exception& exception) {
+			pathToScript.clear();
+			Console::println("An error occurred: " + string(exception.what()));
+		}
 	}
 
 	//

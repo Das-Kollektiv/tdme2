@@ -22,10 +22,10 @@ public:
 	MathMethods(MiniScript* miniScript): miniScript(miniScript) {}
 
 	/**
-	 * Register script data type
-	 * @param scriptDataType script data type
+	 * Register data type
+	 * @param dataType data type
 	 */
-	void registerDataType(MiniScript::ScriptDataType* scriptDataType);
+	void registerDataType(MiniScript::DataType* dataType);
 
 	/**
 	 * Register methods
@@ -34,38 +34,38 @@ public:
 
 	/**
 	 * Multiply
-	 * @param argumentValues argument values
+	 * @param arguments argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	void mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void mul(const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement);
 
 	/**
 	 * Division
-	 * @param argumentValues argument values
+	 * @param arguments argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	void div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void div(const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement);
 
 	/**
 	 * Addition
-	 * @param argumentValues argument values
+	 * @param arguments argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	void add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void add(const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement);
 
 	/**
 	 * Subtraction
-	 * @param argumentValues argument values
+	 * @param arguments argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	void sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void sub(const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement);
 
 private:
 	MiniScript* miniScript;
-	vector<MiniScript::ScriptDataType*> scriptDataTypes;
+	vector<MiniScript::DataType*> dataTypes;
 
 };

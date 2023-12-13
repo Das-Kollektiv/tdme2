@@ -737,7 +737,9 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/utilities/Properties.cpp \
 	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
 	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
-	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp
+	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp \
+	ext/miniscript/src/miniscript/utilities/UTF8StringTools.cpp \
+	ext/miniscript/src/miniscript/utilities/UTF8StringTokenizer.cpp
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \

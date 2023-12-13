@@ -16,17 +16,17 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	// console
 	{
 		//
-		class ScriptMethodConsoleLog: public MiniScript::ScriptMethod {
+		class MethodConsoleLog: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodConsoleLog(MiniScript* miniScript): MiniScript::ScriptMethod(), miniScript(miniScript) {}
+			MethodConsoleLog(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "console.log";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				for (const auto& argumentValue: argumentValues) {
-					Console::print(argumentValue.getValueAsString());
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				for (const auto& argument: arguments) {
+					Console::print(argument.getValueAsString());
 				}
 				Console::println();
 			}
@@ -34,16 +34,16 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodConsoleLog(miniScript));
+		miniScript->registerMethod(new MethodConsoleLog(miniScript));
 	}
 	{
 		//
-		class ScriptMethodConsoleDump: public MiniScript::ScriptMethod {
+		class MethodConsoleDump: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodConsoleDump(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodConsoleDump(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					}
@@ -52,15 +52,15 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "console.dump";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				if (argumentValues.size() != 1) {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (arguments.size() != 1) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					Console::println(argumentValues[0].getValueAsString(true));
+					Console::println(arguments[0].getValueAsString(true));
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodConsoleDump(miniScript));
+		miniScript->registerMethod(new MethodConsoleDump(miniScript));
 	}
 }

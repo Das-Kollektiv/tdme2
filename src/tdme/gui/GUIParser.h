@@ -89,7 +89,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables = {}, const EngineMiniScript::ScriptVariable& miniScriptArguments = EngineMiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables = {}, const EngineMiniScript::Variable& miniScriptArguments = EngineMiniScript::Variable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML content
@@ -103,7 +103,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& variables = {}, const string& pathName = string(), const string& fileName = string(), const EngineMiniScript::ScriptVariable& miniScriptArguments = EngineMiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& variables = {}, const string& pathName = string(), const string& fileName = string(), const EngineMiniScript::Variable& miniScriptArguments = EngineMiniScript::Variable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML file into parent node

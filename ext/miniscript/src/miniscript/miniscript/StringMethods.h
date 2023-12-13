@@ -20,17 +20,6 @@ public:
 	static void registerMethods(MiniScript* miniScript);
 
 	/**
-	 * Get length aka character count
-	 * @param stringValue string value
-	 */
-	static int getLength(const string& stringValue) {
-		UTF8CharacterIterator u8It(stringValue);
-		u8It.seekCharacterPosition(2147483647); // 2 ^ 31 - 1
-		//
-		return u8It.getCharacterPosition();
-	}
-
-	/**
 	 * Tokenize
 	 * @param stringValue string value
 	 * @param delimiters delimters

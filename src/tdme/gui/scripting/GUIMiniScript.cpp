@@ -88,547 +88,547 @@ void GUIMiniScript::registerMethods() {
 	// input
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_LEFT: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_LEFT: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_LEFT(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_LEFT(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_LEFT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_LEFT(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_LEFT(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_RIGHT: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_RIGHT: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_RIGHT(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_RIGHT(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RIGHT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RIGHT(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_RIGHT(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_UP: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_UP: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_UP(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_UP(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_UP";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_UP(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_UP(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_DOWN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_DOWN: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_DOWN(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_DOWN(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DOWN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DOWN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_DOWN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_POS1: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_POS1: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_POS1(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_POS1(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_POS1";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_POS1(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_POS1(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_END: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_END: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_END(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_END(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_END";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_END(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_END(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_PAGEUP: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_PAGEUP: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_PAGEUP(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_PAGEUP(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEUP";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEUP(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_PAGEUP(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_PAGEDOWN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_PAGEDOWN: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_PAGEDOWN(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEDOWN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_PAGEDOWN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_BACKSPACE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_BACKSPACE: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_BACKSPACE(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_BACKSPACE(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_BACKSPACE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_BACKSPACE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_BACKSPACE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_DELETE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_DELETE: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_DELETE(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_DELETE(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DELETE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DELETE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_DELETE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_SPACE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_SPACE: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_SPACE(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_SPACE(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_SPACE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_SPACE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_SPACE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_RETURN: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_RETURN: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_RETURN(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_RETURN(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RETURN";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RETURN(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_RETURN(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_ESCAPE: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_ESCAPE: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_ESCAPE(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_ESCAPE(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_ESCAPE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_ESCAPE(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F1: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F1: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F1(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F1(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F1";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F1(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F1(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F2: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F2: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F2(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F2(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F2";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F2(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F2(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F3: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F3: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F3(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F3(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F3";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F3(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F3(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F4: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F4: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F4(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F4(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F4";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F4(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F4(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F5: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F5: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F5(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F5(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F5";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F5(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F5(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F6: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F6: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F6(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F6(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F6";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F6(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F6(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F7: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F7: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F7(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F7(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F7";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F7(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F7(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F8: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F8: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F8(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F8(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F8";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F8(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F8(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F9: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F9: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F9(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F9(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F9";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F9(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F9(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F10: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F10: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F10(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F10(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F10";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F10(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F10(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F11: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F11: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F11(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F11(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F11";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F11(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F11(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardKEYCODE_F12: public ScriptMethod {
+		class MethodInputKeyboardKEYCODE_F12: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardKEYCODE_F12(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputKeyboardKEYCODE_F12(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F12";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F12(this));
+		registerMethod(new MethodInputKeyboardKEYCODE_F12(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsKeyDown: public ScriptMethod {
+		class MethodInputKeyboardIsKeyDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsKeyDown(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputKeyboardIsKeyDown(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isKeyDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t keyCode;
 				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
 					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
@@ -641,26 +641,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsKeyDown(this));
+		registerMethod(new MethodInputKeyboardIsKeyDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsCharDown: public ScriptMethod {
+		class MethodInputKeyboardIsCharDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsCharDown(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputKeyboardIsCharDown(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "charAsString", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "charAsString", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isCharDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string charAsString;
 				if (miniScript->getStringValue(argumentValues, 0, charAsString) == true) {
 					UTF8CharacterIterator u8It(charAsString);
@@ -675,194 +675,194 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsCharDown(this));
+		registerMethod(new MethodInputKeyboardIsCharDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardGetTypedString: public ScriptMethod {
+		class MethodInputKeyboardGetTypedString: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardGetTypedString(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodInputKeyboardGetTypedString(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.getTypedString";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardTypedChars;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardGetTypedString(this));
+		registerMethod(new MethodInputKeyboardGetTypedString(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsControlDown: public ScriptMethod {
+		class MethodInputKeyboardIsControlDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsControlDown(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsControlDown(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isControlDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsControlDown(this));
+		registerMethod(new MethodInputKeyboardIsControlDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsMetaDown: public ScriptMethod {
+		class MethodInputKeyboardIsMetaDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsMetaDown(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsMetaDown(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isMetaDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsMetaDown(this));
+		registerMethod(new MethodInputKeyboardIsMetaDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsAltDown: public ScriptMethod {
+		class MethodInputKeyboardIsAltDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsAltDown(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsAltDown(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isAltDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardAltDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsAltDown(this));
+		registerMethod(new MethodInputKeyboardIsAltDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputKeyboardIsShiftDown: public ScriptMethod {
+		class MethodInputKeyboardIsShiftDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputKeyboardIsShiftDown(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputKeyboardIsShiftDown(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.keyboard.isShiftDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardShiftDown == true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputKeyboardIsShiftDown(this));
+		registerMethod(new MethodInputKeyboardIsShiftDown(this));
 	}
 	// mouse input
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_LEFT: public ScriptMethod {
+		class MethodInputMouseBUTTON_LEFT: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_LEFT(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_LEFT(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_LEFT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_LEFT(this));
+		registerMethod(new MethodInputMouseBUTTON_LEFT(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_MIDDLE: public ScriptMethod {
+		class MethodInputMouseBUTTON_MIDDLE: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_MIDDLE(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_MIDDLE(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_MIDDLE";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_MIDDLE(this));
+		registerMethod(new MethodInputMouseBUTTON_MIDDLE(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseBUTTON_RIGHT: public ScriptMethod {
+		class MethodInputMouseBUTTON_RIGHT: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseBUTTON_RIGHT(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseBUTTON_RIGHT(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_RIGHT";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseBUTTON_RIGHT(this));
+		registerMethod(new MethodInputMouseBUTTON_RIGHT(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsButtonDown: public ScriptMethod {
+		class MethodInputMouseIsButtonDown: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsButtonDown(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsButtonDown(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isButtonDown";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
@@ -875,25 +875,25 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsButtonDown(this));
+		registerMethod(new MethodInputMouseIsButtonDown(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsButtonUp: public ScriptMethod {
+		class MethodInputMouseIsButtonUp: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsButtonUp(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsButtonUp(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isButtonUp";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
@@ -906,25 +906,25 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsButtonUp(this));
+		registerMethod(new MethodInputMouseIsButtonUp(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseIsDragging: public ScriptMethod {
+		class MethodInputMouseIsDragging: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseIsDragging(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodInputMouseIsDragging(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN),
+					VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.isDragging";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
@@ -937,196 +937,196 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseIsDragging(this));
+		registerMethod(new MethodInputMouseIsDragging(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseHasMoved: public ScriptMethod {
+		class MethodInputMouseHasMoved: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseHasMoved(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+			MethodInputMouseHasMoved(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.hasMoved";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseMoved;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseHasMoved(this));
+		registerMethod(new MethodInputMouseHasMoved(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetX: public ScriptMethod {
+		class MethodInputMouseGetX: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetX(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetX(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseX);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetX(this));
+		registerMethod(new MethodInputMouseGetX(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetXUnscaled: public ScriptMethod {
+		class MethodInputMouseGetXUnscaled: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetXUnscaled(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetXUnscaled(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getXUnscaled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetXUnscaled(this));
+		registerMethod(new MethodInputMouseGetXUnscaled(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetY: public ScriptMethod {
+		class MethodInputMouseGetY: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetY(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetY(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getY";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseY);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetY(this));
+		registerMethod(new MethodInputMouseGetY(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetYUnscaled: public ScriptMethod {
+		class MethodInputMouseGetYUnscaled: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetYUnscaled(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodInputMouseGetYUnscaled(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getYUnscaled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetYUnscaled(this));
+		registerMethod(new MethodInputMouseGetYUnscaled(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelX: public ScriptMethod {
+		class MethodInputMouseGetWheelX: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelX(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelX(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelX";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelX;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelX(this));
+		registerMethod(new MethodInputMouseGetWheelX(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelY: public ScriptMethod {
+		class MethodInputMouseGetWheelY: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelY(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelY(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelY";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelY;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelY(this));
+		registerMethod(new MethodInputMouseGetWheelY(this));
 	}
 	{
 		//
-		class ScriptMethodInputMouseGetWheelZ: public ScriptMethod {
+		class MethodInputMouseGetWheelZ: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInputMouseGetWheelZ(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+			MethodInputMouseGetWheelZ(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "input.mouse.getWheelZ";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelZ;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
+		registerMethod(new MethodInputMouseGetWheelZ(this));
 	}
 	// gui
 	{
 		//
-		class ScriptMethodGUIScreenSetEnabled: public ScriptMethod {
+		class MethodGUIScreenSetEnabled: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenSetEnabled(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenSetEnabled(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screen.setEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string screenId;
 				bool enabled;
 				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false ||
@@ -1147,26 +1147,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenSetEnabled(this));
+		registerMethod(new MethodGUIScreenSetEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodGUIScreenIsEnabled: public ScriptMethod {
+		class MethodGUIScreenIsEnabled: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenIsEnabled(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenIsEnabled(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screen.isEnabled";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string screenId;
 				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1184,28 +1184,28 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenIsEnabled(this));
+		registerMethod(new MethodGUIScreenIsEnabled(this));
 	}
 	{
 		//
-		class ScriptMethodGUIScreenGoto: public ScriptMethod {
+		class MethodGUIScreenGoto: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenGoto(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenGoto(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screen.goto";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 3 ||
 					EngineMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
@@ -1235,7 +1235,7 @@ void GUIMiniScript::registerMethods() {
 								screenPathName,
 								screenFileName,
 								variables,
-								argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::ScriptVariable(),
+								argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::Variable(),
 								miniScript->screenNode->getContext()
 							)
 						);
@@ -1249,28 +1249,28 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenGoto(this));
+		registerMethod(new MethodGUIScreenGoto(this));
 	}
 	{
 		//
-		class ScriptMethodGUIScreenPush: public ScriptMethod {
+		class MethodGUIScreenPush: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenPush(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenPush(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screen.push";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 3 ||
 					EngineMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
@@ -1297,7 +1297,7 @@ void GUIMiniScript::registerMethods() {
 							screenPathName,
 							screenFileName,
 							variables,
-							argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::ScriptVariable(),
+							argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::Variable(),
 							miniScript->screenNode->getContext()
 						);
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -1312,52 +1312,52 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenPush(this));
+		registerMethod(new MethodGUIScreenPush(this));
 	}
 	{
 		//
-		class ScriptMethodGUIScreenPop: public ScriptMethod {
+		class MethodGUIScreenPop: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenPop(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenPop(GUIMiniScript* miniScript):
+				Method(
 					{},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				// mark as popped
 				return "gui.screen.pop";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				miniScript->popped = true;
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenPop(this));
+		registerMethod(new MethodGUIScreenPop(this));
 	}
 	{
 		//
-		class ScriptMethodGUIScreenCall: public ScriptMethod {
+		class MethodGUIScreenCall: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenCall(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIScreenCall(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
+					VariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screen.call";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string screenId;
 				string function;
 				if (miniScript->getStringValue(argumentValues, 0, screenId) == false ||
@@ -1383,7 +1383,7 @@ void GUIMiniScript::registerMethods() {
 						#if defined (__APPLE__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
 							// so we need to make a copy of argumentValues beginning from second element
-							vector<ScriptVariable> callArgumentValues;
+							vector<Variable> callArgumentValues;
 							for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
@@ -1402,89 +1402,89 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenCall(this));
+		registerMethod(new MethodGUIScreenCall(this));
 	}
 	{
 		//
-		class ScriptMethodScreenNodeGetId: public ScriptMethod {
+		class MethodScreenNodeGetId: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScreenNodeGetId(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+			MethodScreenNodeGetId(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.screennode.getId";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(miniScript->screenNode->getId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodScreenNodeGetId(this));
+		registerMethod(new MethodScreenNodeGetId(this));
 	}
 	{
 		//
-		class ScriptMethodGUIEventACTIONTYPE_PERFORMING: public ScriptMethod {
+		class MethodGUIEventACTIONTYPE_PERFORMING: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIEventACTIONTYPE_PERFORMING(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodGUIEventACTIONTYPE_PERFORMING(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.event.ACTIONTYPE_PERFORMING";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMING));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMING(this));
+		registerMethod(new MethodGUIEventACTIONTYPE_PERFORMING(this));
 	}
 	{
 		//
-		class ScriptMethodGUIEventACTIONTYPE_PERFORMED: public ScriptMethod {
+		class MethodGUIEventACTIONTYPE_PERFORMED: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIEventACTIONTYPE_PERFORMED(GUIMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+			MethodGUIEventACTIONTYPE_PERFORMED(GUIMiniScript* miniScript):
+				Method({}, VariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.event.ACTIONTYPE_PERFORMED";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMED));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMED(this));
+		registerMethod(new MethodGUIEventACTIONTYPE_PERFORMED(this));
 	}
 	{
 		//
-		class ScriptMethodGUINodeControllerGetValue: public ScriptMethod {
+		class MethodGUINodeControllerGetValue: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUINodeControllerGetValue(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUINodeControllerGetValue(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.node.controller.getValue";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string nodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1504,27 +1504,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUINodeControllerGetValue(this));
+		registerMethod(new MethodGUINodeControllerGetValue(this));
 	}
 	{
 		//
-		class ScriptMethodGUINodeControllerSetValue: public ScriptMethod {
+		class MethodGUINodeControllerSetValue: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUINodeControllerSetValue(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUINodeControllerSetValue(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.node.controller.setValue";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string nodeId;
 				string value;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
@@ -1546,26 +1546,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUINodeControllerSetValue(this));
+		registerMethod(new MethodGUINodeControllerSetValue(this));
 	}
 	{
 		//
-		class ScriptMethodGUITextNodeGetText: public ScriptMethod {
+		class MethodGUITextNodeGetText: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUITextNodeGetText(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUITextNodeGetText(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.textnode.getText";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string textNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1588,27 +1588,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUITextNodeGetText(this));
+		registerMethod(new MethodGUITextNodeGetText(this));
 	}
 	{
 		//
-		class ScriptMethodGUITextNodeSetText: public ScriptMethod {
+		class MethodGUITextNodeSetText: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUITextNodeSetText(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUITextNodeSetText(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "text", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "text", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.textnode.setText";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string textNodeId;
 				string text;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
@@ -1633,27 +1633,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUITextNodeSetText(this));
+		registerMethod(new MethodGUITextNodeSetText(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsHas: public ScriptMethod {
+		class MethodGUIElementNodeConditionsHas: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsHas(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsHas(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.has";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
@@ -1674,26 +1674,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsHas(this));
+		registerMethod(new MethodGUIElementNodeConditionsHas(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsGet: public ScriptMethod {
+		class MethodGUIElementNodeConditionsGet: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsGet(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsGet(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_ARRAY
+					VariableType::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.get";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1716,27 +1716,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsGet(this));
+		registerMethod(new MethodGUIElementNodeConditionsGet(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsSet: public ScriptMethod {
+		class MethodGUIElementNodeConditionsSet: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsSet(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsSet(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.set";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
@@ -1757,27 +1757,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsSet(this));
+		registerMethod(new MethodGUIElementNodeConditionsSet(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsAdd: public ScriptMethod {
+		class MethodGUIElementNodeConditionsAdd: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsAdd(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsAdd(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.add";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
@@ -1798,30 +1798,30 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsAdd(this));
+		registerMethod(new MethodGUIElementNodeConditionsAdd(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsSetAll: public ScriptMethod {
+		class MethodGUIElementNodeConditionsSetAll: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsSetAll(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsSetAll(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.setAll";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					argumentValues.size() <= 1 || argumentValues[1].getType() != ScriptVariableType::TYPE_ARRAY) {
+					argumentValues.size() <= 1 || argumentValues[1].getType() != VariableType::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1847,27 +1847,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsSetAll(this));
+		registerMethod(new MethodGUIElementNodeConditionsSetAll(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsRemove: public ScriptMethod {
+		class MethodGUIElementNodeConditionsRemove: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsRemove(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsRemove(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.remove";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
@@ -1888,26 +1888,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsRemove(this));
+		registerMethod(new MethodGUIElementNodeConditionsRemove(this));
 	}
 	{
 		//
-		class ScriptMethodGUIElementNodeConditionsRemoveAll: public ScriptMethod {
+		class MethodGUIElementNodeConditionsRemoveAll: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIElementNodeConditionsRemoveAll(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIElementNodeConditionsRemoveAll(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.removeAll";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1926,26 +1926,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIElementNodeConditionsRemoveAll(this));
+		registerMethod(new MethodGUIElementNodeConditionsRemoveAll(this));
 	}
 	{
 		//
-		class ScriptMethodGUIImageNodeGetSource: public ScriptMethod {
+		class MethodGUIImageNodeGetSource: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIImageNodeGetSource(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIImageNodeGetSource(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.imagenode.getSource";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string imageNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1964,27 +1964,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIImageNodeGetSource(this));
+		registerMethod(new MethodGUIImageNodeGetSource(this));
 	}
 	{
 		//
-		class ScriptMethodGUIImageNodeSetSource: public ScriptMethod {
+		class MethodGUIImageNodeSetSource: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIImageNodeSetSource(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIImageNodeSetSource(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.imagenode.setSource";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string imageNodeId;
 				string source;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
@@ -2005,26 +2005,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIImageNodeSetSource(this));
+		registerMethod(new MethodGUIImageNodeSetSource(this));
 	}
 	{
 		//
-		class ScriptMethodGUIVideoNodeGetSource: public ScriptMethod {
+		class MethodGUIVideoNodeGetSource: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIVideoNodeGetSource(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIVideoNodeGetSource(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					VariableType::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.videonode.getSource";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string videoNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2043,27 +2043,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIVideoNodeGetSource(this));
+		registerMethod(new MethodGUIVideoNodeGetSource(this));
 	}
 	{
 		//
-		class ScriptMethodGUIVideoNodeSetSource: public ScriptMethod {
+		class MethodGUIVideoNodeSetSource: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIVideoNodeSetSource(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIVideoNodeSetSource(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.videonode.setSource";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string videoNodeId;
 				string source;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
@@ -2084,26 +2084,26 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIVideoNodeSetSource(this));
+		registerMethod(new MethodGUIVideoNodeSetSource(this));
 	}
 	{
 		//
-		class ScriptMethodGUIParentNodeClearSubNodes: public ScriptMethod {
+		class MethodGUIParentNodeClearSubNodes: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIParentNodeClearSubNodes(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIParentNodeClearSubNodes(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.parentnode.clearSubNodes";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
 				if (EngineMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2122,28 +2122,28 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIParentNodeClearSubNodes(this));
+		registerMethod(new MethodGUIParentNodeClearSubNodes(this));
 	}
 	{
 		//
-		class ScriptMethodGUIParentNodeAddSubNodes: public ScriptMethod {
+		class MethodGUIParentNodeAddSubNodes: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIParentNodeAddSubNodes(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIParentNodeAddSubNodes(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.parentnode.addSubNodes";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
@@ -2166,28 +2166,28 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIParentNodeAddSubNodes(this));
+		registerMethod(new MethodGUIParentNodeAddSubNodes(this));
 	}
 	{
 		//
-		class ScriptMethodGUIParentNodeReplaceSubNodes: public ScriptMethod {
+		class MethodGUIParentNodeReplaceSubNodes: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIParentNodeReplaceSubNodes(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodGUIParentNodeReplaceSubNodes(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_NULL
+					VariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "gui.parentnode.replaceSubNodes";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
@@ -2210,24 +2210,24 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodGUIParentNodeReplaceSubNodes(this));
+		registerMethod(new MethodGUIParentNodeReplaceSubNodes(this));
 	}
 	{
 		//
-		class ScriptMethodLogicSignalSend: public ScriptMethod {
+		class MethodLogicSignalSend: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicSignalSend(GUIMiniScript* miniScript):
-				ScriptMethod({
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .reference = false, .nullable = false }
+			MethodLogicSignalSend(GUIMiniScript* miniScript):
+				Method({
+					{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+					{ .type = VariableType::TYPE_STRING, .name = "signal", .optional = false, .reference = false, .nullable = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.send";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
@@ -2240,7 +2240,7 @@ void GUIMiniScript::registerMethods() {
 							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 							miniScript->startErrorScript();
 						} else {
-							vector<ScriptVariable> arguments(argumentValues.size() - 2);
+							vector<Variable> arguments(argumentValues.size() - 2);
 							for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
 							logic->addSignal(signal, arguments);
 						}
@@ -2261,27 +2261,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodLogicSignalSend(this));
+		registerMethod(new MethodLogicSignalSend(this));
 	}
 	{
 		//
-		class ScriptMethodLogicHas: public ScriptMethod {
+		class MethodLogicHas: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicHas(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodLogicHas(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.has";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
@@ -2298,7 +2298,7 @@ void GUIMiniScript::registerMethods() {
 						} else {
 							auto logicMiniScript = logic->getMiniScript();
 							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
-							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callableFunction == false) {
 								returnValue.setValue(false);
 							} else {
 								returnValue.setValue(true);
@@ -2315,27 +2315,27 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodLogicHas(this));
+		registerMethod(new MethodLogicHas(this));
 	}
 	{
 		//
-		class ScriptMethodLogicCall: public ScriptMethod {
+		class MethodLogicCall: public Method {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodLogicCall(GUIMiniScript* miniScript):
-				ScriptMethod(
+			MethodLogicCall(GUIMiniScript* miniScript):
+				Method(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
+						{ .type = VariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
+						{ .type = VariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
+					VariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.call";
 			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
@@ -2353,14 +2353,14 @@ void GUIMiniScript::registerMethods() {
 						} else {
 							auto logicMiniScript = logic->getMiniScript();
 							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
-							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callableFunction == false) {
 								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 								miniScript->startErrorScript();
 							} else {
 								#if defined (__APPLE__)
 									// MACOSX currently does not support initializing span using begin and end iterators,
 									// so we need to make a copy of argumentValues beginning from second element
-									vector<ScriptVariable> callArgumentValues;
+									vector<Variable> callArgumentValues;
 									for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
 									// call
 									span callArgumentValuesSpan(callArgumentValues);
@@ -2385,7 +2385,7 @@ void GUIMiniScript::registerMethods() {
 				return CONTEXTFUNCTION_GUI;
 			}
 		};
-		registerMethod(new ScriptMethodLogicCall(this));
+		registerMethod(new MethodLogicCall(this));
 	}
 }
 

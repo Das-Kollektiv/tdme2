@@ -56,8 +56,8 @@ public:
 		EngineMiniScript::Script::ScriptType type;
 		string condition;
 		string name;
-		EngineMiniScript::ScriptSyntaxTreeNode conditionSyntaxTree;
-		vector<EngineMiniScript::ScriptSyntaxTreeNode> syntaxTree;
+		EngineMiniScript::SyntaxTreeNode conditionSyntaxTree;
+		vector<EngineMiniScript::SyntaxTreeNode> syntaxTree;
 	};
 
 	enum ContextMenuType { CONTEXTMENUTYPE_NONE, CONTEXTMENUTYPE_NODE, CONTEXTMENUTYPE_CANVAS };

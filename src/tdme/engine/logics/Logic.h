@@ -60,10 +60,10 @@ public:
 	struct SignalStruct {
 		SignalStruct(
 			const string& signal,
-			const vector<EngineMiniScript::ScriptVariable>& arguments
+			const vector<EngineMiniScript::Variable>& arguments
 		): signal(signal), arguments(arguments) {}
 		string signal;
-		vector<EngineMiniScript::ScriptVariable> arguments;
+		vector<EngineMiniScript::Variable> arguments;
 	};
 	vector<SignalStruct> signals;
 
@@ -211,7 +211,7 @@ public:
 	 * @param signal signal
 	 * @param arguments arguments
 	 */
-	inline void addSignal(const string& signal, const vector<EngineMiniScript::ScriptVariable>& arguments) {
+	inline void addSignal(const string& signal, const vector<EngineMiniScript::Variable>& arguments) {
 		signals.emplace_back(
 			signal,
 			arguments
@@ -240,9 +240,9 @@ public:
 	 * Get signal argument
 	 * @return signal argument at given index
 	 */
-	inline EngineMiniScript::ScriptVariable getSignalArgument(int idx) {
-		if (signals.empty() == true) return EngineMiniScript::ScriptVariable();
-		if (idx >= signals[0].arguments.size()) return EngineMiniScript::ScriptVariable();
+	inline EngineMiniScript::Variable getSignalArgument(int idx) {
+		if (signals.empty() == true) return EngineMiniScript::Variable();
+		if (idx >= signals[0].arguments.size()) return EngineMiniScript::Variable();
 		return signals[0].arguments[idx];
 	}
 

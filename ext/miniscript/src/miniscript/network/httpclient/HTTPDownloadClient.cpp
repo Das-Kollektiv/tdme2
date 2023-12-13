@@ -316,7 +316,7 @@ void HTTPDownloadClient::start() {
 					downloadClient->finished = true;
 					downloadClient->progress = 1.0f;
 				} catch (Exception& exception) {
-					socket->shutdown();
+					if (socket != nullptr) socket->shutdown();
 					downloadClient->finished = true;
 					Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 				}

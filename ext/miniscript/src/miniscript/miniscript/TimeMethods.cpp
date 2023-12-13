@@ -18,30 +18,30 @@ void TimeMethods::registerMethods(MiniScript* miniScript) {
 	// time
 	{
 		//
-		class ScriptMethodTimeGetCurrentMillis: public MiniScript::ScriptMethod {
+		class MethodTimeGetCurrentMillis: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTimeGetCurrentMillis(MiniScript* miniScript):
-				MiniScript::ScriptMethod({}, MiniScript::TYPE_INTEGER),
+			MethodTimeGetCurrentMillis(MiniScript* miniScript):
+				MiniScript::Method({}, MiniScript::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "time.getCurrentMillis";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				returnValue.setValue(Time::getCurrentMillis());
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodTimeGetCurrentMillis(miniScript));
+		miniScript->registerMethod(new MethodTimeGetCurrentMillis(miniScript));
 	}
 	{
 		//
-		class ScriptMethodTimeGetAsString: public MiniScript::ScriptMethod {
+		class MethodTimeGetAsString: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTimeGetAsString(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodTimeGetAsString(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "format", .optional = true, .reference = false, .nullable = false }
 					},
@@ -51,9 +51,9 @@ void TimeMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "time.getAsString";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string format = "%Y-%m-%d %H:%M:%S";
-				if (MiniScript::getStringValue(argumentValues, 0, format, true) == false) {
+				if (MiniScript::getStringValue(arguments, 0, format, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -61,6 +61,6 @@ void TimeMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodTimeGetAsString(miniScript));
+		miniScript->registerMethod(new MethodTimeGetAsString(miniScript));
 	}
 }

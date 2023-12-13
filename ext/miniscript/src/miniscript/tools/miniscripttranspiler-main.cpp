@@ -121,7 +121,7 @@ static void processFile(const string& scriptFileName, const string& transpilatio
 
 	//
 	unordered_map<string, vector<string>> methodCodeMap;
-	auto allMethods = Transpiler::getAllMethodNames(miniScript.get());
+	auto allMethods = Transpiler::getAllClassesMethodNames(miniScript.get());
 
 	//
 	vector<string> transpilationUnitIncludes;
@@ -303,7 +303,7 @@ static void processFile(const string& scriptFileName, const string& transpilatio
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.condition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.executableCondition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "Statement(" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + to_string(script.conditionStatement.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + to_string(script.conditionStatement.statementIdx) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(StringTools::replace(script.conditionStatement.statement, "\\", "\\\\"), "\"", "\\\""), "\n", "\\n") + "\"," + "\n";
@@ -316,7 +316,7 @@ static void processFile(const string& scriptFileName, const string& transpilatio
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{" + "\n";
 			auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
 			for (const auto& statement: script.statements) {
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "Statement(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.line) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.statementIdx) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(StringTools::replace(statement.statement, "\\", "\\\\"), "\n", "\\n"), "\"", "\\\"") + "\"," + "\n";
@@ -327,14 +327,14 @@ static void processFile(const string& scriptFileName, const string& transpilatio
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{},\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.callable == true?"true":"false") + ",\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.callableFunction == true?"true":"false") + ",\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{\n";
 			auto argumentIdx = 0;
-			for (const auto& argument: script.arguments) {
+			for (const auto& argument: script.functionArguments) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "Script::ScriptArgument(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + argument.name + "\"," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + (argument.reference == true?"true":"false") + "\n";
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" ")" + (argumentIdx != script.arguments.size() - 1?",":"") + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" ")" + (argumentIdx != script.functionArguments.size() - 1?",":"") + "\n";
 				argumentIdx++;
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}\n";
@@ -344,15 +344,15 @@ static void processFile(const string& scriptFileName, const string& transpilatio
 	}
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";
-	initializeNativeDefinition+= methodCodeIndent + "setNativeScriptFunctions(" + "\n";
+	initializeNativeDefinition+= methodCodeIndent + "setNativeFunctions(" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
-	auto scriptFunctionIdx = 0;
-	for (const auto& [functionName, functionIdx]: miniScript->scriptFunctions) {
+	auto functionItIdx = 0;
+	for (const auto& [functionName, functionIdx]: miniScript->functions) {
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + functionName + "\"," + "\n";
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(functionIdx) + "\n";
-		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptFunctionIdx != miniScript->scriptFunctions.size() - 1?",":"") + "\n";
-		scriptFunctionIdx++;
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (functionItIdx != miniScript->functions.size() - 1?",":"") + "\n";
+		functionItIdx++;
 	}
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";

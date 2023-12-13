@@ -7,8 +7,6 @@
 #include <openssl/rand.h>
 #include <openssl/ocsp.h>
 #include <openssl/bn.h>
-#include <openssl/trace.h>
-#include <openssl/async.h>
 #ifndef OPENSSL_NO_CT
 #include <openssl/ct.h>
 #endif

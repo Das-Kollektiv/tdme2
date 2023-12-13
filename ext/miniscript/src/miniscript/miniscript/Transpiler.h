@@ -22,25 +22,25 @@ class miniscript::miniscript::Transpiler {
 public:
 
 	/**
-	 * Get all method names
+	 * Get all classes method names
 	 * @param miniScript MiniScript instance
-	 * @return all method names
+	 * @return all classes method names
 	 */
-	static const unordered_set<string> getAllMethodNames(MiniScript* miniScript);
+	static const unordered_set<string> getAllClassesMethodNames(MiniScript* miniScript);
 
 	/**
-	 * Get all method names sorted
+	 * Get all classes method names sorted
 	 * @param miniScript MiniScript instance
-	 * @return all method names sorted
+	 * @return all classes method names sorted
 	 */
-	static const vector<string> getAllMethodNamesSorted(MiniScript* miniScript);
+	static const vector<string> getAllClassesMethodNamesSorted(MiniScript* miniScript);
 
 	/**
-	 * Get all method names by class name
+	 * Get method names per classes
 	 * @param miniScript MiniScript instance
-	 * @return all method names
+	 * @return method names per classes
 	 */
-	static const unordered_map<string, vector<string>> getAllClassesMethodNames(MiniScript* miniScript);
+	static const unordered_map<string, vector<string>> getClassesMethodNames(MiniScript* miniScript);
 
 	/**
 	 * Gather method code
@@ -77,8 +77,8 @@ public:
 		string& generatedDefinitions,
 		const string& miniScriptClassName,
 		const string& methodName,
-		const MiniScript::ScriptSyntaxTreeNode& syntaxTree,
-		const MiniScript::ScriptStatement& statement,
+		const MiniScript::SyntaxTreeNode& syntaxTree,
+		const MiniScript::Statement& statement,
 		const unordered_map<string, vector<string>>& methodCodeMap,
 		const unordered_set<string>& allMethods,
 		bool condition,
@@ -115,7 +115,7 @@ public:
 	 */
 	static void generateArrayMapSetVariable(
 		MiniScript* miniScript,
-		const MiniScript::ScriptVariable& variable,
+		const MiniScript::Variable& variable,
 		const unordered_map<string, vector<string>>& methodCodeMap,
 		const unordered_set<string>& allMethods,
 		const string& methodName,
@@ -149,8 +149,8 @@ public:
 		string& generatedDefinitions,
 		const string& miniScriptClassName,
 		const string& methodName,
-		const MiniScript::ScriptSyntaxTreeNode& syntaxTree,
-		const MiniScript::ScriptStatement& statement,
+		const MiniScript::SyntaxTreeNode& syntaxTree,
+		const MiniScript::Statement& statement,
 		const unordered_map<string, vector<string>>& methodCodeMap,
 		const unordered_set<string>& allMethods,
 		bool condition,
@@ -181,8 +181,8 @@ public:
 	static bool transpileScriptStatement(
 		MiniScript* miniScript,
 		string& generatedCode,
-		const MiniScript::ScriptSyntaxTreeNode& syntaxTree,
-		const MiniScript::ScriptStatement& statement,
+		const MiniScript::SyntaxTreeNode& syntaxTree,
+		const MiniScript::Statement& statement,
 		int scriptConditionIdx,
 		int scriptIdx,
 		int& statementIdx,
@@ -241,13 +241,13 @@ public:
 	 * Create source code for given syntax tree node
 	 * @param syntaxTreeNode syntax tree node
 	 */
-	static const string createSourceCode(const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode);
+	static const string createSourceCode(const MiniScript::SyntaxTreeNode& syntaxTreeNode);
 
 	/**
 	 * Create source code for given syntax tree
 	 * @param scriptType script type
 	 * @param condition condition
-	 * @param arguments function arguments
+	 * @param functionArguments function arguments
 	 * @param name name of named conditions
 	 * @param conditionSyntaxTree condition syntax tree
 	 * @param syntaxTree syntax tree
@@ -255,10 +255,10 @@ public:
 	static const string createSourceCode(
 		MiniScript::Script::ScriptType scriptType,
 		const string& condition,
-		const vector<MiniScript::Script::ScriptArgument>& arguments,
+		const vector<MiniScript::Script::FunctionArgument>& functionArguments,
 		const string& name,
-		const MiniScript::ScriptSyntaxTreeNode& conditionSyntaxTree,
-		const vector<MiniScript::ScriptSyntaxTreeNode>& syntaxTree
+		const MiniScript::SyntaxTreeNode& conditionSyntaxTree,
+		const vector<MiniScript::SyntaxTreeNode>& syntaxTree
 	);
 
 	/**

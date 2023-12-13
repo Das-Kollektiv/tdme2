@@ -21,40 +21,40 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 	// script methods
 	{
 		//
-		class ScriptMethodScriptWaitForCondition: public MiniScript::ScriptMethod {
+		class MethodScriptWaitForCondition: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptWaitForCondition(MiniScript* miniScript): miniScript(miniScript) {}
+			MethodScriptWaitForCondition(MiniScript* miniScript): miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.waitForCondition";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				// script bindings
 				miniScript->getScriptState().timeWaitStarted = Time::getCurrentMillis();
 				miniScript->getScriptState().timeWaitTime = 100LL;
 				miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_WAIT_FOR_CONDITION);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptWaitForCondition(miniScript));
+		miniScript->registerMethod(new MethodScriptWaitForCondition(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptWait: public MiniScript::ScriptMethod {
+		class MethodScriptWait: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptWait(MiniScript* miniScript):
-				MiniScript::ScriptMethod({
+			MethodScriptWait(MiniScript* miniScript):
+				MiniScript::Method({
 					{ .type = MiniScript::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.wait";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t time;
-				if (miniScript->getIntegerValue(argumentValues, 0, time) == true) {
+				if (miniScript->getIntegerValue(arguments, 0, time) == true) {
 					miniScript->getScriptState().timeWaitStarted = Time::getCurrentMillis();
 					miniScript->getScriptState().timeWaitTime = time;
 					miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_WAIT);
@@ -63,16 +63,16 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptWait(miniScript));
+		miniScript->registerMethod(new MethodScriptWait(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptEmit: public MiniScript::ScriptMethod {
+		class MethodScriptEmit: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEmit(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodScriptEmit(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
@@ -81,9 +81,9 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "script.emit";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, condition, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, condition, false) == true) {
 					miniScript->emit(condition);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -91,16 +91,16 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptEmit(miniScript));
+		miniScript->registerMethod(new MethodScriptEmit(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptEnableNamedCondition: public MiniScript::ScriptMethod {
+		class MethodScriptEnableNamedCondition: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEnableNamedCondition(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodScriptEnableNamedCondition(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
@@ -109,9 +109,9 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "script.enableNamedCondition"; // METHOD_ENABLENAMEDCONDITION;
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string name;
-				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, name, false) == true) {
 					miniScript->enabledNamedConditions.erase(
 						remove(
 							miniScript->enabledNamedConditions.begin(),
@@ -127,16 +127,16 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptEnableNamedCondition(miniScript));
+		miniScript->registerMethod(new MethodScriptEnableNamedCondition(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptDisableNamedCondition: public MiniScript::ScriptMethod {
+		class MethodScriptDisableNamedCondition: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptDisableNamedCondition(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodScriptDisableNamedCondition(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
@@ -145,9 +145,9 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "script.disableNamedCondition"; // METHOD_DISABLENAMEDCONDITION;
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string name;
-				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
+				if (MiniScript::getStringValue(arguments, 0, name, false) == true) {
 					miniScript->enabledNamedConditions.erase(
 						remove(
 							miniScript->enabledNamedConditions.begin(),
@@ -162,21 +162,21 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptDisableNamedCondition(miniScript));
+		miniScript->registerMethod(new MethodScriptDisableNamedCondition(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptGetNamedConditions: public MiniScript::ScriptMethod {
+		class MethodScriptGetNamedConditions: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptGetNamedConditions(MiniScript* miniScript):
-				MiniScript::ScriptMethod({}, MiniScript::TYPE_STRING),
+			MethodScriptGetNamedConditions(MiniScript* miniScript):
+				MiniScript::Method({}, MiniScript::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.getNamedConditions";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string result;
 				for (const auto& namedCondition: miniScript->enabledNamedConditions) {
 					result+= result.empty() == false?",":namedCondition;
@@ -184,16 +184,16 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				returnValue.setValue(result);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptGetNamedConditions(miniScript));
+		miniScript->registerMethod(new MethodScriptGetNamedConditions(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptEvaluate: public MiniScript::ScriptMethod {
+		class MethodScriptEvaluate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEvaluate(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodScriptEvaluate(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "statement", .optional = false, .reference = false, .nullable = false }
 					},
@@ -203,9 +203,9 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "script.evaluate";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string statementString;
-				if (miniScript->getStringValue(argumentValues, 0, statementString, false) == false) {
+				if (miniScript->getStringValue(arguments, 0, statementString, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -215,16 +215,16 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptEvaluate(miniScript));
+		miniScript->registerMethod(new MethodScriptEvaluate(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptCall: public MiniScript::ScriptMethod {
+		class MethodScriptCall: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptCall(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+			MethodScriptCall(MiniScript* miniScript):
+				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
 					},
@@ -234,9 +234,9 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "script.call"; // METHOD_SCRIPTCALL;
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string function;
-				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
+				if (miniScript->getStringValue(arguments, 0, function) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -245,18 +245,18 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
 						miniScript->startErrorScript();
 					} else {
-						#if defined (__APPLE__)
-							// MACOSX currently does not support initializing span using begin and end iterators,
-							vector<MiniScript::ScriptVariable> callArgumentValues(argumentValues.size() - 1);
-							for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues[i - 1] = move(argumentValues[i]);
+						#if defined (__clang__)
+							// Clang currently does not support initializing span using begin and end iterators,
+							vector<MiniScript::Variable> callArguments(arguments.size() - 1);
+							for (auto i = 1; i < arguments.size(); i++) callArguments[i - 1] = move(arguments[i]);
 							// call
-							span callArgumentValuesSpan(callArgumentValues);
-							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							span callArgumentsSpan(callArguments);
+							miniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 							// move back arguments
-							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = move(callArgumentValues[i - 1]);
+							for (auto i = 1; i < arguments.size(); i++) arguments[i] = move(callArguments[i - 1]);
 						#else
-							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
-							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							span callArgumentsSpan(arguments.begin() + 1, arguments.end());
+							miniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 						#endif
 					}
 				}
@@ -265,43 +265,43 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptCall(miniScript));
+		miniScript->registerMethod(new MethodScriptCall(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptStop: public MiniScript::ScriptMethod {
+		class MethodScriptStop: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptStop(MiniScript* miniScript): MiniScript::ScriptMethod(), miniScript(miniScript) {}
+			MethodScriptStop(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.stop";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				//
 				miniScript->stopScriptExecution();
 				miniScript->stopRunning();
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptStop(miniScript));
+		miniScript->registerMethod(new MethodScriptStop(miniScript));
 	}
 	{
 		//
-		class ScriptMethodScriptGetVariables: public MiniScript::ScriptMethod {
+		class MethodScriptGetVariables: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptGetVariables(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::TYPE_MAP), miniScript(miniScript) {}
+			MethodScriptGetVariables(MiniScript* miniScript): MiniScript::Method({}, MiniScript::TYPE_MAP), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.getVariables";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				returnValue.setType(MiniScript::TYPE_MAP);
 				for (const auto& [variableName, variableValue]: miniScript->getScriptState().variables) {
 					returnValue.setMapEntry(variableName, *variableValue);
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodScriptGetVariables(miniScript));
+		miniScript->registerMethod(new MethodScriptGetVariables(miniScript));
 	}
 }

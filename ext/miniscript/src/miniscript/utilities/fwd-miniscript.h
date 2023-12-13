@@ -16,5 +16,7 @@ namespace utilities {
 	class StringTools;
 	class Time;
 	class UTF8CharacterIterator;
+	class UTF8StringTokenizer;
+	class UTF8StringTools;
 }  // namespace utilities
 }  // namespace miniscript

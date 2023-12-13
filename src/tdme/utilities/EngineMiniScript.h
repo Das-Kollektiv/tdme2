@@ -65,13 +65,13 @@ public:
 
 	// custom data types, which needs to be created in this particular order
 	//	we could also read the types dynamically, but this works for now :)
-	static constexpr ScriptVariableType TYPE_TRANSFORM { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES) };
-	static constexpr ScriptVariableType TYPE_MATRIX4x4 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 1) };
-	static constexpr ScriptVariableType TYPE_MATRIX3x3 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 2) };
-	static constexpr ScriptVariableType TYPE_QUATERNION { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 3) };
-	static constexpr ScriptVariableType TYPE_VECTOR2 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 4) };
-	static constexpr ScriptVariableType TYPE_VECTOR3 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 5) };
-	static constexpr ScriptVariableType TYPE_VECTOR4 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 6) };
+	static constexpr VariableType TYPE_TRANSFORM { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES) };
+	static constexpr VariableType TYPE_MATRIX4x4 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 1) };
+	static constexpr VariableType TYPE_MATRIX3x3 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 2) };
+	static constexpr VariableType TYPE_QUATERNION { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 3) };
+	static constexpr VariableType TYPE_VECTOR2 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 4) };
+	static constexpr VariableType TYPE_VECTOR3 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 5) };
+	static constexpr VariableType TYPE_VECTOR4 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 6) };
 
 	/**
 	 * Register data types
@@ -102,7 +102,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline bool getVector2Value(const span<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
+	inline bool getVector2Value(const span<Variable>& arguments, int idx, Vector2& value, bool optional = false) {
 		return MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, idx, value, optional);
 	}
 
@@ -114,7 +114,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline bool getVector3Value(const span<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
+	inline bool getVector3Value(const span<Variable>& arguments, int idx, Vector3& value, bool optional = false) {
 		return MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, idx, value, optional);
 	}
 
@@ -126,7 +126,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline bool getVector4Value(const span<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
+	inline bool getVector4Value(const span<Variable>& arguments, int idx, Vector4& value, bool optional = false) {
 		return MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, idx, value, optional);
 	}
 
@@ -138,7 +138,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getQuaternionValue(const span<ScriptVariable>& arguments, int idx, Quaternion& value, bool optional = false) {
+	inline static bool getQuaternionValue(const span<Variable>& arguments, int idx, Quaternion& value, bool optional = false) {
 		return MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, idx, value, optional);
 	}
 
@@ -150,7 +150,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
+	inline static bool getMatrix3x3Value(const span<Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
 		return MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, idx, value, optional);
 	}
 
@@ -162,7 +162,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getMatrix4x4Value(const span<ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
+	inline static bool getMatrix4x4Value(const span<Variable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
 		return MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, arguments, idx, value, optional);
 	}
 
@@ -174,7 +174,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getTransformValue(const span<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
+	inline static bool getTransformValue(const span<Variable>& arguments, int idx, Transform& value, bool optional = false) {
 		return MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, idx, value, optional);
 	}
 
@@ -183,7 +183,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, bool value) {
+	inline void setValue(Variable& variable, bool value) {
 		variable.setValue(value);
 	}
 
@@ -192,7 +192,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, int64_t value) {
+	inline void setValue(Variable& variable, int64_t value) {
 		variable.setValue(value);
 	}
 
@@ -201,7 +201,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, float value) {
+	inline void setValue(Variable& variable, float value) {
 		variable.setValue(value);
 	}
 
@@ -210,7 +210,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const string& value) {
+	inline void setValue(Variable& variable, const string& value) {
 		variable.setValue(value);
 	}
 
@@ -219,7 +219,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const vector<ScriptVariable*>& value) {
+	inline void setValue(Variable& variable, const vector<Variable*>& value) {
 		variable.setValue(value);
 	}
 
@@ -228,7 +228,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const unordered_map<string, ScriptVariable*>& value) {
+	inline void setValue(Variable& variable, const unordered_map<string, Variable*>& value) {
 		variable.setValue(value);
 	}
 
@@ -237,7 +237,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const unordered_set<string>& value) {
+	inline void setValue(Variable& variable, const unordered_set<string>& value) {
 		variable.setValue(value);
 	}
 
@@ -246,7 +246,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Vector2& value) {
+	inline void setValue(Variable& variable, const Vector2& value) {
 		variable.setType(TYPE_VECTOR2);
 		variable.setValue(&value);
 	}
@@ -256,7 +256,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Vector3& value) {
+	inline void setValue(Variable& variable, const Vector3& value) {
 		variable.setType(TYPE_VECTOR3);
 		variable.setValue(&value);
 	}
@@ -266,7 +266,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Vector4& value) {
+	inline void setValue(Variable& variable, const Vector4& value) {
 		variable.setType(TYPE_VECTOR4);
 		variable.setValue(&value);
 	}
@@ -275,7 +275,7 @@ public:
 	 * Set vector3 value from given value into variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Quaternion& value) {
+	inline void setValue(Variable& variable, const Quaternion& value) {
 		variable.setType(TYPE_QUATERNION);
 		variable.setValue(&value);
 	}
@@ -285,7 +285,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Matrix3x3& value) {
+	inline void setValue(Variable& variable, const Matrix3x3& value) {
 		variable.setType(TYPE_MATRIX3x3);
 		variable.setValue(&value);
 	}
@@ -295,7 +295,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Matrix4x4& value) {
+	inline void setValue(Variable& variable, const Matrix4x4& value) {
 		variable.setType(TYPE_MATRIX4x4);
 		variable.setValue(&value);
 	}
@@ -305,7 +305,7 @@ public:
 	 * @param variable variable
 	 * @param value value
 	 */
-	inline void setValue(ScriptVariable& variable, const Transform& value) {
+	inline void setValue(Variable& variable, const Transform& value) {
 		variable.setType(TYPE_TRANSFORM);
 		variable.setValue(&value);
 	}

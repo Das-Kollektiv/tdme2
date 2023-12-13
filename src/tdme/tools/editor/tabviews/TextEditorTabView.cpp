@@ -655,7 +655,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 					"	src='resources/engine/gui/template_visualcode_input.xml' " +
 					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-					"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+					"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
 					"	text='" + GUIParser::escape(argumentName) + "' ";
 				if (isLiteral == true) {
 					xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
@@ -701,7 +701,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 		}
 	}
 	// return value
-	if (method != nullptr && method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_NULL) {
+	if (method != nullptr && method->getReturnValueType() != MiniScript::VariableType::TYPE_NULL) {
 		string xml;
 		//
 		xml+=
@@ -711,7 +711,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			"	src='resources/engine/gui/template_visualcode_output.xml' " +
 			"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 			"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-			"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(method->getReturnValueType())) + "}' " +
+			"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(method->getReturnValueType())) + "}' " +
 			"	text='Return' " +
 			"/>";
 
@@ -754,24 +754,24 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 	screenNode->forceInvalidateLayout(screenNode);
 }
 
-void TextEditorTabView::addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX) {
+void TextEditorTabView::addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const MiniScript::SyntaxTreeNode& syntaxTreeNode, int deltaX) {
 	auto node = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(getMiniScriptNodeFlattenedId(idMapping, id)));
 	node->getRequestsConstraints().left+= deltaX;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 
 		addMiniScriptNodeDeltaX(idMapping, id + "." + to_string(argumentIdx), syntaxTreeNode.arguments[argumentIdx], deltaX);
 	}
 }
 
-void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height) {
+void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::SyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height) {
 	// create input nodes
 	auto yInitial = y;
 
 	//
-	if (conditionSyntaxTreeNode->type != MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
+	if (conditionSyntaxTreeNode->type != MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
 		y+= 200;
 		{
 			auto childWidth = 0;
@@ -797,7 +797,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 			.id = flattenedId,
 			.type = Node::NODETYPE_ARGUMENT,
 			.value = conditionSyntaxTreeNode->value.getValueAsString(),
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
+			.returnValueType = MiniScript::VariableType::TYPE_NULL,
 			.left = x,
 			.top = y
 		};
@@ -819,7 +819,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 		// condition input
 		{
 			//
-			auto isLiteral = conditionSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE;
+			auto isLiteral = conditionSyntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE;
 			auto literal = isLiteral == true?condition:string();
 			//
 			string xml =
@@ -829,7 +829,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 				"	src='resources/engine/gui/template_visualcode_input.xml' " +
 				"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 				"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-				"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+				"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(MiniScript::VariableType::TYPE_BOOLEAN)) + "}' " +
 				"	text='" + GUIParser::escape("Cond") + "' ";
 			if (isLiteral == true) {
 				xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
@@ -853,7 +853,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 	}
 
 	// create connection to condition node return to node cond node
-	if (conditionSyntaxTreeNode->type != MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
+	if (conditionSyntaxTreeNode->type != MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
 		//
 		string argumentInputNodeId = flattenedId + "_c";
 		string argumentOutputNodeId = getMiniScriptNodeFlattenedId(idMapping, id + ".c_r");
@@ -896,7 +896,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 	height = Math::max(height, 200);
 }
 
-void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
+void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::SyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
 	// create input nodes
 	int childMaxWidth = 0;
 	auto yInitial = y;
@@ -906,7 +906,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	vector<string> leftNodeIds;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		auto childWidth = 0;
@@ -930,8 +930,8 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 
 	//
 	switch (syntaxTreeNode->type) {
-		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+		case MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+		case MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
 				//
 				createdNodeIds.push_back(flattenedId);
@@ -940,7 +940,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					.id = flattenedId,
 					.type = nodeType,
 					.value = syntaxTreeNode->value.getValueAsString(),
-					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_NULL,
+					.returnValueType = syntaxTreeNode->getMethod() != nullptr?syntaxTreeNode->getMethod()->getReturnValueType():MiniScript::VariableType::TYPE_NULL,
 					.left = x,
 					.top = y
 				};
@@ -953,7 +953,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					nodeTypeColor = "color.nodetype_math";
 				}
 
-				if (syntaxTreeNode->method == nullptr) {
+				if (syntaxTreeNode->getMethod() == nullptr) {
 					nodeTypeColor = "color.nodetype_function";
 				} else {
 					for (const auto& flowControlNode: flowControlNodes) {
@@ -1006,11 +1006,11 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				{
 					//
 					auto argumentIdx = 0;
-					if (syntaxTreeNode->method != nullptr) {
-						const auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
+					if (syntaxTreeNode->getMethod() != nullptr) {
+						const auto& argumentTypes = syntaxTreeNode->getMethod()->getArgumentTypes();
 						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 							//
-							auto isLiteral = argumentIdx < syntaxTreeNode->arguments.size()?syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:false;
+							auto isLiteral = argumentIdx < syntaxTreeNode->arguments.size()?syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:false;
 							auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueAsString():string();
 							auto argumentName = argumentTypes[argumentIdx].name;
 							if (argumentName.empty() == false) argumentName[0] = Character::toUpperCase(argumentName[0]);
@@ -1022,7 +1022,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 								"	src='resources/engine/gui/template_visualcode_input.xml' " +
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-								"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+								"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
 								"	text='" + GUIParser::escape(argumentName) + "' ";
 							if (isLiteral == true) {
 								xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
@@ -1047,7 +1047,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					}
 					for (; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 						//
-						auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+						auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 						auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueAsString():string();
 						//
 						string xml =
@@ -1101,7 +1101,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					}
 				}
 				// return value
-				if (syntaxTreeNode->method != nullptr && syntaxTreeNode->method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_NULL) {
+				if (syntaxTreeNode->getMethod() != nullptr && syntaxTreeNode->getMethod()->getReturnValueType() != MiniScript::VariableType::TYPE_NULL) {
 					string xml;
 					//
 					xml+=
@@ -1111,7 +1111,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(syntaxTreeNode->method->getReturnValueType())) + "}' " +
+						"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(syntaxTreeNode->getMethod()->getReturnValueType())) + "}' " +
 						"	text='Return' " +
 						"/>";
 
@@ -1126,7 +1126,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				} else
 				// functions have a return value pin by default for now
 				//	TODO: MiniScript user functions need also formal return values a) to find out if we have a return value at all and to know the type
-				if (syntaxTreeNode->method == nullptr) {
+				if (syntaxTreeNode->getMethod() == nullptr) {
 					string xml;
 					//
 					xml+=
@@ -1151,7 +1151,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				}
 				break;
 			}
-		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+		case MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 			break;
 	}
 
@@ -1164,7 +1164,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	auto nextLevelXBestFit = -1;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(getMiniScriptNodeFlattenedId(idMapping, id + "." + to_string(argumentIdx))));
@@ -1177,7 +1177,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	}
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(getMiniScriptNodeFlattenedId(idMapping, id + "." + to_string(argumentIdx))));
@@ -1190,7 +1190,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	// create connections to input nodes
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		string argumentInputNodeId = flattenedId + "_a" + to_string(argumentIdx);
@@ -1208,18 +1208,18 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 
 		//
 		auto pinColor = string("color.pintype_undefined");
-		if (syntaxTreeNode->method != nullptr) {
-			const auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
+		if (syntaxTreeNode->getMethod() != nullptr) {
+			const auto& argumentTypes = syntaxTreeNode->getMethod()->getArgumentTypes();
 			// first guess from argument type
 			if (argumentIdx < argumentTypes.size()) {
-				pinColor = getScriptVariableTypePinColor(argumentTypes[argumentIdx].type);
+				pinColor = getVariableTypePinColor(argumentTypes[argumentIdx].type);
 			}
 			// no color?, try return value
 			if (pinColor == "color.pintype_undefined") {
 				auto node = getNodeById(flattenedId + "." + to_string(argumentIdx));
 				if (node != nullptr) {
-					if (node->returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
-						pinColor = getScriptVariableTypePinColor(node->returnValueType);
+					if (node->returnValueType != MiniScript::VariableType::TYPE_NULL) {
+						pinColor = getVariableTypePinColor(node->returnValueType);
 					}
 				}
 			}
@@ -1247,7 +1247,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	}
 }
 
-void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
+void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::SyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
 	//
 	auto xInitial = x;
 	auto yInitial = y;
@@ -1262,7 +1262,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
 		//
-		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 
 		//
 		auto childWidth = 0;
@@ -1291,7 +1291,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			.id = flattenedId,
 			.type = nodeType,
 			.value = syntaxTreeNode->value.getValueAsString(),
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
+			.returnValueType = MiniScript::VariableType::TYPE_NULL,
 			.left = x,
 			.top = y
 		};
@@ -1358,7 +1358,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			//	note: else has no condition syntax tree
 			if (branches[branchIdx].conditionSyntaxTree != nullptr) {
 				//
-				auto isLiteral = branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+				auto isLiteral = branches[branchIdx].conditionSyntaxTree->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 				auto literal = isLiteral == true?branches[branchIdx].conditionSyntaxTree->value.getValueAsString():string();
 				//
 				string xml =
@@ -1368,7 +1368,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 					"	src='resources/engine/gui/template_visualcode_input.xml' " +
 					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-					"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(nodeName == "forTime"?MiniScript::ScriptVariableType::TYPE_INTEGER:MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+					"	pin_color='{$" + GUIParser::escape(getVariableTypePinColor(nodeName == "forTime"?MiniScript::VariableType::TYPE_INTEGER:MiniScript::VariableType::TYPE_BOOLEAN)) + "}' " +
 					"	text='" + GUIParser::escape(nodeName == "forTime"?"time":"Cond " + to_string(branchIdx)) + "' ";
 				if (isLiteral == true) {
 					xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
@@ -1425,7 +1425,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
 		//
-		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 		//
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(getMiniScriptNodeFlattenedId(idMapping, id + "." + to_string(branchIdx))));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
@@ -1439,7 +1439,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
 		//
-		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 		//
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(getMiniScriptNodeFlattenedId(idMapping, id + "." + to_string(branchIdx))));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
@@ -1452,7 +1452,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		//
 		if (branches[branchIdx].conditionSyntaxTree == nullptr ||
-			(branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL)) continue;
+			(branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL)) continue;
 		//
 		string conditionInputNodeId = flattenedId + "_c" + to_string(branchIdx);
 		string conditionOutputNodeId = getMiniScriptNodeFlattenedId(idMapping, id + "." + to_string(branchIdx));
@@ -1660,12 +1660,12 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 }
 
 
-bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds) {
+bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<MiniScript::SyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds) {
 	//
 	auto syntaxTreeNode = syntaxTree[i];
 	auto syntaxTreeNodeIdx = i;
 	// handle if
-	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+	if (syntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 		(syntaxTreeNode->value.getValueAsString() == "if" ||
 		syntaxTreeNode->value.getValueAsString() == "forCondition" ||
 		syntaxTreeNode->value.getValueAsString() == "forTime")) {
@@ -1682,14 +1682,14 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 		);
 		for (i++; i < syntaxTree.size(); i++) {
 			auto branchSyntaxTreeNode = syntaxTree[i];
-			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+			if (branchSyntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 				(branchSyntaxTreeNode->value.getValueAsString() == "if" ||
 				branchSyntaxTreeNode->value.getValueAsString() == "forCondition" ||
 				branchSyntaxTreeNode->value.getValueAsString() == "forTime")) {
 				stackDepth++;
 				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
 			} else
-			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "elseif") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "elseif") {
 				branches.push_back(
 					{
 						.name = branchSyntaxTreeNode->value.getValueAsString(),
@@ -1698,7 +1698,7 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 					}
 				);
 			} else
-			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "else") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "else") {
 				branches.push_back(
 					{
 						.name = branchSyntaxTreeNode->value.getValueAsString(),
@@ -1707,7 +1707,7 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 					}
 				);
 			} else
-			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "end") {
+			if (branchSyntaxTreeNode->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "end") {
 				//
 				stackDepth--;
 				// done?
@@ -1771,11 +1771,11 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		// 	copy syntax tree
 		auto syntaxTree = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
 		// 	construct syntax tree as vector of pointers to the nodes
-		vector<MiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
+		vector<MiniScript::SyntaxTreeNode*> syntaxTreeNodes;
 		for (auto& syntaxTreeNode: syntaxTree) syntaxTreeNodes.push_back(&syntaxTreeNode);
 		// 	remove end node if we have any
 		if (syntaxTreeNodes.empty() == false &&
-			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->value.getValueAsString() == "end") {
 			syntaxTreeNodes.erase(syntaxTreeNodes.begin() + syntaxTreeNodes.size() - 1);
 		}
@@ -2064,8 +2064,8 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 					auto literalInputValue = literalInput->getController()->getValue().getString();
 					if (argumentsSourceCode.empty() == false) argumentsSourceCode+= ", ";
 					// implicitely literal
-					MiniScript::ScriptVariable value;
-					MiniScript::ScriptStatement scriptStatement(
+					MiniScript::Variable value;
+					MiniScript::Statement scriptStatement(
 						MiniScript::LINE_NONE,
 						MiniScript::STATEMENTIDX_NONE,
 						string(),

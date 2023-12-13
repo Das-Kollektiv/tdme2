@@ -27,32 +27,31 @@ using tdme::utilities::MiniScriptQuaternion;
 using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::Console;
 
-const string MiniScriptTransform::CLASS_NAME = "transform";
 const string MiniScriptTransform::TYPE_NAME = "Transform";
 
 void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::ScriptVariableType>(getType());
-	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("mat4")->getType());
-	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("quaternion")->getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
+	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
+	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Matrix4x4")->getType());
+	const auto TYPE_QUATERNION = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Quaternion")->getType());
+	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	//
 	{
 		//
-		class ScriptMethodTransformAxisZ: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformAxisZ: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformAxisZ(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod({}, TYPE_VECTOR3),
+				MiniScript::Method({}, TYPE_VECTOR3),
 				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.AXIS_Z";
+				return "Transform::AXIS_Z";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(0.0f, 0.0f, 1.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -62,21 +61,21 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformAxisY: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformAxisY: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformAxisY(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod({}, TYPE_VECTOR3),
+				MiniScript::Method({}, TYPE_VECTOR3),
 				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.AXIS_Y";
+				return "Transform::AXIS_Y";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(0.0f, 1.0f, 0.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -86,21 +85,21 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformAxisX: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformAxisX: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformAxisX(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod({}, TYPE_VECTOR3),
+				MiniScript::Method({}, TYPE_VECTOR3),
 				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.AXIS_X";
+				return "Transform::AXIS_X";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(1.0f, 0.0f, 0.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -110,24 +109,24 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransform: public MiniScript::ScriptMethod {
+		class ScriptMethodTransform: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransform(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "translation", .optional = true, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "scale", .optional = true, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "rotationZ", .optional = true, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "rotationZ", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .reference = false, .nullable = false },
 					},
 					TYPE_TRANSFORM
 				),
@@ -135,7 +134,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "transform";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform result;
 				Vector3 vec3Value;
 				float floatValue;
@@ -181,18 +180,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetTranslation: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetTranslation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformGetTranslation(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
@@ -200,9 +199,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.getTranslation";
+				return "Transform::getTranslation";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getTranslation();
@@ -219,29 +218,29 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformSetTranslation: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformSetTranslation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformSetTranslation(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::VariableType::TYPE_NULL
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.setTranslation";
+				return "Transform::setTranslation";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 translation;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
@@ -262,18 +261,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetScale: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetScale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformGetScale(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
@@ -281,9 +280,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.getScale";
+				return "Transform::getScale";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getScale();
@@ -300,29 +299,29 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformSetScale: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformSetScale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformSetScale(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "scale", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::VariableType::TYPE_NULL
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.setScale";
+				return "Transform::setScale";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 scale;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
@@ -342,29 +341,29 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetRotationAxis: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetRotationAxis: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformGetRotationAxis(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.getRotationAxis";
+				return "Transform::getRotationAxis";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
@@ -388,27 +387,27 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetRotationAngle: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetRotationAngle: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_TRANSFORM;
 		public:
 			ScriptMethodTransformGetRotationAngle(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM
+				MiniScript::VariableType TYPE_TRANSFORM
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::VariableType::TYPE_FLOAT
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
 			const string getMethodName() override {
-				return "transform.getRotationAngle";
+				return "Transform::getRotationAngle";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
@@ -429,28 +428,28 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformSetRotationAngle: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformSetRotationAngle: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_TRANSFORM;
 		public:
 			ScriptMethodTransformSetRotationAngle(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM
+				MiniScript::VariableType TYPE_TRANSFORM
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::VariableType::TYPE_NULL
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
 			const string getMethodName() override {
-				return "transform.setRotationAngle";
+				return "Transform::setRotationAngle";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
 				float angle;
@@ -477,18 +476,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformRotate: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformRotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformRotate(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
@@ -497,9 +496,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.rotate";
+				return "Transform::rotate";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 vec3;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
@@ -519,30 +518,30 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformApplyRotation: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformApplyRotation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_VECTOR3;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_VECTOR3;
 		public:
 			ScriptMethodTransformApplyRotation(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_VECTOR3
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_VECTOR3
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::VariableType::TYPE_NULL
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "transform.applyRotation";
+				return "Transform::applyRotation";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 axis;
 				float angle;
@@ -576,26 +575,26 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformInterpolateRotation: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformInterpolateRotation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodTransformInterpolateRotation(MiniScript* miniScript):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "currentAngle", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "targetAngle", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "timePassedSeconds", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "currentAngle", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "targetAngle", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "timePassedSeconds", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .reference = true, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::VariableType::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transform.interpolateRotation";
+				return "Transform::interpolateRotation";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				float currentAngle;
 				float targetAngle;
 				float timePassedSeconds;
@@ -618,18 +617,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetTransformMatrix: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetTransformMatrix: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_MATRIX4x4;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
 			ScriptMethodTransformGetTransformMatrix(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_MATRIX4x4
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_MATRIX4x4
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
@@ -637,9 +636,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
-				return "transform.getTransformMatrix";
+				return "Transform::getTransformMatrix";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getTransformMatrix();
@@ -656,18 +655,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformGetRotationsQuaternion: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformGetRotationsQuaternion: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_QUATERNION;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_QUATERNION;
 		public:
 			ScriptMethodTransformGetRotationsQuaternion(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_QUATERNION
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_QUATERNION
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
@@ -675,9 +674,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_QUATERNION(TYPE_QUATERNION) {}
 			const string getMethodName() override {
-				return "transform.getRotationsQuaternion";
+				return "Transform::getRotationsQuaternion";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getRotationsQuaternion();
@@ -694,18 +693,18 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 	{
 		//
-		class ScriptMethodTransformFromMatrix: public MiniScript::ScriptMethod {
+		class ScriptMethodTransformFromMatrix: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::ScriptVariableType TYPE_TRANSFORM;
-			MiniScript::ScriptVariableType TYPE_MATRIX4x4;
+			MiniScript::VariableType TYPE_TRANSFORM;
+			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
 			ScriptMethodTransformFromMatrix(
 				MiniScript* miniScript,
-				MiniScript::ScriptVariableType TYPE_TRANSFORM,
-				MiniScript::ScriptVariableType TYPE_MATRIX4x4
+				MiniScript::VariableType TYPE_TRANSFORM,
+				MiniScript::VariableType TYPE_MATRIX4x4
 			):
-				MiniScript::ScriptMethod(
+				MiniScript::Method(
 					{
 						{ .type = TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .reference = false, .nullable = false },
 					},
@@ -713,9 +712,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
-				return "transform.fromMatrix";
+				return "Transform::fromMatrix";
 			}
-			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Matrix4x4 transformMatrix;
 				if (MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_TRANSFORM, argumentValues, 0, transformMatrix, false) == true) {
 					Transform result;
@@ -732,7 +731,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	}
 }
 
-void MiniScriptTransform::unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const {
+void MiniScriptTransform::unsetVariableValue(MiniScript::Variable& variable) const {
 	if (variable.getType() != getType()) return;
 	if (variable.getValuePtr() == 0ll) return;
 	//
@@ -740,7 +739,7 @@ void MiniScriptTransform::unsetScriptVariableValue(MiniScript::ScriptVariable& v
 	variable.setValuePtr(0ll);
 }
 
-void MiniScriptTransform::setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const {
+void MiniScriptTransform::setVariableValue(MiniScript::Variable& variable, const void* value) const {
 	if (variable.getType() != getType()) return;
 	//
 	Transform transformValue;
@@ -756,21 +755,21 @@ void MiniScriptTransform::setScriptVariableValue(MiniScript::ScriptVariable& var
 	variable.setValuePtr((uint64_t)(new Transform(transformValue)));
 }
 
-void MiniScriptTransform::copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const {
+void MiniScriptTransform::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	//
 	Transform transformValue;
 	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
 		transformValue = *static_cast<Transform*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::ScriptVariableType>(getType());
+	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_TRANSFORM);
 	*static_cast<Transform*>((void*)to.getValuePtr()) = transformValue;
 }
 
-bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::ScriptVariableType>(getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
+bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
+	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	// transform
 	if (MiniScript::hasType(argumentValues, TYPE_TRANSFORM) == true) {
 		// transform * vec3
@@ -811,27 +810,23 @@ bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Scr
 	return false;
 }
 
-bool MiniScriptTransform::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::div(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::add(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::sub(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
-}
-
-const string& MiniScriptTransform::getClassName() const {
-	return CLASS_NAME;
 }
 
 const string& MiniScriptTransform::getTypeAsString() const {
 	return TYPE_NAME;
 }
 
-const string MiniScriptTransform::getValueAsString(const MiniScript::ScriptVariable& variable) const {
+const string MiniScriptTransform::getValueAsString(const MiniScript::Variable& variable) const {
 	//
 	Transform transformValue;
 	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {

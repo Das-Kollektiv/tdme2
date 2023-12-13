@@ -1,13 +1,14 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <miniscript/miniscript.h>
 #include <miniscript/math/Math.h>
 #include <miniscript/utilities/fwd-miniscript.h>
 
-using std::string;
+using std::string_view;
 using std::to_string;
 using std::vector;
 
@@ -22,7 +23,7 @@ public:
 	class UTF8PositionCache {
 		friend class UTF8CharacterIterator;
 	public:
-		static constexpr int CACHE_ENTRY_SIZE { 100 };
+		static constexpr int64_t CACHE_ENTRY_SIZE { 100 };
 
 		/**
 		 * Remove cache
@@ -36,7 +37,7 @@ public:
 		 * Remove from cache by binary index
 		 * @param idx binary index
 		 */
-		inline void removeCache(int binaryIdx, int characterIdx) {
+		inline void removeCache(int64_t binaryIdx, int64_t characterIdx) {
 			// Console::println("MutableString::removeCache(): binary: " + to_string(binaryIdx) + ", character: " + to_string(characterIdx));
 			// remove succeeding entries from binary cache
 			if (binaryIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
@@ -65,14 +66,14 @@ public:
 	private:
 		struct UTF8PositionCacheEntry {
 			UTF8PositionCacheEntry(
-				int binaryPosition,
-				int characterPosition
+				int64_t binaryPosition,
+				int64_t characterPosition
 			):
 				binaryPosition(binaryPosition),
 				characterPosition(characterPosition)
 			{}
-			int binaryPosition;
-			int characterPosition;
+			int64_t binaryPosition;
+			int64_t characterPosition;
 		};
 		vector<UTF8PositionCacheEntry> binaryCache;
 		vector<UTF8PositionCacheEntry> characterCache;
@@ -83,11 +84,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param stringReference string reference
+	 * @param stringView string view
 	 * @param cache UTF8 position cache or nullptr if UTF8 positions should not be cached
 	 */
-	inline UTF8CharacterIterator(const string& stringReference, UTF8PositionCache* cache = nullptr): stringReference(stringReference), cache(cache) {
-		//
+	inline UTF8CharacterIterator(const string_view& stringView, UTF8PositionCache* cache = nullptr): stringView(stringView), cache(cache) {
 	}
 
 	/**
@@ -101,7 +101,7 @@ public:
 	/**
 	 * @return underlying binary buffer position
 	 */
-	inline int getBinaryPosition() const {
+	inline int64_t getBinaryPosition() const {
 		return binaryPosition;
 	}
 
@@ -109,7 +109,7 @@ public:
 	 * Set underlying binary buffer position
 	 * @param position underlying buffer position
 	 */
-	inline void seekBinaryPosition(int position) const {
+	inline void seekBinaryPosition(int64_t position) const {
 		reset();
 		// seeking in cache first
 		if (position >= UTF8PositionCache::CACHE_ENTRY_SIZE && cache != nullptr && cache->binaryCache.empty() == false) {
@@ -120,14 +120,15 @@ public:
 		}
 		//
 		while (hasNext() == true && binaryPosition < position) {
-			if (hasNext() == true) next();
+			if (hasNext() == false) break;
+			next();
 		}
 	}
 
 	/**
 	 * @return character position
 	 */
- 	inline int getCharacterPosition() const {
+ 	inline int64_t getCharacterPosition() const {
 		return characterPosition;
 	}
 
@@ -135,7 +136,7 @@ public:
 	 * Seek character position
 	 * @param position character position
 	 */
-	inline void seekCharacterPosition(int position) const {
+	inline void seekCharacterPosition(int64_t position) const {
 		reset();
 		// seeking in cache first
 		if (position >= UTF8PositionCache::CACHE_ENTRY_SIZE && cache != nullptr && cache->characterCache.empty() == false) {
@@ -146,7 +147,7 @@ public:
 		}
 		//
 		auto seekCount = position - characterPosition;
-		for (auto i = 0; i < seekCount; i++) {
+		for (int64_t i = 0; i < seekCount; i++) {
 			if (hasNext() == false) break;
 			next();
 		}
@@ -156,16 +157,16 @@ public:
 	 * @return next character available
 	 */
 	inline bool hasNext() const {
-		return binaryPosition < stringReference.size();
+		return binaryPosition < stringView.size();
 	}
 	/**
 	 * @return next character or -1 if an error occurred or no string left
 	 */
 	inline int next() const {
 		// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
-		int l = stringReference.size() - binaryPosition;
+		int64_t l = stringView.size() - binaryPosition;
 		if (l < 1) return -1;
-		unsigned char u0 = stringReference[binaryPosition + 0];
+		unsigned char u0 = stringView[binaryPosition + 0];
 		if (u0 >= 0 && u0 <= 127) {
 			addCacheEntry();
 			binaryPosition++;
@@ -178,7 +179,7 @@ public:
 			characterPosition++;
 			return -1;
 		}
-		unsigned char u1 = stringReference[binaryPosition + 1];
+		unsigned char u1 = stringView[binaryPosition + 1];
 		if (u0 >= 192 && u0 <= 223) {
 			addCacheEntry();
 			binaryPosition+= 2;
@@ -197,7 +198,7 @@ public:
 			characterPosition++;
 			return -1;
 		}
-		unsigned char u2 = stringReference[binaryPosition + 2];
+		unsigned char u2 = stringView[binaryPosition + 2];
 		if (u0 >= 224 && u0 <= 239) {
 			addCacheEntry();
 			binaryPosition+= 3;
@@ -210,7 +211,7 @@ public:
 			characterPosition++;
 			return -1;
 		}
-		unsigned char u3 = stringReference[binaryPosition + 3];
+		unsigned char u3 = stringView[binaryPosition + 3];
 		if (u0 >= 240 && u0 <= 247) {
 			addCacheEntry();
 			binaryPosition+= 4;
@@ -226,9 +227,9 @@ public:
 	}
 
 private:
-	const string& stringReference;
-	mutable int binaryPosition { 0 };
-	mutable int characterPosition { 0 };
+	const string_view stringView;
+	mutable int64_t binaryPosition { 0 };
+	mutable int64_t characterPosition { 0 };
 	mutable UTF8PositionCache* cache;
 
 	/**
