@@ -1,6 +1,5 @@
 #pragma once
 
-#include <openssl/types.h>
 #include <openssl/x509.h>
 
 #include <string>

@@ -227,7 +227,7 @@ void HTTPClient::execute() {
 		//
 		socket->shutdown();
 	} catch (Exception& exception) {
-		socket->shutdown();
+		if (socket != nullptr) socket->shutdown();
 		//
 		Console::println(string("HTTPClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 		// rethrow
