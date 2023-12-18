@@ -23,14 +23,14 @@ Also note the focus on easy integration into other products and easy customizabi
   - very small implementation of a scripting language
   - runs on every CPU, OS, ... due to its simplicity, so its highly portable
   - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
-  - built-in data types: null, boolean, integer, float, string, byte array, array, map and set
+  - built-in data types: null, boolean, integer, float, string, byte array, array, map, set, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform
   - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
   - supports functions and recursion
   - supports inline/lamda functions
   - supports operators by operator to method mapping by a preprocessor run
   - supports loops and conditions
   - supports programming with classes style programming
-    - for built-in datatypes: string, byte array, array, map and set
+    - for built-in datatypes: string, byte array, array, map, set, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform
     - for script classes/objects
     - for custom data types
   - supports event like programming
@@ -178,8 +178,7 @@ A special type of functions are callables. Callables are functions that are used
 Despite the fact that a callable function of a script can be called from another script, 
 they have the limitation that they must not contain MiniScript C++ method calls that require a context function.
 
-Context functions are functions that require a special context. You can ignore this fow now. 
-Default MiniScript does not provide script methods by C++ that require a context. 
+Context functions are functions that require a special context. 
 
 ```
 ...
@@ -1026,6 +1025,25 @@ end
 | <sub>setTranslation($translation: Vector3): Null</sub>                                           |
 
 ## 6.7. Matrix4x4 class
+
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| &nbsp;                                    |
+| <b>STATIC METHODS</b>                     |
+| Create identity 4x4 matrix                                                                       |
+| <sub><b>static</b> Matrix4x4::identity(): Matrix4x4</sub>                                        |
+| Create rotation 4x4 matrix                                                                       |
+| <sub><b>static</b> Matrix4x4::rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>             |
+| Create scale 4x4 matrix                                                                          |
+| <sub><b>static</b> Matrix4x4::scale(...): Matrix4x4</sub>                                        |
+| Create translation 4x4 matrix                                                                    |
+| <sub><b>static</b> Matrix4x4::translate($translation: Vector3): Matrix4x4</sub>                  |
+| &nbsp;                                    |
+| <b>NON STATIC METHODS</b>                 |
+| Compute euler angles from 4x4 matrix                                                             |
+| <sub>computeEulerAngles(): Vector3</sub>                                                         |
+| Create 4x4 matrix inverse                                                                        |
+| <sub>invert(): Matrix4x4</sub>                                                                   |
 
 
 ## 6.8. Matrix3x3 class

@@ -45,7 +45,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				MiniScript::Method({}, TYPE_MATRIX4x4),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
-				return "Matrix4x4.identity";
+				return "Matrix4x4::identity";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				const auto result = Matrix4x4().identity();
@@ -76,7 +76,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "Matrix4x4.translate";
+				return "Matrix4x4::translate";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 translation;
@@ -114,7 +114,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "Matrix4x4.rotate";
+				return "Matrix4x4::rotate";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 axis;
@@ -148,7 +148,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				MiniScript::Method({}, TYPE_MATRIX4x4),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "Matrix4x4.scale";
+				return "Matrix4x4::scale";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3Value;
@@ -193,7 +193,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
-				return "Matrix4x4.invert";
+				return "Matrix4x4::invert";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Matrix4x4 mat4;
@@ -230,7 +230,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				),
 				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
-				return "Matrix4x4.computeEulerAngles";
+				return "Matrix4x4::computeEulerAngles";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Matrix4x4 mat4;
