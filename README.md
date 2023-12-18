@@ -360,7 +360,6 @@
         - pl_mpeg
         - ReactPhysics3D
         - RapidJSON
-        - sha256
         - tinygltf
         - tinyxml
         - V-HACD
