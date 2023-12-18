@@ -816,9 +816,9 @@ end
 | <sub><b>static</b> String::concatenate(...): String</sub>                                        |
 | Create string from byte array                                                                    |
 | <sub><b>static</b> String::fromByteArray($byteArray: ByteArray): String</sub>                    |
-| Not documented                                                                                   |
+| Generate string                                                                                  |
 | <sub><b>static</b> String::generate($what: String[, $count: Integer]): String</sub>              |
-| Not documented                                                                                   |
+| Indent string                                                                                    |
 | <sub><b>static</b> String::indent($src: String, $with: String, $count: Integer): String</sub>    |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
@@ -830,7 +830,7 @@ end
 | <sub>equalsIgnoreCase($other: String): Boolean</sub>                                             |
 | Return first index of specific string in string                                                  |
 | <sub>firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                          |
-| Not documented                                                                                   |
+| Return first index of characters provided within given string in string                          |
 | <sub>firstIndexOfChars($what: String[, $beginIndex: Integer]): Integer</sub>                     |
 | Return index of specific string in string                                                        |
 | <sub>indexOf($what: String[, $beginIndex: Integer]): Integer</sub>                               |
@@ -842,7 +842,7 @@ end
 | <sub>isInteger(): Boolean</sub>                                                                  |
 | Return last index of specific string in string                                                   |
 | <sub>lastIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                           |
-| Not documented                                                                                   |
+| Return last index of characters provided within given string in string                           |
 | <sub>lastIndexOfChars($what: String[, $endIndex: Integer]): Integer</sub>                        |
 | Return string length                                                                             |
 | <sub>length(): Integer</sub>                                                                     |
@@ -870,33 +870,6 @@ end
 | <sub>tokenize($delimiters: String): Array</sub>                                                  |
 | Trim string                                                                                      |
 | <sub>trim(): String</sub>                                                                        |
-
-## 6.2. Byte array class
-
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| &nbsp;                                    |
-| <b>STATIC METHODS</b>                     |
-| Create a byte array                                                                              |
-| <sub><b>static</b> ByteArray(...): ByteArray</sub>                                               |
-| &nbsp;                                    |
-| <b>NON STATIC METHODS</b>                 |
-| Append another byte array to this byte array                                                     |
-| <sub>appendByteArray(&$other: ByteArray): Null</sub>                                             |
-| Clear byte array                                                                                 |
-| <sub>clear(): Null</sub>                                                                         |
-| Extract a byte array from this byte array                                                        |
-| <sub>extractByteArray($index: Integer, $length: Integer): ByteArray</sub>                        |
-| Get byte array entry                                                                             |
-| <sub>get($index: Integer): Integer</sub>                                                         |
-| Get byte array length                                                                            |
-| <sub>length(): Integer</sub>                                                                     |
-| Add entry to byte array                                                                          |
-| <sub>push(...): Null</sub>                                                                       |
-| Remove entry from byte array                                                                     |
-| <sub>remove($index: Integer): Null</sub>                                                         |
-| Set byte array entry                                                                             |
-| <sub>set($index: Integer, $value: Integer): Null</sub>                                           |
 
 ## 6.3. Array class
 
