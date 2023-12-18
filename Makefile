@@ -997,8 +997,8 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
-	src/tdme/tools/cli/createminiscriptcodecompletion-main.cpp \
-	src/tdme/tools/cli/createminiscriptdocumentation-main.cpp \
+	src/tdme/tools/cli/miniscriptcodecompletion-main.cpp \
+	src/tdme/tools/cli/miniscriptdocumentation-main.cpp \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \

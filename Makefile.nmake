@@ -844,8 +844,8 @@ all: \
 	converttotm \
 	copyanimationsetups \
 	createinstaller \
-	createminiscriptcodecompletion \
-	createminiscriptdocumentation \
+	miniscriptcodecompletion \
+	miniscriptdocumentation \
 	createrc \
 	dumpmodel \
 	imageprocessor \
@@ -1172,15 +1172,15 @@ createinstaller:
 	rc $(MSCBIN)\createinstaller.exe.rc
 	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\createinstaller $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp $(MSCBIN)\createinstaller.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-createminiscriptcodecompletion:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptcodecompletion.exe $(MSCBIN)\createminiscriptcodecompletion.exe.rc
-	rc $(MSCBIN)\createminiscriptcodecompletion.exe.rc
-	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\createminiscriptcodecompletion $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptcodecompletion-main.cpp $(MSCBIN)\createminiscriptcodecompletion.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+miniscriptcodecompletion:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptcodecompletion.exe $(MSCBIN)\miniscriptcodecompletion.exe.rc
+	rc $(MSCBIN)\miniscriptcodecompletion.exe.rc
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptcodecompletion $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptcodecompletion-main.cpp $(MSCBIN)\miniscriptcodecompletion.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-createminiscriptdocumentation:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptdocumentation.exe $(MSCBIN)\createminiscriptdocumentation.exe.rc
-	rc $(MSCBIN)\createminiscriptdocumentation.exe.rc
-	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\createminiscriptdocumentation $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptdocumentation-main.cpp $(MSCBIN)\createminiscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+miniscriptdocumentation:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptdocumentation.exe $(MSCBIN)\miniscriptdocumentation.exe.rc
+	rc $(MSCBIN)\miniscriptdocumentation.exe.rc
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptdocumentation $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptdocumentation-main.cpp $(MSCBIN)\miniscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createrc:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createrc.exe $(MSCBIN)\createrc.exe.rc
@@ -1334,8 +1334,8 @@ copy-executables:
 	copy $(MSCBIN)\converttotm.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\copyanimationsetups.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\createinstaller.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\createminiscriptcodecompletion.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\createminiscriptdocumentation.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptcodecompletion.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptdocumentation.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\createrc.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\dumpmodel.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.
