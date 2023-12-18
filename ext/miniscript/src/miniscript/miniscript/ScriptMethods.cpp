@@ -304,4 +304,22 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new MethodScriptGetVariables(miniScript));
 	}
+	{
+		//
+		class MethodScriptIsNative: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodScriptIsNative(MiniScript* miniScript): MiniScript::Method({}, MiniScript::TYPE_BOOLEAN),
+			miniScript(miniScript) {}
+
+			const string getMethodName() override {
+				return "script.isNative";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				returnValue.setValue(miniScript->isNative());
+			}
+		};
+		miniScript->registerMethod(new MethodScriptIsNative(miniScript));
+	}
 }

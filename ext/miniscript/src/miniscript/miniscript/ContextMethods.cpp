@@ -1,11 +1,14 @@
 #include <span>
 
+#include <memory>
+
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/ContextMethods.h>
 #include <miniscript/miniscript/MiniScript.h>
 #include <miniscript/utilities/Console.h>
 
 using std::span;
+using std::unique_ptr;
 
 using miniscript::miniscript::ContextMethods;
 
@@ -147,12 +150,22 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					auto script = make_unique<MiniScript>();
-					script->setContext(miniScript->getContext());
-					script->parseScript(
-						pathName,
-						fileName
-					);
+					unique_ptr<MiniScript> script;
+					if (miniScript->getLibrary() != nullptr) {
+						script = unique_ptr<MiniScript>(
+							miniScript->getLibrary()->loadScript(
+								pathName,
+								fileName
+							)
+						);
+					} else {
+						script = make_unique<MiniScript>();
+						script->setContext(miniScript->getContext());
+						script->parseScript(
+							pathName,
+							fileName
+						);
+					}
 					if (script != nullptr) {
 						// verbose
 						if (verbose == true) Console::println(script->getInformation());

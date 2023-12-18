@@ -82,8 +82,8 @@ int main(int argc, char** argv)
 
 	// run script
 	// EngineMiniScript::registerDataTypes();
-	unique_ptr<MiniScript> script;
 	unique_ptr<Context> context;
+	unique_ptr<MiniScript> script;
 	// if no file given, then read from input stream until Ctrl+D(Unix) or Ctrl+Z(Windows) was hit
 	//	which is the standard behaviour of those kind of CLI apps
 	//	we store the file as temporary one and reuse it for execution
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 		try {
 			if (statementsOnly == true) {
 				scriptCode = StringTools::replace(
-					FileSystem::getContentAsString("resources/templates/cli", "statements.tscript"),
+					FileSystem::getContentAsString("resources/miniscript/templates/cli", "statements.tscript"),
 					"{$statements}",
 					scriptCode
 				);
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 			if (verbose == true) Console::println(script->getInformation());
 			//
 			if (script->isValid() == false) {
-				Console::println("Script not valid. Exiting");
+				Console::println(pathToScript + ": Script not valid. Exiting!");
 			} else {
 				// TODO: we need a MiniScript startup routine
 				Network::initialize();

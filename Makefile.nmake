@@ -703,8 +703,11 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/ContextMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/Context.cpp \
+	ext/miniscript/src/miniscript/miniscript/Documentation.cpp \
 	ext/miniscript/src/miniscript/miniscript/FileSystemMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Generator.cpp \
 	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Library.cpp \
 	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/MathMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/MiniScript.cpp \

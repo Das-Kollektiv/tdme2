@@ -2722,7 +2722,7 @@ void MiniScript::registerMethods() {
 						Method* method { nullptr };
 						if (functionIdx == MiniScript::SCRIPTIDX_NONE) {
 							#if defined(__MINISCRIPT_TRANSPILATION__)
-								method = evaluateMemberAccessArrays[static_cast<int>(functionArguments[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][EVALUATEMEMBERACCESS_MEMBER];
+								method = evaluateMemberAccessArrays[static_cast<int>(arguments[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][EVALUATEMEMBERACCESS_MEMBER];
 							#else
 								method = miniScript->getMethod(className + "::" + member);
 							#endif

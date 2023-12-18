@@ -40,4 +40,12 @@ public:
 	 */
 	static void encode(const vector<uint8_t>& decodedData, string& encodedString);
 
+private:
+	/**
+	 * Hashes data to SHA256 string
+	 * @param data data to hash
+	 * @param size size of data
+	 * @param encodedString encoded string
+	 */
+	static void hash(const uint8_t* data, size_t size, string& encodedString);
 };

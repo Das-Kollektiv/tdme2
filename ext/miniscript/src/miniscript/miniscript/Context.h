@@ -11,15 +11,14 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+using miniscript::miniscript::MiniScript;
+
 /** 
  * Scripts context
  * @author Andreas Drewke
  */
 class miniscript::miniscript::Context
 {
-public:
-	static constexpr bool VERBOSE { false };
-
 private:
 	unordered_map<string, MiniScript*> scriptsById;
 

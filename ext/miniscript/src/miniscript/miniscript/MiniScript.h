@@ -15,6 +15,7 @@
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/fwd-miniscript.h>
 #include <miniscript/miniscript/Context.h>
+#include <miniscript/miniscript/Library.h>
 #include <miniscript/utilities/Character.h>
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Exception.h>
@@ -50,19 +51,13 @@ using _StringTools = miniscript::utilities::StringTools;
 using _Time = miniscript::utilities::Time;
 using _UTF8CharacterIterator = miniscript::utilities::UTF8CharacterIterator;
 using _Context = miniscript::miniscript::Context;
-
-namespace miniscript {
-namespace tools {
-	class TranspilerTool;
-}
-}
+using _Library = miniscript::miniscript::Library;
 
 /**
  * Miniscript
  * @author Andreas Drewke
  */
 class miniscript::miniscript::MiniScript {
-	friend class ::miniscript::tools::TranspilerTool;
 	friend class BaseMethods;
 	friend class JSONMethods;
 	friend class ScriptMethods;
@@ -2459,6 +2454,7 @@ protected:
 
 	bool native;
 	_Context* context { nullptr };
+	_Library* library { nullptr };
 	vector<Script> scripts;
 	string nativeHash;
 	vector<Script> nativeScripts;
@@ -3093,6 +3089,21 @@ public:
 	}
 
 	/**
+	 * @return library
+	 */
+	inline _Library* getLibrary() {
+		return library;
+	}
+
+	/**
+	 * Set library
+	 * @param library library
+	 */
+	inline void setLibrary(_Library* library) {
+		this->library = library;
+	}
+
+	/**
 	 * Returns string representation of given argument indices
 	 * @param argumentIndices argument indices
 	 * @param delimiter delimiter
@@ -3181,6 +3192,13 @@ public:
 	 */
 	inline const string& getNativeHash() {
 		return nativeHash;
+	}
+
+	/**
+	 * @return script path name
+	 */
+	inline const string& getScriptPathName() {
+		return scriptPathName;
 	}
 
 	/**

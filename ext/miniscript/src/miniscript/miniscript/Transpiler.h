@@ -2,25 +2,41 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/MiniScript.h>
 
 using std::string;
-using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using miniscript::miniscript::MiniScript;
 
 /**
- * MiniScript transpiler tool set
+ * MiniScript transpiler
  * @author Andreas Drewke
  */
 class miniscript::miniscript::Transpiler {
 public:
+	/**
+	 * Transpile MiniScript script instance
+	 * @param miniScript MiniScript script instance
+	 * @param transpilationFileName transpilation file name
+	 * @param miniScriptExtensionFileNames MiniScript extension file names
+	 */
+	static void transpile(MiniScript* miniScript, const string& transpilationFileName, const vector<string>& miniScriptExtensionFileNames);
 
+	/**
+	 * Untranspile
+	 * @param scriptFileName script file name
+	 * @param transpilationFileName transpilation file name
+	 */
+	static void untranspile(const string& scriptFileName, const string& transpilationFileName);
+
+private:
 	/**
 	 * Get all classes method names
 	 * @param miniScript MiniScript instance

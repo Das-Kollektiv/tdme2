@@ -11,8 +11,11 @@ namespace miniscript {
 	class ContextMethods;
 	class Context;
 	class CryptographyMethods;
+	class Documentation;
 	class FileSystemMethods;
+	class Generator;
 	class JSONMethods;
+	class Library;
 	class MathMethods;
 	class MapMethods;
 	class NetworkMethods;
