@@ -1,0 +1,7 @@
+{$main-target}: $(OBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc {$main-target-executable} {$main-target-executable}.rc
+	rc {$main-target-executable}.rc
+	cl /D MINISCRIPT_DLL_IMPORT /Fe$(BIN)\{$main-target} /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) {$main-target-source} {$main-target-executable}.res $** /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	del $(OBJ)\{$main-target}-main.obj
+	del {$main-target-executable}.rc
+	del {$main-target-executable}.res

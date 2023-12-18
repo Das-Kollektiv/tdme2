@@ -1,0 +1,180 @@
+# initialize
+on: initialize
+	console.log("-----------------------------")
+	console.log("filesystem-test: Initialize")
+	console.log("-----------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("--------------------------")
+	console.log("filesystem-test: Nothing")
+	console.log("--------------------------")
+	console.log()
+	# compose URI
+	console.log("filesystem.composeURI('filesystem-test', 'test.txt'): " + filesystem.composeURI('filesystem-test', 'test.txt'))
+	# canonical URI
+	console.log("filesystem.getCanonicalURI('filesystem-test/abc/123/../..', 'test.txt'): " + filesystem.getCanonicalURI('filesystem-test/abc/123/../..', 'test.txt'))
+	# get filename
+	console.log("filesystem.getFileName('filesystem-test/abc/123/test.txt'): " + filesystem.getFileName('filesystem-test/abc/123/test.txt'))
+	# get pathname
+	console.log("filesystem.getPathName('filesystem-test/abc/123/test.txt'): " + filesystem.getPathName('filesystem-test/abc/123/test.txt'))
+	# remove file extension
+	console.log("filesystem.removeFileExtension('filesystem-test/abc/123/test.txt'): " + filesystem.removeFileExtension('filesystem-test/abc/123/test.txt'))
+	# is path
+	console.log("filesystem.isPath('.'): " + filesystem.isPath('.'))
+	console.log("filesystem.isPath('filesystem-test'): " + filesystem.isPath('filesystem-test'))
+	# is drive
+	console.log("filesystem.isDrive('filesystem-test'): " + filesystem.isPath('filesystem-test'))
+	console.log("filesystem.isDrive('C:'): " + filesystem.isDrive('C:'))
+	console.log("filesystem.isDrive('C:/'): " + filesystem.isDrive('C:/'))
+	# TODO: backslash
+	# create folder
+	console.log("Creating path: filesystem-test")
+	if (filesystem.createPath("filesystem-test") == false)
+		console.log("Could not create path filesystem-test. Exiting.")
+		script.stop()
+	end
+	# get current working dir
+	$cwd = filesystem.getCurrentWorkingPathName()
+	console.log("filesystem.getCurrentWorkingPathName(): " + filesystem.getCurrentWorkingPathName())
+	# change path
+	console.log("Changing path: filesystem-test")
+	if (filesystem.changePath("filesystem-test") == false)
+		console.log("Could not change path filesystem-test. Exiting.")
+		script.stop()
+	end
+	console.log("filesystem.getCurrentWorkingPathName(): " + filesystem.getCurrentWorkingPathName())
+	# change path
+	if (filesystem.changePath($cwd + "/filesystem-test") == false)
+		console.log("Could not change path filesystem-test. Exiting.")
+		script.stop()
+	end
+	# change path back
+	console.log("Changing path: " + $cwd)
+	if (filesystem.changePath($cwd) == false)
+		console.log("Could not change path " + $cwd + ". Exiting.")
+		script.stop()
+	end
+	# exists
+	console.log("filesystem.exists('filesystem-test'): " + filesystem.exists('filesystem-test'))
+	console.log("filesystem.exists('filesystem-test-123'): " + filesystem.exists('filesystem-test-123')) 
+	# list folder
+	console.log("Listing path: filesystem-test")
+	$files = filesystem.list("filesystem-test")
+	if ($files == null)
+		console.log("Could not list path filesystem-test. Exiting.")
+		script.stop()
+	else
+		$i = 0
+		forCondition ($i < $files->length())
+			console.log("File@" + $i + ": " + $files[$i])
+			++$i
+		end
+	end 
+	# create binary file
+	console.log("Creating file: filesystem-test/test.bin")
+	$binaryContent = ByteArray(1, 2, 3, 4, 5, 6)
+	if (filesystem.setContent("filesystem-test", "test.bin", $binaryContent) == false)
+		console.log("Could not create file filesystem-test/test.bin. Exiting.")
+		script.stop()
+	end
+	# binary file size
+	console.log("Reading file size of filesystem-test/test.bin: " + filesystem.getFileSize("filesystem-test", "test.bin"))
+	# reading file
+	console.log("Reading file: filesystem-test/test.bin")
+	$fileContent = filesystem.getContent("filesystem-test", "test.bin");
+	if ($fileContent == null)
+		console.log("Could not read file filesystem-test/test.bin. Exiting.")
+		script.stop()
+	else
+		console.log("filesystem-test/test.bin: " + $fileContent)
+	end
+	# remove binary file
+	console.log("Removing file: filesystem-test/test.bin")
+	if (filesystem.removeFile("filesystem-test", "test.bin") == false)
+		console.log("Could not remove file filesystem-test/test.bin. Exiting.")
+		script.stop()
+	end
+	# create text file
+	console.log("Creating file: filesystem-test/test.txt")
+	if (filesystem.setContentFromString("filesystem-test", "test.txt", "Arrr. I am a mighty pirate.") == false)
+		console.log("Could not create file filesystem-test/test.txt. Exiting.")
+		script.stop()
+	end
+	# text file size
+	console.log("Reading file size of filesystem-test/test.txt: " + filesystem.getFileSize("filesystem-test", "test.txt"))
+	# reading file
+	console.log("Reading file: filesystem-test/test.txt")
+	$fileContent = filesystem.getContentAsString("filesystem-test", "test.txt");
+	if ($fileContent == null)
+		console.log("Could not read file filesystem-test/test.txt. Exiting.")
+		script.stop()
+	else
+		console.log("filesystem-test/test.txt: " + $fileContent)
+	end
+	# remove text file
+	console.log("Removing file: filesystem-test/test.txt")
+	if (filesystem.removeFile("filesystem-test", "test.txt") == false)
+		console.log("Could not remove file filesystem-test/test.txt. Exiting.")
+		script.stop()
+	end
+	# create lines based text file
+	console.log("Creating file: filesystem-test/test.txt")
+	if (filesystem.setContentFromStringArray("filesystem-test", "test.txt", ["Line 1", "Line 2", "Line 3"]) == false)
+		console.log("Could not create file filesystem-test/test.txt. Exiting.")
+		script.stop()
+	end
+	# lines based file text size
+	console.log("Reading file size of filesystem-test/test.txt: " + filesystem.getFileSize("filesystem-test", "test.txt"))
+	# reading file
+	console.log("Reading file: filesystem-test/test.txt")
+	$fileContent = filesystem.getContentAsStringArray("filesystem-test", "test.txt");
+	if ($fileContent == null)
+		console.log("Could not read file filesystem-test/test.txt. Exiting.")
+		script.stop()
+	else
+		console.log("filesystem-test/test.txt: " + $fileContent)
+	end
+	# rename file and move: they work internally the same
+	if (filesystem.rename("filesystem-test/test.txt", "filesystem-test/test-renamed.txt") == false)
+		console.log("Could not create rename filesystem-test/test.txt to filesystem-test/test-renamed.txt. Exiting.")
+	end 
+	# list folder
+	console.log("Listing path: filesystem-test")
+	$files = filesystem.list("filesystem-test")
+	if ($files == null)
+		console.log("Could not list path filesystem-test. Exiting.")
+		script.stop()
+	else
+		$i = 0
+		forCondition ($i < $files->length())
+			console.log("File@" + $i + ": " + $files[$i])
+			++$i
+		end
+	end 
+	# remove file
+	console.log("Removing file: filesystem-test/test-renamed.txt")
+	if (filesystem.removeFile("filesystem-test", "test-renamed.txt") == false)
+		console.log("Could not remove file filesystem-test/test-renamed.txt. Exiting.")
+		script.stop()
+	end
+	# remove folder
+	console.log("Removing path: filesystem-test")
+	if (filesystem.removePath("filesystem-test", false) == false)
+		console.log("Could not remove  path filesystem-test. Exiting.")
+		script.stop()
+	end
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("------------------------")
+	console.log("filesystem-test: Error")
+	console.log("-----------------------")
+	console.log("An error occurred")
+	script.stop()
+end

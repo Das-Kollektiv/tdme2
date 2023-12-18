@@ -1,0 +1,62 @@
+# initialize
+on: initialize
+	console.log("----------------------------")
+	console.log("functions-test: Initialize")
+	console.log("----------------------------")
+	console.log()
+end
+
+# user script function of recursive factorial computation 
+function: factorial($value)
+	if ($value == 0) 
+		return(1)
+	end
+	return($value * factorial($value - 1))
+end 
+
+# user script function to just display some hello world
+function: helloWorldFunction()
+	console.log("helloWorldFunction(): Hello world")
+end
+
+# user script function to test assign back in user functions
+function: assignTest($a, &$b, &$c)
+	$a = "a"
+	$b = "b"
+	$c = "c"
+end
+
+# user script function to test assign back in user functions
+function: globalVariableTest()
+	console.log("globalVariableTest(): $GLOBAL.globalTest = " + $GLOBAL.globalTest)
+	$GLOBAL.globalTest = "Been there, done that, got the t-shirt"
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("-------------------------")
+	console.log("functions-test: Nothing")
+	console.log("-------------------------")
+	helloWorldFunction()
+	console.log("factorial(5) = " + factorial(5))
+	$a = "0"
+	$b = "1"
+	$c = "2"
+	console.log("assignTest(): pre: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	assignTest($a, $b, $c)
+	console.log("assignTest(): post: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	$globalTest = "Global Test Variable"
+	console.log("globalVariableTest(): pre: $globalTest = " + $globalTest)
+	globalVariableTest()
+	console.log("globalVariableTest(): post: $globalTest = " + $globalTest)
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("----------------------")
+	console.log("functions-test: Error")
+	console.log("----------------------")
+	console.log("An error occurred")
+	script.stop()
+end

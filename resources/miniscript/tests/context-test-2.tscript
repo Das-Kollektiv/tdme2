@@ -1,0 +1,31 @@
+# initialize
+on: initialize
+	console.log("--------------------------")
+	console.log("context-test: Initialize")
+	console.log("--------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("-----------------------")
+	console.log("context-test: Nothing")
+	console.log("-----------------------")
+	console.log()
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("---------------------")
+	console.log("context-test: Error")
+	console.log("---------------------")
+	console.log("An error occurred")
+	script.stop()
+end
+
+callable: hello2($name)
+	console.log("context-test-2 runs natively: " + script.isNative())
+	console.log("Hello from context-test-2 " + $name)
+end

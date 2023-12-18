@@ -1,0 +1,101 @@
+#
+BIN = scriptlibrary-bin
+LIB_DIR = scriptlibrary-lib
+OBJ := scriptlibrary-obj
+
+# determine platform
+OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
+OS := $(shell sh -c 'uname -s 2>/dev/null')
+
+#
+NAME = scriptlibrary
+ifeq ($(OS), Darwin)
+	LIB_EXT = .dylib
+else ifeq ($(OSSHORT), Msys)
+	LIB_EXT = .dll
+else
+	LIB_EXT = .so
+endif
+LIB := lib$(NAME)$(LIB_EXT)
+
+#
+CPPVERSION = -std=c++2a
+OFLAGS = -O3
+EXTRAFLAGS = 
+INCLUDES = -Isrc -Iext -I.
+
+LIBS_LDFLAGS := -Llib -lminiscript
+
+# set platform specific flags
+ifeq ($(OS), Darwin)
+	# MacOSX
+else ifeq ($(OS), FreeBSD)
+	# FreeBSD
+	INCLUDES := $(INCLUDES) -I/usr/local/include
+else ifeq ($(OS), NetBSD)
+	# NetBSD
+	INCLUDES := $(INCLUDES) -I/usr/pkg/include
+else ifeq ($(OS), OpenBSD)
+	# OpenBSD
+	INCLUDES := $(INCLUDES) -I/usr/local/include
+else ifeq ($(OS), Haiku)
+	# Haiku
+	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
+else ifeq ($(OS), Linux)
+	# Linux
+else
+	# Windows/MINGW
+	INCLUDES := $(INCLUDES) -I/mingw64/include
+endif
+
+#
+LIBS_LDFLAGS := $(LIBS_LDFLAGS)
+
+#
+CPPFLAGS := $(INCLUDES)
+CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG -fPIC
+CXXFLAGS := $(CFLAGS) $(CPPVERSION)
+
+SRC = {$source-folder}
+SRCS = {$source-files}
+
+OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
+
+define cpp-command
+@mkdir -p $(dir $@);
+@echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+endef
+
+$(LIB_DIR)/$(LIB): $(OBJS)
+
+$(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command)
+
+$(LIB_DIR)/$(LIB): $(OBJS)
+	@echo Creating shared library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+ifeq ($(OSSHORT), Msys)
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(LIBS_LDFLAGS) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	@rm $@.rc
+	@rm $@.rc.o
+else
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS)
+endif
+	@echo Done $@
+
+lib: $(LIB_DIR)/$(LIB)
+
+all: lib
+
+clean:
+	rm -rf obj obj-debug $(BIN) $(OBJ)
+
+print-opts:
+	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"
+	
+.PHONY: all mains clean print-opts
+
+-include $(OBJS:%.o=%.d)

@@ -1,0 +1,28 @@
+# initialize
+on: initialize
+	console.log("------------------------------")
+	console.log("application-test: Initialize")
+	console.log("------------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("---------------------------")
+	console.log("application-test: Nothing")
+	console.log("---------------------------")
+	console.log()
+	#
+	console.log("application.execute('ls'): " + application.execute('ls'))
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("-------------------------")
+	console.log("application-test: Error")
+	console.log("-------------------------")
+	console.log("An error occurred")
+	script.stop()
+end

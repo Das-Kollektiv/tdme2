@@ -1,0 +1,46 @@
+# initialize
+on: initialize
+	console.log("--------------------------")
+	console.log("network-test: Initialize")
+	console.log("--------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("-----------------------")
+	console.log("network-test: Nothing")
+	console.log("-----------------------")
+	console.log()
+	#
+	console.log("Fetch drewke.net/tdme2/ via HTTP")
+	$result = network.httpclient.get("http://drewke.net/tdme2/")
+	if ($result == null)
+		console.log("Failed to do HTTP GET request: http://drewke.net/tdme2/")
+	else
+		console.log("HTTP response status: " + $result.status)
+		console.log("HTTP headers: " + $result.headers)
+		console.log("HTTP response: " + $result.response)
+	end
+	#
+	console.log("Fetch drewke.net/tdme2/ via HTTPS")
+	$result = network.httpclient.get("https://drewke.net/tdme2/")
+	if ($result == null)
+		console.log("Failed to do HTTP GET request: https://drewke.net/tdme2/")
+	else
+		console.log("HTTP response status: " + $result.status)
+		console.log("HTTP headers: " + $result.headers)
+		console.log("HTTP response: " + $result.response)
+	end
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("---------------------")
+	console.log("network-test: Error")
+	console.log("---------------------")
+	console.log("An error occurred")
+	script.stop()
+end

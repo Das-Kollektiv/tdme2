@@ -1,0 +1,32 @@
+#include <cstdlib>
+#include <string>
+
+#include <ext/miniscript/src/miniscript/miniscript/Transpiler.h>
+#include <tdme/engine/Version.h>
+#include <tdme/utilities/Console.h>
+
+using std::exit;
+using std::string;
+
+using miniscript::miniscript::Transpiler;
+using tdme::engine::Version;
+using tdme::utilities::Console;
+
+int main(int argc, char** argv)
+{
+	Console::println(string("miniscriptuntranspiler ") + Version::getVersion());
+	Console::println(Version::getCopyright());
+	Console::println();
+
+	//
+	if (argc < 3) {
+		Console::println("Usage: miniscriptuntranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file");
+		exit(EXIT_FAILURE);
+	}
+
+	//
+	Transpiler::untranspile(argv[1], argv[2]);
+
+	//
+	exit(EXIT_SUCCESS);
+}

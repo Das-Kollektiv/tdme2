@@ -1,0 +1,39 @@
+# initialize
+on: initialize
+	console.log("----------------------------")
+	console.log("constants-test: Initialize")
+	console.log("----------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("-------------------------")
+	console.log("constants-test: Nothing")
+	console.log("-------------------------")
+	console.log()
+	# setting some constants
+	setConstant("$ARRAY", [1,2,3,4])
+	setConstant("$MAP", {a: 1, b: 2, c: 3, d: 4})
+	setConstant("$PRIMITIVE", 1234)
+	# trying to overwrite constants
+	# which should have no effect, but a warning
+	$PRIMITIVE = 2345
+	$ARRAY = [1,2,3,4]
+	$ARRAY[0] = 5
+	$MAP = {a: 1, b: 2, c: 3, d: 4}
+	$MAP.a = 5
+	# printing original constants
+	console.log(script.getVariables())
+	# done
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("-----------------------")
+	console.log("constants-test: Error")
+	console.log("-----------------------")
+	console.log("An error occurred")
+	script.stop()
+end
