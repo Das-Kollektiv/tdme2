@@ -104,7 +104,7 @@ int TextTools::count(GUIStyledTextNode* textNode, const string& findString, bool
 bool TextTools::replace(GUIStyledTextNode* textNode, const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index) {
 	auto success = false;
 	auto findStringLowerCase = matchCase == false?StringTools::toLowerCase(findString):findString;
-	auto findStringLength = StringTools::getUtf8Length(findString);
+	auto findStringLength = StringTools::getUTF8Length(findString);
 	auto textMutableString = textNode->getText();
 	auto textLowerCase = matchCase == false?StringTools::toLowerCase(textMutableString.getString()):textMutableString.getString();
 	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
@@ -159,7 +159,7 @@ bool TextTools::replace(GUIStyledTextNode* textNode, const string& findString, c
 bool TextTools::replaceAll(GUIStyledTextNode* textNode, const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection) {
 	auto success = false;
 	auto findStringLowerCase = matchCase == false?StringTools::toLowerCase(findString):findString;
-	auto findStringLength = StringTools::getUtf8Length(findString);
+	auto findStringLength = StringTools::getUTF8Length(findString);
 	auto textMutableString = textNode->getText();
 	auto textLowerCase = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
 	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());

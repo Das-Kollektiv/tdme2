@@ -519,6 +519,8 @@ SRCS = \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
 	src/tdme/utilities/TextureAtlas.cpp \
+	src/tdme/utilities/UTF8StringTokenizer.cpp \
+	src/tdme/utilities/UTF8StringTools.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
 	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
@@ -593,11 +595,6 @@ EXT_VORBIS_SRCS = \
 EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c
-
-# workaround: ext-sha256.cpp was sha256.cpp, but ext/miniscript also comes with SHA256.cpp,
-#	which collides on Windows as we dont have subfolders for ext objects
-EXT_SHA256_SRCS = \
-    ext/sha256/ext-sha256.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
@@ -750,7 +747,6 @@ EXT_SRCS = \
 	$(EXT_LIBPNG_SRCS) \
 	$(EXT_VORBIS_SRCS) \
 	$(EXT_OGG_SRCS) \
-	$(EXT_SHA256_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS) \
 	$(EXT_CPPSPLINE_SRCS) \
 	$(EXT_BC7_SRCS) \

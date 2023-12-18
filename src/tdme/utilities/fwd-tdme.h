@@ -44,5 +44,7 @@ namespace utilities {
 	class Time;
 	class Terrain;
 	class UTF8CharacterIterator;
+	class UTF8StringTokenizer;
+	class UTF8StringTools;
 }  // namespace utilities
 }  // namespace tdme

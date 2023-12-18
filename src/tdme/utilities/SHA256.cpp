@@ -1,41 +1,36 @@
+#include <openssl/sha.h>
+
 #include <string>
 #include <vector>
-
 #include <cstring>
 
 #include <tdme/tdme.h>
-#include <ext/sha256/sha256.h>
 #include <tdme/utilities/SHA256.h>
+
+using tdme::utilities::SHA256;
 
 using std::string;
 using std::vector;
 
-void tdme::utilities::SHA256::encode(const string& decodedString, string& encodedString) {
-	unsigned char digest[::SHA256::DIGEST_SIZE];
-	memset(digest, 0, ::SHA256::DIGEST_SIZE);
-
-	auto ctx = ::SHA256();
-	ctx.init();
-	ctx.update((const uint8_t*)decodedString.c_str(), decodedString.size());
-	ctx.final(digest);
-
-	char buf[2 * ::SHA256::DIGEST_SIZE + 1];
-	buf[2 * ::SHA256::DIGEST_SIZE] = 0;
-	for (int i = 0; i < ::SHA256::DIGEST_SIZE; i++) sprintf(buf + i * 2, "%02x", digest[i]);
-	encodedString = string(buf);
+void SHA256::encode(const string& decodedString, string& encodedString) {
+	hash((const uint8_t*)decodedString.data(), decodedString.size(), encodedString);
 }
 
-void tdme::utilities::SHA256::encode(const vector<uint8_t>& decodedData, string& encodedString) {
-	unsigned char digest[::SHA256::DIGEST_SIZE];
-	memset(digest, 0, ::SHA256::DIGEST_SIZE);
+void SHA256::encode(const vector<uint8_t>& decodedData, string& encodedString) {
+	hash(decodedData.data(), decodedData.size(), encodedString);
+}
 
-	auto ctx = ::SHA256();
-	ctx.init();
-	ctx.update((const uint8_t*)decodedData.data(), decodedData.size());
-	ctx.final(digest);
-
-	char buf[2 * ::SHA256::DIGEST_SIZE + 1];
-	buf[2 * ::SHA256::DIGEST_SIZE] = 0;
-	for (int i = 0; i < ::SHA256::DIGEST_SIZE; i++) sprintf(buf + i * 2, "%02x", digest[i]);
-	encodedString = string(buf);
+inline void SHA256::hash(const uint8_t* data, size_t size, string& encodedString) {
+	// see: https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c
+	// check this later: https://stackoverflow.com/questions/34289094/alternative-for-calculating-sha256-to-using-deprecated-openssl-code
+	unsigned char hash[SHA256_DIGEST_LENGTH];
+	SHA256_CTX sha256;
+	SHA256_Init(&sha256);
+	SHA256_Update(&sha256, data, size);
+	SHA256_Final(hash, &sha256);
+	char outputBuffer[SHA256_DIGEST_LENGTH * 2];
+	for (int64_t i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+		sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+	}
+	encodedString = string(outputBuffer, SHA256_DIGEST_LENGTH * 2);
 }

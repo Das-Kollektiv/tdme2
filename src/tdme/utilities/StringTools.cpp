@@ -7,6 +7,7 @@
 #include <string_view>
 
 #include <tdme/tdme.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/StringTokenizer.h>
 
 using std::find_if;
@@ -21,16 +22,18 @@ using std::tolower;
 using std::toupper;
 using std::transform;
 
-using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
-const string StringTools::replace(const string& src, const char what, const char by, int beginIndex) {
+using tdme::utilities::Character;
+using tdme::utilities::StringTokenizer;
+
+const string StringTools::replace(const string& src, const char what, const char by, int64_t beginIndex) {
 	string result = src;
 	std::replace(result.begin() + beginIndex, result.end(), what, by);
 	return result;
 }
 
-const string StringTools::replace(const string& src, const string& what, const string& by, int beginIndex) {
+const string StringTools::replace(const string& src, const string& what, const string& by, int64_t beginIndex) {
 	string result = src;
 	if (what.empty()) return result;
 	while ((beginIndex = result.find(what, beginIndex)) != std::string::npos) {
@@ -74,12 +77,12 @@ const string StringTools::trim(const string& src) {
 }
 
 const string_view StringTools::viewTrim(const string_view& src) {
-	auto start = 0;
-	for (auto i = 0; i < src.size(); i++) {
+	int64_t start = 0;
+	for (int64_t i = 0; i < src.size(); i++) {
 		if (isspace(src[i]) != 0) start++; else break;
 	}
-	auto end = 0;
-	for (int i = src.size() - 1; i >= 0; i--) {
+	int64_t end = 0;
+	for (int64_t i = src.size() - 1; i >= 0; i--) {
 		if (isspace(src[i]) != 0) end++; else break;
 	}
 	return string_view(&src[start], src.size() - start - end);
@@ -99,7 +102,7 @@ const string StringTools::toUpperCase(const string& src) {
 
 bool StringTools::regexMatch(const string& src, const string& pattern) {
 	// TODO: return found groups
-	return regex_match(src, regex(pattern));
+	return regex_match(src, regex(pattern, std::regex::ECMAScript));
 }
 
 bool StringTools::regexSearch(const string& src, const string& pattern) {
@@ -115,4 +118,24 @@ const vector<string> StringTools::tokenize(const string& str, const string& deli
 	StringTokenizer t;
 	t.tokenize(str, delimiters, emptyTokens);
 	return t.getTokens();
+}
+
+int64_t StringTools::getUTF8Length(const string& str) {
+	UTF8CharacterIterator u8It(str);
+	u8It.seekCharacterPosition(4611686018427387903); // 2 ^ 62 - 1
+	return u8It.getCharacterPosition();
+}
+
+const string StringTools::getUTF8CharAt(const string& str, int64_t index) {
+	// utf8 character iterator
+	UTF8CharacterIterator u8It(str);
+	u8It.seekCharacterPosition(index);
+	//
+	return u8It.hasNext() == true?Character::toString(u8It.next()):string();
+}
+
+int64_t StringTools::getUTF8BinaryIndex(const string& str, int64_t charIdx) {
+	UTF8CharacterIterator u8It(str);
+	u8It.seekCharacterPosition(charIdx);
+	return u8It.getBinaryPosition();
 }

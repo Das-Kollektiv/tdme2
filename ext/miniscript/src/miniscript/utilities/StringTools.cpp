@@ -131,7 +131,7 @@ const string StringTools::getUTF8CharAt(const string& str, int64_t index) {
 	UTF8CharacterIterator u8It(str);
 	u8It.seekCharacterPosition(index);
 	//
-	return u8It.hasNext() == true?::miniscript::utilities::Character::toString(u8It.next()):string();
+	return u8It.hasNext() == true?::Character::toString(u8It.next()):string();
 }
 
 int64_t StringTools::getUTF8BinaryIndex(const string& str, int64_t charIdx) {

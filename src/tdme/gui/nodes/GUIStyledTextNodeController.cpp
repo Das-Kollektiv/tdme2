@@ -1171,7 +1171,7 @@ void GUIStyledTextNodeController::redo() {
 	switch (historyEntry.type) {
 		case HistoryEntry::TYPE_INSERT:
 			{
-				auto dataUtf8Length = StringTools::getUtf8Length(historyEntry.data);
+				auto dataUtf8Length = StringTools::getUTF8Length(historyEntry.data);
 				index = historyEntry.idx;
 				selectionIndex = -1;
 				styledTextNode->insertText(index, historyEntry.data);
@@ -1183,7 +1183,7 @@ void GUIStyledTextNodeController::redo() {
 			{
 				index = historyEntry.idx;
 				selectionIndex = -1;
-				auto dataUtf8Length = StringTools::getUtf8Length(historyEntry.data);
+				auto dataUtf8Length = StringTools::getUTF8Length(historyEntry.data);
 				styledTextNode->removeText(index, dataUtf8Length);
 				forwardRemoveText(index, dataUtf8Length);
 			}
@@ -1226,14 +1226,14 @@ void GUIStyledTextNodeController::undo() {
 			{
 				index = historyEntry.idx;
 				selectionIndex = -1;
-				auto dataUtf8Length = StringTools::getUtf8Length(historyEntry.data);
+				auto dataUtf8Length = StringTools::getUTF8Length(historyEntry.data);
 				styledTextNode->removeText(index, dataUtf8Length);
 				forwardRemoveText(index, dataUtf8Length);
 			}
 			break;
 		case HistoryEntry::TYPE_DELETE:
 			{
-				auto dataUtf8Length = StringTools::getUtf8Length(historyEntry.data);
+				auto dataUtf8Length = StringTools::getUTF8Length(historyEntry.data);
 				index = historyEntry.idx;
 				selectionIndex = -1;
 				styledTextNode->insertText(index, historyEntry.data);
@@ -1289,7 +1289,7 @@ void GUIStyledTextNodeController::paste() {
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	auto maxLength = 0;
 	auto clipboardContent = Application::getApplication()->getClipboardContent();
-	auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
+	auto clipboardContentLength = StringTools::getUTF8Length(clipboardContent);
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
 			storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1353,7 +1353,7 @@ void GUIStyledTextNodeController::replace(const string& by, int index, int count
 	setTypingHistoryEntryIdx();
 	styledTextNode->insertText(index, by);
 	typedChars = true;
-	setIndex(index + StringTools::getUtf8Length(by));
+	setIndex(index + StringTools::getUTF8Length(by));
 	storeTypingHistoryEntry();
 	// unset history typing index
 	unsetTypingHistoryEntryIdx();

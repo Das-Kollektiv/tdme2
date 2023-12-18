@@ -5,6 +5,7 @@
 #include <string_view>
 
 #include <miniscript/miniscript.h>
+#include <miniscript/math/Math.h>
 #include <miniscript/utilities/Character.h>
 #include <miniscript/utilities/UTF8StringTokenizer.h>
 #include <miniscript/utilities/UTF8CharacterIterator.h>
@@ -17,6 +18,7 @@ using std::string_view;
 
 using miniscript::utilities::UTF8StringTools;
 
+using miniscript::math::Math;
 using miniscript::utilities::Character;
 using miniscript::utilities::UTF8StringTokenizer;
 using miniscript::utilities::UTF8CharacterIterator;
@@ -32,7 +34,7 @@ const string UTF8StringTools::replace(
 	//
 	string result = str;
 	if (what.empty()) return result;
-	while ((binaryBeginIndex = result.find(what, binaryBeginIndex)) != std::string::npos) {
+	while ((binaryBeginIndex = result.find(what, binaryBeginIndex)) != string::npos) {
 		result.replace(binaryBeginIndex, what.length(), by);
 		binaryBeginIndex += by.length();
 	}
@@ -96,7 +98,7 @@ int64_t UTF8StringTools::firstIndexOfChars(const string& str, const string& what
 	while (whatU8It.hasNext() == true) {
 		auto whatChar = Character::toString(whatU8It.next());
 		auto whatIndex = UTF8StringTools::indexOf(str, whatChar, beginIndex, strCache);
-		if (whatIndex != string::npos) index = index == string::npos?whatIndex:(::miniscript::math::Math::min(index, whatIndex));
+		if (whatIndex != string::npos) index = index == string::npos?whatIndex:(Math::min(index, whatIndex));
 	}
 	//
 	if (index == string::npos) {
@@ -120,7 +122,7 @@ int64_t UTF8StringTools::lastIndexOfChars(const string& str, const string& what,
 			auto whatIndex = UTF8StringTools::indexOf(str, whatChar, currentIndex, strCache);
 			if (whatIndex != string::npos) {
 				hit = true;
-				index = ::miniscript::math::Math::max(index, whatIndex);
+				index = Math::max(index, whatIndex);
 			}
 			//
 			currentIndex++;

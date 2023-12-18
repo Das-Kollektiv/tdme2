@@ -184,7 +184,6 @@ LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
 REACTPHYSICS3D = reactphysics3d
-SHA256 = sha256
 SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
@@ -654,6 +653,8 @@ SRCS = \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
 	src/tdme/utilities/TextureAtlas.cpp \
+	src/tdme/utilities/UTF8StringTokenizer.cpp \
+	src/tdme/utilities/UTF8StringTools.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
 	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
@@ -725,11 +726,6 @@ EXT_VORBIS_SRCS = \
 EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c
-
-# workaround: ext-sha256.cpp was sha256.cpp, but ext/miniscript also comes with sha256.cpp,
-#	which collides on Windows as we dont have subfolders for ext objects
-EXT_SHA256_SRCS = \
-	ext/sha256/ext-sha256.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
@@ -1027,7 +1023,6 @@ EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
-EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
@@ -1059,7 +1054,7 @@ endef
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 
@@ -1089,9 +1084,6 @@ $(EXT_VORBIS_OBJS):$(OBJ)/%.o: ext/$(VORBIS)/%.c | print-opts
 
 $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 	$(c-command)
-
-$(EXT_SHA256_OBJS):$(OBJ)/%.o: ext/$(SHA256)/%.cpp | print-opts
-	$(cpp-command)
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command)

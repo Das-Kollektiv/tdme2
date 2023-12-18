@@ -422,7 +422,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (keyControlV == true) {
 			if (disabled == false) {
 				auto clipboardContent = Application::getApplication()->getClipboardContent();
-				auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
+				auto clipboardContentLength = StringTools::getUTF8Length(clipboardContent);
 				if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 					if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() - Math::abs(index - selectionIndex) + clipboardContentLength < textInputNode->getMaxLength()) {
 						textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));

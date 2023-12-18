@@ -1,15 +1,15 @@
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 
-#include <string.h>
+#include <openssl/sha.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
 
-#include <ext/sha256/sha256.h>
 #include <ext/zlib/zlib.h>
 
 #include <tdme/tdme.h>
@@ -445,24 +445,25 @@ const string ArchiveFileSystem::computeSHA256Hash() {
 	auto bytesTotal = ifs.tellg();
 	ifs.seekg(0, ios::beg);
 
+	//
+	unsigned char hash[SHA256_DIGEST_LENGTH];
+	SHA256_CTX sha256;
+	SHA256_Init(&sha256);
+	//
 	uint8_t input[16384];
-	unsigned char digest[SHA256::DIGEST_SIZE];
-	memset(digest, 0, SHA256::DIGEST_SIZE);
-
-	auto ctx = SHA256();
-	ctx.init();
 	int64_t bytesRead = 0LL;
 	while (bytesRead < bytesTotal) {
 		auto bytesToRead = Math::min(static_cast<int64_t>(bytesTotal) - bytesRead, sizeof(input));
 		ifs.read((char*)input, bytesToRead);
-		ctx.update((const uint8_t*)input, bytesToRead);
+		SHA256_Update(&sha256, (const uint8_t*)input, bytesToRead);
 		bytesRead+= bytesToRead;
 	}
-	ctx.final(digest);
-
-	char buf[2 * SHA256::DIGEST_SIZE + 1];
-	buf[2 * SHA256::DIGEST_SIZE] = 0;
-	for (int i = 0; i < SHA256::DIGEST_SIZE; i++) sprintf(buf + i * 2, "%02x", digest[i]);
-	return std::string(buf);
+	SHA256_Final(hash, &sha256);
+	//
+	char outputBuffer[SHA256_DIGEST_LENGTH * 2];
+	for (int64_t i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+		sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+	}
+	return string(outputBuffer, SHA256_DIGEST_LENGTH * 2);
 }
 
