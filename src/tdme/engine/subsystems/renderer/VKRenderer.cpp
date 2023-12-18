@@ -1009,7 +1009,7 @@ void VKRenderer::initialize()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	// create VK shader cache folder
+	// create VK shader cache path
 	try {
 		if (FileSystem::getInstance()->exists("shader/vk") == false) {
 			FileSystem::getInstance()->createPath("shader/vk");

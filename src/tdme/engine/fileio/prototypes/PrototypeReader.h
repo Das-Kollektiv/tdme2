@@ -83,8 +83,8 @@ public:
 
 	/**
 	 * Get resource path name
-	 * @param pathName path name within a TDME2 resource folder where parent resource was loaded from
-	 * @param fileName file name containing a path and file in a TDME2 resource folder
+	 * @param pathName path name within a TDME2 resource path where parent resource was loaded from
+	 * @param fileName file name containing a path and file in a TDME2 resource path
 	 * @return model path name
 	 */
 	static const string getResourcePathName(const string& pathName, const string& fileName);

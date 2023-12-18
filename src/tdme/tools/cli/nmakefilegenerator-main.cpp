@@ -24,7 +24,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& mainSourceFiles) {
+void scanPath(const string& path, vector<string>& sourceFiles, vector<string>& mainSourceFiles) {
 	class SourceFilesFilter : public virtual FileNameFilter {
 		public:
 			virtual ~SourceFilesFilter() {}
@@ -45,16 +45,16 @@ void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& 
 	SourceFilesFilter sourceFilesFilter;
 	vector<string> files;
 
-	FileSystem::getInstance()->list(folder, files, &sourceFilesFilter);
+	FileSystem::getInstance()->list(path, files, &sourceFilesFilter);
 
 	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, "-main.cpp") == true) {
-			mainSourceFiles.push_back(folder + "/" + fileName);
+			mainSourceFiles.push_back(path + "/" + fileName);
 		} else
 		if (StringTools::endsWith(fileName, ".cpp") == true) {
-			sourceFiles.push_back(folder + "/" + fileName);
+			sourceFiles.push_back(path + "/" + fileName);
 		} else {
-			scanDir(folder + "/" + fileName, sourceFiles, mainSourceFiles);
+			scanPath(path + "/" + fileName, sourceFiles, mainSourceFiles);
 		}
 	}
 }
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 		Console::println("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
-		scanDir(pathToSource, sourceFiles, mainSourceFiles);
+		scanPath(pathToSource, sourceFiles, mainSourceFiles);
 
 		//
 		string sourceFilesVariable = "\\\n";
@@ -93,12 +93,12 @@ int main(int argc, char** argv)
 		Console::println("Generating Makefile");
 
 		//
-		auto executableFolder = StringTools::replace(argv[0], "\\", "/");
-		auto tdme2Folder = StringTools::substring(executableFolder, 0, StringTools::toLowerCase(executableFolder).rfind("/tdme2/") + string("/tdme2/").length());
+		auto executablePath = StringTools::replace(argv[0], "\\", "/");
+		auto tdme2Path = StringTools::substring(executablePath, 0, StringTools::toLowerCase(executablePath).rfind("/tdme2/") + string("/tdme2/").length());
 
 		//
-		auto makefileSource = FileSystem::getInstance()->getContentAsString(tdme2Folder + "/resources/engine/templates/makefiles", "Makefile.nmake");
-		auto makefileMainSourceTemplate = FileSystem::getInstance()->getContentAsString(tdme2Folder + "/resources/engine/templates/makefiles", "Makefile.nmake.main");
+		auto makefileSource = FileSystem::getInstance()->getContentAsString(tdme2Path + "/resources/engine/templates/makefiles", "Makefile.nmake");
+		auto makefileMainSourceTemplate = FileSystem::getInstance()->getContentAsString(tdme2Path + "/resources/engine/templates/makefiles", "Makefile.nmake.main");
 		makefileSource = StringTools::replace(makefileSource, "{$source-files}", sourceFilesVariable);
 		makefileSource = StringTools::replace(makefileSource, "{$main-targets}", mainTargets);
 		makefileSource+= "\n";

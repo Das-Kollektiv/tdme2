@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	Console::println("Deleting shader/vk folder");
+	Console::println("Deleting shader/vk path");
 	try {
 		FileSystem::getInstance()->removePath("shader/vk", true);
 	} catch (Exception& exception) {

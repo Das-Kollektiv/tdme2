@@ -36,7 +36,7 @@ using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
 
-void scanDir(const string& folder, vector<string>& totalFiles) {
+void scanPath(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -53,13 +53,13 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	FileSystem::getInstance()->list(folder, files, &listFilter);
+	FileSystem::getInstance()->list(path, files, &listFilter);
 
 	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, ".xml") == true) {
-			totalFiles.push_back(folder + "/" + fileName);
+			totalFiles.push_back(path + "/" + fileName);
 		} else {
-			scanDir(folder + "/" + fileName, totalFiles);
+			scanPath(path + "/" + fileName, totalFiles);
 		}
 	}
 }
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
 	for (auto i = 1; i < argc; i++) {
 		auto pathToHeaders = string(argv[i]);
 		Console::println("Scanning files: " + pathToHeaders);
-		scanDir(pathToHeaders, files);
+		scanPath(pathToHeaders, files);
 	}
 
 	Console::println("Processing files");

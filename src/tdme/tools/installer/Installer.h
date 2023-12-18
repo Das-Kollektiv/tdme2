@@ -44,7 +44,7 @@ private:
 	InstallerMode installerMode;
 	volatile Screen screen;
 	Properties installerProperties;
-	string homeFolder;
+	string homePath;
 	Mutex installThreadMutex;
 	bool installed;
 	string timestamp;

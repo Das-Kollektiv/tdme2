@@ -84,7 +84,7 @@ const string ArchiveFileSystem::composeURI(const string& pathName, const string&
 
 void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
-	// TODO: this currently lists all files beginning from given path, also files in sub folders
+	// TODO: this currently lists all files beginning from given path, also files in sub paths
 	auto _pathName = pathName;
 	if (_pathName.empty() == false && StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
 	for (const auto& [mapfileName, fileInformation]: fileInformations) {

@@ -26,7 +26,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
-void scanDir(const string& folder, vector<string>& totalFiles) {
+void scanPath(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -43,13 +43,13 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	FileSystem::getInstance()->list(folder, files, &listFilter);
+	FileSystem::getInstance()->list(path, files, &listFilter);
 
 	for (const auto& fileName: files) {
 		if (fileName == "LICENSE") {
-			totalFiles.push_back(folder + "/" + fileName);
+			totalFiles.push_back(path + "/" + fileName);
 		} else {
-			scanDir(folder + "/" + fileName, totalFiles);
+			scanPath(path + "/" + fileName, totalFiles);
 		}
 	}
 }
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 
 	Console::println("Scanning files");
 	vector<string> files;
-	scanDir(pathToHeaders, files);
+	scanPath(pathToHeaders, files);
 
 	Console::println("Processing files");
 	Console::println("------------------");

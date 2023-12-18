@@ -199,7 +199,7 @@ public:
 	}
 
 	/**
-	 * @return application sub folder path name
+	 * @return application sub path path name
 	 */
 	inline const string& getApplicationSubPathName() {
 		return applicationSubPathName;

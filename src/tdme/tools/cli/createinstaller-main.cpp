@@ -161,7 +161,7 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				// path
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
-					// Apple: no .dSYM folders
+					// Apple: no .dSYM files
 					#if defined(__APPLE__)
 						if (StringTools::endsWith(fileName, ".dSYM") == true) return false;
 					#endif
@@ -258,7 +258,7 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 				if (fileName == "..") return false;
 				// path
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
-					// Apple: no .dSYM folders
+					// Apple: no .dSYM files
 					#if defined(__APPLE__)
 						if (StringTools::endsWith(fileName, ".dSYM") == true) return false;
 					#endif
