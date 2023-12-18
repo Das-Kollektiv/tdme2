@@ -4,21 +4,38 @@ This is the documentation of MiniScript language. This document is WIP.
 
 # 1. Introduction
 
-Introduction to MiniScript language features:
-- very small implementation of a scripting language
-- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
-- can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
-- built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set
-- when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
-- supports user script functions and recursion
-- supports operators by operator to method mapping by a preprocessor run
-- supports loops and conditions
-- supports programming with classes style programming
-  - for built-in datatypes: string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set
-  - for script classes/objects
-  - for custom data types
-- supports event like programming
-- can be transpiled to C++
+MiniScript was developed as part of our [TDME2 3D Engine](https://github.com/Mindty-Kollektiv/tdme2) to match
+the requirements for high performance script execution, as well as straight forward game logic scripting.
+
+MiniScript might borrow some ideas from JavaScript, Kotlin, PHP and even C++, which you might like and find familier.
+Also note the focus on easy integration into other products and easy customizability and extendability.
+
+## 1.1. Open source
+
+- MiniScript is open source
+  - please check the [license](https://github.com/Mindty-Kollektiv/miniscript/blob/master/LICENSE)
+  - you find the source code at [https://github.com/Mindty-Kollektiv/miniscript](https://github.com/Mindty-Kollektiv/miniscript) 
+  - here you find developer [documentation including collaboration graphs and API](https://www.mindty.com/products/miniscript/documentation/)
+
+## 1.2. Language features
+
+- Introduction to MiniScript language features:
+  - very small implementation of a scripting language
+  - runs on every CPU, OS, ... due to its simplicity, so its highly portable
+  - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
+  - built-in data types: null, boolean, integer, float, string, byte array, array, map and set
+  - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
+  - supports functions and recursion
+  - supports inline/lamda functions
+  - supports operators by operator to method mapping by a preprocessor run
+  - supports loops and conditions
+  - supports programming with classes style programming
+    - for built-in datatypes: string, byte array, array, map and set
+    - for script classes/objects
+    - for custom data types
+  - supports event like programming
+  - unicode support via UTF8
+  - can be transpiled to C++
 
 # 2. Flow control
 
@@ -97,13 +114,12 @@ forCondition takes a single boolean value as argument. The loop will be executed
 
 # 3. Functions/Callables
 
-See this example that shows user script functions and recursion.
+See this example that shows functions and recursion.
 
 Argument variables, parsed in function declarations are populated in function context with corresponding values.
-
 ```
 ...
-# user script function of recursive factorial computation
+# function of recursive factorial computation
 function: factorial($value)
 	console.log("factorial(): $value = " + $value)
 	if ($value == 0) 
@@ -123,7 +139,7 @@ See &$b and &$c.
 Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope. 
 ```
 ...
-# user script function to test references in user functions
+# function to test references in user functions
 function: assignTest($a, &$b, &$c)
 	$a = "a"
 	$b = "b"
@@ -144,7 +160,7 @@ By default variables are read from current context and if they have not been fou
 So to be sure to use a global variable in function scope, just use the "$GLOBAL." accessor.
 ```
 ...
-# user script function to test global variable access
+# function to test global variable access
 function: globalVariableTest()
 	console.log("globalVariableTest(): $GLOBAL.globalTest = " + $GLOBAL.globalTest)
 	$GLOBAL.globalTest = "Been there, done that, got the t-shirt"
@@ -158,14 +174,12 @@ end
 ```
 
 A special type of functions are callables. Callables are functions that are used to interact between MiniScript scripts.
-
-Despite the fact that a callable function of a script can be called from another script,
+ 
+Despite the fact that a callable function of a script can be called from another script, 
 they have the limitation that they must not contain MiniScript C++ method calls that require a context function.
 
-Context functions are functions that require a special context.
-
-In TDME2 these contexts range from updating audio, engine, physics and more. 
-See e.g. initializeEngine(), updateEngine() or initializeLogic(), updateLogic(), ... in section 8(MiniScript logic methods)
+Context functions are functions that require a special context. You can ignore this fow now. 
+Default MiniScript does not provide script methods by C++ that require a context. 
 
 ```
 ...
@@ -214,7 +228,8 @@ MiniScript works with the following data types:
 - map
 - set  
 
-Variable identifiers always start with a "$". Constants need also be prefixed with a "$" and should be named with uppercase letters like "$PI = 3.14". (No real constant support yet, but it is planned)
+Variable identifiers always start with a "$". Constants need also be prefixed with a "$" and should be named with uppercase letters like "$PI = 3.14".
+You can manually set variables with the setVariable("$variableName", ...) or constants with setConstant("$CONSTANT", ...) methods.
 
 ## 4.1. Primitive data types
 
@@ -350,18 +365,18 @@ Initializing a byte array by constructor:
 
 ```
 ...
-	$byteArray = bytearray()
+	$byteArray = ByteArray()
 ...
 ```
 
 ... or initialize and push values to it:
 ```
 ...
-	$byteArray = bytearray(1, 2, 3)
+	$byteArray = ByteArray(1, 2, 3)
 ...
 ```
 
-Pushing values using bytearray.push():
+Pushing values using ByteArray::push():
 ```
 ...
 	$byteArray->push(5, 6, 7)
@@ -377,7 +392,7 @@ Pushing values using [] operator:
 ...
 ```
 
-Iterating byte arrays using bytearray.length() and bytearray.get():
+Iterating byte arrays using ByteArray::length() and ByteArray::get():
 ```
 ...
 	$i = 0
@@ -388,7 +403,7 @@ Iterating byte arrays using bytearray.length() and bytearray.get():
 ...
 ```
 
-Iterating byte arrays using bytearray.length() and [] operator:
+Iterating byte arrays using ByteArray::length() and [] operator:
 ```
 ...
 	$i = 0
@@ -399,7 +414,7 @@ Iterating byte arrays using bytearray.length() and [] operator:
 ...
 ```
 
-Removing from byte arrays using a index with bytearray.remove():
+Removing from byte arrays using a index with ByteArray::remove():
 ```
 ...
 	$byteArray->remove(2)
@@ -422,18 +437,18 @@ Initializing an array by constructor:
 
 ```
 ...
-	$array = array()
+	$array = Array()
 ...
 ```
 
 ... or initialize and push values to it:
 ```
 ...
-	$array = array(1, 2, 3)
+	$array = Array(1, 2, 3)
 ...
 ```
 
-Pushing values using array.push():
+Pushing values using Array::push():
 ```
 ...
 	$array->push(5, 6, 7)
@@ -449,7 +464,21 @@ Pushing values using [] operator:
 ...
 ```
 
-Iterating arrays using array.length() and array.get():
+Removing values from arrays using Array::removeOf():
+```
+...
+	$array->removeOf(6)
+	$array->removeOf(7)
+...
+```
+
+Removing from arrays using a index with Array::remove():
+```
+...
+	$array->remove(2)
+...
+```
+Iterating arrays using Array::length() and Array::get():
 ```
 ...
 	$i = 0
@@ -460,7 +489,7 @@ Iterating arrays using array.length() and array.get():
 ...
 ```
 
-Iterating arrays using array.length() and [] operator:
+Iterating arrays using Array::length() and [] operator:
 ```
 ...
 	$i = 0
@@ -471,21 +500,12 @@ Iterating arrays using array.length() and [] operator:
 ...
 ```
 
-Removing values from arrays using array.removeOf():
+Iterating arrays using Array::forEach() and a lamda function
 ```
 ...
-	$array->removeOf(6)
-	$array->removeOf(7)
+	$array->forEach(($value) -> { console.log($value) })
 ...
 ```
-
-Removing from arrays using a index with array.remove():
-```
-...
-	$array->remove(2)
-...
-```
-
 
 ## 4.5. Maps
 
@@ -501,11 +521,11 @@ Initializing a map by map initializer
 Initializing a map by map constructor:
 ```
 ...
-	$map = map()
+	$map = Map()
 ...
 ```
 
-Setting map key, value pairs using map.set():
+Setting map key, value pairs using Map::set():
 ```
 ...
 	$map->set("test1", 123)
@@ -515,14 +535,14 @@ Setting map key, value pairs using map.set():
 ...
 ```
 
-Removing from map using map.remove() and a given key:
+Removing from map using Map::remove() and a given key:
 ```
 ...
 	$map->remove("test2")
 ...
 ```
 
-Reading values from map using map.get() and given keys:
+Reading values from map using Map::get() and given keys:
 ```
 ...
 	console.log("map value for test1 key using map.get(): ", $map->get("test1"))
@@ -564,7 +584,7 @@ Reading map values:
 ...
 ```
 
-Reading all keys and values from map using map.get() and map.getKeys()
+Reading all keys and values from map using Map::get() and Map::getKeys()
 ```
 ...
 	$mapKeys = $map->getKeys()
@@ -573,6 +593,13 @@ Reading all keys and values from map using map.get() and map.getKeys()
 		console.log($mapKeys[$i] + " = " + $map->get($mapKeys[$i]))
 		++$i
 	end
+...
+```
+
+Iterating maps using Map::forEach() and a lamda function
+```
+...
+	$map->forEach(($key, $value) -> { console.log($key + " = " + $value) })
 ...
 ```
 
@@ -590,11 +617,11 @@ Initializing a set by set initializer
 Initializing a set by set constructor
 ```
 ...
-	$set = set()
+	$set = Set()
 ...
 ```
 
-Inserting keys into set using set.insert():
+Inserting keys into set using Set::insert():
 ```
 ...
 	$set->insert("test1")
@@ -603,14 +630,14 @@ Inserting keys into set using set.insert():
 ...
 ```
 
-Removing keys from set using set.remove():
+Removing keys from set using Set::remove():
 ```
 ...
 	$set->remove("test2")
 ...
 ```
 
-Checking if keys exist in map using map.has() and given keys:
+Checking if keys exist in set using Set::has() and given keys:
 ```
 ...
 	console.log("set does have test1 key using set.has(): ", $set->has("test1"))
@@ -622,7 +649,7 @@ Checking if keys exist in map using map.has() and given keys:
 ```
 
 
-Checking if keys exist in map using dot operator and given keys:
+Checking if keys exist in set using dot operator and given keys:
 ```
 ...
 	console.log("set key for test1 using set dot operator: ", $set.test1)
@@ -647,6 +674,13 @@ Reading all keys as array from set:
 ```
 ...
 	console.log("set keys: ", $set->getKeys())
+...
+```
+
+Iterating sets using Set::forEach() and a lamda function
+```
+...
+	$set->forEach(($key) -> { console.log($key) })
 ...
 ```
 
@@ -778,11 +812,15 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create string                                                                                    |
-| <sub><b>static</b> string($string: String): String</sub>                                         |
+| <sub><b>static</b> String($string: String): String</sub>                                         |
 | Concatenate strings                                                                              |
-| <sub><b>static</b> string.concatenate(...): String</sub>                                         |
-| Create spaces as string                                                                          |
-| <sub><b>static</b> string.space([$spaces: Integer]): String</sub>                                |
+| <sub><b>static</b> String::concatenate(...): String</sub>                                        |
+| Create string from byte array                                                                    |
+| <sub><b>static</b> String::fromByteArray($byteArray: ByteArray): String</sub>                    |
+| Not documented                                                                                   |
+| <sub><b>static</b> String::generate($what: String[, $count: Integer]): String</sub>              |
+| Not documented                                                                                   |
+| <sub><b>static</b> String::indent($src: String, $with: String, $count: Integer): String</sub>    |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Return character of string at given position                                                     |
@@ -793,6 +831,8 @@ end
 | <sub>equalsIgnoreCase($other: String): Boolean</sub>                                             |
 | Return first index of specific string in string                                                  |
 | <sub>firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                          |
+| Not documented                                                                                   |
+| <sub>firstIndexOfChars($what: String[, $beginIndex: Integer]): Integer</sub>                     |
 | Return index of specific string in string                                                        |
 | <sub>indexOf($what: String[, $beginIndex: Integer]): Integer</sub>                               |
 | Test if string value is empty                                                                    |
@@ -803,6 +843,8 @@ end
 | <sub>isInteger(): Boolean</sub>                                                                  |
 | Return last index of specific string in string                                                   |
 | <sub>lastIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                           |
+| Not documented                                                                                   |
+| <sub>lastIndexOfChars($what: String[, $endIndex: Integer]): Integer</sub>                        |
 | Return string length                                                                             |
 | <sub>length(): Integer</sub>                                                                     |
 | Pad string left                                                                                  |
@@ -819,6 +861,8 @@ end
 | <sub>startsWith($prefix: String): Boolean</sub>                                                  |
 | Return substring of string                                                                       |
 | <sub>substring($beginIndex: Integer[, $endIndex: Integer]): String</sub>                         |
+| Convert string to byte array                                                                     |
+| <sub>toByteArray(): ByteArray</sub>                                                              |
 | Compute lower case string of string                                                              |
 | <sub>toLowerCase(): String</sub>                                                                 |
 | Compute upper case string of string                                                              |
@@ -835,11 +879,15 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create a byte array                                                                              |
-| <sub><b>static</b> bytearray(...): ByteArray</sub>                                               |
+| <sub><b>static</b> ByteArray(...): ByteArray</sub>                                               |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
+| Append another byte array to this byte array                                                     |
+| <sub>appendByteArray(&$other: ByteArray): Null</sub>                                             |
 | Clear byte array                                                                                 |
 | <sub>clear(): Null</sub>                                                                         |
+| Extract a byte array from this byte array                                                        |
+| <sub>extractByteArray($index: Integer, $length: Integer): ByteArray</sub>                        |
 | Get byte array entry                                                                             |
 | <sub>get($index: Integer): Integer</sub>                                                         |
 | Get byte array length                                                                            |
@@ -858,11 +906,15 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create array                                                                                     |
-| <sub><b>static</b> array(...): Array</sub>                                                       |
+| <sub><b>static</b> Array(...): Array</sub>                                                       |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Clear array                                                                                      |
 | <sub>clear(): Null</sub>                                                                         |
+| Iterate array values, by using a (Lamda) function                                                |
+| <sub>forEach($function: Function[, &$cookie: Mixed]): Null</sub>                                 |
+| Iterate range of array values, by using a (Lamda) function                                       |
+| <sub>forRange($function: Function, $beginIndex: Integer[, $count: Integer[, $step: Integer[, &$cookie: Mixed]]]): Null</sub>|
 | Get array entry                                                                                  |
 | <sub>get($index: Integer): Mixed</sub>                                                           |
 | Get array index by value                                                                         |
@@ -880,7 +932,7 @@ end
 | Set array entry                                                                                  |
 | <sub>set($index: Integer, $value: Mixed): Null</sub>                                             |
 | Sort array                                                                                       |
-| <sub>sort($function: String): Null</sub>                                                         |
+| <sub>sort($function: Function): Null</sub>                                                       |
 
 ## 6.4. Map class
 
@@ -889,9 +941,13 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create map                                                                                       |
-| <sub><b>static</b> map(): Map</sub>                                                              |
+| <sub><b>static</b> Map(): Map</sub>                                                              |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
+| Clear map                                                                                        |
+| <sub>clear(): Null</sub>                                                                         |
+| Iterate map key and value pairs, by using a (Lamda) function                                     |
+| <sub>forEach($function: Function[, &$cookie: Mixed]): Null</sub>                                 |
 | Get map value by key                                                                             |
 | <sub>get($key: String): Mixed</sub>                                                              |
 | Get map keys                                                                                     |
@@ -912,9 +968,13 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create set                                                                                       |
-| <sub><b>static</b> set(): Set</sub>                                                              |
+| <sub><b>static</b> Set(): Set</sub>                                                              |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
+| Clear set                                                                                        |
+| <sub>clear(): Null</sub>                                                                         |
+| Iterate set keys, by using a (Lamda) function                                                    |
+| <sub>forEach($function: Function[, &$cookie: Mixed]): Null</sub>                                 |
 | Get set keys                                                                                     |
 | <sub>getKeys(): Array</sub>                                                                      |
 | Has key in set                                                                                   |
@@ -930,63 +990,43 @@ end
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
-| Create transform                                                                                 |
-| <sub><b>static</b> transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 | X axis as vector3                                                                                |
-| <sub><b>static</b> transform.AXIS_X(): Vector3</sub>                                             |
+| <sub><b>static</b> Transform::AXIS_X(): Vector3</sub>                                            |
 | Y axis as vector3                                                                                |
-| <sub><b>static</b> transform.AXIS_Y(): Vector3</sub>                                             |
+| <sub><b>static</b> Transform::AXIS_Y(): Vector3</sub>                                            |
 | Z axis as vector3                                                                                |
-| <sub><b>static</b> transform.AXIS_Z(): Vector3</sub>                                             |
-| Create transform from 4x4 matrix                                                                 |
-| <sub><b>static</b> transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>            |
+| <sub><b>static</b> Transform::AXIS_Z(): Vector3</sub>                                            |
+| Create Transform from 4x4 matrix                                                                 |
+| <sub><b>static</b> Transform::fromMatrix($transformMatrix: Matrix4x4): Transform</sub>           |
 | Interpolate rotation                                                                             |
-| <sub><b>static</b> transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, &$interpolatedAngle: Float): Boolean</sub>|
+| <sub><b>static</b> Transform::interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, &$interpolatedAngle: Float): Boolean</sub>|
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
-| Apply a rotation to transform                                                                    |
+| Apply a rotation to Transform                                                                    |
 | <sub>applyRotation($axis: Vector3, $angle: Float): Null</sub>                                    |
-| Get rotation angle of specific rotation of transform                                             |
+| Get rotation angle of specific rotation of Transform                                             |
 | <sub>getRotationAngle($idx: Integer): Float</sub>                                                |
-| Set rotation axis of specific rotation of transform                                              |
+| Set rotation axis of specific rotation of Transform                                              |
 | <sub>getRotationAxis($idx: Integer): Vector3</sub>                                               |
-| Compute transform rotations quaternion                                                           |
+| Compute Transform rotations quaternion                                                           |
 | <sub>getRotationsQuaternion(): Quaternion</sub>                                                  |
 | Get transfrom scale                                                                              |
 | <sub>getScale(): Vector3</sub>                                                                   |
-| Get 4x4 transform matrix                                                                         |
+| Get 4x4 Transform matrix                                                                         |
 | <sub>getTransformMatrix(): Matrix4x4</sub>                                                       |
-| Get transform translation                                                                        |
+| Get Transform translation                                                                        |
 | <sub>getTranslation(): Vector3</sub>                                                             |
-| Rotate vector3 using transform                                                                   |
-| <sub>rotate($vec3: Vector3): Vector3</sub>                                                       |
-| Set rotation angle of specific rotation of transform                                             |
+| Rotate vector3 using Transform                                                                   |
+| <sub>rotate($vector3: Vector3): Vector3</sub>                                                    |
+| Set rotation angle of specific rotation of Transform                                             |
 | <sub>setRotationAngle($idx: Integer, $angle: Float): Null</sub>                                  |
 | Set transfrom scale                                                                              |
 | <sub>setScale($scale: Vector3): Null</sub>                                                       |
-| Set transform translation                                                                        |
+| Set Transform translation                                                                        |
 | <sub>setTranslation($translation: Vector3): Null</sub>                                           |
 
 ## 6.7. Matrix4x4 class
 
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| &nbsp;                                    |
-| <b>STATIC METHODS</b>                     |
-| Create identity 4x4 matrix                                                                       |
-| <sub><b>static</b> mat4.identity(): Matrix4x4</sub>                                              |
-| Create rotation 4x4 matrix                                                                       |
-| <sub><b>static</b> mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                   |
-| Create scale 4x4 matrix                                                                          |
-| <sub><b>static</b> mat4.scale(...): Matrix4x4</sub>                                              |
-| Create translation 4x4 matrix                                                                    |
-| <sub><b>static</b> mat4.translate($translation: Vector3): Matrix4x4</sub>                        |
-| &nbsp;                                    |
-| <b>NON STATIC METHODS</b>                 |
-| Compute euler angles from 4x4 matrix                                                             |
-| <sub>computeEulerAngles(): Vector3</sub>                                                         |
-| Create 4x4 matrix inverse                                                                        |
-| <sub>invert(): Matrix4x4</sub>                                                                   |
 
 ## 6.8. Matrix3x3 class
 
@@ -995,17 +1035,17 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create identity 3x3 matrix                                                                       |
-| <sub><b>static</b> mat3.identity(): Matrix3x3</sub>                                              |
+| <sub><b>static</b> Matrix3x3::identity(): Matrix3x3</sub>                                        |
 | Create rotation 3x3 matrix                                                                       |
-| <sub><b>static</b> mat3.rotate($angle: Float): Matrix3x3</sub>                                   |
+| <sub><b>static</b> Matrix3x3::rotate($angle: Float): Matrix3x3</sub>                             |
 | Create 3x3 matrix which rotates around point                                                     |
-| <sub><b>static</b> mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub>       |
+| <sub><b>static</b> Matrix3x3::rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub> |
 | Create 3x3 matrix which rotates around texture center                                            |
-| <sub><b>static</b> mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>                |
+| <sub><b>static</b> Matrix3x3::rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>          |
 | Create scale 3x3 matrix                                                                          |
-| <sub><b>static</b> mat3.scale(...): Matrix3x3</sub>                                              |
+| <sub><b>static</b> Matrix3x3::scale(...): Matrix3x3</sub>                                        |
 | Create translation 3x3 matrix                                                                    |
-| <sub><b>static</b> mat3.translate($translation: Vector2): Matrix3x3</sub>                        |
+| <sub><b>static</b> Matrix3x3::translate($translation: Vector2): Matrix3x3</sub>                  |
 
 ## 6.9. Quaternion class
 
@@ -1014,9 +1054,9 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create identity quaternion                                                                       |
-| <sub><b>static</b> quaternion.identity(): Quaternion</sub>                                       |
+| <sub><b>static</b> Quaternion::identity(): Quaternion</sub>                                      |
 | Create rotation quaternion                                                                       |
-| <sub><b>static</b> quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>            |
+| <sub><b>static</b> Quaternion::rotate($axis: Vector3, $angle: Float): Quaternion</sub>           |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Compute euler angles from quaternion                                                             |
@@ -1035,9 +1075,9 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create vector2                                                                                   |
-| <sub><b>static</b> vec2($x: Float, $y: Float): Vector2</sub>                                     |
+| <sub><b>static</b> Vector2($x: Float, $y: Float): Vector2</sub>                                  |
 | Compute vector2 dot product                                                                      |
-| <sub><b>static</b> vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                 |
+| <sub><b>static</b> Vector2::computeDotProduct($a: Vector2, $b: Vector2): Float</sub>             |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Compute vector2 length                                                                           |
@@ -1058,13 +1098,13 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create vector3                                                                                   |
-| <sub><b>static</b> vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                          |
+| <sub><b>static</b> Vector3($x: Float, $y: Float, $z: Float): Vector3</sub>                       |
 | Compute angle between two vector3                                                                |
-| <sub><b>static</b> vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>         |
+| <sub><b>static</b> Vector3::computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>     |
 | Compute vector3 cross product                                                                    |
-| <sub><b>static</b> vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>             |
+| <sub><b>static</b> Vector3::computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>         |
 | Compute vector3 dot product                                                                      |
-| <sub><b>static</b> vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                 |
+| <sub><b>static</b> Vector3::computeDotProduct($a: Vector3, $b: Vector3): Float</sub>             |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Compute vector3 length                                                                           |
@@ -1087,9 +1127,9 @@ end
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
 | Create vector4                                                                                   |
-| <sub><b>static</b> vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>               |
+| <sub><b>static</b> Vector4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>            |
 | Compute vector4 dot product                                                                      |
-| <sub><b>static</b> vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                 |
+| <sub><b>static</b> Vector4::computeDotProduct($a: Vector4, $b: Vector4): Float</sub>             |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Compute vector4 length                                                                           |
@@ -1113,6 +1153,8 @@ end
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Set constant                                                                                     |
+| <sub>setConstant($constant: String, $value: Mixed): Mixed</sub>                                  |
 | Get variable                                                                                     |
 | <sub>getVariable($variable: String): Mixed</sub>                                                 |
 | Set variable                                                                                     |
@@ -1143,8 +1185,6 @@ end
 | <sub>end(): Null</sub>                                                                           |
 | Equals                                                                                           |
 | <sub>equals($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
-| Create float                                                                                     |
-| <sub>float($float: Float): Float</sub>                                                           |
 | For condition                                                                                    |
 | <sub>forCondition($condition: Boolean): Null</sub>                                               |
 | For time                                                                                         |
@@ -1179,15 +1219,34 @@ end
 | <sub>return([$value: Mixed]): Null</sub>                                                         |
 | Subtract                                                                                         |
 | <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| Not documented                                                                                   |
+| <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 
-## 7.2. Application methods
+## 7.2. Matrix4x4 methods
+
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Not documented                                                                                   |
+| <sub>Matrix4x4.computeEulerAngles($matrix4x4: Matrix4x4): Vector3</sub>                          |
+| Not documented                                                                                   |
+| <sub>Matrix4x4.identity(): Matrix4x4</sub>                                                       |
+| Not documented                                                                                   |
+| <sub>Matrix4x4.invert($matrix4x4: Matrix4x4): Matrix4x4</sub>                                    |
+| Not documented                                                                                   |
+| <sub>Matrix4x4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                            |
+| Not documented                                                                                   |
+| <sub>Matrix4x4.scale(...): Matrix4x4</sub>                                                       |
+| Not documented                                                                                   |
+| <sub>Matrix4x4.translate($translation: Vector3): Matrix4x4</sub>                                 |
+
+## 7.3. Application methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Execute Application                                                                              |
 | <sub>application.execute($command: String): String</sub>                                         |
 
-## 7.3. Console methods
+## 7.4. Console methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1196,7 +1255,7 @@ end
 | Print to console                                                                                 |
 | <sub>console.log(...): Null</sub>                                                                |
 
-## 7.4. Cryptography Base64 methods
+## 7.5. Cryptography Base64 methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1205,19 +1264,23 @@ end
 | Encode a string using Base64                                                                     |
 | <sub>cryptography.base64.encode($value: String): String</sub>                                    |
 
-## 7.5. Cryptography SHA256 methods
+## 7.6. Cryptography SHA256 methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Hash a string using SHA256                                                                       |
 | <sub>cryptography.sha256.encode($value: String): String</sub>                                    |
 
-## 7.6. File System
+## 7.7. File System methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get canonical URI                                                                                |
 | <sub>filesystem.getCanonicalURI($pathName: String, $fileName: String): ?String</sub>             |
+| Get file content as byte array                                                                   |
+| <sub>filesystem.getContent($pathName: String, $fileName: String): ?ByteArray</sub>               |
+| Set file content from byte array                                                                 |
+| <sub>filesystem.setContent($pathName: String, $fileName: String, $content: ByteArray): Boolean</sub>|
 | Get file content as string                                                                       |
 | <sub>filesystem.getContentAsString($pathName: String, $fileName: String): ?String</sub>          |
 | Get file content as string array                                                                 |
@@ -1259,7 +1322,18 @@ end
 | Renames a file/folder                                                                            |
 | <sub>filesystem.rename($fileNameFrom: String, $fileNameTo: String): Boolean</sub>                |
 
-## 7.7. JSON methods
+## 7.8. Float methods
+
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Create float                                                                                     |
+| <sub>float($float: Float): Float</sub>                                                           |
+| Convert integer bit representation of float to float                                             |
+| <sub>float.fromIntValue($int: Integer): Float</sub>                                              |
+| Convert float to integer bit representation of float                                             |
+| <sub>float.toIntValue($float: Float): Integer</sub>                                              |
+
+## 7.9. JSON methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1268,7 +1342,7 @@ end
 | Serialize JSON                                                                                   |
 | <sub>json.serialize($value: Mixed): String</sub>                                                 |
 
-## 7.8. Math methods
+## 7.10. Math methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1327,7 +1401,7 @@ end
 | Compute tan                                                                                      |
 | <sub>math.tan($x: Float): Float</sub>                                                            |
 
-## 7.9. HTTP/HTTPS client methods
+## 7.11. HTTP/HTTPS client methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1342,12 +1416,14 @@ end
 | Execute a HTTP/HTTPS PUT request                                                                 |
 | <sub>network.httpclient.put($url: String, $data: Mixed[, $queryParameters: ?Map[, $headers: ?Map]]): ?Map</sub>|
 
-## 7.10. Script methods
+## 7.12. Script methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get named conditions                                                                             |
 | <sub>script.getNamedConditions(): String</sub>                                                   |
+| Returns if script runs natively                                                                  |
+| <sub>script.isNative(): Boolean</sub>                                                            |
 | Get script variables                                                                             |
 | <sub>script.getVariables(): Map</sub>                                                            |
 | Call script callable function                                                                    |
@@ -1367,7 +1443,7 @@ end
 | Wait for condition to happen                                                                     |
 | <sub>script.waitForCondition(): Null</sub>                                                       |
 
-## 7.11. Time methods
+## 7.13. Time methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1376,7 +1452,7 @@ end
 | Get current time in milliseconds                                                                 |
 | <sub>time.getCurrentMillis(): Integer</sub>                                                      |
 
-## 7.12. XML methods
+## 7.14. XML methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

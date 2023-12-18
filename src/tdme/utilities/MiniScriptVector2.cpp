@@ -77,7 +77,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -114,7 +114,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -189,7 +189,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR2
 				),
@@ -228,7 +228,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -264,7 +264,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),

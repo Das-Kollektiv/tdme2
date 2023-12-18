@@ -81,7 +81,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -118,7 +118,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -234,7 +234,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
@@ -315,7 +315,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -351,7 +351,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
@@ -387,7 +387,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "vector3", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),

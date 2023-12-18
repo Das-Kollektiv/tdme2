@@ -1262,6 +1262,7 @@ void Transpiler::generateMiniScriptEvaluateMemberAccessArrays(
 	generatedDefinitions.push_back("evaluateMemberAccessArrays = {};");
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx < static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()); typeIdx++) {
 		const auto& className = MiniScript::Variable::getTypeAsString(static_cast<MiniScript::VariableType>(typeIdx));
+		Console::println("xxx: " + className);
 		const auto& methods = methodsByClasses[className];
 		auto methodIdx = 0;
 		for (const auto& method: allMethods) {

@@ -187,7 +187,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_MATRIX4x4, .name = "matrix4x4", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX4x4
 				),
@@ -224,7 +224,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 			):
 				MiniScript::Method(
 					{
-						{ .type = TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_MATRIX4x4, .name = "matrix4x4", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
