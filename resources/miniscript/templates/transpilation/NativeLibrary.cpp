@@ -15,11 +15,12 @@ using std::unique_ptr;
 
 using miniscript::miniscript::Library;
 
-using miniscript::miniscript::Context;
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
 
-Library::Library(Context* context) {
+using _Context = miniscript::miniscript::Context;
+using _Console = miniscript::utilities::Console;
+
+Library::Library(_Context* context) {
 	this->context = context;
 }
 
@@ -27,7 +28,7 @@ Library::~Library() {
 }
 
 MiniScript* Library::loadScript(const string& pathName, const string& fileName) {
-	Console::println("NativeLibrary::loadScript(): " + pathName + "/" + fileName);
+	_Console::println("NativeLibrary::loadScript(): " + pathName + "/" + fileName);
 	unique_ptr<MiniScript> script;
 	//
 	{$library-code}
@@ -41,6 +42,6 @@ MiniScript* Library::loadScript(const string& pathName, const string& fileName) 
 //
 extern "C" Library* createInstance()
 {
-	Console::println("Library::createInstance(): Creating library instance!");
+	_Console::println("Library::createInstance(): Creating library instance!");
 	return new Library(nullptr);
 }

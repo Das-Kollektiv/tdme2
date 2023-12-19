@@ -15,9 +15,10 @@ using std::unordered_map;
 using miniscript::miniscript::NetworkMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::network::httpclient::HTTPClient;
-using miniscript::utilities::Console;
-using miniscript::utilities::Exception;
+
+using _Console = miniscript::utilities::Console;
+using _Exception = miniscript::utilities::Exception;
+using _HTTPClient = miniscript::network::httpclient::HTTPClient;
 
 void NetworkMethods::registerMethods(MiniScript* miniScript) {
 	// network
@@ -69,8 +70,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					//
 					try {
-						HTTPClient httpClient;
-						httpClient.setMethod(HTTPClient::HTTP_METHOD_HEAD);
+						_HTTPClient httpClient;
+						httpClient.setMethod(_HTTPClient::HTTP_METHOD_HEAD);
 						httpClient.setGETParameters(getParameters);
 						httpClient.setHeaders(headers);
 						httpClient.setURL(url);
@@ -85,11 +86,11 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 							responseHeaders.setMapEntry(headerName, headerValue);
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
-					} catch (Exception& exception) {
-						Console::println("An error occurred: " + string(exception.what()));
+					} catch (_Exception& exception) {
+						_Console::println("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -145,8 +146,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					//
 					try {
-						HTTPClient httpClient;
-						httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
+						_HTTPClient httpClient;
+						httpClient.setMethod(_HTTPClient::HTTP_METHOD_GET);
 						httpClient.setGETParameters(getParameters);
 						httpClient.setHeaders(headers);
 						httpClient.setURL(url);
@@ -168,11 +169,11 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 							responseHeaders.setMapEntry(headerName, headerValue);
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
-					} catch (Exception& exception) {
-						Console::println("An error occurred: " + string(exception.what()));
+					} catch (_Exception& exception) {
+						_Console::println("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -242,8 +243,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					//
 					try {
-						HTTPClient httpClient;
-						httpClient.setMethod(HTTPClient::HTTP_METHOD_POST);
+						_HTTPClient httpClient;
+						httpClient.setMethod(_HTTPClient::HTTP_METHOD_POST);
 						httpClient.setGETParameters(getParameters);
 						httpClient.setHeaders(headers);
 						if (postParameters.empty() == false) {
@@ -270,11 +271,11 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 							responseHeaders.setMapEntry(headerName, headerValue);
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
-					} catch (Exception& exception) {
-						Console::println("An error occurred: " + string(exception.what()));
+					} catch (_Exception& exception) {
+						_Console::println("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -344,8 +345,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					//
 					try {
-						HTTPClient httpClient;
-						httpClient.setMethod(HTTPClient::HTTP_METHOD_PUT);
+						_HTTPClient httpClient;
+						httpClient.setMethod(_HTTPClient::HTTP_METHOD_PUT);
 						httpClient.setGETParameters(getParameters);
 						httpClient.setHeaders(headers);
 						if (postParameters.empty() == false) {
@@ -372,11 +373,11 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 							responseHeaders.setMapEntry(headerName, headerValue);
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
-					} catch (Exception& exception) {
-						Console::println("An error occurred: " + string(exception.what()));
+					} catch (_Exception& exception) {
+						_Console::println("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -431,8 +432,8 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 					}
 					//
 					try {
-						HTTPClient httpClient;
-						httpClient.setMethod(HTTPClient::HTTP_METHOD_DELETE);
+						_HTTPClient httpClient;
+						httpClient.setMethod(_HTTPClient::HTTP_METHOD_DELETE);
 						httpClient.setGETParameters(getParameters);
 						httpClient.setHeaders(headers);
 						httpClient.setURL(url);
@@ -447,11 +448,11 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 							responseHeaders.setMapEntry(headerName, headerValue);
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
-					} catch (Exception& exception) {
-						Console::println("An error occurred: " + string(exception.what()));
+					} catch (_Exception& exception) {
+						_Console::println("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}

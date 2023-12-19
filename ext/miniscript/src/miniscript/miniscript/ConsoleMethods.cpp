@@ -10,7 +10,8 @@ using std::span;
 using miniscript::miniscript::ConsoleMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
+
+using _Console = miniscript::utilities::Console;
 
 void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	// console
@@ -26,9 +27,9 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				for (const auto& argument: arguments) {
-					Console::print(argument.getValueAsString());
+					_Console::print(argument.getValueAsString());
 				}
-				Console::println();
+				_Console::println();
 			}
 			bool isVariadic() const override {
 				return true;
@@ -54,10 +55,10 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (arguments.size() != 1) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					Console::println(arguments[0].getValueAsString(true));
+					_Console::println(arguments[0].getValueAsString(true));
 				}
 			}
 		};

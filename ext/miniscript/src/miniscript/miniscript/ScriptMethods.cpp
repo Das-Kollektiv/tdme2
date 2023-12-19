@@ -14,8 +14,9 @@ using std::make_unique;
 using miniscript::miniscript::ScriptMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-using miniscript::utilities::Time;
+
+using _Console = miniscript::utilities::Console;
+using _Time = miniscript::utilities::Time;
 
 void ScriptMethods::registerMethods(MiniScript* miniScript) {
 	// script methods
@@ -31,7 +32,7 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				// script bindings
-				miniScript->getScriptState().timeWaitStarted = Time::getCurrentMillis();
+				miniScript->getScriptState().timeWaitStarted = _Time::getCurrentMillis();
 				miniScript->getScriptState().timeWaitTime = 100LL;
 				miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_WAIT_FOR_CONDITION);
 			}
@@ -55,11 +56,11 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t time;
 				if (miniScript->getIntegerValue(arguments, 0, time) == true) {
-					miniScript->getScriptState().timeWaitStarted = Time::getCurrentMillis();
+					miniScript->getScriptState().timeWaitStarted = _Time::getCurrentMillis();
 					miniScript->getScriptState().timeWaitTime = time;
 					miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_WAIT);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 				}
 			}
 		};
@@ -86,7 +87,7 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 				if (MiniScript::getStringValue(arguments, 0, condition, false) == true) {
 					miniScript->emit(condition);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -122,7 +123,7 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 					);
 					miniScript->enabledNamedConditions.push_back(name);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -157,7 +158,7 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 						miniScript->enabledNamedConditions.end()
 					);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -206,11 +207,11 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string statementString;
 				if (miniScript->getStringValue(arguments, 0, statementString, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					if (miniScript->evaluate(statementString, returnValue) == false) {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
 					}
 				}
 			}
@@ -237,12 +238,12 @@ void ScriptMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string function;
 				if (miniScript->getStringValue(arguments, 0, function) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto scriptIdx = miniScript->getFunctionScriptIdx(function);
 					if (scriptIdx == MiniScript::SCRIPTIDX_NONE) {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
 						miniScript->startErrorScript();
 					} else {
 						#if defined (__clang__)

@@ -11,8 +11,9 @@ using std::span;
 using miniscript::miniscript::TimeMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-using miniscript::utilities::Time;
+
+using _Console = miniscript::utilities::Console;
+using _Time = miniscript::utilities::Time;
 
 void TimeMethods::registerMethods(MiniScript* miniScript) {
 	// time
@@ -29,7 +30,7 @@ void TimeMethods::registerMethods(MiniScript* miniScript) {
 				return "time.getCurrentMillis";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				returnValue.setValue(Time::getCurrentMillis());
+				returnValue.setValue(_Time::getCurrentMillis());
 			}
 		};
 		miniScript->registerMethod(new MethodTimeGetCurrentMillis(miniScript));
@@ -54,10 +55,10 @@ void TimeMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string format = "%Y-%m-%d %H:%M:%S";
 				if (MiniScript::getStringValue(arguments, 0, format, true) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(Time::getAsString(format));
+					returnValue.setValue(_Time::getAsString(format));
 				}
 			}
 		};

@@ -7,13 +7,13 @@
 #include <miniscript/utilities/fwd-miniscript.h>
 #include <miniscript/utilities/ExceptionBase.h>
 
-using miniscript::utilities::ExceptionBase;
+using _ExceptionBase = miniscript::utilities::ExceptionBase;
 
 /**
  * Base exception class for network exceptions
  * @author Andreas Drewke
  */
-class miniscript::os::network::NetworkException: public ExceptionBase {
+class miniscript::os::network::NetworkException: public _ExceptionBase {
 public:
 	/**
 	 * Constructor

@@ -16,8 +16,9 @@ using std::shared_ptr;
 using miniscript::miniscript::ApplicationMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-using miniscript::utilities::StringTools;
+
+using _Console = miniscript::utilities::Console;
+using _StringTools = miniscript::utilities::StringTools;
 
 const string ApplicationMethods::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
@@ -60,7 +61,7 @@ void ApplicationMethods::registerMethods(MiniScript* miniScript) {
 				if (MiniScript::getStringValue(arguments, 0, command, false) == true) {
 					returnValue.setValue(ApplicationMethods::execute(command));
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}

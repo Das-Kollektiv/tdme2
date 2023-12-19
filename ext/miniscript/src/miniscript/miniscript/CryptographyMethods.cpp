@@ -13,10 +13,11 @@ using std::span;
 using miniscript::miniscript::CryptographyMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Base64;
-using miniscript::utilities::Console;
-using miniscript::utilities::SHA256;
-using miniscript::utilities::StringTools;
+
+using _Base64 = miniscript::utilities::Base64;
+using _Console = miniscript::utilities::Console;
+using _SHA256 = miniscript::utilities::SHA256;
+using _StringTools = miniscript::utilities::StringTools;
 
 void CryptographyMethods::registerMethods(MiniScript* miniScript) {
 	// base64
@@ -40,9 +41,9 @@ void CryptographyMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string value;
 				if (MiniScript::getStringValue(arguments, 0, value, false) == true) {
-					returnValue.setValue(Base64::encode(value));
+					returnValue.setValue(_Base64::encode(value));
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -69,9 +70,9 @@ void CryptographyMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string value;
 				if (MiniScript::getStringValue(arguments, 0, value, false) == true) {
-					returnValue.setValue(Base64::decode(value));
+					returnValue.setValue(_Base64::decode(value));
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -99,9 +100,9 @@ void CryptographyMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string value;
 				if (MiniScript::getStringValue(arguments, 0, value, false) == true) {
-					returnValue.setValue(SHA256::encode(value));
+					returnValue.setValue(_SHA256::encode(value));
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}

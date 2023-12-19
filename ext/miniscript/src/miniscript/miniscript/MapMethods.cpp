@@ -10,7 +10,8 @@ using std::span;
 using miniscript::miniscript::MapMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
+
+using _Console = miniscript::utilities::Console;
 
 void MapMethods::registerMethods(MiniScript* miniScript) {
 	// map
@@ -60,7 +61,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() != 3 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].setMapEntry(key, arguments[2]);
@@ -93,7 +94,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() < 2 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(arguments[0].hasMapEntry(key));
@@ -126,7 +127,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() < 2 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					returnValue = arguments[0].getMapEntry(key);
@@ -159,7 +160,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() < 2 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].removeMapEntry(key);
@@ -189,7 +190,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				//
 				if (arguments.size() != 1 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto keys = arguments[0].getMapKeys();
@@ -223,7 +224,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				//
 				if (arguments.size() != 1 ||
 					arguments[0].getType() != MiniScript::TYPE_MAP) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto values = arguments[0].getMapValues();
@@ -255,7 +256,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (arguments.size() != 1 || arguments[0].getType() != MiniScript::TYPE_MAP) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].clearMap();
@@ -288,7 +289,7 @@ void MapMethods::registerMethods(MiniScript* miniScript) {
 				if ((arguments.size() != 2 && arguments.size() != 3) ||
 					arguments[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(arguments, 1, function, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto mapPtr = arguments[0].getMapPointer();

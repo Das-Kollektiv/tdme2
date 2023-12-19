@@ -11,8 +11,9 @@ using std::span;
 using miniscript::miniscript::JSONMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-using miniscript::utilities::StringTools;
+
+using _Console = miniscript::utilities::Console;
+using _StringTools = miniscript::utilities::StringTools;
 
 void JSONMethods::registerMethods(MiniScript* miniScript) {
 	// json
@@ -36,7 +37,7 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				//
 				if (arguments.size() != 1) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(arguments[0].getValueAsString(false, true));
@@ -65,17 +66,17 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string json;
 				if (MiniScript::getStringValue(arguments, 0, json, false) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					json = StringTools::trim(json);
-					if (StringTools::startsWith(json, "{") == true) {
+					json = _StringTools::trim(json);
+					if (_StringTools::startsWith(json, "{") == true) {
 						returnValue = MiniScript::initializeMapSet(json, miniScript, statement);
 					} else
-					if (StringTools::startsWith(json, "[") == true) {
+					if (_StringTools::startsWith(json, "[") == true) {
 						returnValue = MiniScript::initializeArray(json, miniScript, statement);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": JSON string not valid");
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": JSON string not valid");
 					}
 				}
 			}

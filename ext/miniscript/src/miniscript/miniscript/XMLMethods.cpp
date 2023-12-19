@@ -11,8 +11,9 @@ using std::span;
 using miniscript::miniscript::XMLMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-using miniscript::utilities::StringTools;
+
+using _Console = miniscript::utilities::Console;
+using _StringTools = miniscript::utilities::StringTools;
 
 void XMLMethods::registerMethods(MiniScript* miniScript) {
 	// xml
@@ -42,7 +43,7 @@ void XMLMethods::registerMethods(MiniScript* miniScript) {
 				if (MiniScript::getStringValue(arguments, 0, name, false) == false ||
 					(arguments.size() >= 2 && arguments[1].getType() != MiniScript::TYPE_MAP) ||
 					MiniScript::getStringValue(arguments, 2, innerXML, true) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto mapPtr = arguments[1].getMapPointer();
@@ -69,10 +70,10 @@ void XMLMethods::registerMethods(MiniScript* miniScript) {
 
 inline const string XMLMethods::escape(const string& str) {
 	string result;
-	result = StringTools::replace(str, "&", "&amp;");
-	result = StringTools::replace(result, "\"", "&quot;");
-	result = StringTools::replace(result, "'", "&#39;");
-	result = StringTools::replace(result, "<", "&lt;");
-	result = StringTools::replace(result, ">", "&gt;");
+	result = _StringTools::replace(str, "&", "&amp;");
+	result = _StringTools::replace(result, "\"", "&quot;");
+	result = _StringTools::replace(result, "'", "&#39;");
+	result = _StringTools::replace(result, "<", "&lt;");
+	result = _StringTools::replace(result, ">", "&gt;");
 	return result;
 }

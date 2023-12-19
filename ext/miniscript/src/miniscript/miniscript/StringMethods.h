@@ -2,10 +2,8 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/fwd-miniscript.h>
-#include <miniscript/utilities/UTF8CharacterIterator.h>
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::UTF8CharacterIterator;
 
 /**
  * MiniScript script string methods

@@ -10,7 +10,7 @@
 using std::string;
 using std::vector;
 
-using miniscript::utilities::ExceptionBase;
+using _ExceptionBase = miniscript::utilities::ExceptionBase;
 
 /**
  * File system
@@ -24,14 +24,14 @@ public:
 	 * File system exception
 	 * @author Andreas Drewke
 	 */
-	class FileSystemException: public ExceptionBase
+	class FileSystemException: public _ExceptionBase
 	{
 	public:
 		/**
 		 * @brief Public constructor
 		 * @param message message Exception message
 		 */
-		FileSystemException(const string& message) throw(): ExceptionBase(message) {
+		FileSystemException(const string& message) throw(): _ExceptionBase(message) {
 			//
 		}
 	};

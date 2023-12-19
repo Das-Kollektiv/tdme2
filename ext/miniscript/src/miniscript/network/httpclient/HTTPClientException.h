@@ -6,13 +6,13 @@
 #include <miniscript/network/httpclient/fwd-miniscript.h>
 #include <miniscript/utilities/ExceptionBase.h>
 
-using miniscript::utilities::ExceptionBase;
+using _ExceptionBase = miniscript::utilities::ExceptionBase;
 
 /**
  * HTTP client exception
  * @author Andreas Drewke
  */
-class miniscript::network::httpclient::HTTPClientException: public ExceptionBase {
+class miniscript::network::httpclient::HTTPClientException: public _ExceptionBase {
 public:
 	/**
 	 * @brief public constructor

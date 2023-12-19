@@ -13,7 +13,8 @@ using std::unique_ptr;
 using miniscript::miniscript::ContextMethods;
 
 using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
+
+using _Console = miniscript::utilities::Console;
 
 void ContextMethods::registerMethods(MiniScript* miniScript) {
 	if (miniScript->getContext() == nullptr) return;
@@ -40,7 +41,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				string callable;
 				if (MiniScript::getStringValue(arguments, 0, scriptId) == false ||
 					MiniScript::getStringValue(arguments, 1, callable) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto script = miniScript->getContext()->getScript(scriptId);
@@ -82,17 +83,17 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 				string callable;
 				if (MiniScript::getStringValue(arguments, 0, scriptId) == false ||
 					MiniScript::getStringValue(arguments, 1, callable) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto script = dynamic_cast<MiniScript*>(miniScript->getContext()->getScript(scriptId));
 					if (script == nullptr) {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no script with given id: " + scriptId);
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no script with given id: " + scriptId);
 						miniScript->startErrorScript();
 					} else {
 						auto scriptIdx = script->getFunctionScriptIdx(callable);
 						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || script->getScripts()[scriptIdx].callableFunction == false) {
-							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
+							_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
 							#if defined (__clang__)
@@ -147,7 +148,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 					MiniScript::getStringValue(arguments, 1, pathName) == false ||
 					MiniScript::getStringValue(arguments, 2, fileName) == false ||
 					MiniScript::getBooleanValue(arguments, 3, verbose, true) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					unique_ptr<MiniScript> script;
@@ -168,10 +169,10 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 					}
 					if (script != nullptr) {
 						// verbose
-						if (verbose == true) Console::println(script->getInformation());
+						if (verbose == true) _Console::println(script->getInformation());
 						//
 						if (script->isValid() == false) {
-							Console::println("Script not valid.");
+							_Console::println("Script not valid.");
 						} else {
 							miniScript->getContext()->addScript(scriptId, script.release());
 						}
@@ -201,7 +202,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string scriptId;
 				if (MiniScript::getStringValue(arguments, 0, scriptId) == false) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					miniScript->getContext()->removeScript(scriptId);
