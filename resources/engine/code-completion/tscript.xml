@@ -7,14 +7,14 @@
 	</keyword>
 	<keyword name="Array::clear" func="yes">
 		<overload return-value="Null" descr="Clear array">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 		</overload>
 	</keyword>
 	<keyword name="Array::forEach" func="yes">
 		<overload return-value="Null" descr="Iterate array values, by using a (Lamda) function">
 			<parameter name="Array $array" />
 			<parameter name="Function $function" />
-			<parameter name="[Mixed =$cookie]" />
+			<parameter name="[Mixed &$cookie]" />
 		</overload>
 	</keyword>
 	<keyword name="Array::forRange" func="yes">
@@ -24,7 +24,7 @@
 			<parameter name="Integer $beginIndex" />
 			<parameter name="[Integer $count]" />
 			<parameter name="[Integer $step]" />
-			<parameter name="[Mixed =$cookie]" />
+			<parameter name="[Mixed &$cookie]" />
 		</overload>
 	</keyword>
 	<keyword name="Array::get" func="yes">
@@ -47,38 +47,38 @@
 	</keyword>
 	<keyword name="Array::push" func="yes">
 		<overload return-value="Null" descr="Add entry to array">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="Array::remove" func="yes">
 		<overload return-value="Null" descr="Remove array entry by index">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 			<parameter name="Integer $index" />
 		</overload>
 	</keyword>
 	<keyword name="Array::removeOf" func="yes">
 		<overload return-value="Null" descr="Remove array entry by value">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 			<parameter name="String $value" />
 			<parameter name="[Integer $beginIndex]" />
 		</overload>
 	</keyword>
 	<keyword name="Array::reverse" func="yes">
 		<overload return-value="Null" descr="Reverse array">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 		</overload>
 	</keyword>
 	<keyword name="Array::set" func="yes">
 		<overload return-value="Null" descr="Set array entry">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 			<parameter name="Integer $index" />
 			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="Array::sort" func="yes">
 		<overload return-value="Null" descr="Sort array">
-			<parameter name="Array =$array" />
+			<parameter name="Array &$array" />
 			<parameter name="Function $function" />
 		</overload>
 	</keyword>
@@ -89,18 +89,18 @@
 	</keyword>
 	<keyword name="ByteArray::appendByteArray" func="yes">
 		<overload return-value="Null" descr="Append another byte array to this byte array">
-			<parameter name="ByteArray =$bytearray" />
-			<parameter name="ByteArray =$other" />
+			<parameter name="ByteArray &$bytearray" />
+			<parameter name="ByteArray &$other" />
 		</overload>
 	</keyword>
 	<keyword name="ByteArray::clear" func="yes">
 		<overload return-value="Null" descr="Clear byte array">
-			<parameter name="ByteArray =$bytearray" />
+			<parameter name="ByteArray &$bytearray" />
 		</overload>
 	</keyword>
 	<keyword name="ByteArray::extractByteArray" func="yes">
 		<overload return-value="ByteArray" descr="Extract a byte array from this byte array">
-			<parameter name="ByteArray =$bytearray" />
+			<parameter name="ByteArray &$bytearray" />
 			<parameter name="Integer $index" />
 			<parameter name="Integer $length" />
 		</overload>
@@ -118,19 +118,19 @@
 	</keyword>
 	<keyword name="ByteArray::push" func="yes">
 		<overload return-value="Null" descr="Add entry to byte array">
-			<parameter name="ByteArray =$bytearray" />
+			<parameter name="ByteArray &$bytearray" />
 			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="ByteArray::remove" func="yes">
 		<overload return-value="Null" descr="Remove entry from byte array">
-			<parameter name="ByteArray =$bytearray" />
+			<parameter name="ByteArray &$bytearray" />
 			<parameter name="Integer $index" />
 		</overload>
 	</keyword>
 	<keyword name="ByteArray::set" func="yes">
 		<overload return-value="Null" descr="Set byte array entry">
-			<parameter name="ByteArray =$bytearray" />
+			<parameter name="ByteArray &$bytearray" />
 			<parameter name="Integer $index" />
 			<parameter name="Integer $value" />
 		</overload>
@@ -147,14 +147,14 @@
 	</keyword>
 	<keyword name="Map::clear" func="yes">
 		<overload return-value="Null" descr="Clear map">
-			<parameter name="Map =$map" />
+			<parameter name="Map &$map" />
 		</overload>
 	</keyword>
 	<keyword name="Map::forEach" func="yes">
 		<overload return-value="Null" descr="Iterate map key and value pairs, by using a (Lamda) function">
 			<parameter name="Map $map" />
 			<parameter name="Function $function" />
-			<parameter name="[Mixed =$cookie]" />
+			<parameter name="[Mixed &$cookie]" />
 		</overload>
 	</keyword>
 	<keyword name="Map::get" func="yes">
@@ -181,13 +181,13 @@
 	</keyword>
 	<keyword name="Map::remove" func="yes">
 		<overload return-value="Null" descr="Remove map entry">
-			<parameter name="Map =$map" />
+			<parameter name="Map &$map" />
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
 	<keyword name="Map::set" func="yes">
 		<overload return-value="Null" descr="Set map entry">
-			<parameter name="Map =$map" />
+			<parameter name="Map &$map" />
 			<parameter name="String $key" />
 			<parameter name="Mixed $value" />
 		</overload>
@@ -288,14 +288,14 @@
 	</keyword>
 	<keyword name="Set::clear" func="yes">
 		<overload return-value="Null" descr="Clear set">
-			<parameter name="Set =$set" />
+			<parameter name="Set &$set" />
 		</overload>
 	</keyword>
 	<keyword name="Set::forEach" func="yes">
 		<overload return-value="Null" descr="Iterate set keys, by using a (Lamda) function">
 			<parameter name="Set $set" />
 			<parameter name="Function $function" />
-			<parameter name="[Mixed =$cookie]" />
+			<parameter name="[Mixed &$cookie]" />
 		</overload>
 	</keyword>
 	<keyword name="Set::getKeys" func="yes">
@@ -311,13 +311,13 @@
 	</keyword>
 	<keyword name="Set::insert" func="yes">
 		<overload return-value="Null" descr="Insert key into set">
-			<parameter name="Set =$set" />
+			<parameter name="Set &$set" />
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
 	<keyword name="Set::remove" func="yes">
 		<overload return-value="Null" descr="Remove key from set">
-			<parameter name="Set =$set" />
+			<parameter name="Set &$set" />
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
@@ -510,7 +510,7 @@
 	</keyword>
 	<keyword name="Transform::applyRotation" func="yes">
 		<overload return-value="Null" descr="Apply a rotation to Transform">
-			<parameter name="Transform =$transform" />
+			<parameter name="Transform &$transform" />
 			<parameter name="Vector3 $axis" />
 			<parameter name="Float $angle" />
 		</overload>
@@ -558,7 +558,7 @@
 			<parameter name="Float $targetAngle" />
 			<parameter name="Float $timePassedSeconds" />
 			<parameter name="Float $degreesPerSeconds" />
-			<parameter name="Float =$interpolatedAngle" />
+			<parameter name="Float &$interpolatedAngle" />
 		</overload>
 	</keyword>
 	<keyword name="Transform::rotate" func="yes">
@@ -569,20 +569,20 @@
 	</keyword>
 	<keyword name="Transform::setRotationAngle" func="yes">
 		<overload return-value="Null" descr="Set rotation angle of specific rotation of Transform">
-			<parameter name="Transform =$transform" />
+			<parameter name="Transform &$transform" />
 			<parameter name="Integer $idx" />
 			<parameter name="Float $angle" />
 		</overload>
 	</keyword>
 	<keyword name="Transform::setScale" func="yes">
 		<overload return-value="Null" descr="Set transfrom scale">
-			<parameter name="Transform =$transform" />
+			<parameter name="Transform &$transform" />
 			<parameter name="Vector3 $scale" />
 		</overload>
 	</keyword>
 	<keyword name="Transform::setTranslation" func="yes">
 		<overload return-value="Null" descr="Set Transform translation">
-			<parameter name="Transform =$transform" />
+			<parameter name="Transform &$transform" />
 			<parameter name="Vector3 $translation" />
 		</overload>
 	</keyword>
@@ -1244,12 +1244,12 @@
 	</keyword>
 	<keyword name="prefixDecrement" func="yes">
 		<overload return-value="Integer" descr="Prefix decrement">
-			<parameter name="Integer =$variable" />
+			<parameter name="Integer &$variable" />
 		</overload>
 	</keyword>
 	<keyword name="prefixIncrement" func="yes">
 		<overload return-value="Integer" descr="Prefix increment">
-			<parameter name="Integer =$variable" />
+			<parameter name="Integer &$variable" />
 		</overload>
 	</keyword>
 	<keyword name="return" func="yes">
@@ -1424,7 +1424,7 @@
 	<keyword name="engine.computeScreenCoordinateByWorldCoordinate" func="yes">
 		<overload return-value="Boolean" descr="Compute engine screen coordinate by world coordinate">
 			<parameter name="Vector3 $worldCoodinate" />
-			<parameter name="Vector2 =$screenCoordinate" />
+			<parameter name="Vector2 &$screenCoordinate" />
 		</overload>
 	</keyword>
 	<keyword name="engine.getWidth" func="yes">
@@ -1952,7 +1952,7 @@
 			<parameter name="String $logicId" />
 			<parameter name="Vector3 $startPosition" />
 			<parameter name="Vector3 $endPosition" />
-			<parameter name="Array =$path" />
+			<parameter name="Array &$path" />
 		</overload>
 	</keyword>
 	<keyword name="scene.getDepth" func="yes">
@@ -2182,8 +2182,8 @@
 			<parameter name="Integer $collisionTypeIds" />
 			<parameter name="Float $stepUpMax" />
 			<parameter name="Vector3 $point" />
-			<parameter name="Vector3 =$heightPoint" />
-			<parameter name="[String =$bodyId]" />
+			<parameter name="Vector3 &$heightPoint" />
+			<parameter name="[String &$bodyId]" />
 			<parameter name="[Float $minHeight]" />
 			<parameter name="[Float $maxHeight]" />
 		</overload>
@@ -2199,8 +2199,8 @@
 			<parameter name="Integer $collisionTypeIds" />
 			<parameter name="Vector3 $start" />
 			<parameter name="Vector3 $end" />
-			<parameter name="Vector3 =$hitPoint" />
-			<parameter name="[String =$bodyId]" />
+			<parameter name="Vector3 &$hitPoint" />
+			<parameter name="[String &$bodyId]" />
 			<parameter name="[String $actorId]" />
 		</overload>
 	</keyword>
