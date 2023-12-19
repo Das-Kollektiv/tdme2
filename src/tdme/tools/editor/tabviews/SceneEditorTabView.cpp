@@ -1,5 +1,9 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 
+#if !defined(_MSC_VER)
+	#include <dlfcn.h>
+#endif
+
 #include <memory>
 #include <string>
 #include <unordered_set>
@@ -1442,7 +1446,49 @@ void SceneEditorTabView::runScene() {
 		applicationClient->getContext()->initialize();
 	}
 
+	//
 	Library* scriptLibrary = nullptr;
+
+	// load script library from libscriptlibrary.so
+	#if defined(_MSC_VER)
+		// TODO: next
+	#else
+		//
+		string scriptLibraryURI = editorView->getScreenController()->getProjectPath() + "/libscriptlibrary.so";
+		//
+		#if defined(__HAIKU__)
+			// TODO: fix me!!!
+			scriptLibraryHandle = dlopen(("lib/" + scriptLibraryURI).c_str(), RTLD_NOW);
+		#else
+			scriptLibraryHandle = dlopen(scriptLibraryURI.c_str(), RTLD_NOW);
+		#endif
+			//
+		if (scriptLibraryHandle == nullptr) {
+			Console::println("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
+		} else {
+			//
+			Library* (*scriptLibraryCreateInstance)() = (Library*(*)())dlsym(scriptLibraryHandle, "createInstance");
+			//
+			if (scriptLibraryCreateInstance == nullptr) {
+				dlclose(scriptLibraryHandle);
+				scriptLibraryHandle = nullptr;
+				//
+				Console::println("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
+			} else {
+				//
+				scriptLibrary = (Library*)scriptLibraryCreateInstance();
+				if (scriptLibrary == nullptr) {
+					dlclose(scriptLibraryHandle);
+					scriptLibraryHandle = nullptr;
+					//
+					Console::println("SceneEditorTabView::runScene(): Could not create script library");
+				}
+			}
+		}
+	#endif
+
+	//
+	Console::println("SceneEditorTabView::runScene(): native script library @ " + scriptLibraryURI + ": " + string(scriptLibrary != nullptr?"YES":"NO"));
 
 	// add gui
 	if (scene->getGUIFileName().empty() == false) {
@@ -1468,25 +1514,44 @@ void SceneEditorTabView::runScene() {
 	string invalidScripts;
 	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
-			auto miniScript = make_unique<LogicMiniScript>();
-			miniScript->parseScript(
-				Tools::getPathName(entity->getPrototype()->getScript()),
-				Tools::getFileName(entity->getPrototype()->getScript())
-			);
-			if (miniScript->isValid() == false) {
+			auto scriptURI = entity->getPrototype()->getScript();
+			if (StringTools::startsWith(scriptURI, editorView->getScreenController()->getProjectPath() + "/") == true) {
+				scriptURI = StringTools::substring(scriptURI, (editorView->getScreenController()->getProjectPath() + "/").size());
+			}
+			// arr, try to load from library
+			unique_ptr<LogicMiniScript> logicMiniScript;
+			if (scriptLibrary != nullptr) {
+				logicMiniScript = unique_ptr<LogicMiniScript>(
+					dynamic_cast<LogicMiniScript*>(
+						scriptLibrary->loadScript(
+							Tools::getPathName(scriptURI),
+							Tools::getFileName(scriptURI),
+							editorView->getScreenController()->getProjectPath()
+						)
+					)
+				);
+			} else {
+				// nope, interpreted
+				logicMiniScript = make_unique<LogicMiniScript>();
+				logicMiniScript->parseScript(
+					Tools::getPathName(entity->getPrototype()->getScript()),
+					Tools::getFileName(entity->getPrototype()->getScript())
+				);
+			}
+			if (logicMiniScript->isValid() == false) {
 				//
 				invalidScripts+=
 					Tools::getRelativeResourcesFileName(
 						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
 					);
 				//
-				if (miniScript->getParseErrors().empty() == true) {
+				if (logicMiniScript->getParseErrors().empty() == true) {
 					invalidScripts+= "\n";
 				} else {
 					//
 					invalidScripts+= ":\n";
 					//
-					for (const auto& parseError: miniScript->getParseErrors())
+					for (const auto& parseError: logicMiniScript->getParseErrors())
 						invalidScripts+= "\t" + parseError + "\n";
 					//
 					invalidScripts+= "\n";
@@ -1501,7 +1566,7 @@ void SceneEditorTabView::runScene() {
 					applicationClient->getContext(),
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
-					miniScript.release(),
+					logicMiniScript.release(),
 					entity->getPrototype(),
 					true
 				).release()
@@ -1567,4 +1632,9 @@ void SceneEditorTabView::shutdownScene() {
 	applicationClient->getContext()->unsetScene();
 	//
 	applicationClient = nullptr;
+	//
+	if (scriptLibraryHandle != nullptr) {
+		dlclose(scriptLibraryHandle);
+		scriptLibraryHandle = nullptr;
+	}
 }

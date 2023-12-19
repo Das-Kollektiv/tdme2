@@ -18,6 +18,7 @@ namespace miniscript {
 	class Library;
 	class MathMethods;
 	class MapMethods;
+	class NativeLibrary;
 	class NetworkMethods;
 	class MiniScript;
 	class ScriptMethods;

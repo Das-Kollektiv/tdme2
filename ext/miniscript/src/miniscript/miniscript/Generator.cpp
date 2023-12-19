@@ -61,9 +61,9 @@ void Generator::generateLibrary(
 		libraryIncludes+= string() + "#include \"" + className + ".h\"" + "\n";
 		libraryCode+= string() + "\t" + "if (scriptURI == \"" + scriptURI + "\") {" + "\n";
 		libraryCode+= string() + "\t\t" + "script = make_unique<" + className + ">();" + "\n";
-		libraryCode+= string() + "\t" + "}" + "\n";
+		libraryCode+= string() + "\t" + "} else" + "\n";
 	}
-	libraryCode+= string() + "\t" + "else {" + "\n";
+	libraryCode+= string() + "\t" + "{" + "\n";
 	libraryCode+= string() + "\t\t" + "script = make_unique<MiniScript>();" + "\n";
 	libraryCode+= string() + "\t" + "}";
 

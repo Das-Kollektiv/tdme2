@@ -16,7 +16,7 @@ using _Context = miniscript::miniscript::Context;
  */
 class miniscript::miniscript::Library
 {
-private:
+protected:
 	_Context* context { nullptr };
 
 public:
@@ -53,8 +53,9 @@ public:
 	 * Load script from library
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param basePathName base path name
 	 * @return MiniScript script from library
 	 */
-	virtual MiniScript* loadScript(const string& pathName, const string& fileName);
+	virtual MiniScript* loadScript(const string& pathName, const string& fileName, const string& basePathName = string());
 
 };

@@ -211,7 +211,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::startScript();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + miniScript->getBaseClass() + "::startScript();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
@@ -223,7 +223,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::execute();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + miniScript->getBaseClass() + "::execute();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
@@ -253,7 +253,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 
 	string registerMethodsDefinitions;
 	registerMethodsDefinitions+= "void " + miniScriptClassName + "::registerMethods() {" + "\n";
-	registerMethodsDefinitions+= methodCodeIndent+ "MiniScript::registerMethods();" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent + miniScript->getBaseClass() + "::registerMethods();" + "\n";
 	registerMethodsDefinitions+= methodCodeIndent + "if (native == false) return;" + "\n";
 	//
 	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
@@ -265,7 +265,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	string emitDefinition;
 	emitDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
 	emitDefinition+= methodCodeIndent + "if (native == false) {" + "\n";
-	emitDefinition+= methodCodeIndent + "\t" + "MiniScript::emit(condition);" + "\n";
+	emitDefinition+= methodCodeIndent + "\t" + miniScript->getBaseClass() + "::emit(condition);" + "\n";
 	emitDefinition+= methodCodeIndent + "\t" + "return;" + "\n";
 	emitDefinition+= methodCodeIndent + "}" + "\n";
 	string generatedDefinitions = "\n";

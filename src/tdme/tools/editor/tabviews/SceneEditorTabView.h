@@ -149,6 +149,8 @@ private:
 
 	unique_ptr<ApplicationClient> applicationClient;
 
+	void* scriptLibraryHandle { nullptr };
+
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(SceneEditorTabView)
