@@ -1,7 +1,9 @@
 #include <cstdlib>
 #include <string>
 
-#include <ext/miniscript/src/miniscript/miniscript/Transpiler.h>
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Transpiler.h>
+
 #include <tdme/engine/Version.h>
 #include <tdme/utilities/Console.h>
 

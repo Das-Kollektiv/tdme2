@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_set>
 
+#include <miniscript/miniscript/Library.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/logics/ApplicationClient.h>
@@ -53,6 +55,8 @@ using std::unique_ptr;
 using std::unordered_set;
 
 using tdme::tools::editor::tabviews::SceneEditorTabView;
+
+using miniscript::miniscript::Library;
 
 using tdme::audio::Audio;
 using tdme::engine::logics::ApplicationClient;
@@ -1438,6 +1442,8 @@ void SceneEditorTabView::runScene() {
 		applicationClient->getContext()->initialize();
 	}
 
+	Library* scriptLibrary = nullptr;
+
 	// add gui
 	if (scene->getGUIFileName().empty() == false) {
 		try {
@@ -1445,6 +1451,7 @@ void SceneEditorTabView::runScene() {
 				Tools::getPathName(scene->getGUIFileName()),
 				Tools::getFileName(scene->getGUIFileName()),
 				{},
+				scriptLibrary,
 				MiniScript::Variable(),
 				applicationClient->getContext()
 			);

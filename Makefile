@@ -999,6 +999,9 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/createinstaller-main.cpp \
 	src/tdme/tools/cli/miniscriptcodecompletion-main.cpp \
 	src/tdme/tools/cli/miniscriptdocumentation-main.cpp \
+	src/tdme/tools/cli/miniscriptlibrary-main.cpp \
+	src/tdme/tools/cli/miniscriptmakefile-main.cpp \
+	src/tdme/tools/cli/miniscriptnmakefile-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
 	src/tdme/tools/cli/miniscriptuntranspiler-main.cpp \
 	src/tdme/tools/cli/createrc-main.cpp \

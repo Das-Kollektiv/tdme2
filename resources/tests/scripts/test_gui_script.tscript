@@ -3,7 +3,7 @@ function: initialize($arguments)
 	console.log("initialize(): " + gui.screennode.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
-	$GLOBAL.context = map()
+	$GLOBAL.context = {}
 	$GLOBAL.context.screenIdx = 1
 	console.log($GLOBAL.context)
 end
@@ -28,7 +28,7 @@ function: onAction($actionType, $elementNodeId)
 		elseif ($elementNodeId == "btn_evualuate")
 			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
 		elseif ($elementNodeId == "btn_nextscreen")
-			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", map(), $GLOBAL.context)
+			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", {}, $GLOBAL.context)
 		end
 	end
 end

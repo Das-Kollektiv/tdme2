@@ -16,9 +16,9 @@ function: onAction($actionType, $elementNodeId)
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
 		if ($elementNodeId == "btn_popup")
-			gui.screen.push("resources/tests/screens/test_gui_popup.xml", map(), $GLOBAL.context)
+			gui.screen.push("resources/tests/screens/test_gui_popup.xml", {}, $GLOBAL.context)
 		elseif ($elementNodeId == "btn_backscreen")
-			gui.screen.goto("resources/tests/screens/test_gui_script.xml", map(), $GLOBAL.context)
+			gui.screen.goto("resources/tests/screens/test_gui_script.xml", {}, $GLOBAL.context)
 		end
 	end
 end

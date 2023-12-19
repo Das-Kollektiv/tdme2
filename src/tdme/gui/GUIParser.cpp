@@ -184,12 +184,12 @@ const string GUIParser::getRootNode(const string& xml) {
 	return rootNode;
 }
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables, const MiniScript::Variable& miniScriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables, Library* scriptLibrary, const MiniScript::Variable& scriptArguments, Context* context)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), variables, pathName, fileName, miniScriptArguments, context);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), variables, pathName, fileName, scriptLibrary, scriptArguments, context);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& variables, const string& pathName, const string& fileName, const MiniScript::Variable& miniScriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& variables, const string& pathName, const string& fileName, Library* scriptLibrary, const MiniScript::Variable& scriptArguments, Context* context)
 {
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
@@ -280,8 +280,9 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		unescape(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("tooltip")))),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true"),
+		scriptLibrary,
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script"))),
-		miniScriptArguments,
+		scriptArguments,
 		context
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor

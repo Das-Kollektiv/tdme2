@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Library.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -55,6 +58,8 @@ using std::to_string;
 using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
+
+using miniscript::miniscript::Library;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -116,8 +121,9 @@ GUIScreenNode::GUIScreenNode(
 	const string& tooltip,
 	bool scrollable,
 	bool popUp,
+	Library* scriptLibrary,
 	const string& scriptFileName,
-	const EngineMiniScript::Variable& miniScriptArguments,
+	const EngineMiniScript::Variable& scriptArguments,
 	Context* context
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
@@ -137,16 +143,27 @@ GUIScreenNode::GUIScreenNode(
 	this->popUp = popUp;
 	this->foccussedBorderColor = GUIColor(applicationSubPathName == "project"?GUIParser::getProjectThemeProperties()->get("color.focus", "#ff0000"):GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (scriptFileName.empty() == false) {
-		this->script = make_unique<GUIMiniScript>(this);
 		// compute project script path and file name
 		string projectScriptPathName;
 		string projectScriptFileName;
 		getProjectFilePathNameAndFileName(scriptFileName, projectScriptPathName, projectScriptFileName);
 		//
-		this->script->parseScript(
-			projectScriptPathName,
-			projectScriptFileName
-		);
+		if (scriptLibrary != nullptr) {
+			this->script = unique_ptr<GUIMiniScript>(
+				dynamic_cast<GUIMiniScript*>(
+					scriptLibrary->loadScript(
+						projectScriptPathName,
+						projectScriptFileName
+					)
+				)
+			);
+		} else {
+			this->script = make_unique<GUIMiniScript>(this);
+			this->script->parseScript(
+				projectScriptPathName,
+				projectScriptFileName
+			);
+		}
 		// check if valid
 		if (this->script->isValid() == false) {
 			// nope
@@ -156,7 +173,7 @@ GUIScreenNode::GUIScreenNode(
 			// yup
 			Console::println(this->script->getInformation());
 			//
-			this->miniScriptArguments = miniScriptArguments;
+			this->scriptArguments = scriptArguments;
 			//
 			this->scriptOnActionAvailable = this->script->hasFunction("onAction");
 			this->scriptOnChangeAvailable = this->script->hasFunction("onChange");
@@ -216,7 +233,7 @@ GUIScreenNode::~GUIScreenNode() {
 void GUIScreenNode::initializeMiniScript() {
 	//
 	if (script != nullptr && script->hasFunction("initialize") == true) {
-		vector<EngineMiniScript::Variable> arguments { miniScriptArguments };
+		vector<EngineMiniScript::Variable> arguments { scriptArguments };
 		span argumentsSpan(arguments);
 		EngineMiniScript::Variable returnValue;
 		script->call("initialize", argumentsSpan, returnValue);

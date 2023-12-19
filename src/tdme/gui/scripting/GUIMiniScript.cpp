@@ -1235,6 +1235,7 @@ void GUIMiniScript::registerMethods() {
 								screenPathName,
 								screenFileName,
 								variables,
+								miniScript->getLibrary(),
 								arguments.size() == 3?arguments[2]:EngineMiniScript::Variable(),
 								miniScript->screenNode->getContext()
 							)
@@ -1297,6 +1298,7 @@ void GUIMiniScript::registerMethods() {
 							screenPathName,
 							screenFileName,
 							variables,
+							miniScript->getLibrary(),
 							arguments.size() == 3?arguments[2]:EngineMiniScript::Variable(),
 							miniScript->screenNode->getContext()
 						);

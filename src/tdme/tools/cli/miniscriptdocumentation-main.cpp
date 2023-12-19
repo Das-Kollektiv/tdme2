@@ -2,8 +2,9 @@
 #include <set>
 #include <string>
 
-#include <ext/miniscript/src/miniscript/miniscript/Documentation.h>
-#include <ext/miniscript/src/miniscript/utilities/Properties.h>
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Documentation.h>
+#include <miniscript/utilities/Properties.h>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>

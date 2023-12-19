@@ -261,11 +261,23 @@ public:
 				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
-					auto logicMiniScript = make_unique<LogicMiniScript>();
-					logicMiniScript->parseScript(
-						Tools::getPathName(prototype->getScript()),
-						Tools::getFileName(prototype->getScript())
-					);
+					unique_ptr<LogicMiniScript> logicMiniScript;
+					if (miniScript->getLibrary() != nullptr) {
+						logicMiniScript = unique_ptr<LogicMiniScript>(
+							dynamic_cast<LogicMiniScript*>(
+								miniScript->getLibrary()->loadScript(
+									Tools::getPathName(prototype->getScript()),
+									Tools::getFileName(prototype->getScript())
+								)
+							)
+						);
+					} else {
+						logicMiniScript = make_unique<LogicMiniScript>();
+						logicMiniScript->parseScript(
+							Tools::getPathName(prototype->getScript()),
+							Tools::getFileName(prototype->getScript())
+						);
+					}
 					miniScript->context->addLogic(
 						make_unique<MiniScriptLogic>(
 							miniScript->context,

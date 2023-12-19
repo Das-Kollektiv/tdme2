@@ -846,6 +846,9 @@ all: \
 	createinstaller \
 	miniscriptcodecompletion \
 	miniscriptdocumentation \
+	miniscriptlibrary \
+	miniscriptmakefile \
+	miniscriptnmakefile \
 	miniscripttranspiler \
 	miniscriptuntranspiler \
 	createrc \
@@ -1183,6 +1186,21 @@ miniscriptdocumentation:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptdocumentation.exe $(MSCBIN)\miniscriptdocumentation.exe.rc
 	rc $(MSCBIN)\miniscriptdocumentation.exe.rc
 	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptdocumentation $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptdocumentation-main.cpp $(MSCBIN)\miniscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+miniscriptlibrary:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptlibrary.exe $(MSCBIN)\miniscriptlibrary.exe.rc
+	rc $(MSCBIN)\miniscriptlibrary.exe.rc
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptlibrary $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptlibrary-main.cpp $(MSCBIN)\miniscriptlibrary.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+miniscriptmakefile:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptmakefile.exe $(MSCBIN)\miniscriptmakefile.exe.rc
+	rc $(MSCBIN)\miniscriptmakefile.exe.rc
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptmakefile $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptmakefile-main.cpp $(MSCBIN)\miniscriptmakefile.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+miniscriptnmakefile:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptnmakefile.exe $(MSCBIN)\miniscriptnmakefile.exe.rc
+	rc $(MSCBIN)\miniscriptnmakefile.exe.rc
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fe$(MSCBIN)\miniscriptnmakefile $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptnmakefile-main.cpp $(MSCBIN)\miniscriptnmakefile.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 miniscripttranspiler:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscripttranspiler.exe $(MSCBIN)\miniscripttranspiler.exe.rc

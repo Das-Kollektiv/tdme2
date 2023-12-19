@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <ext/miniscript/src/miniscript/miniscript/Transpiler.h>
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Transpiler.h>
 
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>

@@ -6,6 +6,9 @@
 #include <unordered_set>
 #include <vector>
 
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Library.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
@@ -27,6 +30,8 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
+
+using miniscript::miniscript::Library;
 
 using tdme::engine::Texture;
 using tdme::engine::logics::Context;
@@ -179,7 +184,7 @@ private:
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
 
-	EngineMiniScript::Variable miniScriptArguments;
+	EngineMiniScript::Variable scriptArguments;
 
 	Context* context { nullptr };
 
@@ -356,8 +361,9 @@ public:
 	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
+	 * @param scriptLibrary
 	 * @param scriptFileName EngineMiniScript script file name
-	 * @param miniScriptArguments mini script arguments
+	 * @param scriptArguments script arguments
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
 	 */
@@ -384,8 +390,9 @@ public:
 		const string& tooltip,
 		bool scrollable,
 		bool popUp,
+		Library* scriptLibrary,
 		const string& scriptFileName,
-		const EngineMiniScript::Variable& miniScriptArguments,
+		const EngineMiniScript::Variable& scriptArguments,
 		Context* context
 	);
 
