@@ -23,7 +23,7 @@ CFLAGS := $(OFLAGS) $(EXTRAFLAGS) -g -pipe -MMD -MP -DAPP_BUILD_TYPE=$(APP_BUILD
 CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 
 # source files
-SRC = {$source-folder}
+SRC = {$source-path}
 SRCS = {$source-files}
 
 # executables source files

@@ -56,7 +56,7 @@ CPPFLAGS := $(INCLUDES)
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG -fPIC
 CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 
-SRC = {$source-folder}
+SRC = {$source-path}
 SRCS = {$source-files}
 
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
