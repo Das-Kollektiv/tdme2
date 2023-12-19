@@ -1,6 +1,5 @@
 #
-BIN = scriptlibrary-bin
-LIB_DIR = scriptlibrary-lib
+LIB_DIR = scriptlibrary
 OBJ := scriptlibrary-obj
 
 # determine platform
@@ -22,9 +21,9 @@ LIB := lib$(NAME)$(LIB_EXT)
 CPPVERSION = -std=c++2a
 OFLAGS = -O3
 EXTRAFLAGS = 
-INCLUDES = -Isrc -Iext -I.
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src -Iext/miniscript/src -Isrc/tdme
 
-LIBS_LDFLAGS := -Llib -lminiscript
+LIBS_LDFLAGS := -Llib -ltdme2
 
 # set platform specific flags
 ifeq ($(OS), Darwin)
