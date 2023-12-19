@@ -1450,11 +1450,10 @@ void SceneEditorTabView::runScene() {
 	Library* scriptLibrary = nullptr;
 
 	// load script library from libscriptlibrary.so
+	string scriptLibraryURI = editorView->getScreenController()->getProjectPath() + "/libscriptlibrary.so";
 	#if defined(_MSC_VER)
 		// TODO: next
 	#else
-		//
-		string scriptLibraryURI = editorView->getScreenController()->getProjectPath() + "/libscriptlibrary.so";
 		//
 		#if defined(__HAIKU__)
 			// TODO: fix me!!!
@@ -1634,7 +1633,11 @@ void SceneEditorTabView::shutdownScene() {
 	applicationClient = nullptr;
 	//
 	if (scriptLibraryHandle != nullptr) {
-		dlclose(scriptLibraryHandle);
+		#if defined(_MSC_VER)
+			// TODO: next
+		#else
+			dlclose(scriptLibraryHandle);
+		#endif
 		scriptLibraryHandle = nullptr;
 	}
 }
