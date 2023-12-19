@@ -25,7 +25,8 @@ public:
 	FORBID_CLASS_COPY(NativeLibrary)
 
 	/**
-	 * Constructor
+	 * Public constructor
+	 * @param context context or nullptr
 	 */
 	NativeLibrary(_Context* context): _Library(context) {
 	}

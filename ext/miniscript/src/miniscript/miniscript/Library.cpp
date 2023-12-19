@@ -10,24 +10,22 @@
 using std::make_unique;
 using std::string;
 
-using miniscript::miniscript::Library;
+using _Context = miniscript::miniscript::Context;
+using _Library = miniscript::miniscript::Library;
+using _Console = miniscript::utilities::Console;
 
-using miniscript::miniscript::Context;
-using miniscript::miniscript::MiniScript;
-using miniscript::utilities::Console;
-
-Library::Library(Context* context) {
+_Library::Library(_Context* context) {
 	this->context = context;
 }
 
-Library::~Library() {
+_Library::~Library() {
 }
 
-MiniScript* Library::loadScript(const string& pathName, const string& fileName) {
-	Console::println("Library::loadScript(): " + pathName + "/" + fileName);
+MiniScript* _Library::loadScript(const string& pathName, const string& fileName, const string& basePathName) {
+	_Console::println("Library::loadScript(): " + pathName + "/" + fileName + (basePathName.empty() == false?"@" + basePathName:""));
 	auto script = make_unique<MiniScript>();
 	script->setContext(context);
 	script->setLibrary(this);
-	script->parseScript(pathName, fileName);
+	script->parseScript((basePathName.empty() == false?basePathName + "/":"") + pathName, fileName);
 	return script.release();
 }
