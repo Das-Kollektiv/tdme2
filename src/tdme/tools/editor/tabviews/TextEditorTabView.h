@@ -529,7 +529,7 @@ public:
 	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMiniScript::SyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * @return EngineMiniScript script index
+	 * @return MiniScript script index
 	 */
 	inline int getMiniScriptScriptIdx() {
 		return miniScriptScriptIdx;
@@ -559,7 +559,7 @@ public:
 
 	/**
 	 * Update miniscript syntax tree
-	 * @param miniScriptScriptIdx EngineMiniScript script index
+	 * @param miniScriptScriptIdx MiniScript script index
 	 */
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 

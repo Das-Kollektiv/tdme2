@@ -361,8 +361,8 @@ public:
 	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
-	 * @param scriptLibrary
-	 * @param scriptFileName EngineMiniScript script file name
+	 * @param scriptLibrary script library
+	 * @param scriptFileName script file name
 	 * @param scriptArguments script arguments
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException

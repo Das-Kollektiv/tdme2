@@ -197,7 +197,7 @@ public:
 
 	/**
 	 * Update EngineMiniScript syntax tree
-	 * @param miniScriptScriptIdx EngineMiniScript script index
+	 * @param miniScriptScriptIdx MiniScript script index
 	 */
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 
