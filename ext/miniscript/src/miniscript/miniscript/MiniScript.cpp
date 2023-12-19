@@ -117,6 +117,9 @@ const string MiniScript::Variable::TYPENAME_SET = "Set";
 
 const vector<string> MiniScript::Method::CONTEXTFUNCTIONS_ALL = {};
 
+const string MiniScript::getBaseClassHeader() {
+	return "miniscript/miniscript/MiniScript.h";
+}
 
 const string MiniScript::getBaseClass() {
 	return "miniscript::miniscript::MiniScript";

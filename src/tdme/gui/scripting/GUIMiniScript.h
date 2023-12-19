@@ -45,6 +45,7 @@ public:
 	virtual ~GUIMiniScript();
 
 	// overridden methods
+	const string getBaseClassHeader();
 	const string getBaseClass();
 	const vector<string> getTranspilationUnits();
 	void registerStateMachineStates() override;

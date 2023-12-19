@@ -3,6 +3,8 @@
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/MiniScript.h>
 
+#include <{$base-class-header}>
+
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_START__*/
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_END__*/
 

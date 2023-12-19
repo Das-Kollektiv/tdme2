@@ -3,6 +3,8 @@
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/MiniScript.h>
 
+#include <{$base-class-header}>
+
 /**
  * MiniScript -> C++ transpilation of {$script}
  */

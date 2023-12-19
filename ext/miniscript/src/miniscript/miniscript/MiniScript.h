@@ -3157,6 +3157,11 @@ public:
 	virtual ~MiniScript();
 
 	/**
+	 * @return base class header
+	 */
+	virtual const string getBaseClassHeader();
+
+	/**
 	 * @return base class
 	 */
 	virtual const string getBaseClass();

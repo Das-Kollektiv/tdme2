@@ -69,6 +69,10 @@ GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): EngineMiniScript(), scr
 GUIMiniScript::~GUIMiniScript() {
 }
 
+const string GUIMiniScript::getBaseClassHeader() {
+	return "tdme/gui/scripting/GUIMiniScript.h";
+}
+
 const string GUIMiniScript::getBaseClass() {
 	return "tdme::gui::scripting::GUIMiniScript";
 }

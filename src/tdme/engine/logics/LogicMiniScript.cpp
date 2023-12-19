@@ -97,6 +97,10 @@ LogicMiniScript::LogicMiniScript(): EngineMiniScript(), prototypesToAddMutex("pr
 LogicMiniScript::~LogicMiniScript() {
 }
 
+const string LogicMiniScript::getBaseClassHeader() {
+	return "tdme/engine/logics/LogicMiniScript.h";
+}
+
 const string LogicMiniScript::getBaseClass() {
 	return "tdme::engine::logics::LogicMiniScript";
 }
