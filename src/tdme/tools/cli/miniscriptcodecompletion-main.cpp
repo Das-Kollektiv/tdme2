@@ -43,6 +43,7 @@ int main(int argc, char** argv)
 	//
 	vector<string> keywords1;
 	vector<string> keywords2;
+	keywords2.push_back("callable:");
 	keywords2.push_back("function:");
 	keywords2.push_back("on:");
 	keywords2.push_back("on-enabled:");
