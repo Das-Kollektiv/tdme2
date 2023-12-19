@@ -87,6 +87,7 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param variables variables
+	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
 	 * @param context application logic context
 	 * @return GUI screen node
@@ -101,6 +102,7 @@ public:
 	 * @param variables variables
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
 	 * @param context application logic context
 	 * @return GUI screen node
