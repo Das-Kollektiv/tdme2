@@ -47,16 +47,18 @@ public:
 	 * @param srcPath source path
 	 * @param makefileURI makefile URI
 	 * @param library library
+	 * @param basePath base path
 	 */
-	static void generateMakefile(const string& srcPath, const string& makefileURI, bool library);
+	static void generateMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string());
 
 	/**
 	 * Generate NMakefile
 	 * @param srcPath source path
 	 * @param makefileURI makefile URI
 	 * @param library library
+	 * @param basePath base path
 	 */
-	static void generateNMakefile(const string& srcPath, const string& makefileURI, bool library);
+	static void generateNMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string());
 
 private:
 

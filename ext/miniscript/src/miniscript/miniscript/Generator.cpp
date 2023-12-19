@@ -79,24 +79,32 @@ void Generator::generateLibrary(
 	}
 }
 
-void Generator::generateMakefile(const string& srcPath, const string& makefileURI, bool library) {
+void Generator::generateMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath) {
 	//
 	try {
 		Console::println("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
-		scanPath(srcPath, sourceFiles, mainSourceFiles);
+		scanPath(basePath + "/" + srcPath, sourceFiles, mainSourceFiles);
 
+		// cut off base path
+		for (auto& sourceFile: sourceFiles) sourceFile = StringTools::substring(sourceFile, basePath.size() + 1);
+		for (auto& mainSourceFile: mainSourceFiles) mainSourceFile = StringTools::substring(mainSourceFile, basePath.size() + 1);
+
+		//
 		string sourceFilesVariable = "\\\n";
 		for (const auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
 		sourceFilesVariable+= "\n";
 
+		//
 		string mainSourceFilesVariable = "\\\n";
 		for (const auto& file: mainSourceFiles) mainSourceFilesVariable+= "\t" + file + "\\\n";
 		mainSourceFilesVariable+= "\n";
 
+		//
 		Console::println("Generating Makefile");
 
+		//
 		auto makefileSource = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", library == true?"Library-Makefile":"Makefile");
 		makefileSource = StringTools::replace(makefileSource, "{$source-path}", srcPath);
 		makefileSource = StringTools::replace(makefileSource, "{$source-files}", sourceFilesVariable);
@@ -107,20 +115,26 @@ void Generator::generateMakefile(const string& srcPath, const string& makefileUR
 	}
 }
 
-void Generator::generateNMakefile(const string& srcPath, const string& makefileURI, bool library) {
+void Generator::generateNMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath) {
 	//
 	try {
 		Console::println("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
-		scanPath(srcPath, sourceFiles, mainSourceFiles);
+		scanPath(basePath + "/" + srcPath, sourceFiles, mainSourceFiles);
+
+		// cut off base path
+		for (auto& sourceFile: sourceFiles) sourceFile = StringTools::substring(sourceFile, basePath.size() + 1);
+		for (auto& mainSourceFile: mainSourceFiles) mainSourceFile = StringTools::substring(mainSourceFile, basePath.size() + 1);
 
 		//
 		string sourceFilesVariable = "\\\n";
 		for (const auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
 		sourceFilesVariable+= "\n";
+
 		//
 		string makefileSource;
+
 		//
 		if (library == true) {
 			Console::println("Generating Makefile");

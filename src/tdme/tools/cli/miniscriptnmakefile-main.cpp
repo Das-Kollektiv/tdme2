@@ -22,18 +22,18 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	if ((argc != 3 && argc != 4) || (argc == 4 && string(argv[1]) != "--library")) {
-		Console::println("Usage: miniscriptnmakefile [--library] source_pathname makefile_filename");
+	if (argc != 4) {
+		Console::println("Usage: miniscriptnmakefile base_pathname source_pathname makefile_filename");
 		exit(EXIT_FAILURE);
 	}
 
 	//
-	auto library = argc == 4 && string(argv[1]) == "--library";
-	auto srcPath = string(argv[1 + (library == true?1:0)]);
-	auto makefileURI = string(argv[2 + (library == true?1:0)]);
+	auto basePath = string(argv[1]);
+	auto srcPath = string(argv[2]);
+	auto makefileURI = string(argv[3]);
 
 	//
-	Generator::generateNMakefile(srcPath, makefileURI, library);
+	Generator::generateNMakefile(srcPath, makefileURI, true, basePath);
 
 	//
 	exit(EXIT_SUCCESS);
