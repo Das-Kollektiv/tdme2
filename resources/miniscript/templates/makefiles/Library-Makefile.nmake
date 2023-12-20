@@ -51,7 +51,7 @@ init:
 	mkdir $(MSCBIN)
 
 compile: $(SRCS)
-	cl /D MINISCRIPT_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 link1: $(MSCOBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:$(MSCBIN)\$(LIBNAME).lib $**

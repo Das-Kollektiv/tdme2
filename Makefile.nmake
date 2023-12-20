@@ -889,7 +889,7 @@ ext-link2: $(MSCOBJ)/*.obj
 	rc $(MSCBIN)\libtdme-ext.dll.rc
 	echo LIBRARY $(MSCBIN)\libtdme-ext.dll > $(MSCBIN)\libtdme-ext.def
 	type $(MSCBIN)\libtdme-ext.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme-ext.def
-	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme-ext.dll.res $(LIBS_LDFLAGS) /OUT:$(MSCBIN)\libtdme-ext.dll
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme-ext.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme-ext.dll.res $(LIBS_LDFLAGS) /OUT:$(MSCBIN)\libtdme-ext.dll
 
 ext-clean:$(MSCOBJ)/*.obj
 	del /S /Q $(MSCOBJ) >nul 2>&1
@@ -915,7 +915,7 @@ link2: $(MSCOBJ)/*.obj
 	rc $(MSCBIN)\libtdme.dll.rc
 	echo LIBRARY $(MSCBIN)\libtdme.dll > $(MSCBIN)\libtdme.def
 	type $(MSCBIN)\libtdme.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme.def
-	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme-ext.lib /OUT:$(MSCBIN)\libtdme.dll
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme-ext.lib /OUT:$(MSCBIN)\libtdme.dll
 
 clean: 
 	del /S /Q $(MSCOBJ) >nul 2>&1
@@ -947,7 +947,7 @@ opengl3core-link2: $(MSCOBJ)/*.obj
 	rc $(MSCBIN)\libopengl3corerenderer.dll.rc
 	echo LIBRARY $(MSCBIN)\libopengl3corerenderer.dll > $(MSCBIN)\libopengl3corerenderer.def
 	type $(MSCBIN)\libopengl3corerenderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl3corerenderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl3corerenderer.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl3corerenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl3corerenderer.dll
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl3corerenderer.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl3corerenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl3corerenderer.dll
 
 opengl3core-clean:
 	del /S /Q $(MSCOBJ) >nul 2>&1
@@ -973,7 +973,7 @@ opengl2-link2: $(MSCOBJ)/*.obj
 	rc $(MSCBIN)\libopengl2renderer.dll.rc
 	echo LIBRARY $(MSCBIN)\libopengl2renderer.dll > $(MSCBIN)\libopengl2renderer.def
 	type $(MSCBIN)\libopengl2renderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl2renderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl2renderer.def /IGNORE:4197 /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl2renderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl2renderer.dll
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl2renderer.def /DEBUG /IGNORE:4197 /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl2renderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl2renderer.dll
 
 opengl2-clean:
 	del /S /Q $(MSCOBJ) >nul 2>&1
@@ -1004,7 +1004,7 @@ vulkan-link2: $(MSCOBJ)/*.obj
 	echo LIBRARY $(MSCBIN)\libvulkanrenderer.dll > $(MSCBIN)\libvulkanrenderer.def
 	echo DESCRIPTION $(MSCBIN)\libvulkanrenderer >> $(MSCBIN)\libvulkanrenderer.def
 	type $(MSCBIN)\libvulkanrenderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libvulkanrenderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libvulkanrenderer.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libvulkanrenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:$(MSCBIN)\libvulkanrenderer.dll
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libvulkanrenderer.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libvulkanrenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:$(MSCBIN)\libvulkanrenderer.dll
 
 AudioTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc AudioTest.exe $(MSCBIN)\AudioTest.exe.rc
