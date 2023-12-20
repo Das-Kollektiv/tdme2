@@ -10,7 +10,6 @@ INCLUDES = \
 	/I "." \
 	/I "src" \
 	/I "ext" \
-	/I "ext\src" \
 	/I "ext\vhacd\include" \
 	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
@@ -1366,6 +1365,11 @@ copy-executables:
 	copy $(MSCBIN)\createinstaller.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscriptcodecompletion.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscriptdocumentation.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptlibrary.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptmakefile.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptnmakefile.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\createrc.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\dumpmodel.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.

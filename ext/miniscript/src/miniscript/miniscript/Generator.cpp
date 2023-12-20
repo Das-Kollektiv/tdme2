@@ -87,6 +87,8 @@ void Generator::generateMakefile(const string& srcPath, const string& makefileUR
 		vector<string> mainSourceFiles;
 		scanPath(basePath + "/" + srcPath, sourceFiles, mainSourceFiles);
 
+		// TODO: cut out tdme
+
 		// cut off base path
 		for (auto& sourceFile: sourceFiles) sourceFile = StringTools::substring(sourceFile, basePath.size() + 1);
 		for (auto& mainSourceFile: mainSourceFiles) mainSourceFile = StringTools::substring(mainSourceFile, basePath.size() + 1);
@@ -122,6 +124,8 @@ void Generator::generateNMakefile(const string& srcPath, const string& makefileU
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
 		scanPath(basePath + "/" + srcPath, sourceFiles, mainSourceFiles);
+
+		// TODO: cut out tdme
 
 		// cut off base path
 		for (auto& sourceFile: sourceFiles) sourceFile = StringTools::substring(sourceFile, basePath.size() + 1);
