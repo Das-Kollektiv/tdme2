@@ -1319,6 +1319,7 @@ copy-executables:
 	if exist vc140.pdb move vc140.pdb $(MSCBIN)\. 
 	copy $(MSCBIN)\*.dll lib\.
 	copy $(MSCBIN)\*.lib lib\.
+	copy $(MSCBIN)\*.pdb lib\.
 
 	mkdir bin
 	mkdir bin\tdme
