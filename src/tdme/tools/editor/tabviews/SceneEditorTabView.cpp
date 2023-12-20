@@ -1,6 +1,8 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 
-#if !defined(_MSC_VER)
+#if defined(_MSC_VER)
+	#include <windows.h>
+#else
 	#include <dlfcn.h>
 #endif
 
@@ -1450,10 +1452,35 @@ void SceneEditorTabView::runScene() {
 	Library* scriptLibrary = nullptr;
 
 	// load script library from libscriptlibrary.so
-	string scriptLibraryURI = editorView->getScreenController()->getProjectPath() + "/libscriptlibrary.so";
+	string scriptLibraryURI = editorView->getScreenController()->getProjectPath() + "/libscriptlibrary";
 	#if defined(_MSC_VER)
-		// TODO: next
+		scriptLibraryURI+= ".dll";
+		//
+		auto scriptLibraryHandle = LoadLibrary(scriptLibraryURI.c_str());
+		if (scriptLibraryHandle == nullptr) {
+			Console::println("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
+		} else {
+			//
+			Library* (*scriptLibraryCreateInstance)() = (Library*(*)())GetProcAddress(scriptLibraryHandle, "createInstance");
+			//
+			if (scriptLibraryCreateInstance == nullptr) {
+				FreeLibrary(scriptLibraryHandle);
+				scriptLibraryHandle = nullptr;
+				//
+				Console::println("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
+			} else {
+				//
+				scriptLibrary = (Library*)scriptLibraryCreateInstance();
+				if (scriptLibrary == nullptr) {
+					FreeLibrary(scriptLibraryHandle);
+					scriptLibraryHandle = nullptr;
+					//
+					Console::println("SceneEditorTabView::runScene(): Could not create script library");
+				}
+			}
+		}
 	#else
+		scriptLibraryURI+= ".so";
 		//
 		#if defined(__HAIKU__)
 			// TODO: fix me!!!
@@ -1634,7 +1661,7 @@ void SceneEditorTabView::shutdownScene() {
 	//
 	if (scriptLibraryHandle != nullptr) {
 		#if defined(_MSC_VER)
-			// TODO: next
+			FreeLibrary(scriptLibraryHandle);
 		#else
 			dlclose(scriptLibraryHandle);
 		#endif

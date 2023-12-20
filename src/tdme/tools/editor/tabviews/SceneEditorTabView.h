@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(_MSC_VER)
+	#include <windows.h>
+#endif
+
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -149,7 +153,11 @@ private:
 
 	unique_ptr<ApplicationClient> applicationClient;
 
-	void* scriptLibraryHandle { nullptr };
+	#if defined(_MSC_VER)
+		HINSTANCE scriptLibraryHandle { 0 };
+	#else
+		void* scriptLibraryHandle { nullptr };
+	#endif
 
 public:
 	// forbid class copy
