@@ -152,6 +152,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				} else {
 					unique_ptr<MiniScript> script;
+					// try to load from (native) library
 					if (miniScript->getLibrary() != nullptr) {
 						script = unique_ptr<MiniScript>(
 							miniScript->getLibrary()->loadScript(
@@ -159,7 +160,10 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 								fileName
 							)
 						);
-					} else {
+					}
+					// no native script?
+					if (script == nullptr) {
+						// yarrrr, parse ordinary script
 						script = make_unique<MiniScript>();
 						script->setContext(miniScript->getContext());
 						script->parseScript(

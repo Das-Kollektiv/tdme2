@@ -69,11 +69,11 @@ const set<string> Documentation::getAllClassMethods(MiniScript* miniScript) {
 	return allClassMethods;
 }
 
-const set<string> Documentation::getMethodsCategories(MiniScript* miniScript, const set<string>& allClassMethods, MiniScript* omitMiniScript) {
+const set<string> Documentation::getMethodsCategories(MiniScript* miniScript, const set<string>& allClassMethods, MiniScript* excludeMiniScript) {
 	set<string> categories;
 	auto scriptMethods = miniScript->getMethods();
 	for (auto scriptMethod: scriptMethods) {
-		if (omitMiniScript != nullptr && omitMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+		if (excludeMiniScript != nullptr && excludeMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
 		if (allClassMethods.find(scriptMethod->getMethodName()) != allClassMethods.end()) continue;
 		string result;
 		string category;
@@ -173,11 +173,11 @@ const string Documentation::generateClassesDocumentation(const string& heading, 
 	return result;
 }
 
-const string Documentation::generateMethodsDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, const set<string>& allClassMethods, MiniScript* omitMiniScript) {
+const string Documentation::generateMethodsDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, const set<string>& allClassMethods, MiniScript* excludeMiniScript) {
 	auto scriptMethods = miniScript->getMethods();
 	map<string, vector<pair<string, string>>> methodMarkupByCategory;
 	for (auto scriptMethod: scriptMethods) {
-		if (omitMiniScript != nullptr && omitMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+		if (excludeMiniScript != nullptr && excludeMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
 		if (allClassMethods.find(scriptMethod->getMethodName()) != allClassMethods.end()) continue;
 		string result;
 		string category;

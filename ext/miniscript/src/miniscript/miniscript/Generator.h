@@ -48,8 +48,9 @@ public:
 	 * @param makefileURI makefile URI
 	 * @param library library
 	 * @param basePath base path
+	 * @param excludePaths exclude paths
 	 */
-	static void generateMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string());
+	static void generateMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string(), const vector<string>& excludePaths = {});
 
 	/**
 	 * Generate NMakefile
@@ -57,8 +58,9 @@ public:
 	 * @param makefileURI makefile URI
 	 * @param library library
 	 * @param basePath base path
+	 * @param excludePaths exclude paths
 	 */
-	static void generateNMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string());
+	static void generateNMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath = string(), const vector<string>& excludePaths = {});
 
 private:
 

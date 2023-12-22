@@ -435,7 +435,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	{
 		string emitDefinitionIndent = "\t";
 		emitDefinition+= emitDefinitionIndent + "{" + "\n";
-		emitDefinition+= emitDefinitionIndent + "\t" + "Console::println(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
+		emitDefinition+= emitDefinitionIndent + "\t" + "_Console::println(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
 		emitDefinition+= emitDefinitionIndent + "}" + "\n";
 		emitDefinition+= string() + "}" + "\n";
 	}
@@ -2210,7 +2210,7 @@ bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int sc
 	generatedCode+= methodIndent + "setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);" + "\n";
 
 	//
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != STATEMENTIDX_FIRST) Console::println(\"Transpiler::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != STATEMENTIDX_FIRST) _Console::println(\"Transpiler::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;

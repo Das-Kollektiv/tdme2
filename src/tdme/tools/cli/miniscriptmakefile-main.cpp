@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 	auto makefileURI = string(argv[3]);
 
 	//
-	Generator::generateMakefile(srcPath, makefileURI, true, basePath);
+	Generator::generateMakefile(srcPath, makefileURI, true, basePath, { "tdme" });
 
 	//
 	exit(EXIT_SUCCESS);

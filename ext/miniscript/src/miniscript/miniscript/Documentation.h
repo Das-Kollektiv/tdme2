@@ -31,13 +31,13 @@ public:
 	 * Generate methods categories
 	 * @param miniScript MiniScript script instance
 	 * @param allClassMethods all class methods
-	 * @param omitMiniScript omit MiniScript script instance
+	 * @param excludeMiniScript exclude MiniScript script instance
 	 * @return methods categories
 	 */
 	static const set<string> getMethodsCategories(
 		MiniScript* miniScript,
 		const set<string>& allClassMethods,
-		MiniScript* omitMiniScript = nullptr);
+		MiniScript* excludeMiniScript = nullptr);
 
 	/**
 	 * Generate classes documentation
@@ -66,7 +66,7 @@ public:
 	 * @param descriptions descriptions
 	 * @param descriptionPrefix desscription prefix
 	 * @param allClassMethods all class methods
-	 * @param omitMiniScript omit MiniScript script instance
+	 * @param excludeMiniScript exclude MiniScript script instance
 	 * @return documentation
 	 */
 	static const string generateMethodsDocumentation(
@@ -76,7 +76,7 @@ public:
 		Properties& descriptions,
 		const string& descriptionPrefix,
 		const set<string>& allClassMethods,
-		MiniScript* omitMiniScript = nullptr
+		MiniScript* excludeMiniScript = nullptr
 	);
 
 	/**
