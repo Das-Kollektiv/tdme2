@@ -27,23 +27,27 @@ using tdme::utilities::MiniScriptVector4;
 
 const string MiniScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
 
+MiniScript::VariableType MiniScriptMatrix4x4::TYPE_MATRIX4x4 = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptMatrix4x4::TYPE_VECTOR3 = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptMatrix4x4::TYPE_VECTOR4 = MiniScript::TYPE_NULL;
+
+void MiniScriptMatrix4x4::initialize() {
+	TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix4x4")->getType());
+	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
+	TYPE_VECTOR4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector4")->getType());
+}
+
 void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	//
 	{
 		//
 		class MethodMatrix4x4Identity: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			MethodMatrix4x4Identity(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4
-			):
+			MethodMatrix4x4Identity(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_MATRIX4x4),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::identity";
 			}
@@ -53,28 +57,22 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix4x4Identity(miniScript, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodMatrix4x4Identity(miniScript));
 	}
 	{
 		//
 		class MethodMatrix4x4Translate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodMatrix4x4Translate(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodMatrix4x4Translate(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX4x4
 				),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::translate";
 			}
@@ -90,21 +88,15 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix4x4Translate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Translate(miniScript));
 	}
 	{
 		//
 		class MethodMatrix4x4Rotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodMatrix4x4Rotate(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodMatrix4x4Rotate(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
@@ -112,7 +104,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_MATRIX4x4
 				),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::rotate";
 			}
@@ -130,23 +122,17 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix4x4Rotate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Rotate(miniScript));
 	}
 	{
 		//
 		class MethodMatrix4x4Scale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodMatrix4x4Scale(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodMatrix4x4Scale(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_MATRIX4x4),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::scale";
 			}
@@ -172,26 +158,22 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 			}
 
 		};
-		miniScript->registerMethod(new MethodMatrix4x4Scale(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Scale(miniScript));
 	}
 	{
 		//
 		class MethodMatrix4x4Invert: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			MethodMatrix4x4Invert(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4
-			):
+			MethodMatrix4x4Invert(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_MATRIX4x4, .name = "matrix4x4", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX4x4
 				),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::invert";
 			}
@@ -207,28 +189,22 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix4x4Invert(miniScript, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodMatrix4x4Invert(miniScript));
 	}
 	{
 		//
 		class MethodMatrix4x4EulerAngles: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX4x4;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodMatrix4x4EulerAngles(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX4x4,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodMatrix4x4EulerAngles(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_MATRIX4x4, .name = "matrix4x4", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
-				miniScript(miniScript), TYPE_MATRIX4x4(TYPE_MATRIX4x4), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix4x4::computeEulerAngles";
 			}
@@ -244,7 +220,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix4x4EulerAngles(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4EulerAngles(miniScript));
 	}
 }
 
@@ -279,15 +255,11 @@ void MiniScriptMatrix4x4::copyVariable(MiniScript::Variable& to, const MiniScrip
 		matrix4x4Value = *static_cast<Matrix4x4*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_MATRIX4x4);
 	*static_cast<Matrix4x4*>((void*)to.getValuePtr()) = matrix4x4Value;
 }
 
 bool MiniScriptMatrix4x4::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
-	const auto TYPE_VECTOR4 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector4")->getType());
 	//
 	if (MiniScript::hasType(arguments, TYPE_MATRIX4x4) == true) {
 		// matrix4x4 * matrix

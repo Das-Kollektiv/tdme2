@@ -29,25 +29,29 @@ using tdme::utilities::Console;
 
 const string MiniScriptTransform::TYPE_NAME = "Transform";
 
+MiniScript::VariableType MiniScriptTransform::TYPE_MATRIX4x4 = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptTransform::TYPE_QUATERNION = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptTransform::TYPE_TRANSFORM = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptTransform::TYPE_VECTOR3 = MiniScript::TYPE_NULL;
+
+void MiniScriptTransform::initialize() {
+	TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix4x4")->getType());
+	TYPE_QUATERNION = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Quaternion")->getType());
+	TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Transform")->getType());
+	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
+}
+
 void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Matrix4x4")->getType());
-	const auto TYPE_QUATERNION = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Quaternion")->getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	//
 	{
 		//
 		class MethodTransformAxisZ: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformAxisZ(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformAxisZ(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_VECTOR3),
-				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::AXIS_Z";
 			}
@@ -57,21 +61,17 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new MethodTransformAxisZ(miniScript, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformAxisZ(miniScript));
 	}
 	{
 		//
 		class MethodTransformAxisY: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformAxisY(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformAxisY(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_VECTOR3),
-				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::AXIS_Y";
 			}
@@ -81,21 +81,17 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new MethodTransformAxisY(miniScript, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformAxisY(miniScript));
 	}
 	{
 		//
 		class MethodTransformAxisX: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformAxisX(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformAxisX(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_VECTOR3),
-				miniScript(miniScript), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::AXIS_X";
 			}
@@ -105,21 +101,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new MethodTransformAxisX(miniScript, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformAxisX(miniScript));
 	}
 	{
 		//
 		class MethodTransform: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransform(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransform(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR3, .name = "translation", .optional = true, .reference = false, .nullable = false },
@@ -130,7 +120,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_TRANSFORM
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform";
 			}
@@ -176,28 +166,22 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 
 			}
 		};
-		miniScript->registerMethod(new MethodTransform(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransform(miniScript));
 	}
 	{
 		//
 		class MethodTransformGetTranslation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformGetTranslation(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformGetTranslation(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getTranslation";
 			}
@@ -214,21 +198,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetTranslation(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformGetTranslation(miniScript));
 	}
 	{
 		//
 		class MethodTransformSetTranslation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformSetTranslation(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformSetTranslation(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
@@ -236,7 +214,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_NULL
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::setTranslation";
 			}
@@ -257,28 +235,22 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformSetTranslation(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformSetTranslation(miniScript));
 	}
 	{
 		//
 		class MethodTransformGetScale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformGetScale(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformGetScale(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR3
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getScale";
 			}
@@ -295,21 +267,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetScale(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformGetScale(miniScript));
 	}
 	{
 		//
 		class MethodTransformSetScale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformSetScale(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformSetScale(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
@@ -317,7 +283,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_NULL
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::setScale";
 			}
@@ -337,21 +303,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformSetScale(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformSetScale(miniScript));
 	}
 	{
 		//
 		class MethodTransformGetRotationAxis: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformGetRotationAxis(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformGetRotationAxis(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
@@ -359,7 +319,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_VECTOR3
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getRotationAxis";
 			}
@@ -383,19 +343,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetRotationAxis(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformGetRotationAxis(miniScript));
 	}
 	{
 		//
 		class MethodTransformGetRotationAngle: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
 		public:
-			MethodTransformGetRotationAngle(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM
-			):
+			MethodTransformGetRotationAngle(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
@@ -403,7 +359,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getRotationAngle";
 			}
@@ -424,19 +380,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetRotationAngle(miniScript, TYPE_TRANSFORM));
+		miniScript->registerMethod(new MethodTransformGetRotationAngle(miniScript));
 	}
 	{
 		//
 		class MethodTransformSetRotationAngle: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
 		public:
-			MethodTransformSetRotationAngle(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM
-			):
+			MethodTransformSetRotationAngle(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
@@ -445,7 +397,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_NULL
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::setRotationAngle";
 			}
@@ -472,21 +424,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformSetRotationAngle(miniScript, TYPE_TRANSFORM));
+		miniScript->registerMethod(new MethodTransformSetRotationAngle(miniScript));
 	}
 	{
 		//
 		class MethodTransformRotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformRotate(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformRotate(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
@@ -494,7 +440,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_VECTOR3
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::rotate";
 			}
@@ -514,21 +460,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformRotate(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformRotate(miniScript));
 	}
 	{
 		//
 		class MethodTransformApplyRotation: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			MethodTransformApplyRotation(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_VECTOR3
-			):
+			MethodTransformApplyRotation(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
@@ -537,7 +477,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_NULL
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::applyRotation";
 			}
@@ -571,7 +511,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformApplyRotation(miniScript, TYPE_TRANSFORM, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodTransformApplyRotation(miniScript));
 	}
 	{
 		//
@@ -620,21 +560,15 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 		class MethodTransformGetTransformMatrix: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			MethodTransformGetTransformMatrix(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_MATRIX4x4
-			):
+			MethodTransformGetTransformMatrix(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX4x4
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getTransformMatrix";
 			}
@@ -651,28 +585,22 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetTransformMatrix(miniScript, TYPE_TRANSFORM, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodTransformGetTransformMatrix(miniScript));
 	}
 	{
 		//
 		class MethodTransformGetRotationsQuaternion: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_QUATERNION;
 		public:
-			MethodTransformGetRotationsQuaternion(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_QUATERNION
-			):
+			MethodTransformGetRotationsQuaternion(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_QUATERNION
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_QUATERNION(TYPE_QUATERNION) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::getRotationsQuaternion";
 			}
@@ -689,28 +617,22 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformGetRotationsQuaternion(miniScript, TYPE_TRANSFORM, TYPE_QUATERNION));
+		miniScript->registerMethod(new MethodTransformGetRotationsQuaternion(miniScript));
 	}
 	{
 		//
 		class MethodTransformFromMatrix: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_TRANSFORM;
-			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			MethodTransformFromMatrix(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_TRANSFORM,
-				MiniScript::VariableType TYPE_MATRIX4x4
-			):
+			MethodTransformFromMatrix(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_TRANSFORM
 				),
-				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Transform::fromMatrix";
 			}
@@ -727,7 +649,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodTransformFromMatrix(miniScript, TYPE_TRANSFORM, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodTransformFromMatrix(miniScript));
 	}
 }
 
@@ -762,14 +684,11 @@ void MiniScriptTransform::copyVariable(MiniScript::Variable& to, const MiniScrip
 		transformValue = *static_cast<Transform*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_TRANSFORM);
 	*static_cast<Transform*>((void*)to.getValuePtr()) = transformValue;
 }
 
 bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	// transform
 	if (MiniScript::hasType(arguments, TYPE_TRANSFORM) == true) {
 		// transform * vec3

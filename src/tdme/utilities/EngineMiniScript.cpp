@@ -57,6 +57,14 @@ void EngineMiniScript::registerDataTypes() {
 	registerDataType(new MiniScriptVector2());
 	registerDataType(new MiniScriptVector3());
 	registerDataType(new MiniScriptVector4());
+	//
+	MiniScriptTransform::initialize();
+	MiniScriptMatrix4x4::initialize();
+	MiniScriptMatrix3x3::initialize();
+	MiniScriptQuaternion::initialize();
+	MiniScriptVector2::initialize();
+	MiniScriptVector3::initialize();
+	MiniScriptVector4::initialize();
 }
 
 EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const string& fileName) {

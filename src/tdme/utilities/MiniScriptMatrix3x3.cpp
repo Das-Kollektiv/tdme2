@@ -27,23 +27,25 @@ using tdme::utilities::MiniScriptVector2;
 
 const string MiniScriptMatrix3x3::TYPE_NAME = "Matrix3x3";
 
+MiniScript::VariableType MiniScriptMatrix3x3::TYPE_MATRIX3x3 = MiniScript::TYPE_NULL;
+MiniScript::VariableType MiniScriptMatrix3x3::TYPE_VECTOR2 = MiniScript::TYPE_NULL;
+
+void MiniScriptMatrix3x3::initialize() {
+	TYPE_MATRIX3x3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix3x3")->getType());
+	TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector2")->getType());
+}
+
 void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector2")->getType());
 	//
 	{
 		//
 		class MethodMatrix3x3Identity: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			MethodMatrix3x3Identity(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3
-			):
+			MethodMatrix3x3Identity(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_MATRIX3x3),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::identity";
 			}
@@ -53,28 +55,22 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix3x3Identity(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3Identity(miniScript));
 	}
 	{
 		//
 		class MethodMatrix3x3Translate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodMatrix3x3Translate(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodMatrix3x3Translate(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX3x3
 				),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3), TYPE_VECTOR2(TYPE_VECTOR2) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::translate";
 			}
@@ -90,26 +86,22 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix3x3Translate(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3Translate(miniScript));
 	}
 	{
 		//
 		class MethodMatrix3x3Rotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			MethodMatrix3x3Rotate(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3
-			):
+			MethodMatrix3x3Rotate(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX3x3
 				),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::rotate";
 			}
@@ -125,26 +117,22 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix3x3Rotate(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3Rotate(miniScript));
 	}
 	{
 		//
 		class MethodMatrix3x3RotateAroundTextureCenter: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			MethodMatrix3x3RotateAroundTextureCenter(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3
-			):
+			MethodMatrix3x3RotateAroundTextureCenter(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_MATRIX3x3
 				),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::rotateAroundTextureCenter";
 			}
@@ -160,21 +148,15 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix3x3RotateAroundTextureCenter(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3RotateAroundTextureCenter(miniScript));
 	}
 	{
 		//
 		class MethodMatrix3x3RotateAroundPoint: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodMatrix3x3RotateAroundPoint(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodMatrix3x3RotateAroundPoint(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "point", .optional = false, .reference = false, .nullable = false },
@@ -182,7 +164,7 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_MATRIX3x3
 				),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3), TYPE_VECTOR2(TYPE_VECTOR2) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::rotateAroundPoint";
 			}
@@ -200,23 +182,17 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodMatrix3x3RotateAroundPoint(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3RotateAroundPoint(miniScript));
 	}
 	{
 		//
 		class MethodMatrix3x3Scale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_MATRIX3x3;
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodMatrix3x3Scale(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_MATRIX3x3,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodMatrix3x3Scale(MiniScript* miniScript):
 				MiniScript::Method({}, TYPE_MATRIX3x3),
-				miniScript(miniScript), TYPE_MATRIX3x3(TYPE_MATRIX3x3), TYPE_VECTOR2(TYPE_VECTOR2) {}
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "Matrix3x3::scale";
 			}
@@ -242,7 +218,7 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			}
 
 		};
-		miniScript->registerMethod(new MethodMatrix3x3Scale(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3Scale(miniScript));
 	}
 }
 
@@ -277,14 +253,11 @@ void MiniScriptMatrix3x3::copyVariable(MiniScript::Variable& to, const MiniScrip
 		matrix3x3Value = *static_cast<Matrix3x3*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_MATRIX3x3);
 	*static_cast<Matrix3x3*>((void*)to.getValuePtr()) = matrix3x3Value;
 }
 
 bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::VariableType>(getType());
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector2")->getType());
 	//
 	if (MiniScript::hasType(arguments, TYPE_MATRIX3x3) == true) {
 		// matrix3x3 * matrix

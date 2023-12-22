@@ -21,19 +21,20 @@ using tdme::utilities::MiniScriptVector2;
 
 const string MiniScriptVector2::TYPE_NAME = "Vector2";
 
+MiniScript::VariableType MiniScriptVector2::TYPE_VECTOR2 = MiniScript::TYPE_NULL;
+
+void MiniScriptVector2::initialize() {
+	TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector2")->getType());
+}
+
 void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	{
 		//
 		class MethodVec2: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = MiniScript::VariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
@@ -41,8 +42,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					},
 					TYPE_VECTOR2
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -62,27 +62,22 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2(miniScript));
 	}
 	{
 		//
 		class MethodVec2ComputeLength: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2ComputeLength(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2ComputeLength(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -99,27 +94,22 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2ComputeLength(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2ComputeLength(miniScript));
 	}
 	{
 		//
 		class MethodVec2ComputeLengthSquared: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2ComputeLengthSquared(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2ComputeLengthSquared(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false }
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -135,19 +125,15 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2ComputeLengthSquared(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2ComputeLengthSquared(miniScript));
 	}
 	{
 		//
 		class MethodVec2ComputeDotProduct: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2ComputeDotProduct(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2ComputeDotProduct(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "a", .optional = false, .reference = false, .nullable = false },
@@ -155,8 +141,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -174,27 +159,22 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2ComputeDotProduct(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2ComputeDotProduct(miniScript));
 	}
 	{
 		//
 		class MethodVec2Normalize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2Normalize(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2Normalize(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					TYPE_VECTOR2
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -213,27 +193,22 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2Normalize(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2Normalize(miniScript));
 	}
 	{
 		//
 		class MethodVec2GetX: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2GetX(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2GetX(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -249,27 +224,22 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2GetX(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2GetX(miniScript));
 	}
 	{
 		//
 		class MethodVec2GetY: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
-			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			MethodVec2GetY(
-				MiniScript* miniScript,
-				MiniScript::VariableType TYPE_VECTOR2
-			):
+			MethodVec2GetY(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = TYPE_VECTOR2, .name = "vector2", .optional = false, .reference = false, .nullable = false },
 					},
 					MiniScript::VariableType::TYPE_FLOAT
 				),
-				miniScript(miniScript),
-				TYPE_VECTOR2(TYPE_VECTOR2) {
+				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
@@ -285,7 +255,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new MethodVec2GetY(miniScript, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodVec2GetY(miniScript));
 	}
 }
 
@@ -320,13 +290,11 @@ void MiniScriptVector2::copyVariable(MiniScript::Variable& to, const MiniScript:
 		vector2Value = *static_cast<Vector2*>((void*)from.getValuePtr());
 	}
 	//
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	to.setType(TYPE_VECTOR2);
 	*static_cast<Vector2*>((void*)to.getValuePtr()) = vector2Value;
 }
 
 bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(arguments, TYPE_VECTOR2) == true) {
 		float f;
@@ -368,7 +336,6 @@ bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Varia
 }
 
 bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (arguments[0].getType() == TYPE_VECTOR2) {
 		Vector2 a;
@@ -401,7 +368,6 @@ bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::Varia
 }
 
 bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(arguments, TYPE_VECTOR2) == true) {
 		Vector2 a;
@@ -426,7 +392,6 @@ bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::Varia
 }
 
 bool MiniScriptVector2::sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
-	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(getType());
 	//
 	if (MiniScript::hasType(arguments, TYPE_VECTOR2) == true) {
 		Vector2 a;

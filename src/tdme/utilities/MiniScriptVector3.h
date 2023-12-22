@@ -30,8 +30,16 @@ private:
 	bool add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 
+	//
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR3;
+
 public:
 	STATIC_DLL_IMPEXT static const string TYPE_NAME;
+
+	/**
+	 * Initialize
+	 */
+	static void initialize();
 
 	/**
 	 * Get vector3 value from given variable
