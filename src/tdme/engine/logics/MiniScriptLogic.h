@@ -303,24 +303,22 @@ public:
 							Tools::getFileName(prototype->getScript())
 						);
 					}
-					// add logic if we have any
-					if (logicMiniScript != nullptr) {
-						if (logicMiniScript->isValid() == false) {
-							Console::println("MiniScriptLogic::updateLogic(): Script not valid. Not using it: " + prototype->getScript());
-						} else {
-							miniScript->context->addLogic(
-								make_unique<MiniScriptLogic>(
-									miniScript->context,
-									prototypeToAdd.id,
-									prototype->isScriptHandlingHID(),
-									logicMiniScript.release(),
-									prototypeToAdd.prototype,
-									runsInEditor,
-									prototypeToAdd.hierarchyId,
-									prototypeToAdd.hierarchyParentId
-								).release()
-							);
-						}
+					// add logic if valid
+					if (logicMiniScript->isValid() == false) {
+						Console::println("MiniScriptLogic::updateLogic(): Script not valid. Not using it: " + prototype->getScript());
+					} else {
+						miniScript->context->addLogic(
+							make_unique<MiniScriptLogic>(
+								miniScript->context,
+								prototypeToAdd.id,
+								prototype->isScriptHandlingHID(),
+								logicMiniScript.release(),
+								prototypeToAdd.prototype,
+								runsInEditor,
+								prototypeToAdd.hierarchyId,
+								prototypeToAdd.hierarchyParentId
+							).release()
+						);
 					}
 				}
 			}

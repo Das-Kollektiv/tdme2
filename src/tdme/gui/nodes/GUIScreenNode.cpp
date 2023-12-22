@@ -184,10 +184,6 @@ GUIScreenNode::GUIScreenNode(
 				projectScriptFileName
 			);
 		}
-		// have script?
-		if (this->script == nullptr) {
-			// no op
-		} else
 		// check if valid
 		if (this->script->isValid() == false) {
 			// nope
