@@ -10,11 +10,12 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/Library.h>
+#include <miniscript/miniscript/MiniScript.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/logics/fwd-tdme.h>
+#include <tdme/engine/logics/Context.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
@@ -60,6 +61,7 @@ using std::unordered_map;
 using std::unordered_set;
 
 using miniscript::miniscript::Library;
+using miniscript::miniscript::MiniScript;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -148,26 +150,50 @@ GUIScreenNode::GUIScreenNode(
 		string projectScriptFileName;
 		getProjectFilePathNameAndFileName(scriptFileName, projectScriptPathName, projectScriptFileName);
 		//
+		// try to load from native library
 		if (scriptLibrary != nullptr) {
-			this->script = unique_ptr<GUIMiniScript>(
-				dynamic_cast<GUIMiniScript*>(
-					scriptLibrary->loadScript(
-						projectScriptPathName,
-						projectScriptFileName
-					)
+			//
+			auto scriptURI = projectScriptPathName + "/" + projectScriptFileName;
+			if (context != nullptr) scriptURI = context->getRelativeURI(scriptURI);
+			// load from library as generic MiniScript
+			auto libraryMiniScript = unique_ptr<MiniScript>(
+				scriptLibrary->loadScript(
+					FileSystem::getInstance()->getPathName(scriptURI),
+					FileSystem::getInstance()->getFileName(scriptURI),
+					applicationRootPathName
 				)
 			);
-		} else {
+			// no native script found?
+			if (libraryMiniScript == nullptr) {
+				// no op
+			} else
+			// no GUIMiniScript
+			if (dynamic_cast<GUIMiniScript*>(libraryMiniScript.get()) == nullptr) {
+				Console::println("GUIScreenNode::GUIScreenNode(): Native library: Native script not of type GUIMiniScript: " + scriptFileName);
+			} else {
+				// cast to GUIMiniScript
+				this->script = unique_ptr<GUIMiniScript>(dynamic_cast<GUIMiniScript*>(libraryMiniScript.release()));
+			}
+		}
+		// have script?
+		if (this->script == nullptr) {
+			// nope, just parse script into GUIMiniScript
 			this->script = make_unique<GUIMiniScript>(this);
 			this->script->parseScript(
 				projectScriptPathName,
 				projectScriptFileName
 			);
 		}
+		// have script?
+		if (this->script == nullptr) {
+			// no op
+		} else
 		// check if valid
 		if (this->script->isValid() == false) {
 			// nope
-			Console::println("GUIScreenNode::GUIScreenNode(): " + projectScriptFileName + ": script not valid. Not using it.");
+			//
+			Console::println("GUIScreenNode::GUIScreenNode(): Script not valid. Not using it: " + projectScriptFileName);
+			//
 			this->script = nullptr;
 		} else {
 			// yup

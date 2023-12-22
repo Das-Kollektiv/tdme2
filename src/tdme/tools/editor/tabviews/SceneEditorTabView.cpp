@@ -1540,30 +1540,41 @@ void SceneEditorTabView::runScene() {
 	string invalidScripts;
 	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
-			auto scriptURI = entity->getPrototype()->getScript();
-			if (StringTools::startsWith(scriptURI, editorView->getScreenController()->getProjectPath() + "/") == true) {
-				scriptURI = StringTools::substring(scriptURI, (editorView->getScreenController()->getProjectPath() + "/").size());
-			}
-			// arr, try to load from library
+			//
 			unique_ptr<LogicMiniScript> logicMiniScript;
+			// try to load from native library
 			if (scriptLibrary != nullptr) {
-				logicMiniScript = unique_ptr<LogicMiniScript>(
-					dynamic_cast<LogicMiniScript*>(
-						scriptLibrary->loadScript(
-							Tools::getPathName(scriptURI),
-							Tools::getFileName(scriptURI),
-							editorView->getScreenController()->getProjectPath()
-						)
+				//
+				auto scriptURI = applicationClient->getContext()->getRelativeURI(entity->getPrototype()->getScript());
+				// load from library as generic MiniScript
+				auto libraryMiniScript = unique_ptr<MiniScript>(
+					scriptLibrary->loadScript(
+						Tools::getPathName(scriptURI),
+						Tools::getFileName(scriptURI),
+						applicationClient->getContext()->getApplicationRootPathName()
 					)
 				);
-			} else {
-				// nope, interpreted
+				// no native script found?
+				if (libraryMiniScript == nullptr) {
+					// no op
+				} else
+				// no LogicMiniScript
+				if (dynamic_cast<LogicMiniScript*>(libraryMiniScript.get()) == nullptr) {
+					Console::println("SceneEditorTabView::runScene(): Native library: Native script not of type LogicMiniScript: " + entity->getPrototype()->getScript());
+				} else {
+					// cast to LogicMiniScript
+					logicMiniScript = unique_ptr<LogicMiniScript>(dynamic_cast<LogicMiniScript*>(libraryMiniScript.release()));
+				}
+			}
+			if (logicMiniScript == nullptr) {
+				// nope, just parse script into LogicMiniScript
 				logicMiniScript = make_unique<LogicMiniScript>();
 				logicMiniScript->parseScript(
 					Tools::getPathName(entity->getPrototype()->getScript()),
 					Tools::getFileName(entity->getPrototype()->getScript())
 				);
 			}
+			//
 			if (logicMiniScript->isValid() == false) {
 				//
 				invalidScripts+=
@@ -1587,6 +1598,7 @@ void SceneEditorTabView::runScene() {
 				//
 				continue;
 			}
+			//
 			applicationClient->getContext()->addLogic(
 				make_unique<MiniScriptLogic>(
 					applicationClient->getContext(),

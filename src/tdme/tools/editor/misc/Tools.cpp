@@ -541,6 +541,11 @@ const string Tools::getApplicationSubPathName(const string& fileName)
 	return "engine";
 }
 
+const string Tools::getCanonicalURI(const string& pathName, const string& fileName)
+{
+	return FileSystem::getInstance()->getCanonicalURI(pathName, fileName);
+}
+
 const string Tools::getPathName(const string& fileName)
 {
 	return FileSystem::getInstance()->getPathName(fileName);
@@ -553,12 +558,7 @@ const string Tools::getFileName(const string& fileName)
 
 const string Tools::removeFileExtension(const string& fileName)
 {
-	auto idx = fileName.rfind('.');
-	if (idx == string::npos) {
-		return fileName;
-	} else {
-		return fileName.substr(0, idx);
-	}
+	return FileSystem::getInstance()->removeFileExtension(fileName);
 }
 
 const string Tools::ensureFileExtension(const string& fileName, const string& extension)

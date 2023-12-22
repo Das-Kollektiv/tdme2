@@ -137,6 +137,14 @@ public:
 	static const string getApplicationSubPathName(const string& fileName);
 
 	/**
+	 * Get canonical URI of given path and file name
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return path
+	 */
+	static const string getCanonicalURI(const string& pathName, const string& fileName);
+
+	/**
 	 * Get path of given file name
 	 * @param fileName file name
 	 * @return path

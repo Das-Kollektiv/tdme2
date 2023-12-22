@@ -5,6 +5,10 @@
 #include <string>
 #include <unordered_map>
 
+#include <miniscript/miniscript.h>
+#include <miniscript/miniscript/MiniScript.h>
+#include <miniscript/miniscript/Library.h>
+
 #include <tdme/tdme.h>
 
 #include <tdme/engine/logics/Logic.h>
@@ -25,6 +29,9 @@ using std::span;
 using std::string;
 using std::unique_ptr;
 using std::unordered_map;
+
+using miniscript::miniscript::MiniScript;
+using miniscript::miniscript::Library;
 
 using tdme::engine::logics::LogicMiniScript;
 
@@ -261,35 +268,60 @@ public:
 				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
+					//
 					unique_ptr<LogicMiniScript> logicMiniScript;
+					// try to load from native library
 					if (miniScript->getLibrary() != nullptr) {
-						logicMiniScript = unique_ptr<LogicMiniScript>(
-							dynamic_cast<LogicMiniScript*>(
-								miniScript->getLibrary()->loadScript(
-									Tools::getPathName(prototype->getScript()),
-									Tools::getFileName(prototype->getScript())
-								)
+						//
+						auto scriptURI = context->getRelativeURI(prototype->getScript());
+						// load from library as generic MiniScript
+						auto libraryMiniScript = unique_ptr<MiniScript>(
+							miniScript->getLibrary()->loadScript(
+								Tools::getPathName(scriptURI),
+								Tools::getFileName(scriptURI),
+								context->getApplicationRootPathName()
 							)
 						);
-					} else {
+						// no native script found?
+						if (libraryMiniScript == nullptr) {
+							// no op
+						} else
+						// no LogicMiniScript
+						if (dynamic_cast<LogicMiniScript*>(libraryMiniScript.get()) == nullptr) {
+							Console::println("MiniScriptLogic::updateLogic(): Native library: Native script not of type LogicMiniScript: " + prototype->getScript());
+						} else {
+							// cast to LogicMiniScript
+							logicMiniScript = unique_ptr<LogicMiniScript>(dynamic_cast<LogicMiniScript*>(libraryMiniScript.release()));
+						}
+					}
+					// have script?
+					if (logicMiniScript == nullptr) {
+						// nope, just parse script into LogicMiniScript
 						logicMiniScript = make_unique<LogicMiniScript>();
 						logicMiniScript->parseScript(
 							Tools::getPathName(prototype->getScript()),
 							Tools::getFileName(prototype->getScript())
 						);
 					}
-					miniScript->context->addLogic(
-						make_unique<MiniScriptLogic>(
-							miniScript->context,
-							prototypeToAdd.id,
-							prototype->isScriptHandlingHID(),
-							logicMiniScript.release(),
-							prototypeToAdd.prototype,
-							runsInEditor,
-							prototypeToAdd.hierarchyId,
-							prototypeToAdd.hierarchyParentId
-						).release()
-					);
+					// add logic if we have any
+					if (logicMiniScript != nullptr) {
+						if (logicMiniScript->isValid() == false) {
+							Console::println("MiniScriptLogic::updateLogic(): Script not valid. Not using it: " + prototype->getScript());
+						} else {
+							miniScript->context->addLogic(
+								make_unique<MiniScriptLogic>(
+									miniScript->context,
+									prototypeToAdd.id,
+									prototype->isScriptHandlingHID(),
+									logicMiniScript.release(),
+									prototypeToAdd.prototype,
+									runsInEditor,
+									prototypeToAdd.hierarchyId,
+									prototypeToAdd.hierarchyParentId
+								).release()
+							);
+						}
+					}
 				}
 			}
 			//

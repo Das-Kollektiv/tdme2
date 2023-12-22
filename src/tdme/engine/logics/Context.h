@@ -403,6 +403,23 @@ public:
 	}
 
 	/**
+	 * Return relative uri
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return relative uri
+	 */
+	inline const string getRelativeURI(const string& pathName, const string& fileName) {
+		return getRelativeURI(pathName + "/" + fileName);
+	}
+
+	/**
+	 * Return relative uri
+	 * @param uri uri
+	 * @return relative uri
+	 */
+	const string getRelativeURI(const string& uri);
+
+	/**
 	 * @return time started
 	 */
 	inline int64_t getTimeStarted() {

@@ -29,6 +29,8 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
@@ -66,6 +68,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
@@ -717,4 +721,17 @@ void Context::initUpdateLogics() {
 }
 
 void Context::doneUpdateLogics() {
+}
+
+const string Context::getRelativeURI(const string& uri) {
+	auto canonicalURI = FileSystem::getInstance()->getCanonicalURI(
+		FileSystem::getInstance()->getPathName(uri),
+		FileSystem::getInstance()->getFileName(uri)
+	);
+	//
+	if (StringTools::startsWith(canonicalURI, applicationRootPathName + "/") == true) {
+		return StringTools::substring(canonicalURI, (applicationRootPathName + "/").size());
+	}
+	//
+	return canonicalURI;
 }
