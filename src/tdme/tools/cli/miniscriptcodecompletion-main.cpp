@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 
+	//
 	Properties methodDescriptions;
 	methodDescriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
@@ -56,13 +57,16 @@ int main(int argc, char** argv)
 
 	//
 	EngineMiniScript::registerDataTypes();
+
 	//
 	auto baseMiniScript = make_unique<EngineMiniScript>();
 	baseMiniScript->registerMethods();
 
+	//
 	auto logicMiniScript = make_unique<LogicMiniScript>();
 	logicMiniScript->registerMethods();
 
+	//
 	auto guiMiniScript = make_unique<GUIMiniScript>(nullptr);
 	guiMiniScript->registerMethods();
 
