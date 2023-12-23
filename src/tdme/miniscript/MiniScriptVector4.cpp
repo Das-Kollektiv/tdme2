@@ -7,7 +7,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScriptVector4.h>
+#include <tdme/miniscript/MiniScriptVector4.h>
 
 using std::span;
 using std::string;
@@ -17,7 +17,7 @@ using miniscript::miniscript::MiniScript;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScriptVector4;
+using tdme::miniscript::MiniScriptVector4;
 
 const string MiniScriptVector4::TYPE_NAME = "Vector4";
 

@@ -7,7 +7,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScriptVector2.h>
+#include <tdme/miniscript/MiniScriptVector2.h>
 
 using std::span;
 using std::string;
@@ -17,7 +17,7 @@ using miniscript::miniscript::MiniScript;
 using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScriptVector2;
+using tdme::miniscript::MiniScriptVector2;
 
 const string MiniScriptVector2::TYPE_NAME = "Vector2";
 

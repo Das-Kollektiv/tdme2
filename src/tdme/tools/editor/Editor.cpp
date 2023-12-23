@@ -21,7 +21,7 @@
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using std::make_unique;
 using std::string;
@@ -45,7 +45,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::View;
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 Editor* Editor::instance = nullptr;
 

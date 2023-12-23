@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/Properties.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -31,7 +31,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::Properties;
 
 using tinyxml::TiXmlElement;

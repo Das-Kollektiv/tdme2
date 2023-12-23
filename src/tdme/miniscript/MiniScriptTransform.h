@@ -5,20 +5,20 @@
 #include <miniscript/miniscript/MiniScript.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/engine/Transform.h>
+#include <tdme/miniscript/fwd-tdme.h>
 
 using std::span;
 
 using miniscript::miniscript::MiniScript;
 
-using tdme::math::Vector3;
+using tdme::engine::Transform;
 
 /**
- * MiniScript Vector3 data type
+ * MiniScript Transform data type
  * @author Andreas Drewke
  */
-class tdme::utilities::MiniScriptVector3 final: public MiniScript::DataType {
+class tdme::miniscript::MiniScriptTransform final: public MiniScript::DataType {
 private:
 	// overridden methods
 	void registerMethods(MiniScript* miniScript) const override;
@@ -31,6 +31,9 @@ private:
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 
 	//
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_MATRIX4x4;
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_QUATERNION;
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_TRANSFORM;
 	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR3;
 
 public:
@@ -42,20 +45,20 @@ public:
 	static void initialize();
 
 	/**
-	 * Get vector3 value from given variable
-	 * @param TYPE_VECTOR3 custom data type for vector3
+	 * Get quaternion value from given variable
+	 * @param TYPE_TRANSFORM custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getVector3Value(MiniScript::VariableType TYPE_VECTOR3, const span<MiniScript::Variable>& arguments, int idx, Vector3& value, bool optional = false) {
+	static inline bool getTransformValue(MiniScript::VariableType TYPE_TRANSFORM, const span<MiniScript::Variable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
-		if (argument.getType() == TYPE_VECTOR3) {
+		if (argument.getType() == TYPE_TRANSFORM) {
 			if (argument.getValuePtr() == 0ll) return optional;
-			value = *static_cast<Vector3*>((void*)argument.getValuePtr());
+			value = *static_cast<Transform*>((void*)argument.getValuePtr());
 			return true;
 		}
 		return optional;
@@ -63,12 +66,12 @@ public:
 	}
 
 	// forbid class copy
-	FORBID_CLASS_COPY(MiniScriptVector3)
+	FORBID_CLASS_COPY(MiniScriptTransform)
 
 	/**
-	 * MiniScript Vector3 data type
+	 * MiniScript Transform data type
 	 */
-	MiniScriptVector3(): MiniScript::DataType(true) {
+	MiniScriptTransform(): MiniScript::DataType(true) {
 		//
 	}
 

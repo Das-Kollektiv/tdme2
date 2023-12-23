@@ -12,7 +12,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/Properties.h>
 
 using std::array;
@@ -28,7 +28,7 @@ using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::Properties;
 
 int main(int argc, char** argv)

@@ -5,20 +5,20 @@
 #include <miniscript/miniscript/MiniScript.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Matrix3x3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Vector4.h>
+#include <tdme/miniscript/fwd-tdme.h>
 
 using std::span;
 
 using miniscript::miniscript::MiniScript;
 
-using tdme::math::Matrix3x3;
+using tdme::math::Vector4;
 
 /**
- * MiniScript Matrix3x3 data type
+ * MiniScript Vector4 data type
  * @author Andreas Drewke
  */
-class tdme::utilities::MiniScriptMatrix3x3 final: public MiniScript::DataType {
+class tdme::miniscript::MiniScriptVector4 final: public MiniScript::DataType {
 private:
 	// overridden methods
 	void registerMethods(MiniScript* miniScript) const override;
@@ -31,8 +31,7 @@ private:
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 
 	//
-	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_MATRIX3x3;
-	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR2;
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR4;
 
 public:
 	STATIC_DLL_IMPEXT static const string TYPE_NAME;
@@ -43,20 +42,20 @@ public:
 	static void initialize();
 
 	/**
-	 * Get matrix3x3 value from given variable
-	 * @param TYPE_MATRIX3x3 custom data type for vector3
+	 * Get vector4 value from given variable
+	 * @param TYPE_VECTOR4 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getMatrix3x3Value(MiniScript::VariableType TYPE_MATRIX3x3, const span<MiniScript::Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
+	static inline bool getVector4Value(MiniScript::VariableType TYPE_VECTOR4, const span<MiniScript::Variable>& arguments, int idx, Vector4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
-		if (argument.getType() == TYPE_MATRIX3x3) {
+		if (argument.getType() == TYPE_VECTOR4) {
 			if (argument.getValuePtr() == 0ll) return optional;
-			value = *static_cast<Matrix3x3*>((void*)argument.getValuePtr());
+			value = *static_cast<Vector4*>((void*)argument.getValuePtr());
 			return true;
 		}
 		return optional;
@@ -64,13 +63,12 @@ public:
 	}
 
 	// forbid class copy
-	FORBID_CLASS_COPY(MiniScriptMatrix3x3)
+	FORBID_CLASS_COPY(MiniScriptVector4)
 
 	/**
-	 * MiniScript Matrix3x3 data type
-	 * @param miniScript mini script instance
+	 * MiniScript Vector4 data type
 	 */
-	MiniScriptMatrix3x3(): MiniScript::DataType(true) {
+	MiniScriptVector4(): MiniScript::DataType(true) {
 		//
 	}
 

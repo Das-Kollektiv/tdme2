@@ -3,27 +3,27 @@
 
 #include <miniscript/miniscript/MiniScript.h>
 
-#include <tdme/utilities/MiniScriptMatrix4x4.h>
+#include <tdme/miniscript/MiniScriptMatrix4x4.h>
 
 #include <tdme/tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScriptVector3.h>
-#include <tdme/utilities/MiniScriptVector4.h>
+#include <tdme/miniscript/MiniScriptVector3.h>
+#include <tdme/miniscript/MiniScriptVector4.h>
 
 using std::span;
 using std::string;
 
 using miniscript::miniscript::MiniScript;
 
-using tdme::utilities::MiniScriptMatrix4x4;
+using tdme::miniscript::MiniScriptMatrix4x4;
 
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScriptVector3;
-using tdme::utilities::MiniScriptVector4;
+using tdme::miniscript::MiniScriptVector3;
+using tdme::miniscript::MiniScriptVector4;
 
 const string MiniScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
 

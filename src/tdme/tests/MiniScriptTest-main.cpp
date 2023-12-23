@@ -4,10 +4,10 @@ using std::make_unique;
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 int main(int argc, char *argv[]) {
 	Console::println("MiniScriptTest");

@@ -37,7 +37,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::move;
@@ -79,7 +79,7 @@ using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
 const vector<string> LogicMiniScript::CONTEXTFUNCTIONS_ENGINE = { "initializeEngine", "updateEngine" };

@@ -9,7 +9,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using std::exit;
 using std::string;
@@ -22,7 +22,7 @@ using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 int main(int argc, char** argv)
 {

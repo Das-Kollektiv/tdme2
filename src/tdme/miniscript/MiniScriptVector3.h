@@ -5,20 +5,20 @@
 #include <miniscript/miniscript/MiniScript.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector4.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/miniscript/fwd-tdme.h>
 
 using std::span;
 
 using miniscript::miniscript::MiniScript;
 
-using tdme::math::Vector4;
+using tdme::math::Vector3;
 
 /**
- * MiniScript Vector4 data type
+ * MiniScript Vector3 data type
  * @author Andreas Drewke
  */
-class tdme::utilities::MiniScriptVector4 final: public MiniScript::DataType {
+class tdme::miniscript::MiniScriptVector3 final: public MiniScript::DataType {
 private:
 	// overridden methods
 	void registerMethods(MiniScript* miniScript) const override;
@@ -31,7 +31,7 @@ private:
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 
 	//
-	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR4;
+	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_VECTOR3;
 
 public:
 	STATIC_DLL_IMPEXT static const string TYPE_NAME;
@@ -42,20 +42,20 @@ public:
 	static void initialize();
 
 	/**
-	 * Get vector4 value from given variable
-	 * @param TYPE_VECTOR4 custom data type for vector3
+	 * Get vector3 value from given variable
+	 * @param TYPE_VECTOR3 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getVector4Value(MiniScript::VariableType TYPE_VECTOR4, const span<MiniScript::Variable>& arguments, int idx, Vector4& value, bool optional = false) {
+	static inline bool getVector3Value(MiniScript::VariableType TYPE_VECTOR3, const span<MiniScript::Variable>& arguments, int idx, Vector3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
-		if (argument.getType() == TYPE_VECTOR4) {
+		if (argument.getType() == TYPE_VECTOR3) {
 			if (argument.getValuePtr() == 0ll) return optional;
-			value = *static_cast<Vector4*>((void*)argument.getValuePtr());
+			value = *static_cast<Vector3*>((void*)argument.getValuePtr());
 			return true;
 		}
 		return optional;
@@ -63,12 +63,12 @@ public:
 	}
 
 	// forbid class copy
-	FORBID_CLASS_COPY(MiniScriptVector4)
+	FORBID_CLASS_COPY(MiniScriptVector3)
 
 	/**
-	 * MiniScript Vector4 data type
+	 * MiniScript Vector3 data type
 	 */
-	MiniScriptVector4(): MiniScript::DataType(true) {
+	MiniScriptVector3(): MiniScript::DataType(true) {
 		//
 	}
 

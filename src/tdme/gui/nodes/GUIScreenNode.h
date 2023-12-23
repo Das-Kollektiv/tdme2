@@ -21,7 +21,7 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -65,7 +65,7 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::MutableString;
 
 /**

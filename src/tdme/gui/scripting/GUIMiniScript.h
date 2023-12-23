@@ -11,7 +11,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using std::array;
 using std::string;
@@ -23,7 +23,7 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 /**
  * GUI mini script

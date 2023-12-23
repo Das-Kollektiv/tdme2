@@ -10,7 +10,6 @@ namespace utilities {
 	class Character;
 	class Console;
 	class ExceptionBase;
-	class EngineMiniScript;
 	class Enum;
 	class Float;
 	class FloatBuffer;
@@ -19,13 +18,6 @@ namespace utilities {
 	class Hex;
 	class IntBuffer;
 	class Integer;
-	class MiniScriptTransform;
-	class MiniScriptMatrix3x3;
-	class MiniScriptMatrix4x4;
-	class MiniScriptQuaternion;
-	class MiniScriptVector2;
-	class MiniScriptVector3;
-	class MiniScriptVector4;
 	class MutableString;
 	class ModelTools;
 	class PathFinding;

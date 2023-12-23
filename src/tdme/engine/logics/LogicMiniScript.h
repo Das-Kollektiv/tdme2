@@ -14,7 +14,7 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using std::array;
 using std::string;
@@ -31,7 +31,7 @@ using tdme::engine::Transform;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 /**
  * Logic mini script

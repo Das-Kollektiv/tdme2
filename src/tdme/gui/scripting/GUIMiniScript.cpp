@@ -26,7 +26,7 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::make_unique;
@@ -58,7 +58,7 @@ using tdme::os::threading::Mutex;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::MutableString;
 
 const vector<string> GUIMiniScript::CONTEXTFUNCTION_GUI = {};

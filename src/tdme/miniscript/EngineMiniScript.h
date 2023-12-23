@@ -17,15 +17,15 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/MiniScriptMatrix3x3.h>
-#include <tdme/utilities/MiniScriptMatrix4x4.h>
-#include <tdme/utilities/MiniScriptMatrix4x4.h>
-#include <tdme/utilities/MiniScriptQuaternion.h>
-#include <tdme/utilities/MiniScriptTransform.h>
-#include <tdme/utilities/MiniScriptVector2.h>
-#include <tdme/utilities/MiniScriptVector3.h>
-#include <tdme/utilities/MiniScriptVector4.h>
+#include <tdme/miniscript/fwd-tdme.h>
+#include <tdme/miniscript/MiniScriptMatrix3x3.h>
+#include <tdme/miniscript/MiniScriptMatrix4x4.h>
+#include <tdme/miniscript/MiniScriptMatrix4x4.h>
+#include <tdme/miniscript/MiniScriptQuaternion.h>
+#include <tdme/miniscript/MiniScriptTransform.h>
+#include <tdme/miniscript/MiniScriptVector2.h>
+#include <tdme/miniscript/MiniScriptVector3.h>
+#include <tdme/miniscript/MiniScriptVector4.h>
 
 using std::span;
 using std::string;
@@ -43,14 +43,14 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utilities::MiniScriptMatrix3x3;
-using tdme::utilities::MiniScriptMatrix4x4;
-using tdme::utilities::MiniScriptMatrix4x4;
-using tdme::utilities::MiniScriptQuaternion;
-using tdme::utilities::MiniScriptTransform;
-using tdme::utilities::MiniScriptVector2;
-using tdme::utilities::MiniScriptVector3;
-using tdme::utilities::MiniScriptVector4;
+using tdme::miniscript::MiniScriptMatrix3x3;
+using tdme::miniscript::MiniScriptMatrix4x4;
+using tdme::miniscript::MiniScriptMatrix4x4;
+using tdme::miniscript::MiniScriptQuaternion;
+using tdme::miniscript::MiniScriptTransform;
+using tdme::miniscript::MiniScriptVector2;
+using tdme::miniscript::MiniScriptVector3;
+using tdme::miniscript::MiniScriptVector4;
 
 using tdme::utilities::Console;
 
@@ -58,7 +58,7 @@ using tdme::utilities::Console;
  * Engine MiniScript
  * @author Andreas Drewke
  */
-class tdme::utilities::EngineMiniScript: public MiniScript {
+class tdme::miniscript::EngineMiniScript: public MiniScript {
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(EngineMiniScript)

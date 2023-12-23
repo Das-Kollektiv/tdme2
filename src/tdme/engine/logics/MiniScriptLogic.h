@@ -22,7 +22,7 @@
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 using std::make_unique;
 using std::span;
@@ -45,7 +45,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 /**
  * Mini script logic

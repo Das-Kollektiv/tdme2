@@ -6,13 +6,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/miniscript/fwd-tdme.h>
 
 using std::span;
 
 using miniscript::miniscript::MiniScript;
 
-using tdme::utilities::MiniScriptQuaternion;
+using tdme::miniscript::MiniScriptQuaternion;
 
 using tdme::math::Quaternion;
 
@@ -20,7 +20,7 @@ using tdme::math::Quaternion;
  * MiniScript Quaternion data type
  * @author Andreas Drewke
  */
-class tdme::utilities::MiniScriptQuaternion final: public MiniScript::DataType {
+class tdme::miniscript::MiniScriptQuaternion final: public MiniScript::DataType {
 private:
 	// overridden methods
 	void registerMethods(MiniScript* miniScript) const override;

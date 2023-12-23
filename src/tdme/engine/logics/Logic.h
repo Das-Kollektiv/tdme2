@@ -8,7 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 #include <tdme/utilities/Time.h>
 
 using std::vector;
@@ -18,7 +18,7 @@ using tdme::engine::physics::World;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 using tdme::utilities::Time;
 
 /**

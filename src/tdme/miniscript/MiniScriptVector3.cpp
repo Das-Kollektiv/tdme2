@@ -7,7 +7,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScriptVector3.h>
+#include <tdme/miniscript/MiniScriptVector3.h>
 
 using miniscript::miniscript::MiniScript;
 
@@ -17,7 +17,7 @@ using std::string;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScriptVector3;
+using tdme::miniscript::MiniScriptVector3;
 
 const string MiniScriptVector3::TYPE_NAME = "Vector3";
 

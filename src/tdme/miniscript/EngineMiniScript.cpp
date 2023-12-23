@@ -1,4 +1,4 @@
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 #include <memory>
 #include <string>
@@ -12,18 +12,18 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScriptMatrix3x3.h>
-#include <tdme/utilities/MiniScriptMatrix4x4.h>
-#include <tdme/utilities/MiniScriptMatrix4x4.h>
-#include <tdme/utilities/MiniScriptQuaternion.h>
-#include <tdme/utilities/MiniScriptTransform.h>
-#include <tdme/utilities/MiniScriptVector2.h>
-#include <tdme/utilities/MiniScriptVector3.h>
-#include <tdme/utilities/MiniScriptVector4.h>
+#include <tdme/miniscript/MiniScriptMatrix3x3.h>
+#include <tdme/miniscript/MiniScriptMatrix4x4.h>
+#include <tdme/miniscript/MiniScriptMatrix4x4.h>
+#include <tdme/miniscript/MiniScriptQuaternion.h>
+#include <tdme/miniscript/MiniScriptTransform.h>
+#include <tdme/miniscript/MiniScriptVector2.h>
+#include <tdme/miniscript/MiniScriptVector3.h>
+#include <tdme/miniscript/MiniScriptVector4.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 using std::make_unique;
 using std::string;
@@ -37,14 +37,14 @@ using tdme::gui::scripting::GUIMiniScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::MiniScriptMatrix3x3;
-using tdme::utilities::MiniScriptMatrix4x4;
-using tdme::utilities::MiniScriptMatrix4x4;
-using tdme::utilities::MiniScriptQuaternion;
-using tdme::utilities::MiniScriptTransform;
-using tdme::utilities::MiniScriptVector2;
-using tdme::utilities::MiniScriptVector3;
-using tdme::utilities::MiniScriptVector4;
+using tdme::miniscript::MiniScriptMatrix3x3;
+using tdme::miniscript::MiniScriptMatrix4x4;
+using tdme::miniscript::MiniScriptMatrix4x4;
+using tdme::miniscript::MiniScriptQuaternion;
+using tdme::miniscript::MiniScriptTransform;
+using tdme::miniscript::MiniScriptVector2;
+using tdme::miniscript::MiniScriptVector3;
+using tdme::miniscript::MiniScriptVector4;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
@@ -136,7 +136,7 @@ EngineMiniScript::EngineMiniScript(): MiniScript() {
 }
 
 const string EngineMiniScript::getBaseClass() {
-	return "tdme::utilities::EngineMiniScript";
+	return "tdme::miniscript::EngineMiniScript";
 }
 
 const vector<string> EngineMiniScript::getTranspilationUnits() {
@@ -159,14 +159,14 @@ const vector<string> EngineMiniScript::getTranspilationUnits() {
 		"ext/miniscript/src/miniscript/miniscript/StringMethods.cpp",
 		"ext/miniscript/src/miniscript/miniscript/TimeMethods.cpp",
 		"ext/miniscript/src/miniscript/miniscript/XMLMethods.cpp",
-		"src/tdme/utilities/EngineMiniScript.cpp",
-		"src/tdme/utilities/MiniScriptMatrix3x3.cpp",
-		"src/tdme/utilities/MiniScriptMatrix4x4.cpp",
-		"src/tdme/utilities/MiniScriptQuaternion.cpp",
-		"src/tdme/utilities/MiniScriptTransform.cpp",
-		"src/tdme/utilities/MiniScriptVector2.cpp",
-		"src/tdme/utilities/MiniScriptVector3.cpp",
-		"src/tdme/utilities/MiniScriptVector4.cpp"
+		"src/tdme/miniscript/EngineMiniScript.cpp",
+		"src/tdme/miniscript/MiniScriptMatrix3x3.cpp",
+		"src/tdme/miniscript/MiniScriptMatrix4x4.cpp",
+		"src/tdme/miniscript/MiniScriptQuaternion.cpp",
+		"src/tdme/miniscript/MiniScriptTransform.cpp",
+		"src/tdme/miniscript/MiniScriptVector2.cpp",
+		"src/tdme/miniscript/MiniScriptVector3.cpp",
+		"src/tdme/miniscript/MiniScriptVector4.cpp"
 	};
 }
 

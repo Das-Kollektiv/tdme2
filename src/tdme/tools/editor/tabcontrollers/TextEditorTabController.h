@@ -16,7 +16,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/miniscript/EngineMiniScript.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
-using tdme::utilities::EngineMiniScript;
+using tdme::miniscript::EngineMiniScript;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
