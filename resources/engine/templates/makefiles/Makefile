@@ -10,7 +10,7 @@ OBJ := obj
 CPPVERSION = -std=c++2a
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 OFLAGS =
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src -Iext/miniscript/src
 
 #EXTRAFLAGS := -D_GLIBCXX_DEBUG
 

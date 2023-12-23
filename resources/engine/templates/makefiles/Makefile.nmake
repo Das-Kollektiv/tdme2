@@ -15,7 +15,9 @@ INCLUDES = \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
 	/I "ext\rapidjson\include" \
-	/I "ext\cpp-spline\src"
+	/I "ext\cpp-spline\src" \
+	/I "ext\miniscript\src" \
+	/I "ext\windows-msc\openssl\include"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
