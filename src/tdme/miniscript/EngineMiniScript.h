@@ -103,7 +103,7 @@ public:
 	 * @return success
 	 */
 	inline bool getVector2Value(const span<Variable>& arguments, int idx, Vector2& value, bool optional = false) {
-		return MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, idx, value, optional);
+		return MiniScriptVector2::getVector2Value(arguments, idx, value, optional);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public:
 	 * @return success
 	 */
 	inline bool getVector3Value(const span<Variable>& arguments, int idx, Vector3& value, bool optional = false) {
-		return MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, idx, value, optional);
+		return MiniScriptVector3::getVector3Value(arguments, idx, value, optional);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public:
 	 * @return success
 	 */
 	inline bool getVector4Value(const span<Variable>& arguments, int idx, Vector4& value, bool optional = false) {
-		return MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, idx, value, optional);
+		return MiniScriptVector4::getVector4Value(arguments, idx, value, optional);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public:
 	 * @return success
 	 */
 	inline static bool getQuaternionValue(const span<Variable>& arguments, int idx, Quaternion& value, bool optional = false) {
-		return MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, idx, value, optional);
+		return MiniScriptQuaternion::getQuaternionValue(arguments, idx, value, optional);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public:
 	 * @return success
 	 */
 	inline static bool getMatrix3x3Value(const span<Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
-		return MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, idx, value, optional);
+		return MiniScriptMatrix3x3::getMatrix3x3Value(arguments, idx, value, optional);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public:
 	 * @return success
 	 */
 	inline static bool getMatrix4x4Value(const span<Variable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
-		return MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, arguments, idx, value, optional);
+		return MiniScriptMatrix4x4::getMatrix4x4Value(arguments, idx, value, optional);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public:
 	 * @return success
 	 */
 	inline static bool getTransformValue(const span<Variable>& arguments, int idx, Transform& value, bool optional = false) {
-		return MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, idx, value, optional);
+		return MiniScriptTransform::getTransformValue(arguments, idx, value, optional);
 	}
 
 	/**

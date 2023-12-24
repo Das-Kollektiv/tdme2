@@ -89,7 +89,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value(arguments, 0, vec3, false) == true) {
 					auto length = vec3.computeLength();
 					returnValue.setValue(Float::isInfinite(length) == true || Float::isNaN(length) == true?0.0f:length);
 				} else {
@@ -121,7 +121,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.computeLengthSquared());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -154,8 +154,8 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 a;
 				Vector3 b;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, a, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 1, b, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, a, false) == true &&
+					MiniScriptVector3::getVector3Value( arguments, 1, b, false) == true) {
 					returnValue.setValue(Vector3::computeDotProduct(a, b));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -188,8 +188,8 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 a;
 				Vector3 b;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, a, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 1, b, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, a, false) == true &&
+					MiniScriptVector3::getVector3Value( arguments, 1, b, false) == true) {
 					auto result = Vector3::computeCrossProduct(a, b);
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
@@ -222,7 +222,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, vec3, false) == true) {
 					auto length = vec3.computeLength();
 					auto result = length < Math::EPSILON || Float::isInfinite(length) == true || Float::isNaN(length) == true?Vector3(0.0f, 0.0f, 0.0f):vec3.normalize();
 					returnValue.setType(TYPE_VECTOR3);
@@ -260,9 +260,9 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 				Vector3 a;
 				Vector3 b;
 				Vector3 n;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, a, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 1, b, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 2, n, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, a, false) == true &&
+					MiniScriptVector3::getVector3Value( arguments, 1, b, false) == true &&
+					MiniScriptVector3::getVector3Value( arguments, 2, n, false) == true) {
 					returnValue.setValue(Vector3::computeAngle(a, b, n));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -293,7 +293,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getX());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -324,7 +324,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getY());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -355,7 +355,7 @@ void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 vec3;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3,  arguments, 0, vec3, false) == true) {
+				if (MiniScriptVector3::getVector3Value( arguments, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getZ());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -409,7 +409,7 @@ bool MiniScriptVector3::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		// a
 		Vector3 a;
 		if (arguments[0].getType() == TYPE_VECTOR3) {
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false);
+			MiniScriptVector3::getVector3Value(arguments, 0, a, false);
 		} else
 		if (MiniScript::getFloatValue(arguments, 0, f, false) == true) {
 			a = Vector3(f, f, f);
@@ -421,7 +421,7 @@ bool MiniScriptVector3::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		// b
 		Vector3 b;
 		if (arguments[1].getType() == TYPE_VECTOR3) {
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false);
+			MiniScriptVector3::getVector3Value(arguments, 1, b, false);
 		} else
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
 			b = Vector3(f, f, f);
@@ -448,10 +448,10 @@ bool MiniScriptVector3::div(MiniScript* miniScript, const span<MiniScript::Varia
 		Vector3 b;
 		float f;
 		// a
-		MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false);
+		MiniScriptVector3::getVector3Value(arguments, 0, a, false);
 		// b
 		if (arguments[1].getType() == TYPE_VECTOR3 &&
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false) == true) {
+			MiniScriptVector3::getVector3Value(arguments, 1, b, false) == true) {
 			// nop
 		} else
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
@@ -477,8 +477,8 @@ bool MiniScriptVector3::add(MiniScript* miniScript, const span<MiniScript::Varia
 	if (MiniScript::hasType(arguments, TYPE_VECTOR3) == true) {
 		Vector3 a;
 		Vector3 b;
-		if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false) == true &&
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false) == true) {
+		if (MiniScriptVector3::getVector3Value(arguments, 0, a, false) == true &&
+			MiniScriptVector3::getVector3Value(arguments, 1, b, false) == true) {
 			auto result = a.clone().add(b);
 			returnValue.setType(TYPE_VECTOR3);
 			returnValue.setValue(&result);
@@ -500,8 +500,8 @@ bool MiniScriptVector3::sub(MiniScript* miniScript, const span<MiniScript::Varia
 	if (MiniScript::hasType(arguments, TYPE_VECTOR3) == true) {
 		Vector3 a;
 		Vector3 b;
-		if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false) == true &&
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false) == true) {
+		if (MiniScriptVector3::getVector3Value(arguments, 0, a, false) == true &&
+			MiniScriptVector3::getVector3Value(arguments, 1, b, false) == true) {
 			auto result = a.clone().sub(b);
 			returnValue.setType(TYPE_VECTOR3);
 			returnValue.setValue(&result);

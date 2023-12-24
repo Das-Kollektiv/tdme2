@@ -44,18 +44,16 @@ public:
 
 	/**
 	 * Get matrix3x3 value from given variable
-	 * @param TYPE_MATRIX3x3 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getMatrix3x3Value(MiniScript::VariableType TYPE_MATRIX3x3, const span<MiniScript::Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
+	static inline bool getMatrix3x3Value(const span<MiniScript::Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_MATRIX3x3) {
-			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Matrix3x3*>((void*)argument.getValuePtr());
 			return true;
 		}

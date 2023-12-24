@@ -46,23 +46,20 @@ public:
 
 	/**
 	 * Get quaternion value from given variable
-	 * @param TYPE_TRANSFORM custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getTransformValue(MiniScript::VariableType TYPE_TRANSFORM, const span<MiniScript::Variable>& arguments, int idx, Transform& value, bool optional = false) {
+	static inline bool getTransformValue(const span<MiniScript::Variable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_TRANSFORM) {
-			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Transform*>((void*)argument.getValuePtr());
 			return true;
 		}
 		return optional;
-
 	}
 
 	// forbid class copy

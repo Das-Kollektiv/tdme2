@@ -43,18 +43,16 @@ public:
 
 	/**
 	 * Get vector2 value from given variable
-	 * @param TYPE_VECTOR2 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getVector2Value(MiniScript::VariableType TYPE_VECTOR2, const span<MiniScript::Variable>& arguments, int idx, Vector2& value, bool optional = false) {
+	static inline bool getVector2Value(const span<MiniScript::Variable>& arguments, int idx, Vector2& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_VECTOR2) {
-			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Vector2*>((void*)argument.getValuePtr());
 			return true;
 		}

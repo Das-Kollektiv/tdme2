@@ -93,7 +93,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					auto length = vec4.computeLength();
 					returnValue.setValue(Float::isInfinite(length) == true || Float::isNaN(length) == true?0.0f:length);
 				} else {
@@ -125,7 +125,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.computeLengthSquared());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -158,8 +158,8 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 a;
 				Vector4 b;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, a, false) == true &&
-					MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 1, b, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, a, false) == true &&
+					MiniScriptVector4::getVector4Value(arguments, 1, b, false) == true) {
 					returnValue.setValue(Vector4::computeDotProduct(a, b));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -190,7 +190,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					auto length = vec4.computeLength();
 					auto result = length < Math::EPSILON || Float::isInfinite(length) == true || Float::isNaN(length) == true?Vector4(0.0f, 0.0f, 0.0f, 0.0f):vec4.normalize();
 					returnValue.setType(TYPE_VECTOR4);
@@ -224,7 +224,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getX());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -255,7 +255,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getY());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -286,7 +286,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getZ());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -317,7 +317,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector4 vec4;
-				if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, vec4, false) == true) {
+				if (MiniScriptVector4::getVector4Value(arguments, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getW());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -371,7 +371,7 @@ bool MiniScriptVector4::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		// a
 		Vector4 a;
 		if (arguments[0].getType() == TYPE_VECTOR4) {
-			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, a, false);
+			MiniScriptVector4::getVector4Value(arguments, 0, a, false);
 		} else
 		if (MiniScript::getFloatValue(arguments, 0, f, false) == true) {
 			a = Vector4(f, f, f, f);
@@ -384,7 +384,7 @@ bool MiniScriptVector4::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		// b
 		Vector4 b;
 		if (arguments[1].getType() == TYPE_VECTOR4) {
-			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 1, b, false);
+			MiniScriptVector4::getVector4Value(arguments, 1, b, false);
 		} else
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
 			b = Vector4(f, f, f, f);
@@ -412,10 +412,10 @@ bool MiniScriptVector4::div(MiniScript* miniScript, const span<MiniScript::Varia
 		Vector4 b;
 		float f;
 		// a
-		MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, a, false);
+		MiniScriptVector4::getVector4Value(arguments, 0, a, false);
 		// b
 		if (arguments[1].getType() == TYPE_VECTOR4 &&
-			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 1, b, false) == true) {
+			MiniScriptVector4::getVector4Value(arguments, 1, b, false) == true) {
 			// nop
 		} else
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
@@ -443,8 +443,8 @@ bool MiniScriptVector4::add(MiniScript* miniScript, const span<MiniScript::Varia
 	if (MiniScript::hasType(arguments, TYPE_VECTOR4) == true) {
 		Vector4 a;
 		Vector4 b;
-		if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, a, false) == true &&
-			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 1, b, false) == true) {
+		if (MiniScriptVector4::getVector4Value(arguments, 0, a, false) == true &&
+			MiniScriptVector4::getVector4Value(arguments, 1, b, false) == true) {
 			//
 			auto result = a.clone().add(b);
 			returnValue.setType(TYPE_VECTOR4);
@@ -467,8 +467,8 @@ bool MiniScriptVector4::sub(MiniScript* miniScript, const span<MiniScript::Varia
 	if (MiniScript::hasType(arguments, TYPE_VECTOR4) == true) {
 		Vector4 a;
 		Vector4 b;
-		if (MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 0, a, false) == true &&
-			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, arguments, 1, b, false) == true) {
+		if (MiniScriptVector4::getVector4Value(arguments, 0, a, false) == true &&
+			MiniScriptVector4::getVector4Value(arguments, 1, b, false) == true) {
 			//
 			auto result = a.clone().sub(b);
 			returnValue.setType(TYPE_VECTOR4);

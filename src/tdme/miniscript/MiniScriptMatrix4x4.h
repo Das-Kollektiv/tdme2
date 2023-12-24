@@ -45,18 +45,16 @@ public:
 
 	/**
 	 * Get matrix4x4 value from given variable
-	 * @param TYPE_MATRIX4x4 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getMatrix4x4Value(MiniScript::VariableType TYPE_MATRIX4x4, const span<MiniScript::Variable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
+	static inline bool getMatrix4x4Value(const span<MiniScript::Variable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_MATRIX4x4) {
-			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Matrix4x4*>((void*)argument.getValuePtr());
 			return true;
 		}

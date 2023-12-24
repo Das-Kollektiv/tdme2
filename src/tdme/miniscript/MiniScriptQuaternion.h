@@ -47,18 +47,16 @@ public:
 
 	/**
 	 * Get quaternion value from given variable
-	 * @param TYPE_QUATERNION custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getQuaternionValue(MiniScript::VariableType TYPE_QUATERNION, const span<MiniScript::Variable>& arguments, int idx, Quaternion& value, bool optional = false) {
+	static inline bool getQuaternionValue(const span<MiniScript::Variable>& arguments, int idx, Quaternion& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_QUATERNION) {
-			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Quaternion*>((void*)argument.getValuePtr());
 			return true;
 		}

@@ -81,7 +81,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Quaternion quaternion;
-				if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, quaternion, false) == true) {
+				if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, quaternion, false) == true) {
 					auto result = quaternion.invert();
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
@@ -116,7 +116,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector3 axis;
 				float angle;
-				if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, axis, false) == true &&
+				if (MiniScriptVector3::getVector3Value(arguments, 0, axis, false) == true &&
 					MiniScript::getFloatValue(arguments, 1, angle, false) == true) {
 					auto result = Quaternion().rotate(axis, angle);
 					returnValue.setType(TYPE_QUATERNION);
@@ -148,7 +148,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Quaternion quaternion;
-				if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, quaternion, false) == true) {
+				if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, quaternion, false) == true) {
 					auto result = quaternion.normalize();
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
@@ -181,7 +181,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Quaternion quaternion;
-				if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, quaternion, false) == true) {
+				if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, quaternion, false) == true) {
 					auto result = quaternion.computeEulerAngles();
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
@@ -214,7 +214,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Quaternion quaternion;
-				if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, quaternion, false) == true) {
+				if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, quaternion, false) == true) {
 					auto result = quaternion.computeMatrix();
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
@@ -271,8 +271,8 @@ bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Va
 			arguments[1].getType() == TYPE_QUATERNION) {
 			Quaternion a;
 			Quaternion b;
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, a, false);
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 1, b, false);
+			MiniScriptQuaternion::getQuaternionValue(arguments, 0, a, false);
+			MiniScriptQuaternion::getQuaternionValue(arguments, 1, b, false);
 			//
 			auto result = a * b;
 			returnValue.setType(TYPE_QUATERNION);
@@ -285,8 +285,8 @@ bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Va
 			arguments[1].getType() == TYPE_VECTOR3) {
 			Quaternion a;
 			Vector3 b;
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, a, false);
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false);
+			MiniScriptQuaternion::getQuaternionValue(arguments, 0, a, false);
+			MiniScriptVector3::getVector3Value(arguments, 1, b, false);
 			//
 			auto result = a * b;
 			returnValue.setType(TYPE_VECTOR3);
@@ -299,8 +299,8 @@ bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Va
 			arguments[1].getType() == TYPE_QUATERNION) {
 			Vector3 a;
 			Quaternion b;
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false);
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 1, b, false);
+			MiniScriptVector3::getVector3Value(arguments, 0, a, false);
+			MiniScriptQuaternion::getQuaternionValue(arguments, 1, b, false);
 			//
 			auto result = b * a;
 			returnValue.setType(TYPE_VECTOR3);
@@ -327,8 +327,8 @@ bool MiniScriptQuaternion::add(MiniScript* miniScript, const span<MiniScript::Va
 	if (MiniScript::hasType(arguments, TYPE_QUATERNION) == true) {
 		Quaternion a;
 		Quaternion b;
-		if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, a, false) == true &&
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 1, b, false) == true) {
+		if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, a, false) == true &&
+			MiniScriptQuaternion::getQuaternionValue(arguments, 1, b, false) == true) {
 			//
 			auto result = a.clone().add(b);
 			returnValue.setType(TYPE_QUATERNION);
@@ -351,8 +351,8 @@ bool MiniScriptQuaternion::sub(MiniScript* miniScript, const span<MiniScript::Va
 	if (MiniScript::hasType(arguments, TYPE_QUATERNION) == true) {
 		Quaternion a;
 		Quaternion b;
-		if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 0, a, false) == true &&
-			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, arguments, 1, b, false) == true) {
+		if (MiniScriptQuaternion::getQuaternionValue(arguments, 0, a, false) == true &&
+			MiniScriptQuaternion::getQuaternionValue(arguments, 1, b, false) == true) {
 			//
 			auto result = a.clone().sub(b);
 			returnValue.setType(TYPE_QUATERNION);
