@@ -223,38 +223,20 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptMatrix3x3::unsetVariableValue(MiniScript::Variable& variable) const {
-	if (variable.getType() != getType()) return;
-	if (variable.getValuePtr() == 0ll) return;
-	//
 	delete static_cast<Matrix3x3*>((void*)variable.getValuePtr());
-	variable.setValuePtr(0ll);
+}
+
+void MiniScriptMatrix3x3::setVariableValue(MiniScript::Variable& variable) const {
+	variable.setValuePtr((uint64_t)(new Matrix3x3()));
 }
 
 void MiniScriptMatrix3x3::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	if (variable.getType() != getType()) return;
-	//
-	Matrix3x3 matrix3x3Value;
-	if (value != 0ll) {
-		matrix3x3Value = *static_cast<const Matrix3x3*>(value);
-	}
-	//
-	if (variable.getValuePtr() != 0ll) {
-		*static_cast<Matrix3x3*>((void*)variable.getValuePtr()) = matrix3x3Value;
-		return;
-	}
-	//
-	variable.setValuePtr((uint64_t)(new Matrix3x3(matrix3x3Value)));
+	*static_cast<Matrix3x3*>((void*)variable.getValuePtr()) = *static_cast<const Matrix3x3*>(value);
 }
 
 void MiniScriptMatrix3x3::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
-	//
-	Matrix3x3 matrix3x3Value;
-	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
-		matrix3x3Value = *static_cast<Matrix3x3*>((void*)from.getValuePtr());
-	}
-	//
 	to.setType(TYPE_MATRIX3x3);
-	*static_cast<Matrix3x3*>((void*)to.getValuePtr()) = matrix3x3Value;
+	*static_cast<Matrix3x3*>((void*)to.getValuePtr()) = *static_cast<Matrix3x3*>((void*)from.getValuePtr());
 }
 
 bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {

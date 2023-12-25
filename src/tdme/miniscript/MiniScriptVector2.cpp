@@ -260,38 +260,20 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptVector2::unsetVariableValue(MiniScript::Variable& variable) const {
-	if (variable.getType() != getType()) return;
-	if (variable.getValuePtr() == 0ll) return;
-	//
 	delete static_cast<Vector2*>((void*)variable.getValuePtr());
-	variable.setValuePtr(0ll);
+}
+
+void MiniScriptVector2::setVariableValue(MiniScript::Variable& variable) const {
+	variable.setValuePtr((uint64_t)(new Vector2()));
 }
 
 void MiniScriptVector2::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	if (variable.getType() != getType()) return;
-	//
-	Vector2 vector2Value;
-	if (value != 0ll) {
-		vector2Value = *static_cast<const Vector2*>(value);
-	}
-	//
-	if (variable.getValuePtr() != 0ll) {
-		*static_cast<Vector2*>((void*)variable.getValuePtr()) = vector2Value;
-		return;
-	}
-	//
-	variable.setValuePtr((uint64_t)(new Vector2(vector2Value)));
+	*static_cast<Vector2*>((void*)variable.getValuePtr()) = *static_cast<const Vector2*>(value);
 }
 
 void MiniScriptVector2::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
-	//
-	Vector2 vector2Value;
-	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
-		vector2Value = *static_cast<Vector2*>((void*)from.getValuePtr());
-	}
-	//
 	to.setType(TYPE_VECTOR2);
-	*static_cast<Vector2*>((void*)to.getValuePtr()) = vector2Value;
+	*static_cast<Vector2*>((void*)to.getValuePtr()) = *static_cast<Vector2*>((void*)from.getValuePtr());
 }
 
 bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {

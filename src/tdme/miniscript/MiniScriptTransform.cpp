@@ -654,38 +654,20 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptTransform::unsetVariableValue(MiniScript::Variable& variable) const {
-	if (variable.getType() != getType()) return;
-	if (variable.getValuePtr() == 0ll) return;
-	//
 	delete static_cast<Transform*>((void*)variable.getValuePtr());
-	variable.setValuePtr(0ll);
+}
+
+void MiniScriptTransform::setVariableValue(MiniScript::Variable& variable) const {
+	variable.setValuePtr((uint64_t)(new Transform()));
 }
 
 void MiniScriptTransform::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	if (variable.getType() != getType()) return;
-	//
-	Transform transformValue;
-	if (value != 0ll) {
-		transformValue = *static_cast<const Transform*>(value);
-	}
-	//
-	if (variable.getValuePtr() != 0ll) {
-		*static_cast<Transform*>((void*)variable.getValuePtr()) = transformValue;
-		return;
-	}
-	//
-	variable.setValuePtr((uint64_t)(new Transform(transformValue)));
+	*static_cast<Transform*>((void*)variable.getValuePtr()) = *static_cast<const Transform*>(value);
 }
 
 void MiniScriptTransform::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
-	//
-	Transform transformValue;
-	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
-		transformValue = *static_cast<Transform*>((void*)from.getValuePtr());
-	}
-	//
 	to.setType(TYPE_TRANSFORM);
-	*static_cast<Transform*>((void*)to.getValuePtr()) = transformValue;
+	*static_cast<Transform*>((void*)to.getValuePtr()) = *static_cast<Transform*>((void*)from.getValuePtr());
 }
 
 bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {

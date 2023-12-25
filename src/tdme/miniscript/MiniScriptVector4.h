@@ -23,6 +23,7 @@ private:
 	// overridden methods
 	void registerMethods(MiniScript* miniScript) const override;
 	void unsetVariableValue(MiniScript::Variable& variable) const override;
+	void setVariableValue(MiniScript::Variable& variable) const override;
 	void setVariableValue(MiniScript::Variable& variable, const void* value) const override;
 	void copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const override;
 	bool mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;

@@ -198,6 +198,12 @@ public:
 		/**
 		 * Set variable value
 		 * @param variable variable
+		 */
+		virtual void setVariableValue(Variable& variable) const = 0;
+
+		/**
+		 * Set variable value
+		 * @param variable variable
 		 * @param value value
 		 */
 		virtual void setVariableValue(Variable& variable, const void* value) const = 0;
@@ -1045,7 +1051,7 @@ public:
 						_Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this, nullptr);
+					MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this);
 			}
 		}
 

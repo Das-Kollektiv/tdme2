@@ -229,38 +229,20 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptQuaternion::unsetVariableValue(MiniScript::Variable& variable) const {
-	if (variable.getType() != getType()) return;
-	if (variable.getValuePtr() == 0ll) return;
-	//
 	delete static_cast<Quaternion*>((void*)variable.getValuePtr());
-	variable.setValuePtr(0ll);
+}
+
+void MiniScriptQuaternion::setVariableValue(MiniScript::Variable& variable) const {
+	variable.setValuePtr((uint64_t)(new Quaternion()));
 }
 
 void MiniScriptQuaternion::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	if (variable.getType() != getType()) return;
-	//
-	Quaternion quaternionValue;
-	if (value != 0ll) {
-		quaternionValue = *static_cast<const Quaternion*>(value);
-	}
-	//
-	if (variable.getValuePtr() != 0ll) {
-		*static_cast<Quaternion*>((void*)variable.getValuePtr()) = quaternionValue;
-		return;
-	}
-	//
-	variable.setValuePtr((uint64_t)(new Quaternion(quaternionValue)));
+	*static_cast<Quaternion*>((void*)variable.getValuePtr()) = *static_cast<const Quaternion*>(value);
 }
 
 void MiniScriptQuaternion::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
-	//
-	Quaternion quaternionValue;
-	if (from.getType() == getType() && from.getValuePtr() != 0ll) {
-		quaternionValue = *static_cast<Quaternion*>((void*)from.getValuePtr());
-	}
-	//
 	to.setType(TYPE_QUATERNION);
-	*static_cast<Quaternion*>((void*)to.getValuePtr()) = quaternionValue;
+	*static_cast<Quaternion*>((void*)to.getValuePtr()) = *static_cast<Quaternion*>((void*)from.getValuePtr());
 }
 
 bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
