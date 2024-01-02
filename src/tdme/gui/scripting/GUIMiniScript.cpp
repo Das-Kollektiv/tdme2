@@ -103,7 +103,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_LEFT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -124,7 +124,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_RIGHT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -145,7 +145,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_UP";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -166,7 +166,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_DOWN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -187,7 +187,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_POS1";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -208,7 +208,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_END";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -229,7 +229,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_PAGEUP";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -250,7 +250,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_PAGEDOWN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -271,7 +271,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_BACKSPACE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -292,7 +292,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_DELETE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -313,7 +313,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_SPACE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -334,7 +334,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_RETURN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -355,7 +355,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_ESCAPE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -376,7 +376,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F1";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -397,7 +397,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F2";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -418,7 +418,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F3";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -439,7 +439,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F4";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -460,7 +460,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F5";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -481,7 +481,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F6";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -502,7 +502,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F7";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -523,7 +523,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F8";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -544,7 +544,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F9";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -565,7 +565,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F10";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -586,7 +586,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F11";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -607,7 +607,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F12";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -635,7 +635,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t keyCode;
 				if (miniScript->getIntegerValue(arguments, 0, keyCode) == true) {
-					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
+					miniScript->setValue(returnValue, miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -669,7 +669,7 @@ void GUIMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, charAsString) == true) {
 					UTF8CharacterIterator u8It(charAsString);
 					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
-					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
+					miniScript->setValue(returnValue, miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -694,7 +694,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.getTypedString";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardTypedChars;
+				miniScript->setValue(returnValue, miniScript->keyboardTypedChars);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -715,7 +715,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.isControlDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardControlDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardControlDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -736,7 +736,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.isMetaDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardControlDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardControlDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -757,7 +757,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.isAltDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardAltDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardAltDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -778,7 +778,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.keyboard.isShiftDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardShiftDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardShiftDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -800,7 +800,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_LEFT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -821,7 +821,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_MIDDLE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -842,7 +842,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_RIGHT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -869,7 +869,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseDown[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -900,7 +900,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseUp[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -931,7 +931,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseDragging[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -956,7 +956,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.hasMoved";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseMoved;
+				miniScript->setValue(returnValue, miniScript->mouseMoved);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -977,7 +977,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getX";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseX);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseX));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -998,7 +998,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getXUnscaled";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseXUnscaled));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -1019,7 +1019,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getY";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseY);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseY));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -1040,7 +1040,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getYUnscaled";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseYUnscaled));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -1061,7 +1061,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getWheelX";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelX;
+				miniScript->setValue(returnValue, miniScript->mouseWheelX);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -1082,7 +1082,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getWheelY";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelY;
+				miniScript->setValue(returnValue, miniScript->mouseWheelY);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;
@@ -1103,7 +1103,7 @@ void GUIMiniScript::registerMethods() {
 				return "input.mouse.getWheelZ";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelZ;
+				miniScript->setValue(returnValue, miniScript->mouseWheelZ);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTION_GUI;

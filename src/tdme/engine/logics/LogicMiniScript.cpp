@@ -777,7 +777,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_LEFT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -798,7 +798,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_RIGHT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -819,7 +819,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_UP";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -840,7 +840,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_DOWN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -861,7 +861,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_POS1";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -882,7 +882,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_END";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -903,7 +903,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_PAGEUP";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -924,7 +924,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_PAGEDOWN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -945,7 +945,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_BACKSPACE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -966,7 +966,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_DELETE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -987,7 +987,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_SPACE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1008,7 +1008,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_RETURN";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1029,7 +1029,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_ESCAPE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1050,7 +1050,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F1";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1071,7 +1071,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F2";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1092,7 +1092,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F3";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1113,7 +1113,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F4";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1134,7 +1134,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F5";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1155,7 +1155,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F6";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1176,7 +1176,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F7";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1197,7 +1197,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F8";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1218,7 +1218,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F9";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1239,7 +1239,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F10";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1260,7 +1260,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F11";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1281,7 +1281,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.KEYCODE_F12";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1309,7 +1309,7 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t keyCode;
 				if (miniScript->getIntegerValue(arguments, 0, keyCode) == true) {
-					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
+					miniScript->setValue(returnValue, miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1343,7 +1343,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, charAsString) == true) {
 					UTF8CharacterIterator u8It(charAsString);
 					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
-					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
+					miniScript->setValue(returnValue, miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1368,7 +1368,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.getTypedString";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardTypedChars;
+				miniScript->setValue(returnValue, miniScript->keyboardTypedChars);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1389,7 +1389,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.isControlDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardControlDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardControlDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1410,7 +1410,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.isMetaDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardControlDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardControlDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1431,7 +1431,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.isAltDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardAltDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardAltDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1452,7 +1452,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.isShiftDown";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->keyboardShiftDown == true;
+				miniScript->setValue(returnValue, miniScript->keyboardShiftDown == true);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1474,7 +1474,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_LEFT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1495,7 +1495,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_MIDDLE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1516,7 +1516,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.BUTTON_RIGHT";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
+				miniScript->setValue(returnValue, static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1543,7 +1543,7 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseDown[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1574,7 +1574,7 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseUp[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1605,7 +1605,7 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
 				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
-					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
+					miniScript->setValue(returnValue, button >= 0 && button <= 3?miniScript->mouseDragging[button]:false);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1630,7 +1630,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.hasMoved";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseMoved;
+				miniScript->setValue(returnValue, miniScript->mouseMoved);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1651,7 +1651,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getX";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseX);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseX));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1672,7 +1672,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getXUnscaled";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseXUnscaled));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1693,7 +1693,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getY";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseY);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseY));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1714,7 +1714,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getYUnscaled";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->mouseYUnscaled));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1735,7 +1735,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getWheelX";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelX;
+				miniScript->setValue(returnValue, miniScript->mouseWheelX);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1756,7 +1756,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getWheelY";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelY;
+				miniScript->setValue(returnValue, miniScript->mouseWheelY);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1777,7 +1777,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getWheelZ";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->mouseWheelZ;
+				miniScript->setValue(returnValue, miniScript->mouseWheelZ);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1993,7 +1993,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.camera.getFovX";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getEngine()->getCamera()->getFovX();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getFovX());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2047,7 +2047,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.timing.getDeltaTime";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTime();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getTiming()->getDeltaTime());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2068,7 +2068,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.timing.getDeltaTimeSeconds";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTimeSeconds();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getTiming()->getDeltaTimeSeconds());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2089,7 +2089,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.timing.getAvarageFPS";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getEngine()->getTiming()->getAvarageFPS();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getTiming()->getAvarageFPS());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2219,7 +2219,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getWidth";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getWidth());
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->context->getEngine()->getWidth()));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2240,7 +2240,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getHeight";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getHeight());
+				miniScript->setValue(returnValue, static_cast<int64_t>(miniScript->context->getEngine()->getHeight()));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2314,7 +2314,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(arguments, 0, mouseX) == true &&
 					miniScript->getIntegerValue(arguments, 1, mouseY) == true) {
 					auto entity = miniScript->context->getEngine()->getEntityByMousePosition(mouseX, mouseY);
-					if (entity != nullptr) returnValue = entity->getId();
+					if (entity != nullptr) miniScript->setValue(returnValue, entity->getId());
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -2386,9 +2386,9 @@ void LogicMiniScript::registerMethods() {
 					Vector2 screenCoordinate;
 					if (miniScript->context->getEngine()->computeScreenCoordinateByWorldCoordinate(worldCoodinate, screenCoordinate) == true) {
 						miniScript->setValue(arguments[1], screenCoordinate);
-						returnValue = true;
+						miniScript->setValue(returnValue, true);
 					} else {
-						returnValue = false;
+						miniScript->setValue(returnValue, false);
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2509,7 +2509,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(arguments, 1, childEntityId, true) == true) {
 					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
-						returnValue = entity->isEnabled();
+						miniScript->setValue(returnValue, entity->isEnabled());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -2592,7 +2592,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(arguments, 1, childEntityId, true) == true) {
 					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
-						returnValue = entity->isPickable();
+						miniScript->setValue(returnValue, entity->isPickable());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3015,7 +3015,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(arguments, 2, childEntityId, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
-						returnValue = object->hasOverlayAnimation(animation);
+						miniScript->setValue(returnValue, object->hasOverlayAnimation(animation));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3530,7 +3530,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(arguments, 1, childEntityId, true) == true) {
 					auto entity = dynamic_cast<ParticleSystem*>(miniScript->getEntity(entityId, childEntityId));
 					if (entity != nullptr) {
-						returnValue = static_cast<int64_t>(entity->emitParticles());
+						miniScript->setValue(returnValue, static_cast<int64_t>(entity->emitParticles()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3559,7 +3559,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_STATIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::BODYTYPE_STATIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::BODYTYPE_STATIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3580,7 +3580,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_DYNAMIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::BODYTYPE_DYNAMIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::BODYTYPE_DYNAMIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3601,7 +3601,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_COLLISION_STATIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_STATIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::BODYTYPE_COLLISION_STATIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3622,7 +3622,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_COLLISION_DYNAMIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_DYNAMIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::BODYTYPE_COLLISION_DYNAMIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3643,7 +3643,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_STATIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_STATIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_STATIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3664,7 +3664,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_DYNAMIC";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_DYNAMIC);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_DYNAMIC));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3685,7 +3685,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_3";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_3);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_3));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3706,7 +3706,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_4";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_4);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_4));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3727,7 +3727,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_5";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_5);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_5));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3748,7 +3748,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_6";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_6);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_6));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3769,7 +3769,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_7";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_7);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_7));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3790,7 +3790,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_8";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_8);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_8));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3811,7 +3811,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_9";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_9);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_9));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3832,7 +3832,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_10";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_10);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_10));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3853,7 +3853,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_11";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_11);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_11));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3874,7 +3874,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_12";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_12);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_12));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3895,7 +3895,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_13";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_13);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_13));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3916,7 +3916,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_14";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_14);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_14));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3937,7 +3937,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_15";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_15);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_15));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3958,7 +3958,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_16";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_16);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_16));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -3979,7 +3979,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.COLLISION_TYPEID_ALL";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_ALL);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Body::COLLISION_TYPEID_ALL));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -4009,7 +4009,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = body->isEnabled();
+						miniScript->setValue(returnValue, body->isEnabled());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4086,7 +4086,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = static_cast<int64_t>(body->getType());
+						miniScript->setValue(returnValue, static_cast<int64_t>(body->getType()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4123,7 +4123,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = static_cast<int64_t>(body->getCollisionTypeId());
+						miniScript->setValue(returnValue, static_cast<int64_t>(body->getCollisionTypeId()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4200,7 +4200,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = static_cast<int64_t>(body->getCollisionTypeIds());
+						miniScript->setValue(returnValue, static_cast<int64_t>(body->getCollisionTypeIds()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4277,7 +4277,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = body->getLinearDamping();
+						miniScript->setValue(returnValue, body->getLinearDamping());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4354,7 +4354,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(arguments, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = body->getAngularDamping();
+						miniScript->setValue(returnValue, body->getAngularDamping());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4783,9 +4783,9 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						miniScript->setValue(arguments[3], heightPoint);
 						if (arguments.size() >= 5) arguments[4].setValue(body->getId());
-						returnValue = true;
+						miniScript->setValue(returnValue, true);
 					} else {
-						returnValue = false;
+						miniScript->setValue(returnValue, false);
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -4880,7 +4880,7 @@ void LogicMiniScript::registerMethods() {
 					if (body2 == nullptr) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body2 not found: " + bodyId2);
 					} else {
-						returnValue = miniScript->context->getWorld()->doCollide(body1, body2);
+						miniScript->setValue(returnValue, miniScript->context->getWorld()->doCollide(body1, body2));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -4952,7 +4952,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_IDLE";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_IDLE);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_IDLE));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -4973,7 +4973,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_TRYLOCK_FAILED";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_TRYLOCK_FAILED);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_TRYLOCK_FAILED));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -4994,7 +4994,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_PATHFINDING_OTHER";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_OTHER);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_OTHER));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -5015,7 +5015,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_PATHFINDING";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -5036,7 +5036,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_PATHFINDING_FAILED";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_FAILED);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_FAILED));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -5057,7 +5057,7 @@ void LogicMiniScript::registerMethods() {
 				return "pathfinding.STATE_PATHFINDING_SUCCESS";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_SUCCESS);
+				miniScript->setValue(returnValue, static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_SUCCESS));
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_LOGIC;
@@ -5096,7 +5096,7 @@ void LogicMiniScript::registerMethods() {
 					arguments[3].setType(EngineMiniScript::TYPE_ARRAY);
 					vector<Vector3> path;
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
-					returnValue = static_cast<int64_t>(pathFindingState);
+					miniScript->setValue(returnValue, static_cast<int64_t>(pathFindingState));
 					for (const auto& position: path) {
 						MiniScript::Variable positionVariable;
 						miniScript->setValue(positionVariable, position);
@@ -5148,7 +5148,7 @@ void LogicMiniScript::registerMethods() {
 				return "scene.getHeight";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getY();
+				miniScript->setValue(returnValue, miniScript->context->getScene()->getBoundingBox()->getDimensions().getY());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -5169,7 +5169,7 @@ void LogicMiniScript::registerMethods() {
 				return "scene.getDepth";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
-				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getZ();
+				miniScript->setValue(returnValue, miniScript->context->getScene()->getBoundingBox()->getDimensions().getZ());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;

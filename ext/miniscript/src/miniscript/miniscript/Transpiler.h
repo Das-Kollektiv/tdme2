@@ -155,6 +155,8 @@ private:
 	 * @param miniScript MiniScript instance
 	 * @param generatedDefinitions generated definitions
 	 * @param miniScriptClassName MiniScript class name
+	 * @param scriptConditionIdx script condition index
+	 * @param scriptIdx script index
 	 * @param methodName method name
 	 * @param syntaxTree syntax tree
 	 * @param statement statement
@@ -168,6 +170,8 @@ private:
 		MiniScript* miniScript,
 		string& generatedDefinitions,
 		const string& miniScriptClassName,
+		int scriptConditionIdx,
+		int scriptIdx,
 		const string& methodName,
 		const MiniScript::SyntaxTreeNode& syntaxTree,
 		const MiniScript::Statement& statement,
@@ -193,6 +197,8 @@ private:
 	/**
 	 * Generate array/map/set variable
 	 * @param miniScript MiniScript instance
+	 * @param scriptConditionIdx script condition index
+	 * @param scriptIdx script index
 	 * @param variable variable
 	 * @param methodCodeMap method code map
 	 * @param allMethods all methods
@@ -206,6 +212,8 @@ private:
 	 */
 	static void generateArrayMapSetVariable(
 		MiniScript* miniScript,
+		int scriptConditionIdx,
+		int scriptIdx,
 		const MiniScript::Variable& variable,
 		const unordered_map<string, vector<string>>& methodCodeMap,
 		const unordered_set<string>& allMethods,
@@ -222,6 +230,8 @@ private:
 	 * Generate array/map/set variable
 	 * @param miniScript MiniScript instance
 	 * @param generatedDefinitions generated definitions
+	 * @param scriptConditionIdx script condition index
+	 * @param scriptIdx script index
 	 * @param miniScriptClassName MiniScript class name
 	 * @param methodName method name
 	 * @param syntaxTree syntax tree
@@ -235,6 +245,8 @@ private:
 	static void generateArrayMapSetInitializer(
 		MiniScript* miniScript,
 		string& generatedDefinitions,
+		int scriptConditionIdx,
+		int scriptIdx,
 		const string& miniScriptClassName,
 		const string& methodName,
 		const MiniScript::SyntaxTreeNode& syntaxTree,

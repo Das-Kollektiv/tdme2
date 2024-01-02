@@ -450,6 +450,8 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				Transpiler::generateArrayMapSetInitializer(
 					miniScript,
 					statementArrayMapSetInitializerDefinitions,
+					MiniScript::SCRIPTIDX_NONE,
+					script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?scriptIdx:MiniScript::SCRIPTIDX_NONE,
 					miniScriptClassName,
 					methodName,
 					script.syntaxTree[statementIdx],
@@ -467,6 +469,8 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 					miniScript,
 					arrayAccessMethodsDefinitions,
 					miniScriptClassName,
+					MiniScript::SCRIPTIDX_NONE,
+					script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?scriptIdx:MiniScript::SCRIPTIDX_NONE,
 					methodName,
 					script.syntaxTree[statementIdx],
 					script.statements[statementIdx],
@@ -503,6 +507,8 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				Transpiler::generateArrayMapSetInitializer(
 					miniScript,
 					arrayMapSetInitializerDefinitions,
+					MiniScript::SCRIPTIDX_NONE,
+					MiniScript::SCRIPTIDX_NONE,
 					miniScriptClassName,
 					methodName,
 					script.conditionSyntaxTree,
@@ -519,6 +525,8 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 					miniScript,
 					arrayAccessMethodsDefinitions,
 					miniScriptClassName,
+					MiniScript::SCRIPTIDX_NONE,
+					MiniScript::SCRIPTIDX_NONE,
 					methodName,
 					script.conditionSyntaxTree,
 					script.conditionStatement,
@@ -1123,6 +1131,8 @@ void Transpiler::generateArrayAccessMethods(
 	MiniScript* miniScript,
 	string& generatedDefinitions,
 	const string& miniScriptClassName,
+	int scriptConditionIdx,
+	int scriptIdx,
 	const string& methodName,
 	const MiniScript::SyntaxTreeNode& syntaxTree,
 	const MiniScript::Statement& statement,
@@ -1276,8 +1286,8 @@ void Transpiler::generateArrayAccessMethods(
 										transpiledCode,
 										arrayAccessSyntaxTree,
 										arrayAccessStatement,
-										MiniScript::SCRIPTIDX_NONE,
-										MiniScript::SCRIPTIDX_NONE,
+										scriptConditionIdx,
+										scriptIdx,
 										statementIdx,
 										methodCodeMap,
 										allMethods,
@@ -1314,6 +1324,8 @@ void Transpiler::generateArrayAccessMethods(
 						miniScript,
 						generatedDefinitions,
 						miniScriptClassName,
+						scriptConditionIdx,
+						scriptIdx,
 						methodName,
 						argument,
 						statement,
@@ -1340,6 +1352,8 @@ void Transpiler::generateArrayAccessMethods(
 						miniScript,
 						generatedDefinitions,
 						miniScriptClassName,
+						scriptConditionIdx,
+						scriptIdx,
 						methodName,
 						argument,
 						statement,
@@ -1406,6 +1420,8 @@ void Transpiler::generateMiniScriptEvaluateMemberAccessArrays(
 
 void Transpiler::generateArrayMapSetVariable(
 	MiniScript* miniScript,
+	int scriptConditionIdx,
+	int scriptIdx,
 	const MiniScript::Variable& variable,
 	const unordered_map<string, vector<string>>& methodCodeMap,
 	const unordered_set<string>& allMethods,
@@ -1473,8 +1489,8 @@ void Transpiler::generateArrayMapSetVariable(
 					transpiledCode,
 					*variable.getInitializer()->getSyntaxTree(),
 					statement,
-					MiniScript::SCRIPTIDX_NONE,
-					MiniScript::SCRIPTIDX_NONE,
+					scriptConditionIdx,
+					scriptIdx,
 					statementIdx,
 					methodCodeMap,
 					allMethods,
@@ -1530,6 +1546,8 @@ void Transpiler::generateArrayMapSetVariable(
 				for (const auto arrayEntry: *arrayValue) {
 					generateArrayMapSetVariable(
 						miniScript,
+						scriptConditionIdx,
+						scriptIdx,
 						*arrayEntry,
 						methodCodeMap,
 						allMethods,
@@ -1564,6 +1582,8 @@ void Transpiler::generateArrayMapSetVariable(
 					auto mapEntryNameEscaped = StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"");
 					generateArrayMapSetVariable(
 						miniScript,
+						scriptConditionIdx,
+						scriptIdx,
 						*mapEntryValue,
 						methodCodeMap,
 						allMethods,
@@ -1609,6 +1629,8 @@ void Transpiler::generateArrayMapSetVariable(
 void Transpiler::generateArrayMapSetInitializer(
 	MiniScript* miniScript,
 	string& generatedDefinitions,
+	int scriptConditionIdx,
+	int scriptIdx,
 	const string& miniScriptClassName,
 	const string& methodName,
 	const MiniScript::SyntaxTreeNode& syntaxTree,
@@ -1635,6 +1657,8 @@ void Transpiler::generateArrayMapSetInitializer(
 							//
 							generateArrayMapSetVariable(
 								miniScript,
+								scriptConditionIdx,
+								scriptIdx,
 								syntaxTree.value,
 								methodCodeMap,
 								allMethods,
@@ -1669,6 +1693,8 @@ void Transpiler::generateArrayMapSetInitializer(
 					generateArrayMapSetInitializer(
 						miniScript,
 						generatedDefinitions,
+						scriptConditionIdx,
+						scriptIdx,
 						miniScriptClassName,
 						methodName,
 						argument,
@@ -1695,6 +1721,8 @@ void Transpiler::generateArrayMapSetInitializer(
 					generateArrayMapSetInitializer(
 						miniScript,
 						generatedDefinitions,
+						scriptConditionIdx,
+						scriptIdx,
 						miniScriptClassName,
 						methodName,
 						argument,
