@@ -12,6 +12,12 @@ using miniscript::miniscript::MiniScript;
 class miniscript::miniscript::ArrayMethods {
 public:
 	/**
+	 * Register constants
+	 * @param miniScript miniScript
+	 */
+	static void registerConstants(MiniScript* miniScript);
+
+	/**
 	 * Register methods
 	 * @param miniScript miniScript
 	 */

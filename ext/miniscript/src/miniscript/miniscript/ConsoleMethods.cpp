@@ -13,6 +13,9 @@ using miniscript::miniscript::MiniScript;
 
 using _Console = miniscript::utilities::Console;
 
+void ConsoleMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	// console
 	{

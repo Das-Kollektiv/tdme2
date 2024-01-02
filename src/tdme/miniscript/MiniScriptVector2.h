@@ -21,6 +21,7 @@ using tdme::math::Vector2;
 class tdme::miniscript::MiniScriptVector2 final: public MiniScript::DataType {
 private:
 	// overridden methods
+	void registerConstants(MiniScript* miniScript) const override;
 	void registerMethods(MiniScript* miniScript) const override;
 	void unsetVariableValue(MiniScript::Variable& variable) const override;
 	void setVariableValue(MiniScript::Variable& variable) const override;

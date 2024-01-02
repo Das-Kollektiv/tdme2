@@ -91,4 +91,18 @@ public:
 		int mainHeadingIdx,
 		MiniScript* miniScript
 	);
+
+	/**
+	 * Generate variables documentation
+	 * @param heading heading
+	 * @param mainHeadingIdx main heading index
+	 * @param miniScript MiniScript script instance
+	 * @return documentation
+	 */
+	static const string generateVariablesDocumentation(
+		const string& heading,
+		int mainHeadingIdx,
+		MiniScript* miniScript
+	);
+
 };

@@ -144,15 +144,19 @@ void SecureTCPSocket::connect(const string& hostname, const unsigned int port) {
 
 void SecureTCPSocket::shutdown() {
 	if (bio != nullptr) BIO_free_all(bio);
+	if (out != nullptr) BIO_free_all(out);
 	if (ctx != nullptr) SSL_CTX_free(ctx);
 	bio = nullptr;
+	out = nullptr;
 	ctx = nullptr;
 }
 
 void SecureTCPSocket::close() {
 	if (bio != nullptr) BIO_free_all(bio);
+	if (out != nullptr) BIO_free_all(out);
 	if (ctx != nullptr) SSL_CTX_free(ctx);
 	bio = nullptr;
+	out = nullptr;
 	ctx = nullptr;
 }
 

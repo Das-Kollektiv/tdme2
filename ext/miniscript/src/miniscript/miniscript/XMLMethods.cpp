@@ -15,6 +15,9 @@ using miniscript::miniscript::MiniScript;
 using _Console = miniscript::utilities::Console;
 using _StringTools = miniscript::utilities::StringTools;
 
+void XMLMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void XMLMethods::registerMethods(MiniScript* miniScript) {
 	// xml
 	{

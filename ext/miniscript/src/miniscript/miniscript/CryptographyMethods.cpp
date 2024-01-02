@@ -19,6 +19,9 @@ using _Console = miniscript::utilities::Console;
 using _SHA256 = miniscript::utilities::SHA256;
 using _StringTools = miniscript::utilities::StringTools;
 
+void CryptographyMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void CryptographyMethods::registerMethods(MiniScript* miniScript) {
 	// base64
 	{

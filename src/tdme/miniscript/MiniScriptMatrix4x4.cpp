@@ -37,6 +37,9 @@ void MiniScriptMatrix4x4::initialize() {
 	TYPE_VECTOR4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector4")->getType());
 }
 
+void MiniScriptMatrix4x4::registerConstants(MiniScript* miniScript) const {
+}
+
 void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 	//
 	{

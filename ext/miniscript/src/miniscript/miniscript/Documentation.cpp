@@ -279,10 +279,41 @@ const string Documentation::generateOperatorsDocumentation(
 	//
 	string result;
 	result+= string() + "\n";
-	result+= string() + "# 10. Operators" + "\n";
+	result+= string() + "# " + to_string(mainHeadingIdx) + ". " + heading + "\n";
 	result+= string() + "\n";
 	result+= string() + "| Op | Method                                                                                      |" + "\n";
 	result+= string() + "|----|---------------------------------------------------------------------------------------------|" + "\n";
 	for (const auto& method: operators) result+= string() + method + "\n";
+	return result;
+}
+
+const string Documentation::generateVariablesDocumentation(
+	const string& heading,
+	int mainHeadingIdx,
+	MiniScript* miniScript
+) {
+	//
+	vector<string> variables;
+	for (const auto& [variableName, variable]: miniScript->getRootScriptState().variables) {
+		string variableString;
+		variableString = "| ";
+		variableString+= variableName;
+		while (variableString.size() < 62) variableString+= " ";
+		variableString+= "| ";
+		auto idx = variableString.size();
+		variableString+= variable->getValueAsString();
+		while (variableString.size() - idx < 35) variableString+= " ";
+		variableString+= "|";
+		variables.push_back(variableString);
+	}
+	sort(variables.begin(), variables.end());
+	//
+	string result;
+	result+= string() + "\n";
+	result+= string() + "# " + to_string(mainHeadingIdx) + ". " + heading + "\n";
+	result+= string() + "\n";
+	result+= string() + "| Name                                                        | Value                              |" + "\n";
+	result+= string() + "|-------------------------------------------------------------|------------------------------------|" + "\n";
+	for (const auto& method: variables) result+= string() + method + "\n";
 	return result;
 }

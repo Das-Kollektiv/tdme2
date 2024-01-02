@@ -19,6 +19,9 @@ void MathMethods::registerDataType(MiniScript::DataType* dataType) {
 	dataTypes.push_back(dataType);
 }
 
+void MathMethods::registerConstants() {
+}
+
 void MathMethods::registerMethods() {
 	// operator methods
 	{

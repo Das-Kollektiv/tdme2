@@ -28,6 +28,11 @@ public:
 	void registerDataType(MiniScript::DataType* dataType);
 
 	/**
+	 * Register constants
+	 */
+	void registerConstants();
+
+	/**
 	 * Register methods
 	 */
 	void registerMethods();

@@ -19,6 +19,9 @@ using _Console = miniscript::utilities::Console;
 using _Exception = miniscript::utilities::Exception;
 using _ExceptionBase = miniscript::utilities::ExceptionBase;
 
+void FileSystemMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void FileSystemMethods::registerMethods(MiniScript* miniScript) {
 	// file system methods
 	{

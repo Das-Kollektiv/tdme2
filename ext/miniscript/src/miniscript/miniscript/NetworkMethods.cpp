@@ -20,6 +20,74 @@ using _Console = miniscript::utilities::Console;
 using _Exception = miniscript::utilities::Exception;
 using _HTTPClient = miniscript::network::httpclient::HTTPClient;
 
+void NetworkMethods::registerConstants(MiniScript* miniScript) {
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_CONTINUE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_CONTINUE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_SWITCHINGPROTOCOLS", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_SWITCHINGPROTOCOLS));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PROCESSING", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PROCESSING));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_EARLYHINTS", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_EARLYHINTS));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_OK", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_OK));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_CREATED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_CREATED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_ACCEPTED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_ACCEPTED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NONAUTHORITATIVEINFORMATION", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NONAUTHORITATIVEINFORMATION));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOCONTENT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOCONTENT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_RESETCONTENT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_RESETCONTENT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PARTIALCONTENT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PARTIALCONTENT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_MULTISTATUS", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_MULTISTATUS));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_ALREADYREPORTED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_ALREADYREPORTED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_IMUSED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_IMUSED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_MULTIPLECHOICES", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_MULTIPLECHOICES));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_MOVEDPERMANENTLY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_MOVEDPERMANENTLY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_FOUND", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_FOUND));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_SEEOTHER", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_SEEOTHER));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOTMODIFIED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOTMODIFIED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_USEPROXY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_USEPROXY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_TEMPORARYREDIRECT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_TEMPORARYREDIRECT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PERMANENTREDIRECT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PERMANENTREDIRECT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_BADREQUEST", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_BADREQUEST));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UNAUTHORIZED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UNAUTHORIZED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PAYMENTREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PAYMENTREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_FORBIDDEN", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_FORBIDDEN));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOTFOUND", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOTFOUND));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_METHODNOTALLOWED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_METHODNOTALLOWED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOTACCEPTABLE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOTACCEPTABLE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PROXYAUTHENTICATIONREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PROXYAUTHENTICATIONREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_REQUESTTIMEOUT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_REQUESTTIMEOUT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_CONFLICT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_CONFLICT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_GONE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_GONE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_LENGTHREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_LENGTHREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PRECONDITIONFAILED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PRECONDITIONFAILED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_CONTENTTOOLARGE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_CONTENTTOOLARGE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PAYLOADTOOLARGE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PAYLOADTOOLARGE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_URITOOLONG", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_URITOOLONG));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UNSUPPORTEDMEDIATYPE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UNSUPPORTEDMEDIATYPE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_RANGENOTSATISFIABLE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_RANGENOTSATISFIABLE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_EXPECTATIONFAILED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_EXPECTATIONFAILED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_IMATEAPOT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_IMATEAPOT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_MISDIRECTEDREQUEST", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_MISDIRECTEDREQUEST));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UNPROCESSABLECONTENT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UNPROCESSABLECONTENT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UNPROCESSABLEENTITY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UNPROCESSABLEENTITY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_LOCKED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_LOCKED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_FAILEDDEPENDENCY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_FAILEDDEPENDENCY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_TOOEARLY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_TOOEARLY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UPGRADEREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UPGRADEREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_PRECONDITIONREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_PRECONDITIONREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_TOOMANYREQUESTS", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_TOOMANYREQUESTS));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_REQUESTHEADERFIELDSTOOLARGE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_REQUESTHEADERFIELDSTOOLARGE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_UNAVAILABLEFORLEGALREASONS", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_UNAVAILABLEFORLEGALREASONS));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_INTERNALSERVERERROR", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_INTERNALSERVERERROR));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOTIMPLEMENTED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOTIMPLEMENTED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_BADGATEWAY", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_BADGATEWAY));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_SERVICEUNAVAILABLE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_SERVICEUNAVAILABLE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_GATEWAYTIMEOUT", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_GATEWAYTIMEOUT));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_HTTPVERSIONNOTSUPPORTED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_HTTPVERSIONNOTSUPPORTED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_VARIANTALSONEGOTIATES", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_VARIANTALSONEGOTIATES));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_INSUFFICIENTSTORAGE", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_INSUFFICIENTSTORAGE));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_LOOPDETECTED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_LOOPDETECTED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NOTEXTENDED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NOTEXTENDED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_NETWORKAUTHENTICATIONREQUIRED", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_NETWORKAUTHENTICATIONREQUIRED));
+	miniScript->setConstant("$HTTPClient::HTTP_STATUS_MAX", static_cast<int64_t>(_HTTPClient::HTTP_STATUS_MAX));
+}
+
 void NetworkMethods::registerMethods(MiniScript* miniScript) {
 	// network
 	{

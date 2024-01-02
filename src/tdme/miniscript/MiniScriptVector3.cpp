@@ -27,6 +27,9 @@ void MiniScriptVector3::initialize() {
 	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
 }
 
+void MiniScriptVector3::registerConstants(MiniScript* miniScript) const {
+}
+
 void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 	{
 		//

@@ -26,6 +26,9 @@ using _Integer = miniscript::utilities::Integer;
 using _UTF8StringTools = miniscript::utilities::UTF8StringTools;
 using _UTF8CharacterIterator = miniscript::utilities::UTF8CharacterIterator;
 
+void StringMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void StringMethods::registerMethods(MiniScript* miniScript) {
 	// string functions
 	{

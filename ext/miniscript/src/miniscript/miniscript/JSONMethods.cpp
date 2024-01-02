@@ -15,6 +15,9 @@ using miniscript::miniscript::MiniScript;
 using _Console = miniscript::utilities::Console;
 using _StringTools = miniscript::utilities::StringTools;
 
+void JSONMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void JSONMethods::registerMethods(MiniScript* miniScript) {
 	// json
 	{

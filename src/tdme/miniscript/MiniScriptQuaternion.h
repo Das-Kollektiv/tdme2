@@ -23,6 +23,7 @@ using tdme::math::Quaternion;
 class tdme::miniscript::MiniScriptQuaternion final: public MiniScript::DataType {
 private:
 	// overridden methods
+	void registerConstants(MiniScript* miniScript) const override;
 	void registerMethods(MiniScript* miniScript) const override;
 	void unsetVariableValue(MiniScript::Variable& variable) const override;
 	void setVariableValue(MiniScript::Variable& variable) const override;

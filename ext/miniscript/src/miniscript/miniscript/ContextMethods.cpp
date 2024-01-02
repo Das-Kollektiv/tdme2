@@ -16,6 +16,9 @@ using miniscript::miniscript::MiniScript;
 
 using _Console = miniscript::utilities::Console;
 
+void ContextMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void ContextMethods::registerMethods(MiniScript* miniScript) {
 	if (miniScript->getContext() == nullptr) return;
 	{

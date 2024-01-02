@@ -35,6 +35,9 @@ void MiniScriptMatrix3x3::initialize() {
 	TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector2")->getType());
 }
 
+void MiniScriptMatrix3x3::registerConstants(MiniScript* miniScript) const {
+}
+
 void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 	//
 	{

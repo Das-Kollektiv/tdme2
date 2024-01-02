@@ -27,6 +27,9 @@ void MiniScriptVector2::initialize() {
 	TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector2")->getType());
 }
 
+void MiniScriptVector2::registerConstants(MiniScript* miniScript) const {
+}
+
 void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 	{
 		//

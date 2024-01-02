@@ -15,6 +15,9 @@ using miniscript::miniscript::MiniScript;
 using _Console = miniscript::utilities::Console;
 using _Time = miniscript::utilities::Time;
 
+void TimeMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void TimeMethods::registerMethods(MiniScript* miniScript) {
 	// time
 	{

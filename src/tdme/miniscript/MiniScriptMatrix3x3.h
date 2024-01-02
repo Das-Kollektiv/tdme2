@@ -21,6 +21,7 @@ using tdme::math::Matrix3x3;
 class tdme::miniscript::MiniScriptMatrix3x3 final: public MiniScript::DataType {
 private:
 	// overridden methods
+	void registerConstants(MiniScript* miniScript) const override;
 	void registerMethods(MiniScript* miniScript) const override;
 	void unsetVariableValue(MiniScript::Variable& variable) const override;
 	void setVariableValue(MiniScript::Variable& variable) const override;

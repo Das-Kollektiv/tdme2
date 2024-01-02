@@ -54,17 +54,20 @@ int main(int argc, char** argv)
 	auto miniScript = make_unique<MiniScript>();
 	miniScript->setContext(context.get());
 	miniScript->registerMethods();
+	miniScript->registerVariables();
 
 	//
 	auto allClassMethods = Documentation::getAllClassMethods(miniScript.get());
 	//
 	auto baseMethodCategories = Documentation::getMethodsCategories(miniScript.get(), allClassMethods);
 	// classes
-	auto classesDocumentation = Documentation::generateClassesDocumentation("MiniScript Classes", 6, miniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
+	auto classesDocumentation = Documentation::generateClassesDocumentation("Classes", 6, miniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
 	// base methods
-	auto methodsDocumentation = Documentation::generateMethodsDocumentation("MiniScript Methods", 7, miniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
-	// base methods
-	auto operatorsDocumentation = Documentation::generateOperatorsDocumentation("MiniScript Operators", 10, miniScript.get());
+	auto methodsDocumentation = Documentation::generateMethodsDocumentation("Methods", 7, miniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
+	// variables
+	auto variablesDocumentation = Documentation::generateVariablesDocumentation("Constants", 8, miniScript.get());
+	// operators
+	auto operatorsDocumentation = Documentation::generateOperatorsDocumentation("Operators", 9, miniScript.get());
 
 	//
 	Console::println("Classes");
@@ -75,6 +78,11 @@ int main(int argc, char** argv)
 	Console::println("Methods");
 	Console::println("---------");
 	Console::println(methodsDocumentation);
+
+	//
+	Console::println("Variables");
+	Console::println("-----------");
+	Console::println(variablesDocumentation);
 
 	//
 	Console::println("Operators");

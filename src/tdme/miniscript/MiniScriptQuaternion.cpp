@@ -37,6 +37,9 @@ void MiniScriptQuaternion::initialize() {
 	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
 }
 
+void MiniScriptQuaternion::registerConstants(MiniScript* miniScript) const {
+}
+
 void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 	{
 		//

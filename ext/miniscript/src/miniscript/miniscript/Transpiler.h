@@ -7,6 +7,7 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/MiniScript.h>
+#include <miniscript/utilities/StringTools.h>
 
 using std::string;
 using std::unordered_map;
@@ -14,6 +15,7 @@ using std::unordered_set;
 using std::vector;
 
 using miniscript::miniscript::MiniScript;
+using miniscript::utilities::StringTools;
 
 /**
  * MiniScript transpiler
@@ -38,6 +40,65 @@ public:
 
 private:
 	/**
+	 * Check if variable has access statement
+	 * @param variableStatement variable statement
+	 * @return variable has statement
+	 */
+	inline static bool variableHasStatement(const string& variableStatement) {
+		auto dotIdx = StringTools::indexOf(variableStatement, ".");
+		if (dotIdx != string::npos) return true;
+		auto squareBracketIdx = StringTools::indexOf(variableStatement, "[");
+		if (squareBracketIdx != string::npos) return true;
+		return false;
+	}
+
+	/**
+	 * Create variable name
+	 * @param variableStatement variable statement
+	 * @return variable name
+	 */
+	inline static const string createVariableName(const string& variableStatement) {
+		auto dotIdx = StringTools::indexOf(variableStatement, ".");
+		if (dotIdx == string::npos) dotIdx = variableStatement.size();
+		auto squareBracketIdx = StringTools::indexOf(variableStatement, "[");
+		if (squareBracketIdx == string::npos) squareBracketIdx = variableStatement.size();
+		auto cppVariableName = StringTools::substring(variableStatement, 0, dotIdx < squareBracketIdx?dotIdx:squareBracketIdx);
+		return cppVariableName;
+	}
+
+	/**
+	 * Create global variable name
+	 * @param variableStatement variable statement
+	 * @return global CPP variable name
+	 */
+	inline static const string createGlobalVariableName(const string& variableStatement) {
+		auto dotIdx = StringTools::indexOf(variableStatement, ".");
+		if (dotIdx == string::npos) dotIdx = variableStatement.size();
+		auto squareBracketIdx = StringTools::indexOf(variableStatement, "[");
+		if (squareBracketIdx == string::npos) squareBracketIdx = variableStatement.size();
+		auto cppVariableName = "_G" + StringTools::substring(variableStatement, 0, dotIdx < squareBracketIdx?dotIdx:squareBracketIdx);
+		cppVariableName = StringTools::replace(cppVariableName, "$", "_");
+		cppVariableName = StringTools::replace(cppVariableName, ":", "_");
+		return cppVariableName;
+	}
+
+	/**
+	 * Create local variable name
+	 * @param variableStatement variable statement
+	 * @return local CPP variable name
+	 */
+	inline static const string createLocalVariableName(const string& variableStatement) {
+		auto dotIdx = StringTools::indexOf(variableStatement, ".");
+		if (dotIdx == string::npos) dotIdx = variableStatement.size();
+		auto squareBracketIdx = StringTools::indexOf(variableStatement, "[");
+		if (squareBracketIdx == string::npos) squareBracketIdx = variableStatement.size();
+		auto cppVariableName = "_L" + StringTools::substring(variableStatement, 0, dotIdx < squareBracketIdx?dotIdx:squareBracketIdx);
+		cppVariableName = StringTools::replace(cppVariableName, "$", "_");
+		cppVariableName = StringTools::replace(cppVariableName, ":", "_");
+		return cppVariableName;
+	}
+
+	/**
 	 * Get all classes method names
 	 * @param miniScript MiniScript instance
 	 * @return all classes method names
@@ -59,6 +120,23 @@ private:
 	static const unordered_map<string, vector<string>> getClassesMethodNames(MiniScript* miniScript);
 
 	/**
+	 * Determine variables
+	 * @param miniScript MiniScript script instance
+	 * @param globalVariables global variables
+	 * @param localVariables local variables per script index
+	 */
+	static void determineVariables(MiniScript* miniScript, unordered_set<string>& globalVariables, vector<unordered_set<string>>& localVariables);
+
+	/**
+	 * Determine variables within syntax tree
+	 * @param scriptIdx script index
+	 * @param syntaxTreeNode syntax tree node
+	 * @param globalVariables global variables
+	 * @param localVariables local variables per script index
+	 */
+	static void determineVariables(int scriptIdx, const MiniScript::SyntaxTreeNode& syntaxTreeNode, unordered_set<string>& globalVariables, vector<unordered_set<string>>& localVariables);
+
+	/**
 	 * Gather method code
 	 * @param miniScriptExtensionsCode MiniScript extensions code
 	 * @param className class name
@@ -75,7 +153,6 @@ private:
 	/**
 	 * Generate array access methods
 	 * @param miniScript MiniScript instance
-	 * @param generatedDeclarations generated declarations
 	 * @param generatedDefinitions generated definitions
 	 * @param miniScriptClassName MiniScript class name
 	 * @param methodName method name
@@ -89,7 +166,6 @@ private:
 	 */
 	static void generateArrayAccessMethods(
 		MiniScript* miniScript,
-		string& generatedDeclarations,
 		string& generatedDefinitions,
 		const string& miniScriptClassName,
 		const string& methodName,
@@ -123,7 +199,6 @@ private:
 	 * @param methodName method name
 	 * @param condition condition
 	 * @param miniScriptClassName MiniScript class name
-	 * @param generatedDeclarations generated declarations
 	 * @param generatedDefinitions generated definitions
 	 * @param depth depth
 	 * @param initializerDepth initializer depth
@@ -137,7 +212,6 @@ private:
 		const string& methodName,
 		bool condition,
 		const string& miniScriptClassName,
-		string& generatedDeclarations,
 		string& generatedDefinitions,
 		int depth = 0,
 		int initializerDepth = 0,
@@ -147,7 +221,6 @@ private:
 	/**
 	 * Generate array/map/set variable
 	 * @param miniScript MiniScript instance
-	 * @param generatedDeclarations generated declarations
 	 * @param generatedDefinitions generated definitions
 	 * @param miniScriptClassName MiniScript class name
 	 * @param methodName method name
@@ -161,7 +234,6 @@ private:
 	 */
 	static void generateArrayMapSetInitializer(
 		MiniScript* miniScript,
-		string& generatedDeclarations,
 		string& generatedDefinitions,
 		const string& miniScriptClassName,
 		const string& methodName,

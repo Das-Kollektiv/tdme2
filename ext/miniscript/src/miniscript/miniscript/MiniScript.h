@@ -184,6 +184,12 @@ public:
 		}
 
 		/**
+		 * Register constants
+		 * @param miniScript MiniScript instance
+		 */
+		virtual void registerConstants(MiniScript* miniScript) const = 0;
+
+		/**
 		 * Register methods
 		 * @param miniScript MiniScript instance
 		 */
@@ -672,6 +678,17 @@ public:
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string TYPENAME_SET;
 
 		/**
+		 * Unset variable
+		 */
+		inline void unset() {
+			if (isReference() == true) {
+				ir.reference->releaseReference();
+				unsetReference();
+			}
+			setType(TYPE_NULL);
+		}
+
+		/**
 		 * Create reference variable
 		 * @param variable variable
 		 * @returns reference variable
@@ -697,6 +714,38 @@ public:
 			Variable* referenceVariable = new Variable();
 			referenceVariable->setReference((Variable*)variable);
 			return referenceVariable;
+		}
+
+		/**
+		 * Create none reference variable
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static Variable createNonReferenceVariable(const Variable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->isReference() == false) return *variable;
+			// otherwise do the copy
+			Variable nonReferenceVariable;
+			//
+			copyVariable(nonReferenceVariable, *variable);
+			//
+			return nonReferenceVariable;
+		}
+
+		/**
+		 * Create none reference variable pointer
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static Variable* createNonReferenceVariablePointer(const Variable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->isReference() == false) return new Variable(*variable);
+			// otherwise do the copy
+			Variable* nonReferenceVariable = new Variable();
+			//
+			copyVariable(*nonReferenceVariable, *variable);
+			//
+			return nonReferenceVariable;
 		}
 
 		/**
@@ -769,38 +818,6 @@ public:
 			}
 			//
 			if (from.isConstant() == true) to.setConstant();
-		}
-
-		/**
-		 * Create none reference variable
-		 * @param variable variable
-		 * @returns reference variable
-		 */
-		inline static Variable createNonReferenceVariable(const Variable* variable) {
-			// copy a non reference variable is cheap
-			if (variable->isReference() == false) return *variable;
-			// otherwise do the copy
-			Variable nonReferenceVariable;
-			//
-			copyVariable(nonReferenceVariable, *variable);
-			//
-			return nonReferenceVariable;
-		}
-
-		/**
-		 * Create none reference variable pointer
-		 * @param variable variable
-		 * @returns reference variable
-		 */
-		inline static Variable* createNonReferenceVariablePointer(const Variable* variable) {
-			// copy a non reference variable is cheap
-			if (variable->isReference() == false) return new Variable(*variable);
-			// otherwise do the copy
-			Variable* nonReferenceVariable = new Variable();
-			//
-			copyVariable(*nonReferenceVariable, *variable);
-			//
-			return nonReferenceVariable;
 		}
 
 		/**
@@ -2606,8 +2623,9 @@ protected:
 	 */
 	inline void popScriptState() {
 		if (scriptStateStack.empty() == true) return;
-		const auto& scriptState = getScriptState();
+		auto& scriptState = getScriptState();
 		for (const auto& [variableName, variable]: scriptState.variables) delete variable;
+		scriptState.variables.clear();
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
@@ -2780,18 +2798,18 @@ private:
 
 	/**
 	 * Get access operator left and right indices
-	 * @param name name
+	 * @param variableStatement variable statement
 	 * @param callerMethod caller method
 	 * @param accessOperatorLeftIdx access operator left idx
 	 * @param accessOperatorRightIdx access operator right idx
 	 * @param statement statement
 	 * @param startIdx startIdx
 	 */
-	bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const Statement* statement = nullptr, int startIdx = 0);
+	bool getVariableAccessOperatorLeftRightIndices(const string& variableStatement, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const Statement* statement = nullptr, int startIdx = 0);
 
 	/**
 	 * Evaluate access
-	 * @param name name
+	 * @param variableStatement variable statement
 	 * @param callerMethod caller method
 	 * @param arrayAccessOperatorLeftIdx array access operator left idx
 	 * @param arrayAccessOperatorRightIdx array access operator right idx
@@ -2799,12 +2817,28 @@ private:
 	 * @param key map key
 	 * @param statement statement
 	 */
-	bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const Statement* statement = nullptr);
+	bool evaluateAccess(const string& variableStatement, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const Statement* statement = nullptr);
 
 	/**
 	 * Returns pointer of variable with given name or nullptr
-	 * @param name name
+	 * @param variablePtr pointer to variable
+	 * @param variableStatement variable statement
 	 * @param callerMethod caller method
+	 * @param parentVariable parent variable
+	 * @param arrayIdx array index whereas there is ARRAYIDX_ADD for [] or ARRAYIDX_NONE for no array access
+	 * @param key key
+	 * @param setAccessBool set access bool which returns one of SETACCESSBOOL_NONE, *_TRUE, *_FALSE
+	 * @param statement optional statement the variable is read in
+	 * @param expectVariable expect variable which controls verbosity
+	 * @return pointer to variable
+	 */
+	Variable* evaluateVariableAccessIntern(Variable* variablePtr, const string& variableStatement, const string& callerMethod, Variable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const Statement* statement = nullptr, bool expectVariable = true);
+
+	/**
+	 * Returns pointer of variable with given name or nullptr
+	 * @param variableStatement variable statement
+	 * @param callerMethod caller method
+	 * @param variableName variable name
 	 * @param parentVariable parent variable
 	 * @param arrayIdx array index whereas there is ARRAYIDX_ADD for [] or ARRAYIDX_NONE for no array access
 	 * @param key key
@@ -2814,7 +2848,20 @@ private:
 	 * @param global use global context instead of current context
 	 * @return pointer to variable
 	 */
-	Variable* getVariableIntern(const string& name, const string& callerMethod, Variable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const Statement* statement = nullptr, bool expectVariable = true, bool global = false);
+	Variable* getVariableIntern(const string& variableStatement, const string& callerMethod, string& variableName, Variable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const Statement* statement = nullptr, bool expectVariable = true, bool global = false);
+
+	/**
+	 * Set variable internal
+	 * @param variableStatement variable statement
+	 * @param parentVariable parent variable
+	 * @param variablePtr variable pointer
+	 * @param arrayIdx array index
+	 * @param key key
+	 * @param variable variable
+	 * @param statement optional statement the variable is written in
+	 * @param createReference optional flag for creating variable references
+	 */
+	void setVariableInternal(const string& variableStatement, Variable* parentVariable, Variable* variablePtr, int64_t arrayIdx, const string& key, const Variable& variable, const Statement* statement = nullptr, bool createReference = false);
 
 	/**
 	 * Evaluate given statement without executing preprocessor run
@@ -3058,7 +3105,7 @@ private:
 			if (c == ']') {
 				squareBracketCount--;
 			} else
-			if (squareBracketCount == 0 && _Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+			if (squareBracketCount == 0 && _Character::isAlphaNumeric(c) == false && c != '_' && c != '.' && c != ':') {
 				return false;
 			}
 		}
@@ -3440,7 +3487,7 @@ public:
 			if (c == ']') {
 				squareBracketCount--;
 			} else
-			if (squareBracketCount == 0 && _Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+			if (squareBracketCount == 0 && _Character::isAlphaNumeric(c) == false && c != '_' && c != '.' && c != ':') {
 				return false;
 			}
 		}
@@ -3448,17 +3495,18 @@ public:
 	}
 
 	/**
-	 * Returns variable with given name
+	 * Returns if variable with given name exists
 	 * @param name name
 	 * @param statement optional statement the variable is read in
-	 * @param createReference optional flag for creating variable references
-	 * @return variable
+	 * @return variable exists
 	 */
-	inline const Variable getVariable(const string& name, const Statement* statement = nullptr, bool createReference = false) {
+	inline bool hasVariable(const string& name, const Statement* statement = nullptr) {
+		//
+		string variableName;
 		// global accessor
-		string globalVariableName;
+		string globalVariableStatement;
 		if (_StringTools::startsWith(name, "$GLOBAL.") == true) {
-			globalVariableName = "$" + _StringTools::trim(_StringTools::substring(name, 8));
+			globalVariableStatement = "$" + _StringTools::substring(name, 8);
 		}
 
 		//
@@ -3466,7 +3514,47 @@ public:
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
 		int setAccessBool = SETACCESSBOOL_NONE;
-		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, true, globalVariableName.empty() == false);
+		auto variablePtr = getVariableIntern(globalVariableStatement.empty() == true?name:globalVariableStatement, __FUNCTION__, variableName, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableStatement.empty() == false);
+		// set '.' operator
+		if (setAccessBool != SETACCESSBOOL_NONE) {
+			return true;
+		} else
+		// we have a pointer to a ordinary variable
+		if (variablePtr != nullptr) {
+			return true;
+		} else {
+			// special case for accessing byte array entries at given array index
+			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
+				return true;
+			} else {
+				// nothing to return
+				return false;
+			}
+		}
+	}
+
+	/**
+	 * Returns variable with given name
+	 * @param variableStatement variable statement
+	 * @param statement optional statement the variable is read in
+	 * @param createReference optional flag for creating variable references
+	 * @return variable
+	 */
+	inline const Variable getVariable(const string& variableStatement, const Statement* statement = nullptr, bool createReference = false) {
+		//
+		string variableName;
+		// global accessor
+		string globalVariableStatement;
+		if (_StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
+			globalVariableStatement = "$" + _StringTools::substring(variableStatement, 8);
+		}
+
+		//
+		Variable* parentVariable = nullptr;
+		string key;
+		int64_t arrayIdx = ARRAYIDX_NONE;
+		int setAccessBool = SETACCESSBOOL_NONE;
+		auto variablePtr = getVariableIntern(globalVariableStatement.empty() == true?variableStatement:globalVariableStatement, __FUNCTION__, variableName, parentVariable, arrayIdx, key, setAccessBool, statement, true, globalVariableStatement.empty() == false);
 		// set '.' operator
 		if (setAccessBool != SETACCESSBOOL_NONE) {
 			return Variable(setAccessBool == SETACCESSBOOL_TRUE);
@@ -3489,17 +3577,65 @@ public:
 	}
 
 	/**
+	 * Returns variable with given name
+	 * @param variablePtr variable pointer
+	 * @param variableStatement variable statement
+	 * @param statement optional statement the variable is read in
+	 * @param createReference optional flag for creating variable references
+	 * @return variable
+	 */
+	inline const Variable getVariable(Variable* variablePtr, const string& variableStatement, const Statement* statement = nullptr, bool createReference = false) {
+		//
+		Variable* parentVariable = nullptr;
+		string key;
+		int64_t arrayIdx = ARRAYIDX_NONE;
+		int setAccessBool = SETACCESSBOOL_NONE;
+		variablePtr = evaluateVariableAccessIntern(variablePtr, variableStatement, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, true);
+		// set '.' operator
+		if (setAccessBool != SETACCESSBOOL_NONE) {
+			return Variable(setAccessBool == SETACCESSBOOL_TRUE);
+		} else
+		// we have a pointer to a ordinary variable
+		if (variablePtr != nullptr) {
+			// if we return any variable we can safely remove the constness, a reference can of course keep its constness
+			auto variable = createReference == false?*variablePtr:Variable::createReferenceVariable(variablePtr);
+			variable.unsetConstant();
+			return variable;
+		} else {
+			// special case for accessing byte array entries at given array index
+			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
+				return Variable(static_cast<int64_t>(parentVariable->getByteArrayEntry(arrayIdx)));
+			} else {
+				// nothing to return
+				return Variable();
+			}
+		}
+	}
+
+	/**
+	 * Set constant
+	 * @param variableStatement variable statement
+	 * @param variable variable
+	 */
+	inline void setConstant(const string& variableStatement, const Variable& variable) {
+		auto constVariable = variable;
+		setConstant(constVariable);
+		setVariable(variableStatement, constVariable);
+	}
+
+	/**
 	 * Set variable
-	 * @param name name
+	 * @param variableStatement variable statement
 	 * @param variable variable
 	 * @param statement optional statement the variable is written in
 	 * @param createReference optional flag for creating variable references
 	 */
-	inline void setVariable(const string& name, const Variable& variable, const Statement* statement = nullptr, bool createReference = false) {
+	inline void setVariable(const string& variableStatement, const Variable& variable, const Statement* statement = nullptr, bool createReference = false) {
+		string variableName;
 		// global accessor
-		string globalVariableName;
-		if (_StringTools::startsWith(name, "$GLOBAL.") == true) {
-			globalVariableName = "$" + _StringTools::trim(_StringTools::substring(name, 8));
+		string globalVariableStatement;
+		if (_StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
+			globalVariableStatement = "$" + _StringTools::substring(variableStatement, 8);
 		}
 
 		//
@@ -3507,140 +3643,57 @@ public:
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
 		int setAccessBool = SETACCESSBOOL_NONE;
-		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableName.empty() == false);
-		// common case
-		if (variablePtr != nullptr) {
-			if (variablePtr->isConstant() == false) {
-				*variablePtr = variable;
+		auto variablePtr = getVariableIntern(globalVariableStatement.empty() == true?variableStatement:globalVariableStatement, __FUNCTION__, variableName, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableStatement.empty() == false);
+
+		// set variable if not yet done
+		if (variablePtr == nullptr && parentVariable == nullptr) {
+			// default
+			auto& scriptState = globalVariableStatement.empty() == true?getScriptState():getRootScriptState();
+			auto variableIt = scriptState.variables.find(globalVariableStatement.empty() == true?variableStatement:globalVariableStatement);
+			if (variableIt != scriptState.variables.end()) {
+				auto& existingVariable = variableIt->second;
+				if (existingVariable->isConstant() == false) {
+					// if we set a variable in variable scope that did exist before, we can safely remove the constness
+					*existingVariable = variable;
+				} else {
+					_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
+				}
+				return;
 			} else {
-				_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
+				// if we set a variable in variable scope that did not exist before, we keep things as they are regarding constness
+				scriptState.variables[globalVariableStatement.empty() == true?variableStatement:globalVariableStatement] =
+					createReference == false?Variable::createNonReferenceVariablePointer(&variable):Variable::createReferenceVariablePointer(&variable);
 			}
-			return;
-		} else
-		// array add operator
-		if (key.empty() == false) {
-			if (parentVariable == nullptr) {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: " + name + ": map access operator without map: '" + key + "'");
-				} else {
-					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": map access operator without map: '" + key + "'");
-				}
-			} else
-			// all checks passed, push to map
-			if (parentVariable->getType() == MiniScript::TYPE_MAP) {
-				// check if our parent is not a const variable
-				if (parentVariable->isConstant() == false) {
-					parentVariable->setMapEntry(key, createReference == false?Variable::createNonReferenceVariable(&variable):Variable::createReferenceVariable(&variable));
-				} else {
-					_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-				}
-			} else
-			if (parentVariable->getType() == MiniScript::TYPE_SET) {
-				// check if our parent is not a const variable
-				if (parentVariable->isConstant() == false) {
-					bool booleanValue;
-					if (variable.getBooleanValue(booleanValue, false) == true) {
-						if (booleanValue == true) {
-							parentVariable->insertSetKey(key);
-						} else {
-							parentVariable->removeSetKey(key);
-						}
-					} else {
-						string callerMethod = __FUNCTION__;
-						_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": set access operator: expected boolean variable to remove/insert key in set, but got " + variable.getTypeAsString());
-					}
-				} else {
-					_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-				}
-			} else {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: " + name + ": map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
-				} else {
-					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
-				}
-			}
-			//
-			return;
-		} else
-		if (arrayIdx == ARRAYIDX_ADD) {
-			if (parentVariable == nullptr) {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: " + name + ": [] array push operator without array");
-				} else {
-					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": [] array push operator without array");
-				}
-			} else
-			if (parentVariable->getType() == MiniScript::TYPE_BYTEARRAY) {
-				// check if our parent is not a const variable
-				if (parentVariable->isConstant() == false) {
-					// all checks passed, push variable to array
-					uint8_t value;
-					if (variable.getByteValue(this, value, statement) == true) {
-						parentVariable->pushByteArrayEntry(value);
-					}
-				} else {
-					_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-				}
-			} else
-			if (parentVariable->getType() == MiniScript::TYPE_ARRAY) {
-				// check if our parent is not a const variable
-				if (parentVariable->isConstant() == false) {
-					// all checks passed, push variable to array
-					parentVariable->pushArrayEntry(createReference == false?Variable::createNonReferenceVariable(&variable):Variable::createReferenceVariable(&variable));
-				} else {
-					_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-				}
-			} else {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: " + name + ": [] array push operator: expected byte array or array, but got " + parentVariable->getTypeAsString());
-				} else {
-					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": [] array push operator: expected byte array or array, but got " + parentVariable->getTypeAsString());
-				}
-			}
-			//
-			return;
-		} else
-		// special case for accessing byte array entries at given array index
-		if (arrayIdx >= ARRAYIDX_FIRST && parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY) {
-			// check if our parent is not a const variable
-			if (parentVariable->isConstant() == false) {
-				uint8_t value;
-				if (variable.getByteValue(this, value, statement) == true) {
-					parentVariable->pushByteArrayEntry(value);
-				} else {
-					string callerMethod = __FUNCTION__;
-					if (statement != nullptr) {
-						_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: " + name + ": [] byte array push operator: expected byte integer value (0 <= byte <= 255), but got " + variable.getTypeAsString());
-					} else {
-						_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: " + name + ": [] byte array push operator: expected byte integer value (0 <= byte <= 255), but got " + variable.getTypeAsString());
-					}
-				}
-			} else {
-				_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-			}
+		} else {
+			setVariableInternal(variableStatement, parentVariable, variablePtr, arrayIdx, key, variable, statement, createReference);
+		}
+	}
+
+	/**
+	 * Set variable
+	 * @param variablePtr variable pointer
+	 * @param variableStatement variable statement
+	 * @param variable variable
+	 * @param statement optional statement the variable is written in
+	 * @param createReference optional flag for creating variable references
+	 */
+	inline void setVariable(Variable* variablePtr, const string& variableStatement, const Variable& variable, const Statement* statement = nullptr, bool createReference = false) {
+		string variableName;
+		// global accessor
+		string globalVariableStatement;
+		if (_StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
+			globalVariableStatement = "$" + _StringTools::substring(variableStatement, 8);
 		}
 
-		// default
-		auto& scriptState = globalVariableName.empty() == true?getScriptState():getRootScriptState();
-		auto variableIt = scriptState.variables.find(globalVariableName.empty() == true?name:globalVariableName);
-		if (variableIt != scriptState.variables.end()) {
-			auto& existingVariable = variableIt->second;
-			if (existingVariable->isConstant() == false) {
-				// if we set a variable in variable scope that did exist before, we can safely remove the constness
-				*existingVariable = variable;
-			} else {
-				_Console::println(getStatementInformation(*statement) + ": constant: " + name + ": Assignment of constant is not allowed");
-			}
-			return;
-		} else {
-			// if we set a variable in variable scope that did not exist before, we keep things as they are regarding constness
-			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] =
-				createReference == false?Variable::createNonReferenceVariablePointer(&variable):Variable::createReferenceVariablePointer(&variable);
-		}
+		//
+		Variable* parentVariable = nullptr;
+		string key;
+		int64_t arrayIdx = ARRAYIDX_NONE;
+		int setAccessBool = SETACCESSBOOL_NONE;
+		variablePtr = evaluateVariableAccessIntern(variablePtr, globalVariableStatement.empty() == true?variableStatement:globalVariableStatement, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, false);
+
+		// set variable if not yet done
+		setVariableInternal(variableStatement, parentVariable, variablePtr, arrayIdx, key, variable, statement, createReference);
 	}
 
 	/**

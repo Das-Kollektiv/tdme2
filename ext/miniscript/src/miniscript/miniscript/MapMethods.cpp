@@ -13,6 +13,9 @@ using miniscript::miniscript::MiniScript;
 
 using _Console = miniscript::utilities::Console;
 
+void MapMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void MapMethods::registerMethods(MiniScript* miniScript) {
 	// map
 	{

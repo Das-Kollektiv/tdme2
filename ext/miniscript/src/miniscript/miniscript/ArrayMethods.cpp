@@ -13,6 +13,9 @@ using miniscript::miniscript::MiniScript;
 
 using _Console = miniscript::utilities::Console;
 
+void ArrayMethods::registerConstants(MiniScript* miniScript) {
+}
+
 void ArrayMethods::registerMethods(MiniScript* miniScript) {
 	// array methods
 	{
