@@ -2212,12 +2212,12 @@ bool Transpiler::transpileScriptStatement(
 		auto setVariable = syntaxTree.value.getValueAsString() == "setVariable" || syntaxTree.value.getValueAsString() == "setConstant";
 		//
 		const auto variable = syntaxTree.arguments[0].value.getValueAsString();
-		auto haveVariableStatement = variableHasStatement(variable);
 		if (haveFunction == true || StringTools::startsWith(variable, "$GLOBAL.") == true) {
 			//
 			if (StringTools::startsWith(variable, "$GLOBAL.") == true) {
 				const auto globalVariable = "$" + StringTools::substring(variable, string_view("$GLOBAL.").size());
 				const auto globalVariableStatement = StringTools::replace(StringTools::replace(globalVariable, "\\", "\\\\"), "\"", "\\\"");
+				auto haveVariableStatement = variableHasStatement(globalVariable);
 				if (getVariable == true) {
 					if (haveVariableStatement == true) {
 						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", \"" + globalVariableStatement + "\", &statement, false);" + "\n";
@@ -2241,6 +2241,7 @@ bool Transpiler::transpileScriptStatement(
 				}
 			} else {
 				const auto& localVariable = variable;
+				auto haveVariableStatement = variableHasStatement(localVariable);
 				if (getVariable == true) {
 					if (haveVariableStatement == true) {
 						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, false);" + "\n";
@@ -2265,6 +2266,7 @@ bool Transpiler::transpileScriptStatement(
 			}
 		} else {
 			const auto& globalVariable = variable;
+			auto haveVariableStatement = variableHasStatement(globalVariable);
 			if (getVariable == true) {
 				if (haveVariableStatement == true) {
 					generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, false);" + "\n";
