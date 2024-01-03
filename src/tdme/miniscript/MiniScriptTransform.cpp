@@ -35,10 +35,10 @@ MiniScript::VariableType MiniScriptTransform::TYPE_TRANSFORM = MiniScript::TYPE_
 MiniScript::VariableType MiniScriptTransform::TYPE_VECTOR3 = MiniScript::TYPE_NULL;
 
 void MiniScriptTransform::initialize() {
-	TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix4x4")->getType());
-	TYPE_QUATERNION = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Quaternion")->getType());
-	TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Transform")->getType());
-	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
+	TYPE_MATRIX4x4 = MiniScript::getDataTypeByClassName("Matrix4x4")->getType();
+	TYPE_QUATERNION = MiniScript::getDataTypeByClassName("Quaternion")->getType();
+	TYPE_TRANSFORM = MiniScript::getDataTypeByClassName("Transform")->getType();
+	TYPE_VECTOR3 = MiniScript::getDataTypeByClassName("Vector3")->getType();
 }
 
 void MiniScriptTransform::registerConstants(MiniScript* miniScript) const {
@@ -657,20 +657,20 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptTransform::unsetVariableValue(MiniScript::Variable& variable) const {
-	delete static_cast<Transform*>((void*)variable.getValuePtr());
+	delete static_cast<Transform*>(variable.getValuePtr());
 }
 
 void MiniScriptTransform::setVariableValue(MiniScript::Variable& variable) const {
-	variable.setValuePtr((uint64_t)(new Transform()));
+	variable.setValuePtr(new Transform());
 }
 
 void MiniScriptTransform::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	*static_cast<Transform*>((void*)variable.getValuePtr()) = *static_cast<const Transform*>(value);
+	*static_cast<Transform*>(variable.getValuePtr()) = *static_cast<const Transform*>(value);
 }
 
 void MiniScriptTransform::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	to.setType(TYPE_TRANSFORM);
-	*static_cast<Transform*>((void*)to.getValuePtr()) = *static_cast<Transform*>((void*)from.getValuePtr());
+	*static_cast<Transform*>(to.getValuePtr()) = *static_cast<Transform*>(from.getValuePtr());
 }
 
 bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
@@ -732,27 +732,24 @@ const string& MiniScriptTransform::getTypeAsString() const {
 
 const string MiniScriptTransform::getValueAsString(const MiniScript::Variable& variable) const {
 	//
-	Transform transformValue;
-	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {
-		transformValue = *static_cast<Transform*>((void*)variable.getValuePtr());
-	}
+	const auto& transform = *static_cast<Transform*>(variable.getValuePtr());
 	//
 	string result;
 	result+=
 		"Transform(translation: Vector3(" +
-		to_string(transformValue.getTranslation().getX()) + ", " +
-		to_string(transformValue.getTranslation().getY()) + ", " +
-		to_string(transformValue.getTranslation().getZ()) + "), " +
+		to_string(transform.getTranslation().getX()) + ", " +
+		to_string(transform.getTranslation().getY()) + ", " +
+		to_string(transform.getTranslation().getZ()) + "), " +
 		"scale: (" +
-		to_string(transformValue.getScale().getX()) + ", " +
-		to_string(transformValue.getScale().getY()) + ", " +
-		to_string(transformValue.getScale().getZ()) + ")";
-	for (auto i = 0; i < transformValue.getRotationCount(); i++) {
+		to_string(transform.getScale().getX()) + ", " +
+		to_string(transform.getScale().getY()) + ", " +
+		to_string(transform.getScale().getZ()) + ")";
+	for (auto i = 0; i < transform.getRotationCount(); i++) {
 		result+= ", rotations: (axis: Vector3(" +
-				to_string(transformValue.getRotationAxis(i).getX()) + ", " +
-				to_string(transformValue.getRotationAxis(i).getY()) + ", " +
-				to_string(transformValue.getRotationAxis(i).getZ()) + "), angle: " +
-				to_string(transformValue.getRotationAngle(i)) + ")";
+				to_string(transform.getRotationAxis(i).getX()) + ", " +
+				to_string(transform.getRotationAxis(i).getY()) + ", " +
+				to_string(transform.getRotationAxis(i).getZ()) + "), angle: " +
+				to_string(transform.getRotationAngle(i)) + ")";
 	}
 	result+= ")";
 	//

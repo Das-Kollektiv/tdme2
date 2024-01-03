@@ -1399,7 +1399,6 @@ void Transpiler::generateMiniScriptEvaluateMemberAccessArrays(
 		to_string((static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()) - static_cast<int>(MiniScript::TYPE_STRING))) +
 		"> evaluateMemberAccessArrays {};"
 	);
-	generatedDeclarations.push_back("// evaluate member access arrays");
 	generatedDefinitions.push_back("evaluateMemberAccessArrays = {};");
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx < static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()); typeIdx++) {
 		const auto& className = MiniScript::Variable::getTypeAsString(static_cast<MiniScript::VariableType>(typeIdx));

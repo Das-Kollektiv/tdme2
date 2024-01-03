@@ -58,7 +58,7 @@ public:
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_TRANSFORM) {
-			value = *static_cast<Transform*>((void*)argument.getValuePtr());
+			value = *static_cast<Transform*>(argument.getValuePtr());
 			return true;
 		}
 		return optional;

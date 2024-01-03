@@ -24,7 +24,7 @@ const string MiniScriptVector2::TYPE_NAME = "Vector2";
 MiniScript::VariableType MiniScriptVector2::TYPE_VECTOR2 = MiniScript::TYPE_NULL;
 
 void MiniScriptVector2::initialize() {
-	TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector2")->getType());
+	TYPE_VECTOR2 = MiniScript::getDataTypeByClassName("Vector2")->getType();
 }
 
 void MiniScriptVector2::registerConstants(MiniScript* miniScript) const {
@@ -263,20 +263,20 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptVector2::unsetVariableValue(MiniScript::Variable& variable) const {
-	delete static_cast<Vector2*>((void*)variable.getValuePtr());
+	delete static_cast<Vector2*>(variable.getValuePtr());
 }
 
 void MiniScriptVector2::setVariableValue(MiniScript::Variable& variable) const {
-	variable.setValuePtr((uint64_t)(new Vector2()));
+	variable.setValuePtr(new Vector2());
 }
 
 void MiniScriptVector2::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	*static_cast<Vector2*>((void*)variable.getValuePtr()) = *static_cast<const Vector2*>(value);
+	*static_cast<Vector2*>(variable.getValuePtr()) = *static_cast<const Vector2*>(value);
 }
 
 void MiniScriptVector2::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	to.setType(TYPE_VECTOR2);
-	*static_cast<Vector2*>((void*)to.getValuePtr()) = *static_cast<Vector2*>((void*)from.getValuePtr());
+	*static_cast<Vector2*>(to.getValuePtr()) = *static_cast<Vector2*>(from.getValuePtr());
 }
 
 bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
@@ -406,15 +406,11 @@ const string& MiniScriptVector2::getTypeAsString() const {
 
 const string MiniScriptVector2::getValueAsString(const MiniScript::Variable& variable) const {
 	//
-	Vector2 vector2Value;
-	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {
-		vector2Value = *static_cast<Vector2*>((void*)variable.getValuePtr());
-	}
+	const auto& vector2 = *static_cast<Vector2*>(variable.getValuePtr());
 	//
 	return
 		"Vector2(" +
-		to_string(vector2Value.getX()) + ", " +
-		to_string(vector2Value.getY()) + ")";
-
+		to_string(vector2.getX()) + ", " +
+		to_string(vector2.getY()) + ")";
 }
 

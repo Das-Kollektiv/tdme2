@@ -55,7 +55,7 @@ public:
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_VECTOR4) {
-			value = *static_cast<Vector4*>((void*)argument.getValuePtr());
+			value = *static_cast<Vector4*>(argument.getValuePtr());
 			return true;
 		}
 		return optional;

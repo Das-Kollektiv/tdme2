@@ -59,7 +59,7 @@ public:
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_QUATERNION) {
-			value = *static_cast<Quaternion*>((void*)argument.getValuePtr());
+			value = *static_cast<Quaternion*>(argument.getValuePtr());
 			return true;
 		}
 		return optional;

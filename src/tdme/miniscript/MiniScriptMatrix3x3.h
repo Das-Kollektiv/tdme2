@@ -56,7 +56,7 @@ public:
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_MATRIX3x3) {
-			value = *static_cast<Matrix3x3*>((void*)argument.getValuePtr());
+			value = *static_cast<Matrix3x3*>(argument.getValuePtr());
 			return true;
 		}
 		return optional;

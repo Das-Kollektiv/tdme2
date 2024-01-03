@@ -32,9 +32,9 @@ MiniScript::VariableType MiniScriptQuaternion::TYPE_QUATERNION = MiniScript::TYP
 MiniScript::VariableType MiniScriptQuaternion::TYPE_VECTOR3 = MiniScript::TYPE_NULL;
 
 void MiniScriptQuaternion::initialize() {
-	TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix4x4")->getType());
-	TYPE_QUATERNION = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Quaternion")->getType());
-	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
+	TYPE_MATRIX4x4 = MiniScript::getDataTypeByClassName("Matrix4x4")->getType();
+	TYPE_QUATERNION = MiniScript::getDataTypeByClassName("Quaternion")->getType();
+	TYPE_VECTOR3 = MiniScript::getDataTypeByClassName("Vector3")->getType();
 }
 
 void MiniScriptQuaternion::registerConstants(MiniScript* miniScript) const {
@@ -232,20 +232,20 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptQuaternion::unsetVariableValue(MiniScript::Variable& variable) const {
-	delete static_cast<Quaternion*>((void*)variable.getValuePtr());
+	delete static_cast<Quaternion*>(variable.getValuePtr());
 }
 
 void MiniScriptQuaternion::setVariableValue(MiniScript::Variable& variable) const {
-	variable.setValuePtr((uint64_t)(new Quaternion()));
+	variable.setValuePtr(new Quaternion());
 }
 
 void MiniScriptQuaternion::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	*static_cast<Quaternion*>((void*)variable.getValuePtr()) = *static_cast<const Quaternion*>(value);
+	*static_cast<Quaternion*>(variable.getValuePtr()) = *static_cast<const Quaternion*>(value);
 }
 
 void MiniScriptQuaternion::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	to.setType(TYPE_QUATERNION);
-	*static_cast<Quaternion*>((void*)to.getValuePtr()) = *static_cast<Quaternion*>((void*)from.getValuePtr());
+	*static_cast<Quaternion*>(to.getValuePtr()) = *static_cast<Quaternion*>(from.getValuePtr());
 }
 
 bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
@@ -361,16 +361,14 @@ const string& MiniScriptQuaternion::getTypeAsString() const {
 
 const string MiniScriptQuaternion::getValueAsString(const MiniScript::Variable& variable) const {
 	//
-	Quaternion quaternionValue;
-	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {
-		quaternionValue = *static_cast<Quaternion*>((void*)variable.getValuePtr());
-	}
+	const auto& quaternion = *static_cast<Quaternion*>(variable.getValuePtr());
+	//
 	return
 		"Quaternion(" +
-		to_string(quaternionValue[0]) + ", " +
-		to_string(quaternionValue[1]) + ", " +
-		to_string(quaternionValue[2]) + ", " +
-		to_string(quaternionValue[3]) + ")";
+		to_string(quaternion[0]) + ", " +
+		to_string(quaternion[1]) + ", " +
+		to_string(quaternion[2]) + ", " +
+		to_string(quaternion[3]) + ")";
 
 }
 

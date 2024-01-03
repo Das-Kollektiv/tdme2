@@ -183,7 +183,7 @@ void MiniScript::registerMethod(Method* method) {
 }
 
 void MiniScript::registerDataType(DataType* dataType) {
-	dataType->setType(TYPE_PSEUDO_CUSTOM_DATATYPES + dataTypes.size());
+	dataType->setType(static_cast<VariableType>(TYPE_PSEUDO_CUSTOM_DATATYPES + dataTypes.size()));
 	dataTypes.push_back(dataType);
 }
 

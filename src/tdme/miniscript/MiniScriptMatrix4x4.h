@@ -57,7 +57,7 @@ public:
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_MATRIX4x4) {
-			value = *static_cast<Matrix4x4*>((void*)argument.getValuePtr());
+			value = *static_cast<Matrix4x4*>(argument.getValuePtr());
 			return true;
 		}
 		return optional;

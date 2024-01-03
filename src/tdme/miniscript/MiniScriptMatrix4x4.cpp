@@ -32,9 +32,9 @@ MiniScript::VariableType MiniScriptMatrix4x4::TYPE_VECTOR3 = MiniScript::TYPE_NU
 MiniScript::VariableType MiniScriptMatrix4x4::TYPE_VECTOR4 = MiniScript::TYPE_NULL;
 
 void MiniScriptMatrix4x4::initialize() {
-	TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Matrix4x4")->getType());
-	TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector3")->getType());
-	TYPE_VECTOR4 = static_cast<MiniScript::VariableType>(MiniScript::getDataTypeByClassName("Vector4")->getType());
+	TYPE_MATRIX4x4 = MiniScript::getDataTypeByClassName("Matrix4x4")->getType();
+	TYPE_VECTOR3 = MiniScript::getDataTypeByClassName("Vector3")->getType();
+	TYPE_VECTOR4 = MiniScript::getDataTypeByClassName("Vector4")->getType();
 }
 
 void MiniScriptMatrix4x4::registerConstants(MiniScript* miniScript) const {
@@ -228,20 +228,20 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 }
 
 void MiniScriptMatrix4x4::unsetVariableValue(MiniScript::Variable& variable) const {
-	delete static_cast<Matrix4x4*>((void*)variable.getValuePtr());
+	delete static_cast<Matrix4x4*>(variable.getValuePtr());
 }
 
 void MiniScriptMatrix4x4::setVariableValue(MiniScript::Variable& variable) const {
-	variable.setValuePtr((uint64_t)(new Matrix4x4()));
+	variable.setValuePtr(new Matrix4x4());
 }
 
 void MiniScriptMatrix4x4::setVariableValue(MiniScript::Variable& variable, const void* value) const {
-	*static_cast<Matrix4x4*>((void*)variable.getValuePtr()) = *static_cast<const Matrix4x4*>(value);
+	*static_cast<Matrix4x4*>(variable.getValuePtr()) = *static_cast<const Matrix4x4*>(value);
 }
 
 void MiniScriptMatrix4x4::copyVariable(MiniScript::Variable& to, const MiniScript::Variable& from) const {
 	to.setType(TYPE_MATRIX4x4);
-	*static_cast<Matrix4x4*>((void*)to.getValuePtr()) = *static_cast<Matrix4x4*>((void*)from.getValuePtr());
+	*static_cast<Matrix4x4*>(to.getValuePtr()) = *static_cast<Matrix4x4*>(from.getValuePtr());
 }
 
 bool MiniScriptMatrix4x4::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
@@ -375,28 +375,25 @@ const string& MiniScriptMatrix4x4::getTypeAsString() const {
 
 const string MiniScriptMatrix4x4::getValueAsString(const MiniScript::Variable& variable) const {
 	//
-	Matrix4x4 matrix4x4Value;
-	if (variable.getType() == getType() && variable.getValuePtr() != 0ll) {
-		matrix4x4Value = *static_cast<Matrix4x4*>((void*)variable.getValuePtr());
-	}
+	const auto& matrix4x4 = *static_cast<Matrix4x4*>(variable.getValuePtr());
+	//
 	return
 		"Matrix4x4(" +
-		to_string(matrix4x4Value[0]) + ", " +
-		to_string(matrix4x4Value[1]) + ", " +
-		to_string(matrix4x4Value[2]) + ", " +
-		to_string(matrix4x4Value[3]) + ", " +
-		to_string(matrix4x4Value[4]) + ", " +
-		to_string(matrix4x4Value[5]) + ", " +
-		to_string(matrix4x4Value[6]) + ", " +
-		to_string(matrix4x4Value[7]) + ", " +
-		to_string(matrix4x4Value[8]) + ", " +
-		to_string(matrix4x4Value[9]) + ", " +
-		to_string(matrix4x4Value[10]) + ", " +
-		to_string(matrix4x4Value[11]) + ", " +
-		to_string(matrix4x4Value[12]) + ", " +
-		to_string(matrix4x4Value[13]) + ", " +
-		to_string(matrix4x4Value[14]) + ", " +
-		to_string(matrix4x4Value[15]) + ")";
-
+		to_string(matrix4x4[0]) + ", " +
+		to_string(matrix4x4[1]) + ", " +
+		to_string(matrix4x4[2]) + ", " +
+		to_string(matrix4x4[3]) + ", " +
+		to_string(matrix4x4[4]) + ", " +
+		to_string(matrix4x4[5]) + ", " +
+		to_string(matrix4x4[6]) + ", " +
+		to_string(matrix4x4[7]) + ", " +
+		to_string(matrix4x4[8]) + ", " +
+		to_string(matrix4x4[9]) + ", " +
+		to_string(matrix4x4[10]) + ", " +
+		to_string(matrix4x4[11]) + ", " +
+		to_string(matrix4x4[12]) + ", " +
+		to_string(matrix4x4[13]) + ", " +
+		to_string(matrix4x4[14]) + ", " +
+		to_string(matrix4x4[15]) + ")";
 }
 
