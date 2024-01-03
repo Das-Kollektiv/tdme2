@@ -3697,15 +3697,6 @@ public:
 	}
 
 	/**
-	 * Unset variable
-	 * @param name name
-	 * @param statement optional statement the variable is unset in
-	 */
-	inline void unsetVariable(const string& name, const Statement* statement = nullptr) {
-		// TODO:
-	}
-
-	/**
 	 * Parse script
 	 * @param pathName path name
 	 * @param fileName file name
@@ -3785,7 +3776,6 @@ public:
 		// lookup function
 		auto functionIt = functions.find(function);
 		if (functionIt == functions.end()) {
-			// _Console::println("MiniScript::call(): Script user function not found: " + function);
 			return false;
 		}
 		//
