@@ -907,39 +907,6 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new MethodSetVariable(miniScript));
 	}
-	// unset variable
-	{
-		//
-		class MethodUnsetVariable: public MiniScript::Method {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			MethodUnsetVariable(MiniScript* miniScript):
-				MiniScript::Method(
-					{
-						{ .type = MiniScript::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
-					},
-					MiniScript::TYPE_NULL
-				),
-				miniScript(miniScript) {
-				//
-			}
-			const string getMethodName() override {
-				return "unsetVariable";
-			}
-			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				string variable;
-				if (arguments.size() != 1 ||
-					MiniScript::getStringValue(arguments, 0, variable, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				} else {
-					miniScript->unsetVariable(variable, &statement);
-				}
-			}
-		};
-		miniScript->registerMethod(new MethodUnsetVariable(miniScript));
-	}
 	// set constant
 	{
 		//
