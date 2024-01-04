@@ -35,7 +35,7 @@ public:
 	 * @param prefix prefix string
 	 * @return if string starts with prefix
 	 */
-	inline static const bool viewStartsWith(const string_view& str, const string& prefix) {
+	inline static const bool viewStartsWith(const string_view& str, const string_view& prefix) {
 		return str.find(prefix) == 0;
 	}
 
@@ -57,7 +57,7 @@ public:
 	 * @param suffix suffix string
 	 * @return if string ends with suffix
 	 */
-	inline static const bool viewEndsWith(const string_view& str, const string& suffix) {
+	inline static const bool viewEndsWith(const string_view& str, const string_view& suffix) {
 		return
 			str.size() >= suffix.size() &&
 			str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;

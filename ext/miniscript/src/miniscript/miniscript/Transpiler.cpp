@@ -954,20 +954,24 @@ void Transpiler::determineVariables(int scriptIdx, const MiniScript::SyntaxTreeN
 					//
 					const auto variableStatement = syntaxTreeNode.arguments[0].value.getValueAsString();
 					//
-					if (variableStatement != "$GLOBAL") {
+					if (scriptIdx == MiniScript::SCRIPTIDX_NONE ||
+						StringTools::startsWith(variableStatement, "$$.") == true ||
+						StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
 						//
-						if (scriptIdx == MiniScript::SCRIPTIDX_NONE || StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
-							if (StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
-								const auto variableName = createVariableName("$" + StringTools::substring(variableStatement, string_view("$GLOBAL.").size()));
-								globalVariables.insert(variableName);
-							} else {
-								const auto variableName = createVariableName(variableStatement);
-								globalVariables.insert(variableName);
-							}
+						if (StringTools::startsWith(variableStatement, "$$.") == true) {
+							const auto variableName = createVariableName("$" + StringTools::substring(variableStatement, string_view("$$.").size()));
+							globalVariables.insert(variableName);
+						} else
+						if (StringTools::startsWith(variableStatement, "$GLOBAL.") == true) {
+							const auto variableName = createVariableName("$" + StringTools::substring(variableStatement, string_view("$GLOBAL.").size()));
+							globalVariables.insert(variableName);
 						} else {
 							const auto variableName = createVariableName(variableStatement);
-							localVariables[scriptIdx].insert(variableName);
+							globalVariables.insert(variableName);
 						}
+					} else {
+						const auto variableName = createVariableName(variableStatement);
+						localVariables[scriptIdx].insert(variableName);
 					}
 				}
 				//
@@ -2211,10 +2215,16 @@ bool Transpiler::transpileScriptStatement(
 		auto setVariable = syntaxTree.value.getValueAsString() == "setVariable" || syntaxTree.value.getValueAsString() == "setConstant";
 		//
 		const auto variable = syntaxTree.arguments[0].value.getValueAsString();
-		if (haveFunction == true || StringTools::startsWith(variable, "$GLOBAL.") == true) {
+		auto dollarDollarVariable = StringTools::startsWith(variable, "$$.");
+		auto dollarGlobalVariable = StringTools::startsWith(variable, "$GLOBAL.");
+		if (haveFunction == true ||
+			dollarDollarVariable == true ||
+			dollarGlobalVariable == true) {
 			//
-			if (StringTools::startsWith(variable, "$GLOBAL.") == true) {
-				const auto globalVariable = "$" + StringTools::substring(variable, string_view("$GLOBAL.").size());
+			if (dollarDollarVariable == true || dollarGlobalVariable == true) {
+				string globalVariable;
+				if (dollarDollarVariable == true) globalVariable = "$" + StringTools::substring(variable, string_view("$$.").size());
+				if (dollarGlobalVariable == true) globalVariable = "$" + StringTools::substring(variable, string_view("$GLOBAL.").size());
 				auto haveVariableStatement = variableHasStatement(globalVariable);
 				if (getVariable == true) {
 					if (haveVariableStatement == true) {
