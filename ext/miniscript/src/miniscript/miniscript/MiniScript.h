@@ -1771,6 +1771,41 @@ public:
 		 * @param statement statement
 		 */
 		inline void setImplicitTypedValueFromStringView(const string_view& value, MiniScript* miniScript, const Statement& statement) {
+			//
+			auto viewIsFunctionAssignment = [](const string_view& candidate, string_view& function) -> bool {
+				if (candidate.size() == 0) return false;
+				//
+				auto i = 0;
+				// (
+				if (candidate[i++] != '(') return false;
+				//
+				if (i >= candidate.size()) return false;
+				// )
+				if (candidate[i++] != ')') return false;
+				// spaces
+				for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+				// -
+				if (candidate[i++] != '-') return false;
+				//
+				if (i >= candidate.size()) return false;
+				// >
+				if (candidate[i++] != '>') return false;
+				// spaces
+				for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+				//
+				auto functionStartIdx = i;
+				for (; i < candidate.size(); i++) {
+					auto c = candidate[i];
+					if (_Character::isAlphaNumeric(c) == false && c != '_') {
+						return false;
+					}
+				}
+				//
+				function = string_view(&candidate[functionStartIdx], i - functionStartIdx);
+				//
+				return true;
+			};
+			//
 			string_view function;
 			//
 			if (value == "null") {
@@ -2791,10 +2826,11 @@ private:
 	 * @param executableStatement executable statement
 	 * @param object object
 	 * @param method method
+	 * @param methodStartIdx method start index
 	 * @param statement statement
 	 * @return statement has a object member access
 	 */
-	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const Statement& statement);
+	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, int& methodStartIdx, const Statement& statement);
 
 	/**
 	 * Get access operator left and right indices
@@ -2879,120 +2915,6 @@ private:
 	  * @return initialized variable
 	  */
 	const Variable initializeVariable(const Variable& variable);
-
-	/**
-	 * Returns if a given string is a function assignment
-	 * @param candidate candidate
-	 * @param function function
-	 * @return if candidate is a function assignment
-	 */
-	inline static bool viewIsFunctionAssignment(const string_view& candidate, string_view& function) {
-		if (candidate.size() == 0) return false;
-		//
-		auto i = 0;
-		// (
-		if (candidate[i++] != '(') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// )
-		if (candidate[i++] != ')') return false;
-		// spaces
-		for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		// -
-		if (candidate[i++] != '-') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// >
-		if (candidate[i++] != '>') return false;
-		// spaces
-		for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		//
-		auto functionStartIdx = i;
-		for (; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (_Character::isAlphaNumeric(c) == false && c != '_') {
-				return false;
-			}
-		}
-		//
-		function = string_view(&candidate[functionStartIdx], i - functionStartIdx);
-		//
-		return true;
-	}
-
-	/**
-	 * Returns if a given string is a inline/lambda function
-	 * @param candidate candidate
-	 * @return if candidate is a inline/lambda function
-	 */
-	inline static bool viewIsLamdaFunction(const string_view& candidate) {
-		if (candidate.size() == 0) return false;
-		//
-		auto i = 0;
-		// (
-		if (candidate[i++] != '(') return false;
-		// spaces
-		for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		//
-		auto argumentStartIdx = string::npos;
-		auto argumentEndIdx = string::npos;
-		//
-		for (; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (c == '&') {
-				if (argumentStartIdx == string::npos) {
-					argumentStartIdx = i;
-				} else {
-					return false;
-				}
-			} else
-			if (c == '$') {
-				if (argumentStartIdx == string::npos) {
-					argumentStartIdx = i;
-				} else
-				if (argumentStartIdx == i - 1 && candidate[argumentStartIdx] == '&') {
-					// no op
-				} else {
-					return false;
-				}
-			} else
-			if (c == ',' || c == ')') {
-				if (argumentEndIdx == string::npos) {
-					if (argumentStartIdx != string::npos) {
-						argumentEndIdx = i;
-					}
-					//
-					argumentStartIdx = string::npos;
-					argumentEndIdx = string::npos;
-				} else {
-					return false;
-				}
-				if (c == ')') {
-					i++;
-					break;
-				}
-			} else
-			if (argumentStartIdx != string::npos && _Character::isAlphaNumeric(candidate[i]) == false && c != '_') {
-				return false;
-			}
-		}
-		//
-		if (i >= candidate.size()) return false;
-		// spaces
-		for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		// -
-		if (candidate[i++] != '-') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// >
-		if (candidate[i++] != '>') return false;
-		// spaces
-		for (; i < candidate.size() && _Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		//
-		if (candidate[i++] != '{') return false;
-		//
-		return true;
-	}
 
 	/**
 	 * Returns if a given string is a inline/lambda function

@@ -18,6 +18,7 @@ on: nothing
 	if ($result == null)
 		console.log("Failed to do HTTP GET request: http://drewke.net/tdme2/")
 	else
+		console.log("Success: " + ($result.status == $HTTPClient::HTTP_STATUS_OK))
 		console.log("HTTP response status: " + $result.status)
 		console.log("HTTP headers: " + $result.headers)
 		console.log("HTTP response: " + $result.response)
@@ -28,6 +29,7 @@ on: nothing
 	if ($result == null)
 		console.log("Failed to do HTTP GET request: https://drewke.net/tdme2/")
 	else
+		console.log("Success: " + ($result.status == $HTTPClient::HTTP_STATUS_OK))
 		console.log("HTTP response status: " + $result.status)
 		console.log("HTTP headers: " + $result.headers)
 		console.log("HTTP response: " + $result.response)
