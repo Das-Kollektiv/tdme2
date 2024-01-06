@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 	lines.push_back("<code-completion>");
 
 	//
-	EngineMiniScript::registerDataTypes();
+	EngineMiniScript::initialize();
 
 	//
 	auto baseMiniScript = make_unique<EngineMiniScript>();

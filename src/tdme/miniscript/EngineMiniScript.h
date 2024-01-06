@@ -74,9 +74,9 @@ public:
 	static constexpr VariableType TYPE_VECTOR4 { static_cast<VariableType>(VariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 6) };
 
 	/**
-	 * Register data types
+	 * Initialize
 	 */
-	static void registerDataTypes();
+	static void initialize();
 
 	/**
 	 * Load script

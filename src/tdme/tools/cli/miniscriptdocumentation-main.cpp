@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 	descriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
-	EngineMiniScript::registerDataTypes();
+	EngineMiniScript::initialize();
 
 	//
 	auto baseMiniScript = make_unique<EngineMiniScript>();

@@ -48,7 +48,7 @@ using tdme::miniscript::MiniScriptVector4;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-void EngineMiniScript::registerDataTypes() {
+void EngineMiniScript::initialize() {
 	//
 	registerDataType(new MiniScriptTransform());
 	registerDataType(new MiniScriptMatrix4x4());

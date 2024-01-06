@@ -12,7 +12,7 @@ using tdme::miniscript::EngineMiniScript;
 int main(int argc, char *argv[]) {
 	Console::println("MiniScriptTest");
 	//
-	EngineMiniScript::registerDataTypes();
+	EngineMiniScript::initialize();
 	// base test
 	{
 		auto script = make_unique<EngineMiniScript>();

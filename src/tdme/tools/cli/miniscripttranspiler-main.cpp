@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	for (auto i = 3; i < argc; i++) miniScriptExtensionFileNames.push_back(argv[i]);
 
 	//
-	EngineMiniScript::registerDataTypes();
+	EngineMiniScript::initialize();
 
 	//
 	auto scriptFileName = string(argv[1]);

@@ -72,7 +72,7 @@ int Editor::main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	//
-	EngineMiniScript::registerDataTypes();
+	EngineMiniScript::initialize();
 	//
 	auto tdmeEditor = new Editor();
 	return tdmeEditor->run(argc, argv, "Editor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
