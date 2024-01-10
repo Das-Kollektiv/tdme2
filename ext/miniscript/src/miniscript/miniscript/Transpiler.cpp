@@ -1115,7 +1115,9 @@ void Transpiler::generateVariableAccess(
 	bool getVariableReference,
 	bool setVariable,
 	const string& returnValueStatement,
-	const string& statementEnd
+	const string& statementEnd,
+	int getArgumentIdx,
+	int setArgumentIdx
 ) {
 	//
 	auto haveFunction = false;
@@ -1145,23 +1147,23 @@ void Transpiler::generateVariableAccess(
 			auto haveVariableStatement = variableHasStatement(globalVariable);
 			if (getVariable == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, false)" + statementEnd;
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, false)" + statementEnd;
 				} else {
 					generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 				}
 			} else
 			if (getVariableReference == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, true)" + statementEnd;
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, true)" + statementEnd;
 				} else {
 					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 				}
 			} else
 			if (setVariable == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[1], &statement); returnValue = arguments[1]" + statementEnd;
+					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 				} else {
-					generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+					generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 				}
 			}
 		} else {
@@ -1169,23 +1171,23 @@ void Transpiler::generateVariableAccess(
 			auto haveVariableStatement = variableHasStatement(localVariable);
 			if (getVariable == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, false)" + statementEnd;
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), &statement, false)" + statementEnd;
 				} else {
 					generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createLocalVariableName(localVariable) + ")" + statementEnd;
 				}
 			} else
 			if (getVariableReference == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, true)" + statementEnd;
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), &statement, true)" + statementEnd;
 				} else {
 					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createLocalVariableName(localVariable) + ")" + statementEnd;
 				}
 			} else
 			if (setVariable == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); returnValue = arguments[1]" + statementEnd;
+					generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 				} else {
-					generatedCode+= indent + createLocalVariableName(localVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+					generatedCode+= indent + createLocalVariableName(localVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 				}
 			}
 		}
@@ -1195,23 +1197,23 @@ void Transpiler::generateVariableAccess(
 		auto haveVariableStatement = variableHasStatement(globalVariable);
 		if (getVariable == true) {
 			if (haveVariableStatement == true) {
-				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, false)" + statementEnd;
+				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), &statement, false)" + statementEnd;
 			} else {
 				generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 			}
 		} else
 		if (getVariableReference == true) {
 			if (haveVariableStatement == true) {
-				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, true)" + statementEnd;
+				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), &statement, true)" + statementEnd;
 			} else {
 				generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 			}
 		} else
 		if (setVariable == true) {
 			if (haveVariableStatement == true) {
-				generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); " + returnValueStatement + "arguments[1]" + statementEnd;
+				generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); " + returnValueStatement + "arguments[" + to_string(getArgumentIdx) + "]" + statementEnd;
 			} else {
-				generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+				generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 			}
 		}
 	}
@@ -2310,7 +2312,9 @@ bool Transpiler::transpileScriptStatement(
 					true,
 					false,
 					string(),
-					",\n"
+					",\n",
+					argumentIdx,
+					-1
 				);
 			} else {
 				//

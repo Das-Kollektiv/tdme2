@@ -100,7 +100,10 @@ using _SHA256 = miniscript::utilities::SHA256;
 using _Time = miniscript::utilities::Time;
 
 const string MiniScript::OPERATOR_CHARS = "+-!~/%<>=&^|";
+
 vector<MiniScript::DataType*> MiniScript::dataTypes;
+MiniScript::ShutdownRAII MiniScript::shutdownRAII(MiniScript::dataTypes);
+
 const string MiniScript::METHOD_SCRIPTCALL = "script.call";
 const string MiniScript::METHOD_ENABLENAMEDCONDITION = "script.enableNamedCondition";
 const string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCondition";
@@ -2858,13 +2861,13 @@ void MiniScript::registerMethods() {
 												arguments[argumentIdx + 1] =
 													callArgumentIdx >= method->getArgumentTypes().size() || method->getArgumentTypes()[callArgumentIdx].reference == false?
 														Variable::createNonReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]):
-														Variable::createReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]);
+														EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1];
 											} else
 											if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
 												arguments[argumentIdx + 1] =
 													callArgumentIdx >= miniScript->getScripts()[functionIdx].functionArguments.size() || miniScript->getScripts()[functionIdx].functionArguments[callArgumentIdx].reference == false?
 														Variable::createNonReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]):
-														Variable::createReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]);
+														EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1];
 											}
 										#else
 											// yep, looks like that

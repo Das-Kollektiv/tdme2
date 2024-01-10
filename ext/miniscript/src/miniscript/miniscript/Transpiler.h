@@ -164,6 +164,8 @@ private:
 	 * @param setVariable set variable
 	 * @param returnValue return value
 	 * @param statementEnd statement end
+	 * @param getArgumentIdx get argument index
+	 * @param setArgumentIdx set argument index
 	 */
 	static void generateVariableAccess(
 		MiniScript* miniScript,
@@ -176,7 +178,9 @@ private:
 		bool getVariableReference,
 		bool setVariable,
 		const string& returnValueStatement = "returnValue = ",
-		const string& statementEnd = ";\n"
+		const string& statementEnd = ";\n",
+		int getArgumentIdx = 0,
+		int setArgumentIdx = 1
 	);
 
 	/**
