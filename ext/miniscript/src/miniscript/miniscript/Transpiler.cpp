@@ -47,33 +47,6 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	//
 	Console::println(scriptFileName + ": Processing script");
 	//
-	auto compare_includes = [](const string& lhs, const string& rhs) -> bool {
-		if (StringTools::startsWith(lhs, "#include <tdme/tdme.h>") == true) return true; else
-		if (StringTools::startsWith(rhs, "#include <tdme/tdme.h>") == true) return false;
-		auto charCount = Math::min((int32_t)lhs.size(), (int32_t)rhs.size());
-		for (auto i = 0; i < charCount; i++) {
-			if (lhs[i] == rhs[i]) {
-				// no op
-			} else {
-				auto charLHS = lhs[i];
-				auto charLCLHS = Character::toLowerCase(lhs[i]);
-				auto charLHSLowerCase = charLHS == charLCLHS;
-				auto charRHS = rhs[i];
-				auto charLCRHS = Character::toLowerCase(rhs[i]);
-				auto charRHSLowerCase = charRHS == charLCRHS;
-				if (charLHSLowerCase == true && charRHSLowerCase == false) {
-					return true;
-				} else
-				if (charLHSLowerCase == false && charRHSLowerCase == true) {
-					return false;
-				} else {
-					return lhs < rhs;
-				}
-			}
-		}
-		return lhs.size() < rhs.size();
-	};
-	//
 	auto replace = [](const vector<string> input, const string& startTag, const string& endTag, const string& replacement, vector<string>& output) -> bool {
 		auto reject = false;
 		auto replaceSuccess = false;
@@ -145,11 +118,11 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 		}
 	}
 	//
-	sort(transpilationUnitIncludes.begin(), transpilationUnitIncludes.end(), compare_includes);
+	sort(transpilationUnitIncludes.begin(), transpilationUnitIncludes.end());
 	transpilationUnitIncludes.erase(unique(transpilationUnitIncludes.begin(), transpilationUnitIncludes.end()), transpilationUnitIncludes.end());
 
 	//
-	sort(transpilationUnitUsings.begin(), transpilationUnitUsings.end(), compare_includes);
+	sort(transpilationUnitUsings.begin(), transpilationUnitUsings.end());
 	transpilationUnitUsings.erase(unique(transpilationUnitUsings.begin(), transpilationUnitUsings.end()), transpilationUnitUsings.end());
 
 	//
@@ -1131,6 +1104,119 @@ void Transpiler::gatherMethodCode(
 	methodCodeMap[methodName] = executeMethodCode;
 }
 
+void Transpiler::generateVariableAccess(
+	MiniScript* miniScript,
+	string& generatedCode,
+	int scriptConditionIdx,
+	int scriptIdx,
+	const string& variableName,
+	const string& indent,
+	bool getVariable,
+	bool getVariableReference,
+	bool setVariable,
+	const string& returnValueStatement,
+	const string& statementEnd
+) {
+	//
+	auto haveFunction = false;
+	auto haveScript = (scriptConditionIdx != MiniScript::SCRIPTIDX_NONE || scriptIdx != MiniScript::SCRIPTIDX_NONE);
+	if (haveScript == true) {
+		const auto& script = miniScript->getScripts()[scriptConditionIdx != MiniScript::SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
+		haveFunction = script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION;
+	}
+	//
+	auto dollarDollarVariable = StringTools::startsWith(variableName, "$$.");
+	auto dollarGlobalVariable = StringTools::startsWith(variableName, "$GLOBAL.");
+	if (haveFunction == true ||
+		dollarDollarVariable == true ||
+		dollarGlobalVariable == true) {
+		//
+		if (dollarDollarVariable == true || dollarGlobalVariable == true) {
+			auto globalVariableIdx = 0;
+			string globalVariable;
+			if (dollarDollarVariable == true) {
+				globalVariable = "$" + StringTools::substring(variableName, string_view("$$.").size());
+				globalVariableIdx = 3;
+			}
+			if (dollarGlobalVariable == true) {
+				globalVariable = "$" + StringTools::substring(variableName, string_view("$GLOBAL.").size());
+				globalVariableIdx = 8;
+			}
+			auto haveVariableStatement = variableHasStatement(globalVariable);
+			if (getVariable == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, false)" + statementEnd;
+				} else {
+					generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
+				}
+			} else
+			if (getVariableReference == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, true)" + statementEnd;
+				} else {
+					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
+				}
+			} else
+			if (setVariable == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[1], &statement); returnValue = arguments[1]" + statementEnd;
+				} else {
+					generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+				}
+			}
+		} else {
+			const auto& localVariable = variableName;
+			auto haveVariableStatement = variableHasStatement(localVariable);
+			if (getVariable == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, false)" + statementEnd;
+				} else {
+					generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createLocalVariableName(localVariable) + ")" + statementEnd;
+				}
+			} else
+			if (getVariableReference == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + returnValueStatement + "getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, true)" + statementEnd;
+				} else {
+					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createLocalVariableName(localVariable) + ")" + statementEnd;
+				}
+			} else
+			if (setVariable == true) {
+				if (haveVariableStatement == true) {
+					generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); returnValue = arguments[1]" + statementEnd;
+				} else {
+					generatedCode+= indent + createLocalVariableName(localVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+				}
+			}
+		}
+	} else {
+		//
+		const auto& globalVariable = variableName;
+		auto haveVariableStatement = variableHasStatement(globalVariable);
+		if (getVariable == true) {
+			if (haveVariableStatement == true) {
+				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, false)" + statementEnd;
+			} else {
+				generatedCode+= indent + returnValueStatement + "Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
+			}
+		} else
+		if (getVariableReference == true) {
+			if (haveVariableStatement == true) {
+				generatedCode+= indent + returnValueStatement + "getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, true)" + statementEnd;
+			} else {
+				generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
+			}
+		} else
+		if (setVariable == true) {
+			if (haveVariableStatement == true) {
+				generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); " + returnValueStatement + "arguments[1]" + statementEnd;
+			} else {
+				generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[1]); " + returnValueStatement + "arguments[1]" + statementEnd;
+			}
+		}
+	}
+}
+
 void Transpiler::generateArrayAccessMethods(
 	MiniScript* miniScript,
 	string& generatedDefinitions,
@@ -1400,11 +1486,11 @@ void Transpiler::generateMiniScriptEvaluateMemberAccessArrays(
 		"array<array<Method*, " +
 		to_string(methodIdx) +
 		">, " +
-		to_string((static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()) - static_cast<int>(MiniScript::TYPE_STRING))) +
+		to_string((static_cast<int>(MiniScript::TYPE_PSEUDO_DATATYPES + MiniScript::getDataTypes().size()) - static_cast<int>(MiniScript::TYPE_STRING))) +
 		"> evaluateMemberAccessArrays {};"
 	);
 	generatedDefinitions.push_back("evaluateMemberAccessArrays = {};");
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx < static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()); typeIdx++) {
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx < static_cast<int>(MiniScript::TYPE_PSEUDO_DATATYPES + MiniScript::getDataTypes().size()); typeIdx++) {
 		const auto& className = MiniScript::Variable::getTypeAsString(static_cast<MiniScript::VariableType>(typeIdx));
 		const auto& methods = methodsByClasses[className];
 		auto methodIdx = 0;
@@ -2184,7 +2270,61 @@ bool Transpiler::transpileScriptStatement(
 
 	// special case: inject EVALUATEMEMBERACCESS_MEMBER for "internal.script.evaluateMemberAccess"
 	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
+		//
+		auto callArgumentIdx = 0;
+		//
+		if (syntaxTree.arguments[0].value.getType() != MiniScript::TYPE_NULL) {
+			generateVariableAccess(
+				miniScript,
+				generatedCode,
+				scriptConditionIdx,
+				scriptIdx,
+				syntaxTree.arguments[0].value.getValueAsString(),
+				minIndentString + depthIndentString + "\t",
+				false,
+				true,
+				false,
+				"auto EVALUATEMEMBERACCESS_ARGUMENT" + to_string(callArgumentIdx) + " = "
+			);
+		} else {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "auto EVALUATEMEMBERACCESS_ARGUMENT" + to_string(callArgumentIdx) + " = Variable();" + "\n";
+		}
+		//
+		callArgumentIdx++;
+		//
+		vector<string> argumentVariables;
+		for (auto argumentIdx = 3; argumentIdx < syntaxTree.arguments.size(); argumentIdx+=2) {
+			// do we have a this variable name?
+			argumentVariables.push_back(string());
+			//
+			if (syntaxTree.arguments[argumentIdx].value.getType() != MiniScript::TYPE_NULL) {
+				//
+				generateVariableAccess(
+					miniScript,
+					argumentVariables[argumentVariables.size() - 1],
+					scriptConditionIdx,
+					scriptIdx,
+					syntaxTree.arguments[argumentIdx].value.getValueAsString(),
+					minIndentString + depthIndentString + "\t\t",
+					false,
+					true,
+					false,
+					string(),
+					",\n"
+				);
+			} else {
+				//
+				argumentVariables[argumentVariables.size() - 1] = minIndentString + depthIndentString + "\t\t" + "Variable()," + "\n";
+			}
+			//
+			callArgumentIdx++;
+		}
+		generatedCode+= minIndentString + depthIndentString + "\t" + "array<Variable, " + to_string(argumentVariables.size()) + "> EVALUATEMEMBERACCESS_ARGUMENTS" + " {" + "\n";
+		for (const auto& argumentVariable: argumentVariables) generatedCode+= argumentVariable;
+		generatedCode+= minIndentString + depthIndentString + "\t" + "};" + "\n";
+		//
 		if (allMethods.contains(syntaxTree.arguments[2].value.getValueAsString()) == true) {
+
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + ";\n";
 		} else {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_NONE;" + "\n";
@@ -2200,111 +2340,18 @@ bool Transpiler::transpileScriptStatement(
 		syntaxTree.value.getValueAsString() == "setConstant") &&
 		syntaxTree.arguments.empty() == false &&
 		syntaxTree.arguments[0].type == MiniScript::SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) {
-		//
-		generatedCode+= minIndentString + depthIndentString + "\t" + "// variable access using " + syntaxTree.value.getValueAsString() + "\n";
-		//
-		auto haveFunction = false;
-		auto haveScript = (scriptConditionIdx != MiniScript::SCRIPTIDX_NONE || scriptIdx != MiniScript::SCRIPTIDX_NONE);
-		if (haveScript == true) {
-			const auto& script = miniScript->getScripts()[scriptConditionIdx != MiniScript::SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
-			haveFunction = script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION;
-		}
-		//
-		auto getVariable = syntaxTree.value.getValueAsString() == "getVariable";
-		auto getVariableReference = syntaxTree.value.getValueAsString() == "getVariableReference";
-		auto setVariable = syntaxTree.value.getValueAsString() == "setVariable" || syntaxTree.value.getValueAsString() == "setConstant";
-		//
-		const auto variable = syntaxTree.arguments[0].value.getValueAsString();
-		auto dollarDollarVariable = StringTools::startsWith(variable, "$$.");
-		auto dollarGlobalVariable = StringTools::startsWith(variable, "$GLOBAL.");
-		if (haveFunction == true ||
-			dollarDollarVariable == true ||
-			dollarGlobalVariable == true) {
-			//
-			if (dollarDollarVariable == true || dollarGlobalVariable == true) {
-				auto globalVariableIdx = 0;
-				string globalVariable;
-				if (dollarDollarVariable == true) {
-					globalVariable = "$" + StringTools::substring(variable, string_view("$$.").size());
-					globalVariableIdx = 3;
-				}
-				if (dollarGlobalVariable == true) {
-					globalVariable = "$" + StringTools::substring(variable, string_view("$GLOBAL.").size());
-					globalVariableIdx = 8;
-				}
-				auto haveVariableStatement = variableHasStatement(globalVariable);
-				if (getVariable == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, false);" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ");" + "\n";
-					}
-				} else
-				if (getVariableReference == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), &statement, true);" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ");" + "\n";
-					}
-				} else
-				if (setVariable == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[0].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[1], &statement); returnValue = arguments[1];" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + createGlobalVariableName(globalVariable) + " = arguments[1]; returnValue = arguments[1];" + "\n";
-					}
-				}
-			} else {
-				const auto& localVariable = variable;
-				auto haveVariableStatement = variableHasStatement(localVariable);
-				if (getVariable == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, false);" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createNonReferenceVariable(&" + createLocalVariableName(localVariable) + ");" + "\n";
-					}
-				} else
-				if (getVariableReference == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), &statement, true);" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createReferenceVariable(&" + createLocalVariableName(localVariable) + ");" + "\n";
-					}
-				} else
-				if (setVariable == true) {
-					if (haveVariableStatement == true) {
-						generatedCode+= minIndentString + depthIndentString + "\t" + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); returnValue = arguments[1];" + "\n";
-					} else {
-						generatedCode+= minIndentString + depthIndentString + "\t" + createLocalVariableName(localVariable) + " = arguments[1]; returnValue = arguments[1];" + "\n";
-					}
-				}
-			}
-		} else {
-			//
-			const auto& globalVariable = variable;
-			auto haveVariableStatement = variableHasStatement(globalVariable);
-			if (getVariable == true) {
-				if (haveVariableStatement == true) {
-					generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, false);" + "\n";
-				} else {
-					generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createNonReferenceVariable(&" + createGlobalVariableName(globalVariable) + ");" + "\n";
-				}
-			} else
-			if (getVariableReference == true) {
-				if (haveVariableStatement == true) {
-					generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = getVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), &statement, true);" + "\n";
-				} else {
-					generatedCode+= minIndentString + depthIndentString + "\t" + "returnValue = Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ");" + "\n";
-				}
-			} else
-			if (setVariable == true) {
-				if (haveVariableStatement == true) {
-					generatedCode+= minIndentString + depthIndentString + "\t" + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[0].getValueAsString(), arguments[1], &statement); returnValue = arguments[1];" + "\n";
-				} else {
-					generatedCode+= minIndentString + depthIndentString + "\t" + createGlobalVariableName(globalVariable) + " = arguments[1]; returnValue = arguments[1];" + "\n";
-				}
-			}
-		}
+		// generate variable access
+		generateVariableAccess(
+			miniScript,
+			generatedCode,
+			scriptConditionIdx,
+			scriptIdx,
+			syntaxTree.arguments[0].value.getValueAsString(),
+			minIndentString + depthIndentString + "\t",
+			syntaxTree.value.getValueAsString() == "getVariable",
+			syntaxTree.value.getValueAsString() == "getVariableReference",
+			syntaxTree.value.getValueAsString() == "setVariable" || syntaxTree.value.getValueAsString() == "setConstant"
+		);
 	} else {
 		// generate code
 		generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";

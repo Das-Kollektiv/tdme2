@@ -49,6 +49,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 void EngineMiniScript::initialize() {
+	MiniScript::initialize();
 	//
 	registerDataType(new MiniScriptTransform());
 	registerDataType(new MiniScriptMatrix4x4());

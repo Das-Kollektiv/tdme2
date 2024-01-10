@@ -14,6 +14,7 @@ namespace miniscript {
 	class Documentation;
 	class FileSystemMethods;
 	class Generator;
+	class HTTPDownloadClientClass;
 	class JSONMethods;
 	class Library;
 	class MathMethods;

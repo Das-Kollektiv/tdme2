@@ -14,8 +14,8 @@ using std::stringstream;
 using std::unordered_map;
 using std::vector;
 
-using miniscript::network::httpclient::HTTPClientException;
-using miniscript::os::network::NetworkException;
+using _HTTPClientException = miniscript::network::httpclient::HTTPClientException;
+using _NetworkException = miniscript::os::network::NetworkException;
 
 /**
  * Basic HTTP client
@@ -290,8 +290,8 @@ public:
 
 	/**
 	 * Execute HTTP request
-	 * @throws miniscript::network::httpclient::HTTPClientException
-	 * @throws miniscript::os::network::NetworkException
+	 * @throws miniscript::network::httpclient::_HTTPClientException
+	 * @throws miniscript::os::network::_NetworkException
 	 */
 	void execute();
 

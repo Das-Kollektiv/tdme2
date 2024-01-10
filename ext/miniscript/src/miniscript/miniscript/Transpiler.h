@@ -151,6 +151,35 @@ private:
 	);
 
 	/**
+	 * Generate variable access
+	 * @param miniScript MiniScript instance
+	 * @param generatedCode generated code
+	 * @param scriptConditionIdx script condition index
+	 * @param scriptIdx script index
+	 * @param variableName variable name
+	 * @param accessName access name
+	 * @param indent indent
+	 * @param getVariable issue get variable access
+	 * @param getVariableReference issue get variable reference access
+	 * @param setVariable set variable
+	 * @param returnValue return value
+	 * @param statementEnd statement end
+	 */
+	static void generateVariableAccess(
+		MiniScript* miniScript,
+		string& generatedCode,
+		int scriptConditionIdx,
+		int scriptIdx,
+		const string& variableName,
+		const string& indent,
+		bool getVariable,
+		bool getVariableReference,
+		bool setVariable,
+		const string& returnValueStatement = "returnValue = ",
+		const string& statementEnd = ";\n"
+	);
+
+	/**
 	 * Generate array access methods
 	 * @param miniScript MiniScript instance
 	 * @param generatedDefinitions generated definitions

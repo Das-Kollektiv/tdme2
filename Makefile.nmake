@@ -702,6 +702,7 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/miniscript/Documentation.cpp \
 	ext/miniscript/src/miniscript/miniscript/FileSystemMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/Generator.cpp \
+	ext/miniscript/src/miniscript/miniscript/HTTPDownloadClientClass.cpp \
 	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/Library.cpp \
 	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \

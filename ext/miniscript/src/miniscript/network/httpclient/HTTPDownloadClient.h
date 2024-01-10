@@ -18,10 +18,10 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-using miniscript::network::httpclient::HTTPClientException;
-using miniscript::os::network::NetworkException;
-using miniscript::os::threading::Mutex;
-using miniscript::os::threading::Thread;
+using _HTTPClientException = miniscript::network::httpclient::HTTPClientException;
+using _NetworkException = miniscript::os::network::NetworkException;
+using _Mutex = miniscript::os::threading::Mutex;
+using _Thread = miniscript::os::threading::Thread;
 
 /**
  * HTTP download client
@@ -41,8 +41,8 @@ private:
 	int16_t statusCode { -1 };
 	unordered_map<string, string> responseHeaders;
 
-	unique_ptr<Thread> downloadThread;
-	Mutex downloadThreadMutex;
+	unique_ptr<_Thread> downloadThread;
+	_Mutex downloadThreadMutex;
 	bool haveHeaders { false };
 	bool haveContentSize { false };
 	uint64_t headerSize { 0LL };
@@ -72,8 +72,75 @@ private:
 	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse);
 
 public:
-
-	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
+	//
+	enum HttpStatusCode {
+		// https://github.com/j-ulrich/http-status-codes-cpp
+		HTTP_STATUS_CONTINUE                        = 100,
+		HTTP_STATUS_SWITCHINGPROTOCOLS              = 101,
+		HTTP_STATUS_PROCESSING                      = 102,
+		HTTP_STATUS_EARLYHINTS                      = 103,
+		HTTP_STATUS_OK                              = 200,
+		HTTP_STATUS_CREATED                         = 201,
+		HTTP_STATUS_ACCEPTED                        = 202,
+		HTTP_STATUS_NONAUTHORITATIVEINFORMATION     = 203,
+		HTTP_STATUS_NOCONTENT                       = 204,
+		HTTP_STATUS_RESETCONTENT                    = 205,
+		HTTP_STATUS_PARTIALCONTENT                  = 206,
+		HTTP_STATUS_MULTISTATUS                     = 207,
+		HTTP_STATUS_ALREADYREPORTED                 = 208,
+		HTTP_STATUS_IMUSED                          = 226,
+		HTTP_STATUS_MULTIPLECHOICES                 = 300,
+		HTTP_STATUS_MOVEDPERMANENTLY                = 301,
+		HTTP_STATUS_FOUND                           = 302,
+		HTTP_STATUS_SEEOTHER                        = 303,
+		HTTP_STATUS_NOTMODIFIED                     = 304,
+		HTTP_STATUS_USEPROXY                        = 305,
+		HTTP_STATUS_TEMPORARYREDIRECT               = 307,
+		HTTP_STATUS_PERMANENTREDIRECT               = 308,
+		HTTP_STATUS_BADREQUEST                      = 400,
+		HTTP_STATUS_UNAUTHORIZED                    = 401,
+		HTTP_STATUS_PAYMENTREQUIRED                 = 402,
+		HTTP_STATUS_FORBIDDEN                       = 403,
+		HTTP_STATUS_NOTFOUND                        = 404,
+		HTTP_STATUS_METHODNOTALLOWED                = 405,
+		HTTP_STATUS_NOTACCEPTABLE                   = 406,
+		HTTP_STATUS_PROXYAUTHENTICATIONREQUIRED     = 407,
+		HTTP_STATUS_REQUESTTIMEOUT                  = 408,
+		HTTP_STATUS_CONFLICT                        = 409,
+		HTTP_STATUS_GONE                            = 410,
+		HTTP_STATUS_LENGTHREQUIRED                  = 411,
+		HTTP_STATUS_PRECONDITIONFAILED              = 412,
+		HTTP_STATUS_CONTENTTOOLARGE                 = 413,
+		HTTP_STATUS_PAYLOADTOOLARGE                 = 413,
+		HTTP_STATUS_URITOOLONG                      = 414,
+		HTTP_STATUS_UNSUPPORTEDMEDIATYPE            = 415,
+		HTTP_STATUS_RANGENOTSATISFIABLE             = 416,
+		HTTP_STATUS_EXPECTATIONFAILED               = 417,
+		HTTP_STATUS_IMATEAPOT                       = 418,
+		HTTP_STATUS_MISDIRECTEDREQUEST              = 421,
+		HTTP_STATUS_UNPROCESSABLECONTENT            = 422,
+		HTTP_STATUS_UNPROCESSABLEENTITY             = 422,
+		HTTP_STATUS_LOCKED                          = 423,
+		HTTP_STATUS_FAILEDDEPENDENCY                = 424,
+		HTTP_STATUS_TOOEARLY                        = 425,
+		HTTP_STATUS_UPGRADEREQUIRED                 = 426,
+		HTTP_STATUS_PRECONDITIONREQUIRED            = 428,
+		HTTP_STATUS_TOOMANYREQUESTS                 = 429,
+		HTTP_STATUS_REQUESTHEADERFIELDSTOOLARGE     = 431,
+		HTTP_STATUS_UNAVAILABLEFORLEGALREASONS      = 451,
+		HTTP_STATUS_INTERNALSERVERERROR             = 500,
+		HTTP_STATUS_NOTIMPLEMENTED                  = 501,
+		HTTP_STATUS_BADGATEWAY                      = 502,
+		HTTP_STATUS_SERVICEUNAVAILABLE              = 503,
+		HTTP_STATUS_GATEWAYTIMEOUT                  = 504,
+		HTTP_STATUS_HTTPVERSIONNOTSUPPORTED         = 505,
+		HTTP_STATUS_VARIANTALSONEGOTIATES           = 506,
+		HTTP_STATUS_INSUFFICIENTSTORAGE             = 507,
+		HTTP_STATUS_LOOPDETECTED                    = 508,
+		HTTP_STATUS_NOTEXTENDED                     = 510,
+		HTTP_STATUS_NETWORKAUTHENTICATIONREQUIRED   = 511,
+		HTTP_STATUS_MAX                             = 1023
+	};
 
 	/**
 	 * Public constructor

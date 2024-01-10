@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 	descriptions.load("resources/miniscript/documentation", "method-descriptions.properties");
 
 	//
-	// MiniScript::registerDataTypes();
+	MiniScript::initialize();
 
 	//
 	auto context = make_unique<Context>();

@@ -27,6 +27,7 @@
 #include <miniscript/miniscript/ConsoleMethods.h>
 #include <miniscript/miniscript/ContextMethods.h>
 #include <miniscript/miniscript/FileSystemMethods.h>
+#include <miniscript/miniscript/HTTPDownloadClientClass.h>
 #include <miniscript/miniscript/JSONMethods.h>
 #include <miniscript/miniscript/MapMethods.h>
 #include <miniscript/miniscript/MathMethods.h>
@@ -77,6 +78,7 @@ using miniscript::miniscript::CryptographyMethods;
 using miniscript::miniscript::ConsoleMethods;
 using miniscript::miniscript::ContextMethods;
 using miniscript::miniscript::FileSystemMethods;
+using miniscript::miniscript::HTTPDownloadClientClass;
 using miniscript::miniscript::JSONMethods;
 using miniscript::miniscript::MapMethods;
 using miniscript::miniscript::MathMethods;
@@ -119,6 +121,13 @@ const string MiniScript::Variable::TYPENAME_SET = "Set";
 
 const vector<string> MiniScript::Method::CONTEXTFUNCTIONS_ALL = {};
 
+void MiniScript::initialize() {
+	//
+	registerDataType(new HTTPDownloadClientClass());
+	//
+	HTTPDownloadClientClass::initialize();
+}
+
 const string MiniScript::getBaseClassHeader() {
 	return "miniscript/miniscript/MiniScript.h";
 }
@@ -137,6 +146,7 @@ const vector<string> MiniScript::getTranspilationUnits() {
 		"src/miniscript/miniscript/ContextMethods.cpp",
 		"src/miniscript/miniscript/CryptographyMethods.cpp",
 		"src/miniscript/miniscript/FileSystemMethods.cpp",
+		"src/miniscript/miniscript/HTTPDownloadClientClass.cpp",
 		"src/miniscript/miniscript/JSONMethods.cpp",
 		"src/miniscript/miniscript/MapMethods.cpp",
 		"src/miniscript/miniscript/MathMethods.cpp",
@@ -183,7 +193,7 @@ void MiniScript::registerMethod(Method* method) {
 }
 
 void MiniScript::registerDataType(DataType* dataType) {
-	dataType->setType(static_cast<VariableType>(TYPE_PSEUDO_CUSTOM_DATATYPES + dataTypes.size()));
+	dataType->setType(static_cast<VariableType>(TYPE_PSEUDO_DATATYPES + dataTypes.size()));
 	dataTypes.push_back(dataType);
 }
 
@@ -760,7 +770,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 		if (viewIsVariableAccess(argument) == true) {
 			//
 			Variable value;
-			value.setValue(string(argument));
+			value.setValue(deescape(argument));
 
 			// look up getVariable method
 			string methodName = argumentIdx >= argumentReferences.size() || argumentReferences[argumentIdx] == false?"getVariable":"getVariableReference";
@@ -780,7 +790,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 
 			syntaxTree.arguments.emplace_back(
 				SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
-				MiniScript::Variable(methodName),
+				MiniScript::Variable(deescape(methodName)),
 				method,
 				initializer_list<SyntaxTreeNode>
 					{
@@ -828,7 +838,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 				_StringTools::viewEndsWith(argument, "'") == true)) {
 				//
 				Variable value;
-				value.setValue(string(_StringTools::viewSubstring(argument, 1, argument.size() - 1)));
+				value.setValue(deescape(_StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 				//
 				syntaxTree.arguments.emplace_back(
 					SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
@@ -855,7 +865,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 	// try first user functions
 	if (functionIdx != SCRIPTIDX_NONE) {
 		syntaxTree.type = SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
-		syntaxTree.value.setValue(string(methodName));
+		syntaxTree.value.setValue(deescape(methodName));
 		syntaxTree.setFunctionScriptIdx(functionIdx);
 		//
 		return true;
@@ -863,7 +873,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 	// try methods next
 	if (method != nullptr) {
 		syntaxTree.type = SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
-		syntaxTree.value.setValue(string(methodName));
+		syntaxTree.value.setValue(deescape(methodName));
 		syntaxTree.setMethod(method);
 		//
 		return true;
@@ -2588,49 +2598,43 @@ const string MiniScript::getInformation() {
 	result+= "\n";
 
 	//
-	if (native == false) {
-		//
-		result+= "Methods:\n";
-		{
-			vector<string> methods;
-			for (const auto& [methodName, method]: this->methods) {
-				if (method->isPrivate() == true) continue;
-				string methodDescription;
-				methodDescription+= method->getMethodName();
-				methodDescription+= "(";
-				methodDescription+= method->getArgumentsInformation();
-				methodDescription+= "): ";
-				methodDescription+= Variable::getReturnTypeAsString(method->getReturnValueType(), method->isReturnValueNullable());
-				methods.push_back(methodDescription);
-			}
-			sort(methods.begin(), methods.end());
-			for (const auto& method: methods) result+= method + "\n";
+	result+= "Methods:\n";
+	{
+		vector<string> methods;
+		for (const auto& [methodName, method]: this->methods) {
+			if (method->isPrivate() == true) continue;
+			string methodDescription;
+			methodDescription+= method->getMethodName();
+			methodDescription+= "(";
+			methodDescription+= method->getArgumentsInformation();
+			methodDescription+= "): ";
+			methodDescription+= Variable::getReturnTypeAsString(method->getReturnValueType(), method->isReturnValueNullable());
+			methods.push_back(methodDescription);
 		}
-		result+= "\n";
-
-		//
-		result+= "Operators:\n";
-		{
-			vector<string> operators;
-			for (const auto& [operatorId, method]: this->operators) {
-				string operatorString;
-				operatorString+= getOperatorAsString(method->getOperator());
-				operatorString+= " --> ";
-				operatorString+= method->getMethodName();
-				operatorString+= "(";
-				operatorString+= method->getArgumentsInformation();
-				operatorString+= "): ";
-				operatorString+= Variable::getReturnTypeAsString(method->getReturnValueType(), method->isReturnValueNullable());
-				operators.push_back(operatorString);
-			}
-			sort(operators.begin(), operators.end());
-			for (const auto& method: operators) result+= method + "\n";
-		}
-		result+= "\n";
-	} else {
-		result+= "Methods:\n\trunning natively\n\n";
-		result+= "Operators:\n\trunning natively\n\n";
+		sort(methods.begin(), methods.end());
+		for (const auto& method: methods) result+= method + "\n";
 	}
+	result+= "\n";
+
+	//
+	result+= "Operators:\n";
+	{
+		vector<string> operators;
+		for (const auto& [operatorId, method]: this->operators) {
+			string operatorString;
+			operatorString+= getOperatorAsString(method->getOperator());
+			operatorString+= " --> ";
+			operatorString+= method->getMethodName();
+			operatorString+= "(";
+			operatorString+= method->getArgumentsInformation();
+			operatorString+= "): ";
+			operatorString+= Variable::getReturnTypeAsString(method->getReturnValueType(), method->isReturnValueNullable());
+			operators.push_back(operatorString);
+		}
+		sort(operators.begin(), operators.end());
+		for (const auto& method: operators) result+= method + "\n";
+	}
+	result+= "\n";
 
 	//
 	result+= "Variables:\n";
@@ -2808,7 +2812,11 @@ void MiniScript::registerMethods() {
 						string thisVariableName;
 						if (arguments[0].getType() != MiniScript::TYPE_NULL && arguments[0].getStringValue(thisVariableName) == true) {
 							// yep, looks like that, we always use a reference here
-							arguments[1] = miniScript->getVariable(thisVariableName, &statement, true);
+							#if defined(__MINISCRIPT_TRANSPILATION__)
+								arguments[1] = Variable::createReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENT0);
+							#else
+								arguments[1] = miniScript->getVariable(thisVariableName, &statement, true);
+							#endif
 						}
 					}
 					// check if map, if so fetch function assignment of member property
@@ -2845,13 +2853,28 @@ void MiniScript::registerMethods() {
 									// do we have a this variable name?
 									string argumentVariableName;
 									if (arguments[argumentIdx].getType() != MiniScript::TYPE_NULL && arguments[argumentIdx].getStringValue(argumentVariableName) == true) {
-										// yep, looks like that
-										if (method != nullptr) {
-											arguments[argumentIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentIdx >= method->getArgumentTypes().size()?false:method->getArgumentTypes()[callArgumentIdx].reference);
-										} else
-										if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
-											arguments[argumentIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentIdx >= miniScript->getScripts()[functionIdx].functionArguments.size()?false:miniScript->getScripts()[functionIdx].functionArguments[callArgumentIdx].reference);
-										}
+										#if defined(__MINISCRIPT_TRANSPILATION__)
+											if (method != nullptr) {
+												arguments[argumentIdx + 1] =
+													callArgumentIdx >= method->getArgumentTypes().size() || method->getArgumentTypes()[callArgumentIdx].reference == false?
+														Variable::createNonReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]):
+														Variable::createReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]);
+											} else
+											if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
+												arguments[argumentIdx + 1] =
+													callArgumentIdx >= miniScript->getScripts()[functionIdx].functionArguments.size() || miniScript->getScripts()[functionIdx].functionArguments[callArgumentIdx].reference == false?
+														Variable::createNonReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]):
+														Variable::createReferenceVariable(&EVALUATEMEMBERACCESS_ARGUMENTS[callArgumentIdx - 1]);
+											}
+										#else
+											// yep, looks like that
+											if (method != nullptr) {
+												arguments[argumentIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentIdx >= method->getArgumentTypes().size()?false:method->getArgumentTypes()[callArgumentIdx].reference);
+											} else
+											if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
+												arguments[argumentIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentIdx >= miniScript->getScripts()[functionIdx].functionArguments.size()?false:miniScript->getScripts()[functionIdx].functionArguments[callArgumentIdx].reference);
+											}
+										#endif
 									}
 									//
 									callArguments[callArgumentIdx] = move(arguments[argumentIdx + 1]);
@@ -2869,12 +2892,12 @@ void MiniScript::registerMethods() {
 							}
 							// write back arguments from call arguments
 							//	this
-							arguments[1] = move(callArgumentsSpan[0]);
+							arguments[1].setValue(callArgumentsSpan[0]);
 							//	additional arguments
 							{
 								auto callArgumentIdx = 1;
 								for (auto argumentIdx = 3; argumentIdx < arguments.size(); argumentIdx+=2) {
-									arguments[argumentIdx] = move(callArgumentsSpan[callArgumentIdx].getValueAsString());
+									arguments[argumentIdx] = move(callArgumentsSpan[callArgumentIdx]);
 									callArgumentIdx++;
 								}
 							}
@@ -2978,54 +3001,54 @@ void MiniScript::registerVariables() {
 	//
 	miniScriptMath->registerConstants();
 
-	// base script methods
-	// 	register base methods
+	// base script constants
+	// 	register base constants
 	BaseMethods::registerConstants(this);
 
-	// 	register string methods
+	// 	register string constants
 	StringMethods::registerConstants(this);
 
-	// 	register byte array methods
+	// 	register byte array constants
 	ByteArrayMethods::registerConstants(this);
 
-	// 	register array methods
+	// 	register array constants
 	ArrayMethods::registerConstants(this);
 
-	// 	register map methods
+	// 	register map constants
 	MapMethods::registerConstants(this);
 
-	// 	register set methods
+	// 	register set constants
 	SetMethods::registerConstants(this);
 
-	// 	register script methods
+	// 	register script constants
 	ScriptMethods::registerConstants(this);
 
-	// additional script methods
-	// register application methods
+	// additional script constants
+	// register application constants
 	ApplicationMethods::registerConstants(this);
 
-	// register console methods
+	// register console constants
 	ConsoleMethods::registerConstants(this);
 
-	// register context methods
+	// register context constants
 	ContextMethods::registerConstants(this);
 
-	// register cryptography methods
+	// register cryptography constants
 	CryptographyMethods::registerConstants(this);
 
-	// register file system methods
+	// register file system constants
 	FileSystemMethods::registerConstants(this);
 
-	// register JSON methods
+	// register JSON constants
 	JSONMethods::registerConstants(this);
 
-	// register network methods
+	// register network constants
 	NetworkMethods::registerConstants(this);
 
-	// register time methods
+	// register time constants
 	TimeMethods::registerConstants(this);
 
-	// register XML methods
+	// register XML constants
 	XMLMethods::registerConstants(this);
 
 	//

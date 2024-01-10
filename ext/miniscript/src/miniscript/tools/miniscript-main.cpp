@@ -80,8 +80,9 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
+	//
+	MiniScript::initialize();
 	// run script
-	// EngineMiniScript::registerDataTypes();
 	unique_ptr<Context> context;
 	unique_ptr<MiniScript> script;
 	// if no file given, then read from input stream until Ctrl+D(Unix) or Ctrl+Z(Windows) was hit
