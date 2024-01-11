@@ -43,7 +43,6 @@ static void printInformation() {
 	Console::println();
 	Console::println("If you do not provide a path to the script or do not pipe a script into the standard input stream,");
 	Console::println("you get a prompt to enter your script. You can finish inputting by hitting Ctrl-D on Unix or Ctrl-Z on Windows.");
-	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char** argv)
@@ -56,7 +55,7 @@ int main(int argc, char** argv)
 		string argument = argv[i];
 		if (argument == "--help") {
 			printInformation();
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		} else
 		if (argument == "--version") {
 			version = true;
@@ -66,7 +65,7 @@ int main(int argc, char** argv)
 		} else {
 			if (pathToScript.empty() == false) {
 				Console::println("Path to script already given");
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			} else {
 				pathToScript = argument;
 			}
@@ -77,7 +76,7 @@ int main(int argc, char** argv)
 	if (version == true) {
 		Console::println(string("miniscript ") + Version::getVersion());
 		Console::println(Version::getCopyright());
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
@@ -159,7 +158,7 @@ int main(int argc, char** argv)
 	} else
 	if (version == false) {
 		printInformation();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 
 	// delete temporary file if we have created any
@@ -176,5 +175,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	exit(script == nullptr || script->isValid() == false?EXIT_FAILURE:EXIT_SUCCESS);
+	return script == nullptr || script->isValid() == false?EXIT_FAILURE:EXIT_SUCCESS;
 }

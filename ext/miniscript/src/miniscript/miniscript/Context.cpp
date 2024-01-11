@@ -25,7 +25,6 @@ Context::~Context() {
 	scriptsById.clear();
 }
 
-
 void Context::addScript(const string& id, MiniScript* script) {
 	if (scriptsById.find(id) != scriptsById.end()) {
 		Console::println("An error occurred: a script with id " + id + " is already registered");

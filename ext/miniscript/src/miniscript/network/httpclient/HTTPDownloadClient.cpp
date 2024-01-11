@@ -313,8 +313,8 @@ void HTTPDownloadClient::start() {
 					socket->shutdown();
 
 					//
-					downloadClient->finished = true;
 					downloadClient->progress = 1.0f;
+					downloadClient->finished = true;
 				} catch (Exception& exception) {
 					if (socket != nullptr) socket->shutdown();
 					downloadClient->finished = true;

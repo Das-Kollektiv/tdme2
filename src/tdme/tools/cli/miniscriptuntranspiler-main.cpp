@@ -23,12 +23,12 @@ int main(int argc, char** argv)
 	//
 	if (argc < 3) {
 		Console::println("Usage: miniscriptuntranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
 	Transpiler::untranspile(argv[1], argv[2]);
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

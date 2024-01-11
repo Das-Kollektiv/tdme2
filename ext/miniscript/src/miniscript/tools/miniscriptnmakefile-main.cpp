@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	//
 	if ((argc != 3 && argc != 4) || (argc == 4 && string(argv[1]) != "--library")) {
 		Console::println("Usage: miniscriptnmakefile [--library] source_pathname makefile_filename");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
@@ -34,5 +34,5 @@ int main(int argc, char** argv)
 	Generator::generateNMakefile(srcPath, makefileURI, library);
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

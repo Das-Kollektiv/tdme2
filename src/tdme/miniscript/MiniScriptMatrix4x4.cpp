@@ -397,3 +397,12 @@ const string MiniScriptMatrix4x4::getValueAsString(const MiniScript::Variable& v
 		to_string(matrix4x4[15]) + ")";
 }
 
+void* MiniScriptMatrix4x4::createScriptContext() const {
+	return nullptr;
+}
+
+void MiniScriptMatrix4x4::deleteScriptContext(void* context) const {
+}
+
+void MiniScriptMatrix4x4::garbageCollection(void* context) const {
+}

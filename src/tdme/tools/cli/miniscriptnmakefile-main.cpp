@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	//
 	if (argc != 4) {
 		Console::println("Usage: miniscriptnmakefile base_pathname source_pathname makefile_filename");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
@@ -36,5 +36,5 @@ int main(int argc, char** argv)
 	Generator::generateNMakefile(srcPath, makefileURI, true, basePath, { "tdme" });
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

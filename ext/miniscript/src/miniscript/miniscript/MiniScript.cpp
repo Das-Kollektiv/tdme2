@@ -164,6 +164,7 @@ const vector<string> MiniScript::getTranspilationUnits() {
 }
 
 MiniScript::MiniScript() {
+	for (auto datatype: dataTypes) dataTypeScriptContexts.push_back(datatype->createScriptContext());
 	setNative(false);
 	pushScriptState();
 }
@@ -172,6 +173,9 @@ MiniScript::~MiniScript() {
 	for (const auto& [methodName, method]: this->methods) delete method;
 	for (const auto& [stateMachineStateId, stateMachineState]: this->stateMachineStates) delete stateMachineState;
 	while (scriptStateStack.empty() == false) popScriptState();
+	garbageCollection();
+	for (auto i = 0; i < dataTypes.size(); i++) dataTypes[i]->deleteScriptContext(dataTypeScriptContexts[i]);
+	dataTypeScriptContexts.clear();
 }
 
 void MiniScript::registerStateMachineState(StateMachineState* state) {
@@ -1152,6 +1156,9 @@ void MiniScript::execute() {
 
 	// execute while having statements to be processed
 	executeStateMachine();
+
+	// try garbage collection
+	tryGarbageCollection();
 }
 
 const string MiniScript::getNextStatement(const string& scriptCode, int& i, int& line) {
@@ -2469,6 +2476,8 @@ bool MiniScript::call(int scriptIdx, span<Variable>& arguments, Variable& return
 	}
 	// done, pop the function script state
 	popScriptState();
+	// try garbage collection
+	tryGarbageCollection();
 	//
 	return true;
 }
@@ -2904,6 +2913,9 @@ void MiniScript::registerMethods() {
 									callArgumentIdx++;
 								}
 							}
+						} else {
+							_Console::println(miniScript->getStatementInformation(statement) + ": class/object member not found: " + member + "()");
+							miniScript->startErrorScript();
 						}
 					} else {
 						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid variable type");
@@ -4092,4 +4104,8 @@ void MiniScript::setConstant(Variable& variable) {
 		default:
 			break;
 	}
+}
+
+void MiniScript::garbageCollection() {
+	for (auto i = 0; i < dataTypes.size(); i++) dataTypes[i]->garbageCollection(dataTypeScriptContexts[i]);
 }

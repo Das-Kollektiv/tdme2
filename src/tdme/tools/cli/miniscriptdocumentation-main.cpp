@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <memory>
 #include <set>
 #include <string>
@@ -7,7 +8,6 @@
 #include <miniscript/utilities/Properties.h>
 
 #include <tdme/tdme.h>
-#include <tdme/application/Application.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
@@ -21,7 +21,6 @@ using std::string;
 using miniscript::miniscript::Documentation;
 using miniscript::utilities::Properties;
 
-using tdme::application::Application;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
@@ -163,5 +162,5 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	Application::exit(Application::EXITCODE_SUCCESS);
+	return EXIT_SUCCESS;
 }

@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	//
 	if (argc < 3) {
 		Console::println("Usage: miniscripttranspiler script_filename transpilation_filename [miniscript_extension_file1] [miniscript_extension_fileN]");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	vector<string> miniScriptExtensionFileNames;
@@ -57,5 +57,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

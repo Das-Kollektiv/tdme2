@@ -167,6 +167,7 @@ public:
 		friend class MathMethods;
 
 	protected:
+		//
 		bool mathDataType { false };
 		MiniScript::VariableType type { TYPE_NULL };
 
@@ -262,6 +263,24 @@ public:
 		 * @return sub was executed
 		 */
 		virtual bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const = 0;
+
+		/**
+		 * Create script context
+		 * @return script context
+		 */
+		virtual void* createScriptContext() const = 0;
+
+		/**
+		 * Delete script context
+		 * @param context script context
+		 */
+		virtual void deleteScriptContext(void* context) const = 0;
+
+		/**
+		 * Issue garbage collection
+		 * @param context script context
+		 */
+		virtual void garbageCollection(void* context) const = 0;
 
 	public:
 		// forbid class copy
@@ -809,7 +828,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::copyScriptVariable(): unknown custom data type with id " + to_string(dataTypeIdx));
+						_Console::println("ScriptVariable::copyScriptVariable(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->copyVariable(to, from);
@@ -997,7 +1016,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
+						_Console::println("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->unsetVariableValue(*this);
@@ -1053,7 +1072,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
+						_Console::println("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this);
@@ -1358,7 +1377,7 @@ public:
 			// custom data type
 			auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 			if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-				_Console::println("ScriptVariable::setValue(): unknown custom data type with id " + to_string(dataTypeIdx));
+				_Console::println("ScriptVariable::setValue(): unknown data type with id " + to_string(dataTypeIdx));
 				return;
 			}
 			MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this, value);
@@ -2105,7 +2124,7 @@ public:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
+						_Console::println("ScriptVariable::getValueAsString(): unknown data type with id " + to_string(dataTypeIdx));
 						return result;
 					}
 					return MiniScript::dataTypes[dataTypeIdx]->getValueAsString(*this);
@@ -2617,6 +2636,8 @@ protected:
 	inline void stopScriptExecution() {
 		while (scriptStateStack.size() > 1) popScriptState();
 		//
+		garbageCollection();
+		//
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
@@ -2701,8 +2722,25 @@ protected:
 	 */
 	static const Variable initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const Statement& statement);
 
+	/**
+	 * Try garbage collection
+	 */
+	inline void tryGarbageCollection() {
+		auto now = _Time::getCurrentMillis();
+		if (dataTypesGCTime == -1ll || now - dataTypesGCTime >= GARBAGE_COLLECTION_INTERVAL) {
+			garbageCollection();
+			dataTypesGCTime = now;
+		}
+	}
+
+	/**
+	 * Issue garbage collection
+	 */
+	void garbageCollection();
+
 private:
 	static constexpr bool VERBOSE { false };
+	static constexpr int64_t GARBAGE_COLLECTION_INTERVAL { 1000ll };
 
 	/**
 	 * Shutdown RAII
@@ -2731,6 +2769,8 @@ private:
 	MINISCRIPT_STATIC_DLL_IMPEXT static vector<DataType*> dataTypes;
 	MINISCRIPT_STATIC_DLL_IMPEXT static ShutdownRAII shutdownRAII;
 
+	//
+	int64_t dataTypesGCTime { -1ll };
 
 	// TODO: maybe we need a better naming for this
 	// functions defined by script itself
@@ -2746,6 +2786,8 @@ private:
 	string scriptFileName;
 	//
 	bool scriptValid { false };
+
+	vector<void*> dataTypeScriptContexts;
 
 	/**
 	 * Parse script code into this MiniScript instance
@@ -3095,6 +3137,21 @@ public:
 	 * @param variable variable
 	 */
 	static void setConstant(Variable& variable);
+
+	/**
+	 * Return data type script context
+	 * @param type data type
+	 * @return data type script context
+	 */
+	inline void* getDataTypeScriptContext(VariableType type) {
+		// custom data types
+		auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_DATATYPES;
+		if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
+			_Console::println("MiniScript::getDataTypeScriptContext(): unknown data type with id " + to_string(dataTypeIdx));
+			return nullptr;
+		}
+		return MiniScript::dataTypeScriptContexts[dataTypeIdx];
+	}
 
 	/**
 	 * @return context

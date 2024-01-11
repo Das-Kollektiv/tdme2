@@ -124,5 +124,5 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

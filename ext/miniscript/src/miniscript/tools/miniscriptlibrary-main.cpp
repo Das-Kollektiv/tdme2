@@ -43,5 +43,5 @@ int main(int argc, char** argv)
 	Generator::generateLibrary(scriptClassPairs, libraryURI);
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

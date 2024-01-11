@@ -1,10 +1,10 @@
 #include <array>
+#include <cstdlib>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/application/Application.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
@@ -20,7 +20,6 @@ using std::make_unique;
 using std::string;
 using std::vector;
 
-using tdme::application::Application;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
@@ -127,5 +126,5 @@ int main(int argc, char** argv)
 	FileSystem::getInstance()->setContentFromStringArray("resources/engine/code-completion", "tscript.xml", lines);
 
 	//
-	Application::exit(Application::EXITCODE_SUCCESS);
+	return EXIT_SUCCESS;
 }

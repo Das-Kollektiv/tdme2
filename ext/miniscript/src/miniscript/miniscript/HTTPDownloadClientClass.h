@@ -24,7 +24,6 @@ using _HTTPDownloadClient = miniscript::network::httpclient::HTTPDownloadClient;
 class miniscript::miniscript::HTTPDownloadClientClass final: public MiniScript::DataType {
 private:
 	MINISCRIPT_STATIC_DLL_IMPEXT static const string TYPE_NAME;
-	MINISCRIPT_STATIC_DLL_IMPEXT static vector<shared_ptr<_HTTPDownloadClient>> instances;
 
 	// overridden methods
 	void registerConstants(MiniScript* miniScript) const override;
@@ -37,8 +36,18 @@ private:
 	bool div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
+	void* createScriptContext() const override;
+	void deleteScriptContext(void* context) const override;
+	void garbageCollection(void* context) const override;
 
 public:
+	/**
+	 * Script context
+	 */
+	struct ScriptContext {
+		vector<shared_ptr<_HTTPDownloadClient>> instances;
+	};
+
 	// forbid class copy
 	FORBID_CLASS_COPY(HTTPDownloadClientClass)
 

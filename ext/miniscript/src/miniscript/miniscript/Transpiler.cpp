@@ -231,6 +231,8 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "executeStateMachine();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "// try garbage collection" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "tryGarbageCollection();" + "\n";
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= "\n";
 	generatedDeclarations+= string() + "protected:" + "\n";

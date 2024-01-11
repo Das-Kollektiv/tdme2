@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	//
 	if ((argc != 4 && argc != 5) || (argc == 5 && string(argv[4]) != "--use-library")) {
 		Console::println("Usage: miniscriptmain script_filename script_class_name main_filename [--use-library]");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
@@ -39,12 +39,12 @@ int main(int argc, char** argv)
 	//
 	if (StringTools::endsWith(mainURI, "-main.cpp") == false) {
 		Console::println("Error: main_filename must end with '-main.cpp'");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	// generate
 	Generator::generateMain(scriptURI, className, mainURI, useLibrary);
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

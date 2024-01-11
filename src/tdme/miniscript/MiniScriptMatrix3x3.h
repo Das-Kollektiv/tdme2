@@ -31,6 +31,9 @@ private:
 	bool div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
+	void* createScriptContext() const override;
+	void deleteScriptContext(void* context) const override;
+	void garbageCollection(void* context) const override;
 
 	//
 	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_MATRIX3x3;

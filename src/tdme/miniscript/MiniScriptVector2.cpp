@@ -414,3 +414,12 @@ const string MiniScriptVector2::getValueAsString(const MiniScript::Variable& var
 		to_string(vector2.getY()) + ")";
 }
 
+void* MiniScriptVector2::createScriptContext() const {
+	return nullptr;
+}
+
+void MiniScriptVector2::deleteScriptContext(void* context) const {
+}
+
+void MiniScriptVector2::garbageCollection(void* context) const {
+}

@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	//
 	if ((argc - 2) / 2 == 0 || argc % 2 == 1) {
 		Console::println("Usage: miniscriptlibrary script_filename1 script_class_name1 [script_filenameN script_class_nameN] library_filename");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//
@@ -45,5 +45,5 @@ int main(int argc, char** argv)
 	Generator::generateLibrary(scriptClassPairs, libraryURI);
 
 	//
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
