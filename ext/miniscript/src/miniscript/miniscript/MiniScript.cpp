@@ -3693,46 +3693,27 @@ inline MiniScript::Variable* MiniScript::evaluateVariableAccessIntern(MiniScript
 					_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": map/set access operator, but variable is not of type map/set");
 					return nullptr;
 				}
-			} else {
-				if (variablePtr->getType() == TYPE_BYTEARRAY) {
-					// otherwise array
-					if (arrayIdx == ARRAYIDX_ADD) {
-						// we have our parent
-						parentVariable = variablePtr;
-						//
-						return nullptr;
-					} else
-					if (arrayIdx >= ARRAYIDX_FIRST && arrayIdx < variablePtr->getByteArrayValueReference().size()) {
-						// we have our parent and will handle the access in calling method
-						parentVariable = variablePtr;
-						//
-						return nullptr;
-					} else {
-						_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(variablePtr->getByteArrayValueReference().size()));
-						return nullptr;
-					}
+			} else
+			if (variablePtr->getType() == TYPE_ARRAY) {
+				// otherwise array
+				if (arrayIdx == ARRAYIDX_ADD) {
+					// we have our parent
+					parentVariable = variablePtr;
+					//
+					return nullptr;
 				} else
-				if (variablePtr->getType() == TYPE_ARRAY) {
-					// otherwise array
-					if (arrayIdx == ARRAYIDX_ADD) {
-						// we have our parent
-						parentVariable = variablePtr;
-						//
-						return nullptr;
-					} else
-					if (arrayIdx >= ARRAYIDX_FIRST && arrayIdx < variablePtr->getArrayValueReference().size()) {
-						//
-						parentVariable = variablePtr;
-						//
-						variablePtr = variablePtr->getArrayValueReference()[arrayIdx];
-					} else {
-						_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(variablePtr->getArrayValueReference().size()));
-						return nullptr;
-					}
+				if (arrayIdx >= ARRAYIDX_FIRST && arrayIdx < variablePtr->getArrayValueReference().size()) {
+					//
+					parentVariable = variablePtr;
+					//
+					variablePtr = variablePtr->getArrayValueReference()[arrayIdx];
 				} else {
-					_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": (byte) array access operator, expected (byte) array, but got: " + variablePtr->getValueAsString());
+					_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(variablePtr->getArrayValueReference().size()));
 					return nullptr;
 				}
+			} else {
+				_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": access operator, expected array, but got: " + variablePtr->getValueAsString());
+				return nullptr;
 			}
 
 			//
@@ -3808,7 +3789,7 @@ inline void MiniScript::setVariableInternal(const string& variableStatement, Var
 	// common case
 	if (variablePtr != nullptr) {
 		if (variablePtr->isConstant() == false) {
-			*variablePtr = variable;
+			variablePtr->setValue(variable);
 		} else {
 			_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
 		}
@@ -3858,18 +3839,6 @@ inline void MiniScript::setVariableInternal(const string& variableStatement, Var
 			string callerMethod = __FUNCTION__;
 			_Console::println("MiniScript::" + callerMethod + "(): " + (statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": [] array push operator without array");
 		} else
-		if (parentVariable->getType() == MiniScript::TYPE_BYTEARRAY) {
-			// check if our parent is not a const variable
-			if (parentVariable->isConstant() == false) {
-				// all checks passed, push variable to array
-				uint8_t value;
-				if (variable.getByteValue(this, value, statement) == true) {
-					parentVariable->pushByteArrayEntry(value);
-				}
-			} else {
-				_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
-			}
-		} else
 		if (parentVariable->getType() == MiniScript::TYPE_ARRAY) {
 			// check if our parent is not a const variable
 			if (parentVariable->isConstant() == false) {
@@ -3880,25 +3849,10 @@ inline void MiniScript::setVariableInternal(const string& variableStatement, Var
 			}
 		} else {
 			string callerMethod = __FUNCTION__;
-			_Console::println("MiniScript::" + callerMethod + "(): " + (statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": [] array push operator: expected byte array or array, but got " + parentVariable->getTypeAsString());
+			_Console::println("MiniScript::" + callerMethod + "(): " + (statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": [] array push operator: expected array, but got " + parentVariable->getTypeAsString());
 		}
 		//
 		return;
-	} else
-	// special case for accessing byte array entries at given array index
-	if (arrayIdx >= ARRAYIDX_FIRST && parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY) {
-		// check if our parent is not a const variable
-		if (parentVariable->isConstant() == false) {
-			uint8_t value;
-			if (variable.getByteValue(this, value, statement) == true) {
-				parentVariable->pushByteArrayEntry(value);
-			} else {
-				string callerMethod = __FUNCTION__;
-				_Console::println("MiniScript::" + callerMethod + "(): " + (statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + variableStatement + ": [] byte array push operator: expected byte integer value (0 <= byte <= 255), but got " + variable.getTypeAsString());
-			}
-		} else {
-			_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
-		}
 	}
 }
 
@@ -4078,7 +4032,7 @@ inline bool MiniScript::evaluateAccess(const string& variableStatement, const st
 	return true;
 }
 
-void MiniScript::setConstant(Variable& variable) {
+void MiniScript::setConstantInternal(Variable& variable) {
 	variable.setConstant();
 	switch (variable.getType()) {
 		case TYPE_ARRAY:

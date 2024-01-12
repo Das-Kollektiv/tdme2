@@ -1116,6 +1116,7 @@ void Transpiler::generateVariableAccess(
 	bool getVariable,
 	bool getVariableReference,
 	bool setVariable,
+	bool setConstant,
 	const string& returnValueStatement,
 	const string& statementEnd,
 	int getArgumentIdx,
@@ -1161,11 +1162,19 @@ void Transpiler::generateVariableAccess(
 					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 				}
 			} else
-			if (setVariable == true) {
+			if (setVariable == true || setConstant == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					if (setConstant == true) {
+						generatedCode+= indent + "setConstant(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					} else {
+						generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					}
 				} else {
-					generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+					generatedCode+= createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					if (setConstant == true) {
+						generatedCode+= indent + "setConstant(" + createGlobalVariableName(globalVariable) + ");" + "\n";
+					}
 				}
 			}
 		} else {
@@ -1185,11 +1194,19 @@ void Transpiler::generateVariableAccess(
 					generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createLocalVariableName(localVariable) + ")" + statementEnd;
 				}
 			} else
-			if (setVariable == true) {
+			if (setVariable == true || setConstant == true) {
 				if (haveVariableStatement == true) {
-					generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					if (setConstant == true) {
+						generatedCode+= indent + "setConstant(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					} else {
+						generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					}
 				} else {
-					generatedCode+= indent + createLocalVariableName(localVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					generatedCode+= indent + "if (" + createLocalVariableName(localVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+					generatedCode+= createLocalVariableName(localVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+					if (setConstant == true) {
+						generatedCode+= indent + "setConstant(" + createLocalVariableName(localVariable) + ");" + "\n";
+					}
 				}
 			}
 		}
@@ -1211,11 +1228,19 @@ void Transpiler::generateVariableAccess(
 				generatedCode+= indent + returnValueStatement + "Variable::createReferenceVariable(&" + createGlobalVariableName(globalVariable) + ")" + statementEnd;
 			}
 		} else
-		if (setVariable == true) {
+		if (setVariable == true || setConstant == true) {
 			if (haveVariableStatement == true) {
-				generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); " + returnValueStatement + "arguments[" + to_string(getArgumentIdx) + "]" + statementEnd;
+				if (setConstant == true) {
+					generatedCode+= indent + "setConstant(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); " + returnValueStatement + "arguments[" + to_string(getArgumentIdx) + "]" + statementEnd;
+				} else {
+					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); " + returnValueStatement + "arguments[" + to_string(getArgumentIdx) + "]" + statementEnd;
+				}
 			} else {
-				generatedCode+= indent + createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+				generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+				generatedCode+= createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
+				if (setConstant == true) {
+					generatedCode+= indent + "setConstant(" + createGlobalVariableName(globalVariable) + ");" + "\n";
+				}
 			}
 		}
 	}
@@ -2288,6 +2313,7 @@ bool Transpiler::transpileScriptStatement(
 				false,
 				true,
 				false,
+				false,
 				"auto EVALUATEMEMBERACCESS_ARGUMENT" + to_string(callArgumentIdx) + " = "
 			);
 		} else {
@@ -2312,6 +2338,7 @@ bool Transpiler::transpileScriptStatement(
 					minIndentString + depthIndentString + "\t\t",
 					false,
 					true,
+					false,
 					false,
 					string(),
 					",\n",
@@ -2356,7 +2383,8 @@ bool Transpiler::transpileScriptStatement(
 			minIndentString + depthIndentString + "\t",
 			syntaxTree.value.getValueAsString() == "getVariable",
 			syntaxTree.value.getValueAsString() == "getVariableReference",
-			syntaxTree.value.getValueAsString() == "setVariable" || syntaxTree.value.getValueAsString() == "setConstant"
+			syntaxTree.value.getValueAsString() == "setVariable",
+			syntaxTree.value.getValueAsString() == "setConstant"
 		);
 	} else {
 		// generate code

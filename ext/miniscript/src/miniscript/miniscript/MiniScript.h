@@ -471,20 +471,20 @@ public:
 			_UTF8CharacterIterator::UTF8PositionCache cache;
 		};
 
+		/**
+		 * ByteArray value
+		 */
+		struct ByteArrayValue {
+			int64_t readPtr { 0ll };
+			int64_t writePtr { 0ll };
+			vector<uint8_t> value;
+		};
+
 		// 24 bytes
 		uint32_t typeReferenceConstantBits { TYPE_NULL };	// 4 bytes
 		int32_t referenceCounter { 1 };				// 4 bytes
 		uint64_t valuePtr { 0LL };					// 8 bytes
 		ir ir {};									// 8 bytes
-
-		/**
-		 * @return is constant
-		 */
-		inline bool isConstant() const {
-			return
-				(typeReferenceConstantBits & CONSTANT_BIT_VALUE) == CONSTANT_BIT_VALUE ||
-				(isReference() == true && (ir.reference->typeReferenceConstantBits & CONSTANT_BIT_VALUE) == CONSTANT_BIT_VALUE);
-		}
 
 		/**
 		 * Set constant
@@ -629,15 +629,15 @@ public:
 		/**
 		 * @return byte array value reference
 		 */
-		inline vector<uint8_t>& getByteArrayValueReference() {
-			return *static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+		inline ByteArrayValue& getByteArrayValueReference() {
+			return *static_cast<ByteArrayValue*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const byte array value reference
 		 */
-		inline const vector<uint8_t>& getByteArrayValueReference() const {
-			return *static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+		inline const ByteArrayValue& getByteArrayValueReference() const {
+			return *static_cast<ByteArrayValue*>((void*)getValuePtrReference());
 		}
 
 		/**
@@ -697,6 +697,15 @@ public:
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string TYPENAME_ARRAY;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string TYPENAME_MAP;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string TYPENAME_SET;
+
+		/**
+		 * @return is constant
+		 */
+		inline bool isConstant() const {
+			return
+				(typeReferenceConstantBits & CONSTANT_BIT_VALUE) == CONSTANT_BIT_VALUE ||
+				(isReference() == true && (ir.reference->typeReferenceConstantBits & CONSTANT_BIT_VALUE) == CONSTANT_BIT_VALUE);
+		}
 
 		/**
 		 * Unset variable
@@ -804,7 +813,7 @@ public:
 					to.getStringValueReference().setCache(from.getStringValueReference().getCache());
 					break;
 				case TYPE_BYTEARRAY:
-					to.setValue(from.getByteArrayValueReference());
+					to.getByteArrayValueReference() = from.getByteArrayValueReference();
 					break;
 				case TYPE_ARRAY:
 					to.setValue(from.getArrayValueReference());
@@ -993,7 +1002,7 @@ public:
 					delete static_cast<StringValue*>((void*)getValuePtrReference());
 					break;
 				case TYPE_BYTEARRAY:
-					delete static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+					delete static_cast<ByteArrayValue*>((void*)getValuePtrReference());
 					break;
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
@@ -1050,7 +1059,7 @@ public:
 					getValuePtrReference() = (uint64_t)(new StringValue());
 					break;
 				case TYPE_BYTEARRAY:
-					getValuePtrReference() = (uint64_t)(new vector<uint8_t>());
+					getValuePtrReference() = (uint64_t)(new ByteArrayValue());
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<Variable*>());
@@ -1330,7 +1339,7 @@ public:
 		 */
 		inline void setValue(const vector<uint8_t>& value) {
 			setType(TYPE_BYTEARRAY);
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			for (const auto arrayEntry: value) {
 				 byteArrayValue.push_back(arrayEntry);
 			}
@@ -1388,7 +1397,7 @@ public:
 		 */
 		inline const vector<uint8_t>* getByteArrayPointer() const {
 			if (getType() != TYPE_BYTEARRAY) return nullptr;
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			return &byteArrayValue;
 		}
 
@@ -1397,7 +1406,7 @@ public:
 		 */
 		inline vector<uint8_t>* getByteArrayPointer() {
 			if (getType() != TYPE_BYTEARRAY) return nullptr;
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			return &byteArrayValue;
 		}
 
@@ -1407,7 +1416,43 @@ public:
 		 */
 		inline int64_t getByteArraySize() const {
 			if (getType() != TYPE_BYTEARRAY) return 0;
-			return getByteArrayValueReference().size();
+			return getByteArrayValueReference().value.size();
+		}
+
+		/**
+		 * Get const byte array read pointer
+		 * @return const pointer to byte array read pointer
+		 */
+		inline const int64_t* getByteArrayReadPointer() const {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			return &getByteArrayValueReference().readPtr;
+		}
+
+		/**
+		 * Get byte array read pointer
+		 * @return pointer to byte array read pointer
+		 */
+		inline int64_t* getByteArrayReadPointer() {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			return &getByteArrayValueReference().readPtr;
+		}
+
+		/**
+		 * Get const byte array write pointer
+		 * @return const pointer to byte array write pointer
+		 */
+		inline const int64_t* getByteArrayWritePointer() const {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			return &getByteArrayValueReference().writePtr;
+		}
+
+		/**
+		 * Get byte array write pointer
+		 * @return pointer to byte array write pointer
+		 */
+		inline int64_t* getByteArrayWritePointer() {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			return &getByteArrayValueReference().writePtr;
 		}
 
 		/**
@@ -1417,7 +1462,7 @@ public:
 		 */
 		inline const uint8_t getByteArrayEntry(int64_t idx) const {
 			if (getType() != TYPE_BYTEARRAY) return 0;
-			const auto& byteArrayValue = getByteArrayValueReference();
+			const auto& byteArrayValue = getByteArrayValueReference().value;
 			if (idx >= 0 && idx < byteArrayValue.size()) return byteArrayValue[idx];
 			return 0;
 		}
@@ -1429,7 +1474,7 @@ public:
 		inline void setByteArrayEntry(int64_t idx, uint8_t value) {
 			setType(TYPE_BYTEARRAY);
 			if (idx < 0) return;
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			while (byteArrayValue.size() <= idx) pushByteArrayEntry(0);
 			byteArrayValue[idx] = value;
 		}
@@ -1440,20 +1485,20 @@ public:
 		 */
 		inline void pushByteArrayEntry(uint8_t value) {
 			setType(TYPE_BYTEARRAY);
-			getByteArrayValueReference().push_back(value);
+			getByteArrayValueReference().value.push_back(value);
 		}
 
 		/**
-		 * Remove byte array entry at given index
+		 * Remove byte array entries at given index and size
 		 * @param idx index
+		 * @param size size
 		 */
-		inline void removeByteArrayEntry(int64_t idx) {
+		inline void removeByteArray(int64_t idx, int64_t size) {
 			if (getType() != TYPE_BYTEARRAY) return;
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			if (idx >= 0 && idx < byteArrayValue.size()) {
-				byteArrayValue.erase(byteArrayValue.begin() + idx);
+				byteArrayValue.erase(byteArrayValue.begin() + idx, byteArrayValue.begin() + idx + size);
 			}
-			return;
 		}
 
 		/**
@@ -1461,9 +1506,8 @@ public:
 		 */
 		inline void clearByteArray() {
 			if (getType() != TYPE_BYTEARRAY) return;
-			auto& byteArrayValue = getByteArrayValueReference();
+			auto& byteArrayValue = getByteArrayValueReference().value;
 			byteArrayValue.clear();
-			return;
 		}
 
 		/**
@@ -1996,7 +2040,7 @@ public:
 					break;
 				case TYPE_BYTEARRAY:
 					{
-						const auto& byteArrayValue = getByteArrayValueReference();
+						const auto& byteArrayValue = getByteArrayValueReference().value;
 						vector<string> values;
 						for (const auto arrayEntry: byteArrayValue) {
 							values.push_back(to_string(arrayEntry));
@@ -2007,7 +2051,13 @@ public:
 							if (i != values.size() - 1) result+= ", ";
 							i++;
 						}
-						result = "ByteArray([" + result + "], size: " + to_string(byteArrayValue.size()) + ", capacity: " + to_string(byteArrayValue.capacity()) + ")";
+						result =
+							"ByteArray([" + result + "], " +
+								"size: " + to_string(byteArrayValue.size()) +
+								", capacity: " + to_string(byteArrayValue.capacity()) +
+								", read position: " + to_string(getByteArrayValueReference().readPtr) +
+								", write position: " + to_string(getByteArrayValueReference().writePtr) +
+								")";
 						break;
 					}
 				case TYPE_ARRAY:
@@ -3126,6 +3176,12 @@ private:
 	 */
 	static bool viewIsKey(const string_view& candidate);
 
+	/**
+	 * Set variable recursively to be a constant
+	 * @param variable variable
+	 */
+	static void setConstantInternal(Variable& variable);
+
 public:
 	/**
 	 * Initialize
@@ -3136,7 +3192,10 @@ public:
 	 * Set variable recursively to be a constant
 	 * @param variable variable
 	 */
-	static void setConstant(Variable& variable);
+	inline static void setConstant(Variable& variable) {
+		if (variable.isConstant() == true) return;
+		setConstantInternal(variable);
+	}
 
 	/**
 	 * Return data type script context
@@ -3570,15 +3629,9 @@ public:
 		// we have a pointer to a ordinary variable
 		if (variablePtr != nullptr) {
 			return true;
-		} else {
-			// special case for accessing byte array entries at given array index
-			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
-				return true;
-			} else {
-				// nothing to return
-				return false;
-			}
 		}
+		//
+		return false;
 	}
 
 	/**
@@ -3616,16 +3669,11 @@ public:
 		if (variablePtr != nullptr) {
 			// if we return any variable we can safely remove the constness, a reference can of course keep its constness
 			auto variable = createReference == false?Variable::createNonReferenceVariable(variablePtr):Variable::createReferenceVariable(variablePtr);
-			variable.unsetConstant();
+			if (createReference == false) variable.unsetConstant();
 			return variable;
 		} else {
-			// special case for accessing byte array entries at given array index
-			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
-				return Variable(static_cast<int64_t>(parentVariable->getByteArrayEntry(arrayIdx)));
-			} else {
-				// nothing to return
-				return Variable();
-			}
+			// nothing to return
+			return Variable();
 		}
 	}
 
@@ -3654,16 +3702,11 @@ public:
 		if (variablePtr != nullptr) {
 			// if we return any variable we can safely remove the constness, a reference can of course keep its constness
 			auto variable = createReference == false?Variable::createNonReferenceVariable(variablePtr):Variable::createReferenceVariable(variablePtr);
-			variable.unsetConstant();
+			if (createReference == false) variable.unsetConstant();
 			return variable;
 		} else {
-			// special case for accessing byte array entries at given array index
-			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
-				return Variable(static_cast<int64_t>(parentVariable->getByteArrayEntry(arrayIdx)));
-			} else {
-				// nothing to return
-				return Variable();
-			}
+			// nothing to return
+			return Variable();
 		}
 	}
 
