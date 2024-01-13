@@ -1,0 +1,34 @@
+# initialize
+on: initialize
+	console.log("-------------------------------")
+	console.log("preprocessor-test: Initialize")
+	console.log("------------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("----------------------------")
+	console.log("preprocessor-test: Nothing")
+	console.log("----------------------------")
+	console.log()
+	$i = 0
+	# postfix, prefix operator
+	console.log("$i: " + $i)
+	console.log("++$i: " + (++$i))
+	console.log("$i++: " + ($i++))
+	console.log("$i: " + $i)
+	# 2 argument operator with left and right arguments
+	console.log("10 * 10: " + 10 * 10)
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("--------------------------")
+	console.log("preprocessor-test: Error")
+	console.log("--------------------------")
+	console.log()
+	script.stop()
+end
