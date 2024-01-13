@@ -1042,22 +1042,46 @@ end
 | <sub><b>static</b> HTTPDownloadClient(): HTTPDownloadClient</sub>                                |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
-| Execute request                                                                                  |
-| <sub>execute(): Null</sub>                                                                       |
+| Cancel download                                                                                  |
+| <sub>cancel(): Null</sub>                                                                        |
 | Get file URI                                                                                     |
 | <sub>getFile(): String</sub>                                                                     |
+| Get GET parameters                                                                               |
+| <sub>getGETParameters(): Map</sub>                                                               |
+| Get headers                                                                                      |
+| <sub>getHeaders(): Map</sub>                                                                     |
+| Get password                                                                                     |
+| <sub>getPassword(): String</sub>                                                                 |
 | Get progress                                                                                     |
 | <sub>getProgress(): Float</sub>                                                                  |
+| Get response headers                                                                             |
+| <sub>getResponseHeaders(): Map</sub>                                                             |
+| Get HTTP status code                                                                             |
+| <sub>getStatusCode(): Integer</sub>                                                              |
 | Get URL                                                                                          |
 | <sub>getURL(): String</sub>                                                                      |
+| Get username                                                                                     |
+| <sub>getUserName(): String</sub>                                                                 |
 | Returns if download has been finished                                                            |
 | <sub>isFinished(): Boolean</sub>                                                                 |
+| Wait until download thread has finished working                                                  |
+| <sub>join(): Null</sub>                                                                          |
 | Reset HTTP download client                                                                       |
 | <sub>reset(): Null</sub>                                                                         |
-| Set file                                                                                         |
+| Set file to save file downloaded to                                                              |
 | <sub>setFile($url: String): Null</sub>                                                           |
+| Set GET parameters                                                                               |
+| <sub>setGETParameters($getParameters: Map): Null</sub>                                           |
+| Set headers                                                                                      |
+| <sub>setHeaders($headers: Map): Null</sub>                                                       |
+| Set password                                                                                     |
+| <sub>setPassword($password: String): Null</sub>                                                  |
 | Set URL                                                                                          |
 | <sub>setURL($url: String): Null</sub>                                                            |
+| Set user name                                                                                    |
+| <sub>setUserName($userName: String): Null</sub>                                                  |
+| Start download                                                                                   |
+| <sub>start(): Null</sub>                                                                         |
 
 ## 6.7. Transform class
 
@@ -1334,6 +1358,10 @@ end
 | <sub>console.dump($value: Mixed): Null</sub>                                                     |
 | Print to console                                                                                 |
 | <sub>console.log(...): Null</sub>                                                                |
+| Print to console                                                                                 |
+| <sub>console.print(...): Null</sub>                                                              |
+| Print to console with a trailing new line                                                        |
+| <sub>console.println(...): Null</sub>                                                            |
 
 ## 7.4. Cryptography Base64 methods
 

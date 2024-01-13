@@ -67,4 +67,47 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new MethodConsoleDump(miniScript));
 	}
+	{
+		//
+		class MethodConsolePrint: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodConsolePrint(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "console.print";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				for (const auto& argument: arguments) {
+					_Console::print(argument.getValueAsString());
+				}
+			}
+			bool isVariadic() const override {
+				return true;
+			}
+		};
+		miniScript->registerMethod(new MethodConsolePrint(miniScript));
+	}
+	{
+		//
+		class MethodConsolePrintln: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodConsolePrintln(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "console.println";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				for (const auto& argument: arguments) {
+					_Console::print(argument.getValueAsString());
+				}
+				_Console::println();
+			}
+			bool isVariadic() const override {
+				return true;
+			}
+		};
+		miniScript->registerMethod(new MethodConsolePrintln(miniScript));
+	}
 }

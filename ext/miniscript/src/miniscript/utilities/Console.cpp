@@ -12,14 +12,17 @@ using miniscript::utilities::Console;
 void Console::println(const string_view& str)
 {
 	cout << str << endl;
+	cout.flush();
 }
 
 void Console::print(const string_view& str)
 {
 	cout << str;
+	cout.flush();
 }
 
 void Console::println()
 {
 	cout << endl;
+	cout.flush();
 }
