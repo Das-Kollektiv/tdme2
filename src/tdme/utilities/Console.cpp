@@ -70,6 +70,7 @@ void Console::println(const string_view& str)
 	//
 	if (logger != nullptr) logger->println(str);
 	cout << str << endl;
+	cout.flush();
 	//
 	mutex.unlock();
 }
@@ -85,6 +86,7 @@ void Console::print(const string_view& str)
 	//
 	if (logger != nullptr) logger->print(str);
 	cout << str;
+	cout.flush();
 	//
 	mutex.unlock();
 }
@@ -99,6 +101,7 @@ void Console::println()
 	//
 	if (logger != nullptr) logger->println();
 	cout << endl;
+	cout.flush();
 	//
 	mutex.unlock();
 }

@@ -91,7 +91,7 @@ string HTTPDownloadClient::urlEncode(const string &value) {
 	return escaped.str();
 }
 
-string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, const string& relativeUrl) {
+const string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, const string& relativeUrl) {
 	string query;
 	for (const auto& [parameterName, parameterValue]: getParameters) {
 		if (query.empty() == true) query+= "?"; else query+="&";
@@ -110,8 +110,7 @@ string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, cons
 	for (const auto& [headerName, headerValue]: headers) {
 		request+= headerName + ": " + headerValue + "\r\n";
 	}
-	request+=
-		string("\r\n");
+	request+= string("\r\n");
 	return request;
 }
 
@@ -174,7 +173,7 @@ void HTTPDownloadClient::reset() {
 	haveContentSize = false;
 	headerSize = 0LL;
 	contentSize = 0LL;
-	finished = true;
+	finished = false;
 	progress = 0.0f;
 }
 
@@ -270,7 +269,7 @@ void HTTPDownloadClient::start() {
 					}
 
 					// transfer to real file
-					if (downloadClient->statusCode == 200 && isStopRequested() == false) {
+					if (downloadClient->statusCode == HTTP_STATUS_OK && isStopRequested() == false) {
 						// input file stream
 						ifstream ifs(std::filesystem::u8path(downloadClient->file + ".download"), ofstream::binary);
 						if (ifs.is_open() == false) {
@@ -313,6 +312,7 @@ void HTTPDownloadClient::start() {
 
 					//
 					socket->shutdown();
+					socket = nullptr;
 
 					//
 					downloadClient->progress = 1.0f;

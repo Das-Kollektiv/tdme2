@@ -47,7 +47,7 @@ private:
 	bool haveContentSize { false };
 	uint64_t headerSize { 0LL };
 	uint64_t contentSize { 0LL };
-	volatile bool finished { true };
+	volatile bool finished { false };
 	volatile float progress { 0.0f };
 
 	/**
@@ -62,7 +62,7 @@ private:
 	 * @param hostName host name
 	 * @param relativeUrl url relative to server root
 	 */
-	string createHTTPRequestHeaders(const string& hostName, const string& relativeUrl);
+	const string createHTTPRequestHeaders(const string& hostName, const string& relativeUrl);
 
 	/**
 	 * Parse HTTP response headers
@@ -264,7 +264,7 @@ public:
 	 * @return HTTP response headers
 	 */
 	inline const unordered_map<string, string>& getResponseHeaders() {
-		return headers;
+		return responseHeaders;
 	}
 
 	/**
