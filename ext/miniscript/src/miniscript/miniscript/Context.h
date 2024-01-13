@@ -21,6 +21,8 @@ class miniscript::miniscript::Context
 {
 private:
 	unordered_map<string, MiniScript*> scriptsById;
+	vector<MiniScript*> scriptCallStack;
+	vector<string> argumentValues;
 
 public:
 	// forbid class copy
@@ -35,6 +37,21 @@ public:
 	 * Destructor
 	 */
 	virtual ~Context();
+
+	/**
+	 * Set argument values
+	 * @param argumentValues argument values
+	 */
+	inline void setArgumentValues(const vector<string>& argumentValues) {
+		this->argumentValues = argumentValues;
+	}
+
+	/**
+	 * @return argument values
+	 */
+	inline const vector<string>& getArgumentValues() {
+		return argumentValues;
+	}
 
 	/**
 	 * Add script
@@ -69,6 +86,21 @@ public:
 			result.push_back(scriptId);
 		}
 		return result;
+	}
+
+	/**
+	 * Add to script call stack
+	 * @param script script
+	 */
+	inline void push(MiniScript* script) {
+		scriptCallStack.push_back(script);
+	}
+
+	/**
+	 * Remove from script call stack
+	 */
+	inline void pop() {
+		scriptCallStack.erase(scriptCallStack.begin() + scriptCallStack.size() - 1);
 	}
 
 };

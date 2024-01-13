@@ -58,6 +58,80 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 	}
 	{
 		//
+		class MethodBreak: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodBreak(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "break";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (miniScript->getScriptState().blockStack.empty() == true) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forXXX");
+					miniScript->startErrorScript();
+				} else {
+					auto& blockStack = miniScript->getScriptState().blockStack;
+					MiniScript::ScriptState::Block endType;
+					for (auto i = blockStack.size() - 1; i >= 0; i--) {
+						if (blockStack[i].type == MiniScript::ScriptState::BLOCKTYPE_FOR) {
+							endType = blockStack[i];
+							blockStack.erase(blockStack.begin() + i, blockStack.end());
+							break;
+						}
+					}
+					if (endType.type == MiniScript::ScriptState::BLOCKTYPE_NONE) {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forXXX");
+					} else
+					if (endType.continueStatement != nullptr) {
+						miniScript->gotoStatement(*endType.breakStatement);
+					} else {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no break statement");
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodBreak(miniScript));
+	}
+	{
+		//
+		class MethodContinue: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodContinue(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "continue";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (miniScript->getScriptState().blockStack.empty() == true) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forXXX");
+					miniScript->startErrorScript();
+				} else {
+					auto& blockStack = miniScript->getScriptState().blockStack;
+					MiniScript::ScriptState::Block* endType = nullptr;
+					for (auto i = blockStack.size() - 1; i >= 0; i--) {
+						if (blockStack[i].type == MiniScript::ScriptState::BLOCKTYPE_FOR) {
+							endType = &blockStack[i];
+							blockStack.erase(blockStack.begin() + i + 1, blockStack.end());
+							break;
+						}
+					}
+					if (endType == nullptr) {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forXXX");
+					} else
+					if (endType->continueStatement != nullptr) {
+						miniScript->gotoStatement(*endType->continueStatement);
+					} else {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no continue statement");
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodContinue(miniScript));
+	}
+	{
+		//
 		class MethodEnd: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -67,22 +141,23 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 				return "end";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				if (miniScript->getScriptState().endTypeStack.empty() == true) {
+				if (miniScript->getScriptState().blockStack.empty() == true) {
 					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without block/forXXX/if");
 					miniScript->startErrorScript();
 				} else {
-					auto endType = miniScript->getScriptState().endTypeStack.top();
-					miniScript->getScriptState().endTypeStack.pop();
-					switch(endType) {
-						case MiniScript::ScriptState::ENDTYPE_BLOCK:
+					auto& blockStack = miniScript->getScriptState().blockStack;
+					auto endType = blockStack[blockStack.size() - 1];
+					blockStack.erase(blockStack.begin() + blockStack.size() - 1);
+					switch(endType.type) {
+						case MiniScript::ScriptState::BLOCKTYPE_BLOCK:
 							if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
 								miniScript->stopRunning();
 							}
 							break;
-						case MiniScript::ScriptState::ENDTYPE_FOR:
+						case MiniScript::ScriptState::BLOCKTYPE_FOR:
 							// no op
 							break;
-						case MiniScript::ScriptState::ENDTYPE_IF:
+						case MiniScript::ScriptState::BLOCKTYPE_IF:
 							miniScript->getScriptState().conditionStack.pop();
 							break;
 					}
@@ -118,21 +193,26 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				} else {
 					//
+					auto& scriptState = miniScript->getScriptState();
 					auto now = _Time::getCurrentMillis();
 					auto timeWaitStarted = now;
-					auto forTimeStartedIt = miniScript->getScriptState().forTimeStarted.find(statement.line);
-					if (forTimeStartedIt == miniScript->getScriptState().forTimeStarted.end()) {
+					auto forTimeStartedIt = scriptState.forTimeStarted.find(statement.line);
+					if (forTimeStartedIt == scriptState.forTimeStarted.end()) {
 						miniScript->getScriptState().forTimeStarted[statement.line] = timeWaitStarted;
 					} else {
 						timeWaitStarted = forTimeStartedIt->second;
 					}
 					//
 					if (_Time::getCurrentMillis() > timeWaitStarted + time) {
-						miniScript->getScriptState().forTimeStarted.erase(statement.line);
+						scriptState.forTimeStarted.erase(statement.line);
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
 					} else {
-						miniScript->getScriptState().endTypeStack.push(MiniScript::ScriptState::ENDTYPE_FOR);
+						scriptState.blockStack.emplace_back(
+							MiniScript::ScriptState::BLOCKTYPE_FOR,
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx - 1],
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx]
+						);
 					}
 				}
 			}
@@ -167,7 +247,12 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
 					} else {
-						miniScript->getScriptState().endTypeStack.push(MiniScript::ScriptState::ENDTYPE_FOR);
+						auto& scriptState = miniScript->getScriptState();
+						scriptState.blockStack.emplace_back(
+							MiniScript::ScriptState::BLOCKTYPE_FOR,
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx - 1],
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx]
+						);
 					}
 				}
 			}
@@ -196,10 +281,9 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					//
-					miniScript->getScriptState().endTypeStack.push(MiniScript::ScriptState::ENDTYPE_IF);
-					//
-					miniScript->getScriptState().conditionStack.push(booleanValue);
+					auto& scriptState = miniScript->getScriptState();
+					scriptState.blockStack.emplace_back(MiniScript::ScriptState::BLOCKTYPE_IF, nullptr, nullptr);
+					scriptState.conditionStack.push(booleanValue);
 					if (booleanValue == false) {
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
@@ -945,11 +1029,77 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 	}
 	{
 		//
-		class MethodIncrement: public MiniScript::Method {
+		class MethodPostfixIncrement: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			MethodIncrement(MiniScript* miniScript):
+			MethodPostfixIncrement(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
+					},
+					MiniScript::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "postfixIncrement";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				int64_t value;
+				if (MiniScript::getIntegerValue(arguments, 0, value, false) == false) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					arguments[0].setValue(value + 1);
+					returnValue.setValue(value);
+				}
+			}
+			MiniScript::Operator getOperator() const override {
+				return MiniScript::OPERATOR_POSTFIX_INCREMENT;
+			}
+		};
+		miniScript->registerMethod(new MethodPostfixIncrement(miniScript));
+	}
+	{
+		//
+		class MethodPostfixDecrement: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodPostfixDecrement(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
+					},
+					MiniScript::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "postfixDecrement";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				int64_t value;
+				if (MiniScript::getIntegerValue(arguments, 0, value, false) == false) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					arguments[0].setValue(value - 1);
+					returnValue.setValue(value);
+				}
+			}
+			MiniScript::Operator getOperator() const override {
+				return MiniScript::OPERATOR_POSTFIX_DECREMENT;
+			}
+		};
+		miniScript->registerMethod(new MethodPostfixDecrement(miniScript));
+	}
+	{
+		//
+		class MethodPrefixIncrement: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodPrefixIncrement(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
@@ -972,18 +1122,18 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 			MiniScript::Operator getOperator() const override {
-				return MiniScript::OPERATOR_INCREMENT;
+				return MiniScript::OPERATOR_PREFIX_INCREMENT;
 			}
 		};
-		miniScript->registerMethod(new MethodIncrement(miniScript));
+		miniScript->registerMethod(new MethodPrefixIncrement(miniScript));
 	}
 	{
 		//
-		class MethodDecrement: public MiniScript::Method {
+		class MethodPrefixDecrement: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			MethodDecrement(MiniScript* miniScript):
+			MethodPrefixDecrement(MiniScript* miniScript):
 				MiniScript::Method(
 					{
 						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
@@ -1006,10 +1156,10 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 				}
 			}
 			MiniScript::Operator getOperator() const override {
-				return MiniScript::OPERATOR_DECREMENT;
+				return MiniScript::OPERATOR_PREFIX_DECREMENT;
 			}
 		};
-		miniScript->registerMethod(new MethodDecrement(miniScript));
+		miniScript->registerMethod(new MethodPrefixDecrement(miniScript));
 	}
 	//
 	{

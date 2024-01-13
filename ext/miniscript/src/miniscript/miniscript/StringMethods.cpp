@@ -662,7 +662,7 @@ void StringMethods::registerMethods(MiniScript* miniScript) {
 			MethodStringIndent(MiniScript *miniScript) :
 				MiniScript::Method(
 					{
-						{ .type = MiniScript::TYPE_STRING, .name = "src", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_STRING, .name = "with", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::TYPE_INTEGER, .name = "count", .optional = false, .reference = false, .nullable = false }
 					},

@@ -39,7 +39,7 @@ static void printInformation() {
 	Console::println(string("miniscript ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
-	Console::println("Usage: miniscript [--version] [--verbose] [path_to_script | < path_to_script]");
+	Console::println("Usage: miniscript [--version] [--verbose] [path_to_script | < path_to_script] --arguments [script command line arguments...]");
 	Console::println();
 	Console::println("If you do not provide a path to the script or do not pipe a script into the standard input stream,");
 	Console::println("you get a prompt to enter your script. You can finish inputting by hitting Ctrl-D on Unix or Ctrl-Z on Windows.");
@@ -62,6 +62,9 @@ int main(int argc, char** argv)
 		} else
 		if (argument == "--verbose") {
 			verbose = true;
+		} else
+		if (argument == "--arguments") {
+			break;
 		} else {
 			if (pathToScript.empty() == false) {
 				Console::println("Path to script already given");
@@ -127,6 +130,28 @@ int main(int argc, char** argv)
 	if (pathToScript.empty() == false) {
 		// yes, go
 		context = make_unique<Context>();
+		//
+		{
+			// create main argument values
+			vector<string> argumentValues;
+			argumentValues.push_back(string(argv[0]));
+			bool haveArguments = false;
+			for (auto i = 0; i < argc; i++) {
+				string argumentValue(argv[i]);
+				if (haveArguments == false &&
+					argumentValue == "--arguments") {
+					haveArguments = true;
+					continue;
+				}
+				//
+				if (haveArguments == false) continue;
+				//
+				argumentValues.push_back(argumentValue);
+			}
+			//
+			context->setArgumentValues(argumentValues);
+		}
+
 		script = make_unique<MiniScript>();
 		script->setContext(context.get());
 		script->parseScript(
@@ -148,11 +173,13 @@ int main(int argc, char** argv)
 				#endif
 				// add script to context
 				auto scriptPtr = script.get();
-				context->addScript("main", script.release());
+				context->push(scriptPtr);
+				context->addScript("application", script.release());
 				//
 				while (scriptPtr->isRunning() == true) {
 					scriptPtr->execute();
 				}
+				context->pop();
 			}
 		}
 	} else

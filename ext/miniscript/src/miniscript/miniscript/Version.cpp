@@ -9,9 +9,9 @@ using std::string;
 using miniscript::miniscript::Version;
 
 string Version::getVersion() {
-	return "0.9.18 PRE-BETA";
+	return "0.9.19 PRE-BETA";
 }
 
 string Version::getCopyright() {
-	return "Developed 2012-2023 by Andreas Drewke, Dominik Hepp, Kolja Gumpert, drewke.net, mindty.com. Please see the license @ https://github.com/Mindty-Kollektiv/miniscript/blob/master/LICENSE";
+	return "Developed 2012-2024 by Andreas Drewke, Dominik Hepp, Kolja Gumpert, drewke.net, mindty.com. Please see the license @ https://github.com/Mindty-Kollektiv/miniscript/blob/master/LICENSE";
 }

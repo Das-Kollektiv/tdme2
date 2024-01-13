@@ -2311,41 +2311,99 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 	//
 	StatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators, statement) == true) {
-		auto methodIt = operators.find(nextOperators.operator_);
-		if (methodIt == operators.end()) {
-			_Console::println(getStatementInformation(statement) + ": " + processedStatement + ": operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": no method found");
-			// TODO: error handling
-			return preprocessedStatement;
+		//
+		Method* method { nullptr };
+		Method* prefixOperatorMethod { nullptr };
+		Method* postfixOperatorMethod { nullptr };
+		//
+		{
+			method = getOperatorMethod(nextOperators.operator_);
+			if (method == nullptr) {
+				_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": no operator method found");
+				scriptValid = false;
+				return preprocessedStatement;
+			}
+			// special case prefix or postfix operator methods, that have 1 argument only
+			if (method->getOperator() == OPERATOR_POSTFIX_INCREMENT ||
+				method->getOperator() == OPERATOR_PREFIX_INCREMENT) {
+				prefixOperatorMethod = getOperatorMethod(OPERATOR_POSTFIX_INCREMENT);
+				postfixOperatorMethod = getOperatorMethod(OPERATOR_PREFIX_INCREMENT);
+			}
+			//
+			if (method->getOperator() == OPERATOR_POSTFIX_DECREMENT ||
+				method->getOperator() == OPERATOR_PREFIX_DECREMENT) {
+				prefixOperatorMethod = getOperatorMethod(OPERATOR_POSTFIX_DECREMENT);
+				postfixOperatorMethod = getOperatorMethod(OPERATOR_PREFIX_DECREMENT);
+			}
+			//
+			if (method->getOperator() == OPERATOR_POSTFIX_INCREMENT ||
+				method->getOperator() == OPERATOR_PREFIX_INCREMENT ||
+				method->getOperator() == OPERATOR_POSTFIX_DECREMENT ||
+				method->getOperator() == OPERATOR_PREFIX_DECREMENT) {
+				//
+				if (prefixOperatorMethod == nullptr) {
+					_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": no prefix operator method found");
+					scriptValid = false;
+					return preprocessedStatement;
+				}
+				//
+				if (postfixOperatorMethod == nullptr) {
+					_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": no postfix operator method found");
+					scriptValid = false;
+					return preprocessedStatement;
+				}
+			}
 		}
-		auto method = methodIt->second;
+		//
 		if (method->isVariadic() == false &&
 			method->getArgumentTypes().size() == 1) {
 			// find the single argument right
 			auto operatorString = getOperatorAsString(nextOperators.operator_);
+			// find left argument
+			string leftArgumentBrackets;
+			int leftArgumentLength = 0;
+			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength, leftArgumentBrackets);
+			// find argument right
 			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
 			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
-			// substitute with method call
-			preprocessedStatement =
-				_StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
-				method->getMethodName() + "(" + rightArgument + ")" +
-				_StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
+			//
+			if (leftArgument.empty() == false) {
+				// substitute with method call
+				preprocessedStatement =
+					_StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
+					prefixOperatorMethod->getMethodName() + "(" + leftArgument + ")" +
+					_StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size(), preprocessedStatement.size()
+				);
+			} else
+			if (rightArgument.empty() == false) {
+				// substitute with method call
+				preprocessedStatement =
+					_StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
+					postfixOperatorMethod->getMethodName() + "(" + rightArgument + ")" +
+					_StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
+			} else {
+				_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": requires left or right argument");
+				scriptValid = false;
+				return preprocessedStatement;
+			}
 		} else
 		if (method->isVariadic() == true ||
 			method->getArgumentTypes().size() == 2) {
 			//
 			auto operatorString = getOperatorAsString(nextOperators.operator_);
-			// find the first argument left
+			// find left argument
 			string leftArgumentBrackets;
 			int leftArgumentLength = 0;
 			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength, leftArgumentBrackets);
-			// find the first argument right
+			// find right argument
 			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
 			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
 			//
-			if (leftArgumentBrackets.empty() == false && rightArgumentBrackets.empty() == false && leftArgumentBrackets != rightArgumentBrackets) {
-				_Console::println(getStatementInformation(statement) + ": " + processedStatement + ": operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": unbalanced bracket usage");
+			if (leftArgument.empty() == true || rightArgument.empty() == true) {
+				_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": requires left and right argument");
+				scriptValid = false;
 				return preprocessedStatement;
 			}
 			//
@@ -2356,7 +2414,8 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 			preprocessedStatement =
 				_StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
 				method->getMethodName() + "(" + leftArgument + ", " + rightArgument + ")" +
-				_StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
+				_StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size()
+			);
 		}
 		//
 		nextOperators = StatementOperator();

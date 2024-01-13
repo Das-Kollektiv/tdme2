@@ -35,6 +35,19 @@ on: nothing
 		console.log("HTTP response: " + $result.response)
 	end
 	#
+	$httpDownloadClient = HTTPDownloadClient()
+	$httpDownloadClient->setURL("https://mindty.com")
+	$httpDownloadClient->setFile("mindty.com.html")
+	console.log("HTTP download client: " + $httpDownloadClient)
+	$httpDownloadClient->execute()
+	forCondition($httpDownloadClient->isFinished() == false)
+		console.log($httpDownloadClient->getProgress())
+		script.wait(1000)
+	end
+	if (filesystem.removeFile(".", "mindty.com.html") == false)
+		console.log("Could not remove file mindty.com.html.")
+	end
+	#
 	script.stop()
 end
 

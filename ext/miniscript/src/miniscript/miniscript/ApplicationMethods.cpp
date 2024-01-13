@@ -71,4 +71,29 @@ void ApplicationMethods::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new MethodApplicationExecute(miniScript));
 	}
+	//
+	if (miniScript->getContext() != nullptr) {
+		//
+		{
+			//
+			class MethodApplicationGetArguments: public MiniScript::Method {
+			private:
+				MiniScript* miniScript { nullptr };
+			public:
+				MethodApplicationGetArguments(MiniScript* miniScript):
+					MiniScript::Method({}, MiniScript::TYPE_ARRAY),
+					miniScript(miniScript) {}
+				const string getMethodName() override {
+					return "application.getArguments";
+				}
+				void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+					returnValue.setType(MiniScript::TYPE_ARRAY);
+					for (const auto& argumentValue: miniScript->getContext()->getArgumentValues()) {
+						returnValue.pushArrayEntry(MiniScript::Variable(argumentValue));
+					}
+				}
+			};
+			miniScript->registerMethod(new MethodApplicationGetArguments(miniScript));
+		}
+	}
 }

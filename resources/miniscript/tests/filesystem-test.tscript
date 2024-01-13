@@ -75,7 +75,13 @@ on: nothing
 	end 
 	# create binary file
 	console.log("Creating file: filesystem-test/test.bin")
-	$binaryContent = ByteArray(1, 2, 3, 4, 5, 6)
+	$binaryContent = ByteArray()
+	$binaryContent->writeInt8(1)
+	$binaryContent->writeInt8(2)
+	$binaryContent->writeInt8(3)
+	$binaryContent->writeInt8(4)
+	$binaryContent->writeInt8(5)
+	$binaryContent->writeInt8(6)
 	if (filesystem.setContent("filesystem-test", "test.bin", $binaryContent) == false)
 		console.log("Could not create file filesystem-test/test.bin. Exiting.")
 		script.stop()

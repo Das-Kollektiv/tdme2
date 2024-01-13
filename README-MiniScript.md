@@ -155,9 +155,9 @@ end
 ...
 ``` 
 
-Global variables can always be accessed by using the "$GLOBAL." accessor.
+Global variables can always be accessed by using the "$$." or "$GLOBAL." accessor.
 By default variables are read from current context and if they have not been found from root context.
-So to be sure to use a global variable in function scope, just use the "$GLOBAL." accessor.
+So to be sure to use a global variable in function scope, just use the "$$." or "$GLOBAL." accessor.
 ```
 ...
 # function to test global variable access
@@ -354,11 +354,29 @@ For more math related methods just look into "6. Methods" section.
 
 ## 4.3. Byte arrays
 
-A byte array is a collection/sequence of byte values which can be accessed by indices. Bytes are the smallest atomic values a CPU does handle.
-A byte has a value of 0...255. Using bit math you can also manipulate byte values at bit scope.
+A byte array is a sequence of byte values. Bytes are the smallest atomic values a CPU does handle.
+Using bit math you can also manipulate byte values at bit scope.
+
+To write and read from byte array you can use the read*() and write() methods.
+
+Available data types are
+- bool (true or false)
+- int8 (-128 .. 127)
+- int16 (-32768 .. 32767)
+- int32 (-2147483646 .. 2147483647)
+- int64 (-9,223,372,036,854,775,806 .. -9,223,372,036,854,775,807)
+- float (floating point number)
+- small string (string with maximum size of 255 bytes)
+- medium string (string with maximum size of 65535 bytes)
+- large string (string with maximum size of 4294967295 bytes)
+
+You can get/set the position for reading from and writing to byte array by using the getReadPosition()/setReadPosition() and
+getWritePosition()/setWritePosition().
+
+If you read from or write to byte array the corresponding position will be advanced automatically. 
 
 Usually byte arrays can be used to exchange/construct network packets/streams, texture data, mesh data, ...
-Also, using a byte array instead of a generic array for byte storage, results in using much less memory space. 
+Also, using a byte array instead of a generic array for byte storage, results in using much less memory space.
 
 Initializing a byte array by constructor:
 
@@ -368,61 +386,58 @@ Initializing a byte array by constructor:
 ...
 ```
 
-... or initialize and push values to it:
+Writing values using ByteArray::write*():
 ```
 ...
-	$byteArray = ByteArray(1, 2, 3)
-...
-```
-
-Pushing values using ByteArray::push():
-```
-...
-	$byteArray->push(5, 6, 7)
-...
-```
-
-Pushing values using [] operator:
-```
-...
-	$byteArray[] = 8
-	$byteArray[] = 9
-	$byteArray[] = 10
+	$byteArray->setWritePosition(0)
+	$byteArray->writeBool(true)
+	$byteArray->writeInt8(1)
+	$byteArray->writeInt16(2)
+	$byteArray->writeInt32(3)
+	$byteArray->writeInt64(4)
+	$byteArray->writeFloat(1234.5678)
+	$byteArray->writeSmallString("Hi there! I am a small sized string.")
+	$byteArray->writeMediumString("Hi there! I am a medium sized string.")
+	$byteArray->writeLargeString("Hi there! I am a large sized string.")
 ...
 ```
 
-Iterating byte arrays using ByteArray::length() and ByteArray::get():
+Reading values using ByteArray::read*():
 ```
 ...
-	$i = 0
-	forCondition($i < $byteArray->length())
-		console.log($i + ": " + $byteArray->get($i))
-		++$i
+	$byteArray->setReadPosition(0)
+	console.log($byteArray->readBool())
+	console.log($byteArray->readInt8())
+	console.log($byteArray->readInt16())
+	console.log($byteArray->readInt32())
+	console.log($byteArray->readInt64())
+	console.log($byteArray->readFloat())
+	console.log($byteArray->readSmallString())
+	console.log($byteArray->readMediumString())
+	console.log($byteArray->readLargeString())
+...
+```
+
+Reading byte arrays using ByteArray::length() and ByteArray::readInt8():
+```
+...
+	$byteArray->setReadPosition(0)
+	forCondition($byteArray->getReadPosition() < $byteArray->length())
+		console.log($i + ": " + $byteArray->readInt8($i))
 	end
 ...
 ```
 
-Iterating byte arrays using ByteArray::length() and [] operator:
+Removing from byte arrays using a index and number of bytes to remove with ByteArray::remove():
 ```
 ...
-	$i = 0
-	forCondition($i < $byteArray->length())
-		console.log($i + ": " + $byteArray[$i])
-		++$i
-	end
-...
-```
-
-Removing from byte arrays using a index with ByteArray::remove():
-```
-...
-	$byteArray->remove(2)
+	$byteArray->remove(2, 3)
 ...
 ```
 
 ## 4.4. Arrays
 
-An array is a collection/sequence of values which can be accessed by indices.
+An array is a sequence of values which can be accessed by indices.
 
 Initializing an array by array initializer:
 
@@ -818,8 +833,6 @@ end
 | <sub><b>static</b> String::fromByteArray($byteArray: ByteArray): String</sub>                    |
 | Generate string                                                                                  |
 | <sub><b>static</b> String::generate($what: String[, $count: Integer]): String</sub>              |
-| Indent string                                                                                    |
-| <sub><b>static</b> String::indent($src: String, $with: String, $count: Integer): String</sub>    |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Return character of string at given position                                                     |
@@ -832,6 +845,8 @@ end
 | <sub>firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                          |
 | Return first index of characters provided within given string in string                          |
 | <sub>firstIndexOfChars($what: String[, $beginIndex: Integer]): Integer</sub>                     |
+| Indent string                                                                                    |
+| <sub>indent($with: String, $count: Integer): String</sub>                                        |
 | Return index of specific string in string                                                        |
 | <sub>indexOf($what: String[, $beginIndex: Integer]): Integer</sub>                               |
 | Test if string value is empty                                                                    |
@@ -870,6 +885,67 @@ end
 | <sub>tokenize($delimiters: String): Array</sub>                                                  |
 | Trim string                                                                                      |
 | <sub>trim(): String</sub>                                                                        |
+
+## 6.2. Byte array class
+
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| &nbsp;                                    |
+| <b>STATIC METHODS</b>                     |
+| Create byte array                                                                                |
+| <sub><b>static</b> ByteArray(): ByteArray</sub>                                                  |
+| &nbsp;                                    |
+| <b>NON STATIC METHODS</b>                 |
+| Clear byte array                                                                                 |
+| <sub>clear(): Null</sub>                                                                         |
+| Get read position                                                                                |
+| <sub>getReadPosition(): Integer</sub>                                                            |
+| Get write position                                                                               |
+| <sub>getWritePosition(): Integer</sub>                                                           |
+| Read bool value and advance read position by 1 byte                                              |
+| <sub>readBool(): ?Boolean</sub>                                                                  |
+| Read 32 bit float value and advance read position by 4 byte                                      |
+| <sub>readFloat(): ?Float</sub>                                                                   |
+| Read 16 bit integer value and advance read position by 2 byte                                    |
+| <sub>readInt16(): ?Integer</sub>                                                                 |
+| Read 16 bit integer value and advance read position by 4 byte                                    |
+| <sub>readInt32(): ?Integer</sub>                                                                 |
+| Read 64 bit integer value and advance read position by 8 byte                                    |
+| <sub>readInt64(): ?Integer</sub>                                                                 |
+| Read 8 bit integer value and advance read position by 1 byte                                     |
+| <sub>readInt8(): ?Integer</sub>                                                                  |
+| Read a string with maximum size of 255 bytes                                                     |
+| <sub>readLargeString(): ?String</sub>                                                            |
+| Read a string with maximum size of 65535 bytes                                                   |
+| <sub>readMediumString(): ?String</sub>                                                           |
+| Read a string with maximum size of 4294967295 bytes                                              |
+| <sub>readSmallString(): ?String</sub>                                                            |
+| Remove values from byte array                                                                    |
+| <sub>remove($index: Integer, $size: Integer): Null</sub>                                         |
+| Set read position                                                                                |
+| <sub>setReadPosition($position: Integer): Null</sub>                                             |
+| Set write position                                                                               |
+| <sub>setWritePosition($position: Integer): Null</sub>                                            |
+| Return size of byte array                                                                        |
+| <sub>size(): Integer</sub>                                                                       |
+| Write bool value and advance write position by 1 byte                                            |
+| <sub>writeBool($value: Boolean): Null</sub>                                                      |
+| Write 32 bit float value and advance write position by 4 byte                                    |
+| <sub>writeFloat($value: Integer): Null</sub>                                                     |
+| Write 16 bit integer value and advance write position by 2 byte                                  |
+| <sub>writeInt16($value: Integer): Null</sub>                                                     |
+| Write 32 bit integer value and advance write position by 4 byte                                  |
+| <sub>writeInt32($value: Integer): Null</sub>                                                     |
+| Write 64 bit integer value and advance write position by 8 byte                                  |
+| <sub>writeInt64($value: Integer): Null</sub>                                                     |
+| Write 8 bit integer value and advance write position by 1 byte                                   |
+| <sub>writeInt8($value: Integer): Null</sub>                                                      |
+| Write a string with maximum size of 255 bytes                                                    |
+| <sub>writeLargeString($value: String): Null</sub>                                                |
+| Write a string with maximum size of 65535 bytes                                                  |
+| <sub>writeMediumString($value: String): Null</sub>                                               |
+| Write a string with maximum size of 4294967295 bytes                                             |
+| <sub>writeSmallString($value: String): Null</sub>                                                |
 
 ## 6.3. Array class
 
@@ -956,12 +1032,41 @@ end
 | Remove key from set                                                                              |
 | <sub>remove($key: String): Null</sub>                                                            |
 
-## 6.6. Transform class
+## 6.6. HTTP download client class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | &nbsp;                                    |
 | <b>STATIC METHODS</b>                     |
+| HTTP Download Client                                                                             |
+| <sub><b>static</b> HTTPDownloadClient(): HTTPDownloadClient</sub>                                |
+| &nbsp;                                    |
+| <b>NON STATIC METHODS</b>                 |
+| Execute request                                                                                  |
+| <sub>execute(): Null</sub>                                                                       |
+| Get file URI                                                                                     |
+| <sub>getFile(): String</sub>                                                                     |
+| Get progress                                                                                     |
+| <sub>getProgress(): Float</sub>                                                                  |
+| Get URL                                                                                          |
+| <sub>getURL(): String</sub>                                                                      |
+| Returns if download has been finished                                                            |
+| <sub>isFinished(): Boolean</sub>                                                                 |
+| Reset HTTP download client                                                                       |
+| <sub>reset(): Null</sub>                                                                         |
+| Set file                                                                                         |
+| <sub>setFile($url: String): Null</sub>                                                           |
+| Set URL                                                                                          |
+| <sub>setURL($url: String): Null</sub>                                                            |
+
+## 6.7. Transform class
+
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| &nbsp;                                    |
+| <b>STATIC METHODS</b>                     |
+| Create Transform                                                                                 |
+| <sub><b>static</b> Transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 | X axis as vector3                                                                                |
 | <sub><b>static</b> Transform::AXIS_X(): Vector3</sub>                                            |
 | Y axis as vector3                                                                                |
@@ -997,7 +1102,7 @@ end
 | Set Transform translation                                                                        |
 | <sub>setTranslation($translation: Vector3): Null</sub>                                           |
 
-## 6.7. Matrix4x4 class
+## 6.8. Matrix4x4 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1018,8 +1123,7 @@ end
 | Create 4x4 matrix inverse                                                                        |
 | <sub>invert(): Matrix4x4</sub>                                                                   |
 
-
-## 6.8. Matrix3x3 class
+## 6.9. Matrix3x3 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1038,7 +1142,7 @@ end
 | Create translation 3x3 matrix                                                                    |
 | <sub><b>static</b> Matrix3x3::translate($translation: Vector2): Matrix3x3</sub>                  |
 
-## 6.9. Quaternion class
+## 6.10. Quaternion class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1059,7 +1163,7 @@ end
 | Normalize quaternion                                                                             |
 | <sub>normalize(): Quaternion</sub>                                                               |
 
-## 6.10. Vector2 class
+## 6.11. Vector2 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1082,7 +1186,7 @@ end
 | Normalize vector2                                                                                |
 | <sub>normalize(): Vector2</sub>                                                                  |
 
-## 6.11. Vector3 class
+## 6.12. Vector3 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1111,7 +1215,7 @@ end
 | Normalize vector3                                                                                |
 | <sub>normalize(): Vector3</sub>                                                                  |
 
-## 6.12. Vector4 class
+## 6.13. Vector4 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1138,8 +1242,6 @@ end
 | Normalize vector4                                                                                |
 | <sub>normalize(): Vector4</sub>                                                                  |
 
-# 7. MiniScript Base Methods
-
 ## 7.1. Base methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
@@ -1150,8 +1252,6 @@ end
 | <sub>getVariable($variable: String): Mixed</sub>                                                 |
 | Set variable                                                                                     |
 | <sub>setVariable($variable: String, $value: Mixed): Mixed</sub>                                  |
-| Unset variable                                                                                   |
-| <sub>unsetVariable($variable: String): Null</sub>                                                |
 | Add                                                                                              |
 | <sub>add($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Logical and                                                                                      |
@@ -1166,6 +1266,10 @@ end
 | <sub>bitwiseXor($a: Integer, $b: Integer): Integer</sub>                                         |
 | Create bool                                                                                      |
 | <sub>bool($bool: Boolean): Boolean</sub>                                                         |
+| Break out of current forCondition or forTime loop                                                |
+| <sub>break(): Null</sub>                                                                         |
+| Continue to next iteration of forCondition or forTime loop                                       |
+| <sub>continue(): Null</sub>                                                                      |
 | Divide                                                                                           |
 | <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Else                                                                                             |
@@ -1202,6 +1306,10 @@ end
 | <sub>notEqual($a: Mixed, $b: Mixed): Boolean</sub>                                               |
 | Logical or                                                                                       |
 | <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
+| Postfix decrement                                                                                |
+| <sub>postfixDecrement(&$variable: Integer): Integer</sub>                                        |
+| Postfix increment                                                                                |
+| <sub>postfixIncrement(&$variable: Integer): Integer</sub>                                        |
 | Prefix decrement                                                                                 |
 | <sub>prefixDecrement(&$variable: Integer): Integer</sub>                                         |
 | Prefix increment                                                                                 |
@@ -1210,8 +1318,6 @@ end
 | <sub>return([$value: Mixed]): Null</sub>                                                         |
 | Subtract                                                                                         |
 | <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
-| Not documented                                                                                   |
-| <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 
 ## 7.2. Application methods
 
@@ -2090,8 +2196,10 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 | && | and($a: Boolean, $b: Boolean): Boolean                                                      |
 | *  | mul($a: Mixed, $b: Mixed): Mixed                                                            |
 | +  | add($a: Mixed, $b: Mixed): Mixed                                                            |
+| ++ | postfixIncrement(&$variable: Integer): Integer                                              |
 | ++ | prefixIncrement(&$variable: Integer): Integer                                               |
 | -  | sub($a: Mixed, $b: Mixed): Mixed                                                            |
+| -- | postfixDecrement(&$variable: Integer): Integer                                              |
 | -- | prefixDecrement(&$variable: Integer): Integer                                               |
 | /  | div($a: Mixed, $b: Mixed): Mixed                                                            |
 | <  | lesser($a: Mixed, $b: Mixed): Boolean                                                       |

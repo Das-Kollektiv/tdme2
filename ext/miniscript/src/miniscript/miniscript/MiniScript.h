@@ -68,9 +68,11 @@ public:
 		// see: https://en.cppreference.com/w/cpp/language/operator_precedence
 		OPERATOR_NONE,
 		// priority 2
-		OPERATOR_INCREMENT,
-		OPERATOR_DECREMENT,
+		OPERATOR_POSTFIX_INCREMENT,
+		OPERATOR_POSTFIX_DECREMENT,
 		// priority 3
+		OPERATOR_PREFIX_INCREMENT,
+		OPERATOR_PREFIX_DECREMENT,
 		OPERATOR_NOT,
 		OPERATOR_BITWISENOT,
 		// priority 5
@@ -2553,7 +2555,26 @@ protected:
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
-		enum EndType { ENDTYPE_BLOCK, ENDTYPE_FOR, ENDTYPE_IF };
+		enum BlockType { BLOCKTYPE_NONE, BLOCKTYPE_BLOCK, BLOCKTYPE_FOR, BLOCKTYPE_IF };
+		struct Block {
+			Block():
+				type(BLOCKTYPE_NONE),
+				continueStatement(nullptr),
+				breakStatement(nullptr)
+			{}
+			Block(
+				BlockType type,
+				const Statement* continueStatement,
+				const Statement* breakStatement
+			):
+				type(type),
+				continueStatement(continueStatement),
+				breakStatement(breakStatement)
+			{}
+			BlockType type;
+			const Statement* continueStatement;
+			const Statement* breakStatement;
+		};
 		enum ConditionType {
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
@@ -2571,7 +2592,7 @@ protected:
 		unordered_map<string, Variable*> variables;
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
-		stack<EndType> endTypeStack;
+		vector<Block> blockStack;
 		// applies for functions only
 		Variable returnValue;
 	};
@@ -2614,6 +2635,14 @@ protected:
 	 */
 	inline void setNativeHash(const string& nativeHash) {
 		this->nativeHash = nativeHash;
+	}
+
+	/**
+	 * Go to statement
+	 * @param statement statement
+	 */
+	void gotoStatement(const Statement& statement) {
+		getScriptState().gotoStatementIdx = statement.statementIdx;
 	}
 
 	/**
@@ -2662,8 +2691,8 @@ protected:
 		if (isFunctionRunning() == false) enabledNamedConditions.clear();
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		if (scriptIdx != SCRIPTIDX_NONE) scriptState.endTypeStack.push(ScriptState::ENDTYPE_BLOCK);
+		scriptState.blockStack.clear();
+		if (scriptIdx != SCRIPTIDX_NONE) scriptState.blockStack.emplace_back(ScriptState::BLOCKTYPE_BLOCK, nullptr, nullptr);
 		scriptState.id.clear();
 		scriptState.scriptIdx = scriptIdx;
 		scriptState.statementIdx = STATEMENTIDX_FIRST;
@@ -3451,8 +3480,10 @@ public:
 	inline static string getOperatorAsString(Operator operator_) {
 		switch(operator_) {
 			case(OPERATOR_NONE): return "NONE";
-			case(OPERATOR_INCREMENT): return "++";
-			case(OPERATOR_DECREMENT): return "--";
+			case(OPERATOR_POSTFIX_INCREMENT): return "++";
+			case(OPERATOR_POSTFIX_DECREMENT): return "--";
+			case(OPERATOR_PREFIX_INCREMENT): return "++";
+			case(OPERATOR_PREFIX_DECREMENT): return "--";
 			case(OPERATOR_NOT): return "!";
 			case(OPERATOR_BITWISENOT): return "~";
 			case(OPERATOR_MULTIPLICATION): return "*";
@@ -3758,7 +3789,7 @@ public:
 				auto& existingVariable = variableIt->second;
 				if (existingVariable->isConstant() == false) {
 					// if we set a variable in variable scope that did exist before, we can safely remove the constness
-					*existingVariable = variable;
+					existingVariable->setValue(variable);
 				} else {
 					_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
 				}
@@ -3936,6 +3967,20 @@ public:
 	 * @return methods
 	 */
 	const vector<Method*> getMethods();
+
+	/**
+	 * Get method by operator
+	 * @param operator_ operator
+	 * @return method or nullptr
+	 */
+	inline Method* getOperatorMethod(Operator operator_) {
+		auto methodIt = operators.find(operator_);
+		if (methodIt != operators.end()) {
+			return methodIt->second;
+		} else {
+			return nullptr;
+		}
+	}
 
 	/**
 	 * @return operator methods

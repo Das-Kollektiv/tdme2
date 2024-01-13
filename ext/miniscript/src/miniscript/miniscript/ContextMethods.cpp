@@ -99,6 +99,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 							_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
+							miniScript->getContext()->push(script);
 							#if defined (__clang__)
 								// Clang currently does not support initializing span using begin and end iterators,
 								vector<MiniScript::Variable> callArguments(arguments.size() - 2);
@@ -112,6 +113,7 @@ void ContextMethods::registerMethods(MiniScript* miniScript) {
 								span callArgumentsSpan(arguments.begin() + 2, arguments.end());
 								script->call(scriptIdx, callArgumentsSpan, returnValue);
 							#endif
+							miniScript->getContext()->pop();
 						}
 					}
 				}
