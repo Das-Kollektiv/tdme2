@@ -2317,12 +2317,16 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 		Method* postfixOperatorMethod { nullptr };
 		//
 		{
+			// resolve method
 			method = getOperatorMethod(nextOperators.operator_);
 			if (method == nullptr) {
 				_Console::println(getStatementInformation(statement) + ": operator @" + to_string(nextOperators.idx) + ": no operator method found");
 				scriptValid = false;
 				return preprocessedStatement;
 			}
+			// default for methods with 1 argument is post fix operator method
+			postfixOperatorMethod = method;
+			//
 			// special case prefix or postfix operator methods, that have 1 argument only
 			if (method->getOperator() == OPERATOR_POSTFIX_INCREMENT ||
 				method->getOperator() == OPERATOR_PREFIX_INCREMENT) {
