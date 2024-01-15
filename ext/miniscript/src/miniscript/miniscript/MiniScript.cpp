@@ -164,7 +164,16 @@ const vector<string> MiniScript::getTranspilationUnits() {
 }
 
 MiniScript::MiniScript() {
-	for (auto datatype: dataTypes) dataTypeScriptContexts.push_back(datatype->createScriptContext());
+	for (auto dataType: dataTypes) {
+		if (dataType->isRequiringGarbageCollection() == false) continue;
+		// create script context
+		auto scriptContext = dataType->createScriptContext();
+		scriptContext->setMiniScript(this);
+		scriptContext->setIndex(garbageCollectionDataTypes.size());
+		//
+		garbageCollectionDataTypes.emplace_back(dataType,scriptContext);
+		garbageCollectionScriptContextsByDataType[dataType->getType()] = scriptContext;
+	}
 	setNative(false);
 	pushScriptState();
 }
@@ -174,8 +183,7 @@ MiniScript::~MiniScript() {
 	for (const auto& [stateMachineStateId, stateMachineState]: this->stateMachineStates) delete stateMachineState;
 	while (scriptStateStack.empty() == false) popScriptState();
 	garbageCollection();
-	for (auto i = 0; i < dataTypes.size(); i++) dataTypes[i]->deleteScriptContext(dataTypeScriptContexts[i]);
-	dataTypeScriptContexts.clear();
+	for (auto& garbageCollectionDataType: garbageCollectionDataTypes) garbageCollectionDataType.dataType->deleteScriptContext(garbageCollectionDataType.context);
 }
 
 void MiniScript::registerStateMachineState(StateMachineState* state) {
@@ -1309,7 +1317,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 	auto lineIdx = LINE_FIRST;
 	auto currentLineIdx = 0;
 	auto statementIdx = STATEMENTIDX_FIRST;
-	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
+	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF, GOTOSTATEMENTTYPE_SWITCH, GOTOSTATEMENTTYPE_CASE, GOTOSTATEMENTTYPE_DEFAULT };
 	struct GotoStatementStruct {
 		GotoStatementType type;
 		int statementIdx;
@@ -1465,14 +1473,14 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 					auto rightBracketIdx = statement.find(')');
 					if (leftBracketIdx != string::npos || leftBracketIdx != string::npos) {
 						if (leftBracketIdx == string::npos) {
-							_Console::println("MiniScript::parseScriptInternal(): " + scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
+							_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							scriptValid = false;
 						} else
 						if (rightBracketIdx == string::npos) {
-							_Console::println("MiniScript::parseScriptInternal(): " + scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
+							_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
@@ -1494,7 +1502,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 										reference
 									);
 								} else {
-									_Console::println("MiniScript::parseScriptInternal(): " + scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
+									_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
 									parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
@@ -1538,9 +1546,9 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 					arguments
 				);
 			} else {
-				_Console::println("MiniScript::parseScriptInternal(): " + scriptFileName + ": @" + to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
+				_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'function:', 'callable:'");
 				//
-				parseErrors.push_back(to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
+				parseErrors.push_back(to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'function:', 'callable:'");
 				//
 				scriptValid = false;
 			}
@@ -1550,9 +1558,9 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 				_StringTools::startsWith(statementCode, "on-enabled:") == true ||
 				_StringTools::startsWith(statementCode, "callable:") == true
 			) {
-				_Console::println("MiniScript::parseScriptInternal(): " + scriptFileName + ": @" + to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
+				_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": unbalanced if/elseif/else/switch/case/default/forCondition/forTime/end");
 				//
-				parseErrors.push_back(to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
+				parseErrors.push_back(to_string(currentLineIdx) + ": unbalanced if/elseif/else/switch/case/default/forCondition/forTime/end");
 				//
 				scriptValid = false;
 			} else
@@ -1585,6 +1593,23 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
+						case GOTOSTATEMENTTYPE_SWITCH:
+							{
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
+							}
+							break;
+						case GOTOSTATEMENTTYPE_CASE:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size() + 1;
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
+							}
+							break;
+						case GOTOSTATEMENTTYPE_DEFAULT:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size() + 1;
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
+							}
+							break;
 					}
 				} else{
 					scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
@@ -1609,7 +1634,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 							}
 							break;
 						default:
-							_Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if/elseif");
+							_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if/elseif");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": else without if/elseif");
 							//
@@ -1623,7 +1648,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 						}
 					);
 				} else {
-					_Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if");
+					_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if");
 					//
 					parseErrors.push_back(to_string(currentLineIdx) + ": else without if");
 					//
@@ -1656,7 +1681,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 							}
 							break;
 						default:
-							_Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
+							_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 							scriptValid = false;
 							break;
 					}
@@ -1667,7 +1692,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 						}
 					);
 				} else {
-					_Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
+					_Console::println(scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 					//
 					parseErrors.push_back(to_string(currentLineIdx) + ": elseif without if");
 					//
@@ -1698,6 +1723,30 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 							.statementIdx = statementIdx
 						}
 					);
+				} else
+				if (_StringTools::regexMatch(executableStatement, "^switch[\\s]*\\(.*\\)$") == true) {
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_SWITCH,
+							.statementIdx = STATEMENTIDX_NONE
+						}
+					);
+				} else
+				if (_StringTools::regexMatch(executableStatement, "^case[\\s]*\\(.*\\)$") == true) {
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_CASE,
+							.statementIdx = statementIdx
+						}
+					);
+				}
+				if (_StringTools::regexMatch(executableStatement, "^default[\\s]*$") == true) {
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_DEFAULT,
+							.statementIdx = statementIdx
+						}
+					);
 				}
 				scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, executableStatement, STATEMENTIDX_NONE);
 			}
@@ -1705,11 +1754,11 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 		}
 	}
 
-	// check for unbalanced forXXX/if/elseif/else/end
+	// check for unbalanced if/elseif/else/switch/case/default/forCondition/forTime/end
 	if (scriptValid == true && gotoStatementStack.empty() == false) {
-		_Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
+		_Console::println(scriptFileName + ": unbalanced if/elseif/else/switch/case/default/forCondition/forTime/end");
 		//
-		parseErrors.push_back("Unbalanced forXXX/if/elseif/else/end");
+		parseErrors.push_back("Unbalanced if/elseif/else/switch/case/default/forCondition/forTime/end");
 		//
 		scriptValid = false;
 		//
@@ -4124,5 +4173,9 @@ void MiniScript::setConstantInternal(Variable& variable) {
 }
 
 void MiniScript::garbageCollection() {
-	for (auto i = 0; i < dataTypes.size(); i++) dataTypes[i]->garbageCollection(dataTypeScriptContexts[i]);
+	auto garbageCollectionDataTypesIndicesCopy = garbageCollectionDataTypesIndices;
+	for (auto index: garbageCollectionDataTypesIndicesCopy) {
+		auto& garbageCollectionDataType = garbageCollectionDataTypes[index];
+		garbageCollectionDataType.dataType->garbageCollection(garbageCollectionDataType.context);
+	}
 }

@@ -488,12 +488,12 @@ const string MiniScriptVector4::getValueAsString(const MiniScript::Variable& var
 
 }
 
-void* MiniScriptVector4::createScriptContext() const {
+MiniScript::DataType::ScriptContext* MiniScriptVector4::createScriptContext() const {
 	return nullptr;
 }
 
-void MiniScriptVector4::deleteScriptContext(void* context) const {
+void MiniScriptVector4::deleteScriptContext(ScriptContext* context) const {
 }
 
-void MiniScriptVector4::garbageCollection(void* context) const {
+void MiniScriptVector4::garbageCollection(ScriptContext* context) const {
 }

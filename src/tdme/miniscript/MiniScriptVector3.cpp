@@ -519,12 +519,12 @@ const string MiniScriptVector3::getValueAsString(const MiniScript::MiniScript::V
 
 }
 
-void* MiniScriptVector3::createScriptContext() const {
+MiniScript::DataType::ScriptContext* MiniScriptVector3::createScriptContext() const {
 	return nullptr;
 }
 
-void MiniScriptVector3::deleteScriptContext(void* context) const {
+void MiniScriptVector3::deleteScriptContext(ScriptContext* context) const {
 }
 
-void MiniScriptVector3::garbageCollection(void* context) const {
+void MiniScriptVector3::garbageCollection(ScriptContext* context) const {
 }

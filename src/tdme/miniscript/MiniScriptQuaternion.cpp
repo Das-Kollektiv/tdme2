@@ -372,12 +372,12 @@ const string MiniScriptQuaternion::getValueAsString(const MiniScript::Variable& 
 
 }
 
-void* MiniScriptQuaternion::createScriptContext() const {
+MiniScript::DataType::ScriptContext* MiniScriptQuaternion::createScriptContext() const {
 	return nullptr;
 }
 
-void MiniScriptQuaternion::deleteScriptContext(void* context) const {
+void MiniScriptQuaternion::deleteScriptContext(ScriptContext* context) const {
 }
 
-void MiniScriptQuaternion::garbageCollection(void* context) const {
+void MiniScriptQuaternion::garbageCollection(ScriptContext* context) const {
 }

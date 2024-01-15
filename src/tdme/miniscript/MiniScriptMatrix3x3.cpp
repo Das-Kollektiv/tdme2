@@ -357,12 +357,12 @@ const string MiniScriptMatrix3x3::getValueAsString(const MiniScript::Variable& v
 
 }
 
-void* MiniScriptMatrix3x3::createScriptContext() const {
+MiniScript::DataType::ScriptContext* MiniScriptMatrix3x3::createScriptContext() const {
 	return nullptr;
 }
 
-void MiniScriptMatrix3x3::deleteScriptContext(void* context) const {
+void MiniScriptMatrix3x3::deleteScriptContext(ScriptContext* context) const {
 }
 
-void MiniScriptMatrix3x3::garbageCollection(void* context) const {
+void MiniScriptMatrix3x3::garbageCollection(ScriptContext* context) const {
 }

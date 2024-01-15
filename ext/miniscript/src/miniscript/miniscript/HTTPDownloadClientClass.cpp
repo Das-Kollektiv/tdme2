@@ -43,10 +43,11 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				return "HTTPDownloadClient";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				auto& scriptContext = *static_cast<HTTPDownloadClientClass::ScriptContext*>(miniScript->getDataTypeScriptContext(MiniScript::TYPE_HTTPDOWNLOADCLIENT));
+				auto& scriptContext = *static_cast<HTTPDownloadClientClass::HTTPDownloadClientClassScriptContext*>(miniScript->getDataTypeScriptContext(MiniScript::TYPE_HTTPDOWNLOADCLIENT));
 				//
 				auto httpDownloadClient = make_shared<_HTTPDownloadClient>();
-				scriptContext.instances.push_back(httpDownloadClient);
+				scriptContext.getInstances().push_back(httpDownloadClient);
+				scriptContext.setRequiresGarbageCollection();
 				//
 				returnValue.setType(MiniScript::TYPE_HTTPDOWNLOADCLIENT);
 				returnValue.setValue(&httpDownloadClient);
@@ -715,22 +716,26 @@ const string HTTPDownloadClientClass::getValueAsString(const MiniScript::Variabl
 	return "HTTPDownloadClientClass(url: " + httpDownloadClient->getURL() + ", file: " + httpDownloadClient->getFile() + ")";
 }
 
-void* HTTPDownloadClientClass::createScriptContext() const {
-	return new ScriptContext();
+MiniScript::DataType::ScriptContext* HTTPDownloadClientClass::createScriptContext() const {
+	return new HTTPDownloadClientClassScriptContext();
 }
 
-void HTTPDownloadClientClass::deleteScriptContext(void* context) const {
-	delete static_cast<ScriptContext*>(context);
+void HTTPDownloadClientClass::deleteScriptContext(MiniScript::DataType::ScriptContext* context) const {
+	delete static_cast<HTTPDownloadClientClassScriptContext*>(context);
 }
 
-void HTTPDownloadClientClass::garbageCollection(void* context) const {
-	auto& scriptContext = *static_cast<ScriptContext*>(context);
-	for (auto i = 0; i < scriptContext.instances.size(); i++) {
-		auto& instance = scriptContext.instances[i];
+void HTTPDownloadClientClass::garbageCollection(MiniScript::DataType::ScriptContext* context) const {
+	auto& scriptContext = *static_cast<HTTPDownloadClientClassScriptContext*>(context);
+	auto& instances = scriptContext.getInstances();
+	for (auto i = 0; i < instances.size(); i++) {
+		auto& instance = instances[i];
 		if (instance.use_count() == 1 && instance->isFinished() == true) {
 			instance->join();
-			scriptContext.instances.erase(scriptContext.instances.begin() + i);
+			instances.erase(instances.begin() + i);
 			i--;
 		}
+	}
+	if (instances.empty() == true) {
+		scriptContext.unsetRequiresGarbageCollection();
 	}
 }

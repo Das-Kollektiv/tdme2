@@ -1292,8 +1292,12 @@ end
 | <sub>bool($bool: Boolean): Boolean</sub>                                                         |
 | Break out of current forCondition or forTime loop                                                |
 | <sub>break(): Null</sub>                                                                         |
+| Begins a case block within a switch block, which will be executed if the case value has matched  |
+| <sub>case($value: Mixed): Null</sub>                                                             |
 | Continue to next iteration of forCondition or forTime loop                                       |
 | <sub>continue(): Null</sub>                                                                      |
+| Begins a default block within a switch block, which will be executed if no case value has matched|
+| <sub>default(): Null</sub>                                                                       |
 | Divide                                                                                           |
 | <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Else                                                                                             |
@@ -1342,6 +1346,8 @@ end
 | <sub>return([$value: Mixed]): Null</sub>                                                         |
 | Subtract                                                                                         |
 | <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| Begins switch block to match a given value to case values or a default                           |
+| <sub>switch($value: Mixed): Null</sub>                                                           |
 
 ## 7.2. Application methods
 

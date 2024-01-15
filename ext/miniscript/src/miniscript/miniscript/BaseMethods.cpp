@@ -68,7 +68,7 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (miniScript->getScriptState().blockStack.empty() == true) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forXXX");
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forCondition/forTime");
 					miniScript->startErrorScript();
 				} else {
 					auto& blockStack = miniScript->getScriptState().blockStack;
@@ -81,7 +81,7 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 						}
 					}
 					if (endType.type == MiniScript::ScriptState::BLOCKTYPE_NONE) {
-						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forXXX");
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": break without forCondition/forTime");
 					} else
 					if (endType.continueStatement != nullptr) {
 						miniScript->gotoStatement(*endType.breakStatement);
@@ -105,7 +105,7 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (miniScript->getScriptState().blockStack.empty() == true) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forXXX");
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forCondition, forTime");
 					miniScript->startErrorScript();
 				} else {
 					auto& blockStack = miniScript->getScriptState().blockStack;
@@ -118,7 +118,7 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 						}
 					}
 					if (endType == nullptr) {
-						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forXXX");
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": continue without forCondition, forTime");
 					} else
 					if (endType->continueStatement != nullptr) {
 						miniScript->gotoStatement(*endType->continueStatement);
@@ -142,25 +142,21 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (miniScript->getScriptState().blockStack.empty() == true) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without block/forXXX/if");
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without if/elseif/else/switch/case/default/forCondition/forTime/end");
 					miniScript->startErrorScript();
 				} else {
 					auto& blockStack = miniScript->getScriptState().blockStack;
-					auto endType = blockStack[blockStack.size() - 1];
-					blockStack.erase(blockStack.begin() + blockStack.size() - 1);
-					switch(endType.type) {
+					auto& block = blockStack[blockStack.size() - 1];
+					switch(block.type) {
 						case MiniScript::ScriptState::BLOCKTYPE_BLOCK:
 							if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
 								miniScript->stopRunning();
 							}
 							break;
-						case MiniScript::ScriptState::BLOCKTYPE_FOR:
-							// no op
-							break;
-						case MiniScript::ScriptState::BLOCKTYPE_IF:
-							miniScript->getScriptState().conditionStack.pop();
+						default:
 							break;
 					}
+					blockStack.erase(blockStack.begin() + blockStack.size() - 1);
 					if (statement.gotoStatementIdx != MiniScript::STATEMENTIDX_NONE) {
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
@@ -209,9 +205,11 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 						miniScript->gotoStatementGoto(statement);
 					} else {
 						scriptState.blockStack.emplace_back(
-							MiniScript::ScriptState::BLOCKTYPE_FOR,
+							MiniScript::ScriptState::BLOCKTYPE_FORTIME,
+							false,
 							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx - 1],
-							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx]
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx],
+							MiniScript::Variable()
 						);
 					}
 				}
@@ -250,8 +248,10 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 						auto& scriptState = miniScript->getScriptState();
 						scriptState.blockStack.emplace_back(
 							MiniScript::ScriptState::BLOCKTYPE_FOR,
+							false,
 							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx - 1],
-							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx]
+							&miniScript->getScripts()[scriptState.scriptIdx].statements[statement.gotoStatementIdx],
+							MiniScript::Variable()
 						);
 					}
 				}
@@ -282,8 +282,7 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				} else {
 					auto& scriptState = miniScript->getScriptState();
-					scriptState.blockStack.emplace_back(MiniScript::ScriptState::BLOCKTYPE_IF, nullptr, nullptr);
-					scriptState.conditionStack.push(booleanValue);
+					scriptState.blockStack.emplace_back(MiniScript::ScriptState::BLOCKTYPE_IF, booleanValue, nullptr, nullptr, MiniScript::Variable());
 					if (booleanValue == false) {
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
@@ -314,20 +313,19 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 				if (miniScript->getBooleanValue(arguments, 0, booleanValue, false) == false) {
 					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
-				} else
-				if (miniScript->getScriptState().conditionStack.empty() == true) {
-					_Console::println("MethodElseIfCondition::executeMethod(): elseif without if");
-					miniScript->startErrorScript();
 				} else {
 					//
-					auto conditionStackElement = miniScript->getScriptState().conditionStack.top();
-					if (conditionStackElement == false) {
-						miniScript->getScriptState().conditionStack.pop();
-						miniScript->getScriptState().conditionStack.push(booleanValue);
-					}
-					if (conditionStackElement == true || booleanValue == false) {
+					auto& scriptState = miniScript->getScriptState();
+					auto& blockStack = scriptState.blockStack[scriptState.blockStack.size() - 1];
+					if (blockStack.type != MiniScript::ScriptState::BlockType::BLOCKTYPE_IF) {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": elseif without if");
+						miniScript->startErrorScript();
+					} else
+					if (blockStack.match == true || booleanValue == false) {
 						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
+					} else {
+						blockStack.match = booleanValue;
 					}
 				}
 			}
@@ -345,19 +343,116 @@ void BaseMethods::registerMethods(MiniScript* miniScript) {
 				return "else";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				if (miniScript->getScriptState().conditionStack.empty() == true) {
-					_Console::println("MethodElse::executeMethod(): else without if");
+				auto& scriptState = miniScript->getScriptState();
+				auto& blockStack = scriptState.blockStack[scriptState.blockStack.size() - 1];
+				if (blockStack.type != MiniScript::ScriptState::BlockType::BLOCKTYPE_IF) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": else without if");
 					miniScript->startErrorScript();
-				} else {
-					auto conditionStackElement = miniScript->getScriptState().conditionStack.top();
-					if (conditionStackElement == true) {
-						miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
-						miniScript->gotoStatementGoto(statement);
-					}
+				} else
+				if (blockStack.match == true) {
+					miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
+					miniScript->gotoStatementGoto(statement);
 				}
 			}
 		};
 		miniScript->registerMethod(new MethodElse(miniScript));
+	}
+	// switch
+	{
+		//
+		class MethodSwitch: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodSwitch(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "switch";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				bool booleanValue;
+				if (arguments.size() != 1) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					auto& scriptState = miniScript->getScriptState();
+					scriptState.blockStack.emplace_back(MiniScript::ScriptState::BLOCKTYPE_SWITCH, booleanValue, nullptr, nullptr, arguments[0]);
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodSwitch(miniScript));
+	}
+	{
+		//
+		class MethodCase: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodCase(MiniScript* miniScript):
+				MiniScript::Method(
+					{
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "case";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				if (arguments.size() != 1) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					//
+					auto& scriptState = miniScript->getScriptState();
+					auto& blockStack = scriptState.blockStack[scriptState.blockStack.size() - 1];
+					if (blockStack.type != MiniScript::ScriptState::BlockType::BLOCKTYPE_SWITCH) {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": case without switch");
+						miniScript->startErrorScript();
+					} else {
+						auto match = arguments[0].getValueAsString() == blockStack.switchVariable.getValueAsString();
+						if (blockStack.match == true || match == false) {
+							miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
+							miniScript->gotoStatementGoto(statement);
+						} else {
+							blockStack.match = match;
+							scriptState.blockStack.emplace_back(MiniScript::ScriptState::BLOCKTYPE_CASE, false, nullptr, nullptr, MiniScript::Variable());
+						}
+					}
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodCase(miniScript));
+	}
+	{
+		//
+		class MethodDefault: public MiniScript::Method {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			MethodDefault(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "default";
+			}
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+				auto& scriptState = miniScript->getScriptState();
+				auto& blockStack = scriptState.blockStack[scriptState.blockStack.size() - 1];
+				if (blockStack.type != MiniScript::ScriptState::BlockType::BLOCKTYPE_SWITCH) {
+					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": default without switch");
+					miniScript->startErrorScript();
+				} else
+				if (blockStack.match == true) {
+					miniScript->setScriptStateState(MiniScript::STATEMACHINESTATE_NEXT_STATEMENT);
+					miniScript->gotoStatementGoto(statement);
+				}
+			}
+		};
+		miniScript->registerMethod(new MethodDefault(miniScript));
 	}
 	// equality
 	{

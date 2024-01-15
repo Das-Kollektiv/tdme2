@@ -169,8 +169,61 @@ public:
 		friend class MathMethods;
 
 	protected:
+		/**
+		 * Script context
+		 */
+		class ScriptContext {
+			friend class MiniScript;
+			public:
+				/**
+				 * Constructor
+				 */
+				ScriptContext() {}
+
+				/**
+				 * Destructor
+				 */
+				virtual ~ScriptContext() {}
+
+				/**
+				 * Set MiniScript instance
+				 * @param miniScript MiniScript instance
+				 */
+				void setMiniScript(MiniScript* miniScript) {
+					this->miniScript = miniScript;
+				}
+
+				/**
+				 * Set garbage collection type index
+				 * @param index garbage collection type index
+				 */
+				void setIndex(int index) {
+					this->index = index;
+				}
+
+				/**
+				 * Set requires garbage collection
+				 */
+				inline void setRequiresGarbageCollection() {
+					miniScript->garbageCollectionDataTypesIndices.insert(index);
+				}
+
+				/**
+				 * Unset requires garbage collection
+				 */
+				inline void unsetRequiresGarbageCollection() {
+					miniScript->garbageCollectionDataTypesIndices.erase(index);
+				}
+
+			private:
+				int index { -1 };
+				MiniScript* miniScript { nullptr };
+		};
+
 		//
 		bool mathDataType { false };
+		bool requiresGarbageCollection { false };
+		//
 		MiniScript::VariableType type { TYPE_NULL };
 
 		/**
@@ -186,6 +239,13 @@ public:
 		 */
 		inline bool isMathDataType() {
 			return mathDataType;
+		}
+
+		/**
+		 * @return is requiring garbage collection
+		 */
+		inline bool isRequiringGarbageCollection() {
+			return requiresGarbageCollection;
 		}
 
 		/**
@@ -270,19 +330,19 @@ public:
 		 * Create script context
 		 * @return script context
 		 */
-		virtual void* createScriptContext() const = 0;
+		virtual ScriptContext* createScriptContext() const = 0;
 
 		/**
 		 * Delete script context
 		 * @param context script context
 		 */
-		virtual void deleteScriptContext(void* context) const = 0;
+		virtual void deleteScriptContext(ScriptContext* context) const = 0;
 
 		/**
 		 * Issue garbage collection
 		 * @param context script context
 		 */
-		virtual void garbageCollection(void* context) const = 0;
+		virtual void garbageCollection(ScriptContext* context) const = 0;
 
 	public:
 		// forbid class copy
@@ -291,8 +351,9 @@ public:
 		/**
 		 * Data type
 		 * @param mathDataType is math data type and provides math methods
+		 * @param requiresGarbageCollection requires garbage collection
 		 */
-		DataType(bool mathDataType): mathDataType(mathDataType) {
+		DataType(bool mathDataType, bool requiresGarbageCollection): mathDataType(mathDataType), requiresGarbageCollection(requiresGarbageCollection) {
 			//
 		}
 
@@ -2555,25 +2616,33 @@ protected:
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
-		enum BlockType { BLOCKTYPE_NONE, BLOCKTYPE_BLOCK, BLOCKTYPE_FOR, BLOCKTYPE_IF };
+		enum BlockType { BLOCKTYPE_NONE, BLOCKTYPE_BLOCK, BLOCKTYPE_FOR, BLOCKTYPE_FORTIME, BLOCKTYPE_IF, BLOCKTYPE_SWITCH, BLOCKTYPE_CASE };
 		struct Block {
 			Block():
 				type(BLOCKTYPE_NONE),
+				match(false),
 				continueStatement(nullptr),
-				breakStatement(nullptr)
+				breakStatement(nullptr),
+				switchVariable(Variable())
 			{}
 			Block(
 				BlockType type,
+				bool match,
 				const Statement* continueStatement,
-				const Statement* breakStatement
+				const Statement* breakStatement,
+				const Variable& switchVariable
 			):
 				type(type),
+				match(match),
 				continueStatement(continueStatement),
-				breakStatement(breakStatement)
+				breakStatement(breakStatement),
+				switchVariable(switchVariable)
 			{}
 			BlockType type;
+			bool match;
 			const Statement* continueStatement;
 			const Statement* breakStatement;
+			Variable switchVariable;
 		};
 		enum ConditionType {
 			SCRIPT,
@@ -2591,7 +2660,6 @@ protected:
 		string id;
 		unordered_map<string, Variable*> variables;
 		unordered_map<int, int64_t> forTimeStarted;
-		stack<bool> conditionStack;
 		vector<Block> blockStack;
 		// applies for functions only
 		Variable returnValue;
@@ -2690,9 +2758,8 @@ protected:
 		auto& scriptState = getScriptState();
 		if (isFunctionRunning() == false) enabledNamedConditions.clear();
 		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 		scriptState.blockStack.clear();
-		if (scriptIdx != SCRIPTIDX_NONE) scriptState.blockStack.emplace_back(ScriptState::BLOCKTYPE_BLOCK, nullptr, nullptr);
+		if (scriptIdx != SCRIPTIDX_NONE) scriptState.blockStack.emplace_back(ScriptState::BLOCKTYPE_BLOCK, false, nullptr, nullptr, Variable());
 		scriptState.id.clear();
 		scriptState.scriptIdx = scriptIdx;
 		scriptState.statementIdx = STATEMENTIDX_FIRST;
@@ -2866,7 +2933,26 @@ private:
 	//
 	bool scriptValid { false };
 
-	vector<void*> dataTypeScriptContexts;
+	/**
+	 * Garbage collection data type
+	 */
+	struct GarbageCollectionDataType {
+		GarbageCollectionDataType(
+			DataType* dataType,
+			DataType::ScriptContext* context):
+			dataType(dataType),
+			context(context) {
+			//
+		}
+		//
+		DataType* dataType;
+		DataType::ScriptContext* context;
+	};
+
+	//
+	vector<GarbageCollectionDataType> garbageCollectionDataTypes;
+	unordered_map<VariableType, DataType::ScriptContext*> garbageCollectionScriptContextsByDataType;
+	unordered_set<int> garbageCollectionDataTypesIndices;
 
 	/**
 	 * Parse script code into this MiniScript instance
@@ -3231,14 +3317,12 @@ public:
 	 * @param type data type
 	 * @return data type script context
 	 */
-	inline void* getDataTypeScriptContext(VariableType type) {
-		// custom data types
-		auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_DATATYPES;
-		if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-			_Console::println("MiniScript::getDataTypeScriptContext(): unknown data type with id " + to_string(dataTypeIdx));
-			return nullptr;
+	inline DataType::ScriptContext* getDataTypeScriptContext(VariableType type) {
+		auto garbageCollectionScriptContextsByDataTypeIt = garbageCollectionScriptContextsByDataType.find(type);
+		if (garbageCollectionScriptContextsByDataTypeIt != garbageCollectionScriptContextsByDataType.end()) {
+			return garbageCollectionScriptContextsByDataTypeIt->second;
 		}
-		return MiniScript::dataTypeScriptContexts[dataTypeIdx];
+		return nullptr;
 	}
 
 	/**

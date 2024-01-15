@@ -36,16 +36,29 @@ private:
 	bool div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
-	void* createScriptContext() const override;
-	void deleteScriptContext(void* context) const override;
-	void garbageCollection(void* context) const override;
+	DataType::ScriptContext* createScriptContext() const override;
+	void deleteScriptContext(DataType::ScriptContext* context) const override;
+	void garbageCollection(DataType::ScriptContext* context) const override;
 
 public:
 	/**
 	 * Script context
 	 */
-	struct ScriptContext {
-		vector<shared_ptr<_HTTPDownloadClient>> instances;
+	class HTTPDownloadClientClassScriptContext final: public ScriptContext {
+		public:
+			/**
+			 * Constructor
+			 */
+			HTTPDownloadClientClassScriptContext() {}
+
+			/**
+			 * @return instances
+			 */
+			inline vector<shared_ptr<_HTTPDownloadClient>>& getInstances() {
+				return instances;
+			}
+		private:
+			vector<shared_ptr<_HTTPDownloadClient>> instances;
 	};
 
 	// forbid class copy
@@ -76,9 +89,9 @@ public:
 	}
 
 	/**
-	 * MiniScript Vector2 data type
+	 * MiniScript HTTP download client class
 	 */
-	HTTPDownloadClientClass(): MiniScript::DataType(false) {
+	HTTPDownloadClientClass(): MiniScript::DataType(false, true) {
 		//
 	}
 

@@ -31,9 +31,9 @@ private:
 	bool div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
 	bool sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const override;
-	void* createScriptContext() const override;
-	void deleteScriptContext(void* context) const override;
-	void garbageCollection(void* context) const override;
+	ScriptContext* createScriptContext() const override;
+	void deleteScriptContext(ScriptContext* context) const override;
+	void garbageCollection(ScriptContext* context) const override;
 
 	//
 	STATIC_DLL_IMPEXT static MiniScript::VariableType TYPE_MATRIX4x4;
@@ -72,7 +72,7 @@ public:
 	/**
 	 * MiniScript Matrix4x4 data type
 	 */
-	MiniScriptMatrix4x4(): MiniScript::DataType(true) {
+	MiniScriptMatrix4x4(): MiniScript::DataType(true, false) {
 		//
 	}
 

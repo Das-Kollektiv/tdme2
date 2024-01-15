@@ -756,12 +756,12 @@ const string MiniScriptTransform::getValueAsString(const MiniScript::Variable& v
 	return result;
 }
 
-void* MiniScriptTransform::createScriptContext() const {
+MiniScript::DataType::ScriptContext* MiniScriptTransform::createScriptContext() const {
 	return nullptr;
 }
 
-void MiniScriptTransform::deleteScriptContext(void* context) const {
+void MiniScriptTransform::deleteScriptContext(ScriptContext* context) const {
 }
 
-void MiniScriptTransform::garbageCollection(void* context) const {
+void MiniScriptTransform::garbageCollection(ScriptContext* context) const {
 }
