@@ -1,5 +1,6 @@
 #include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <span>
 #include <memory>
 
@@ -21,6 +22,43 @@ using _Console = miniscript::utilities::Console;
 using _StringTools = miniscript::utilities::StringTools;
 
 void ApplicationMethods::registerConstants(MiniScript* miniScript) {
+	miniScript->setConstant("$APPLICATION::EXITCODE_SUCCESS", static_cast<int64_t>(EXIT_SUCCESS));
+	miniScript->setConstant("$APPLICATION::EXITCODE_FAILURE", static_cast<int64_t>(EXIT_FAILURE));
+	//
+	#if defined(__FreeBSD__)
+		miniScript->setConstant("$APPLICATION::OS", string("FreeBSD"));
+	#elif defined(__HAIKU__)
+		miniScript->setConstant("$APPLICATION::OS", string("Haiku"));
+	#elif defined(__linux__)
+		miniScript->setConstant("$APPLICATION::OS", string("Linux"));
+	#elif defined(__APPLE__)
+		miniScript->setConstant("$APPLICATION::OS", string("MacOSX"));
+	#elif defined(__NetBSD__)
+		miniScript->setConstant("$APPLICATION::OS", string("NetBSD"));
+	#elif defined(__OpenBSD__)
+		miniScript->setConstant("$APPLICATION::OS", string("OpenBSD"));
+	#elif defined(_MSC_VER)
+		miniScript->setConstant("$APPLICATION::OS", string("Windows-MSC"));
+	#elif defined(_WIN32)
+		miniScript->setConstant("$APPLICATION::OS", string("Windows-MINGW"));
+	#else
+		miniScript->setConstant("$APPLICATION::OS", string("Unknown"));
+	#endif
+	#if defined(__amd64__) || defined(_M_X64)
+		miniScript->setConstant("$APPLICATION::CPU", string("X64"));
+	#elif defined(__ia64__) || defined(_M_IA64)
+		miniScript->setConstant("$APPLICATION::CPU", string("IA64"));
+	#elif defined(__aarch64__)
+		miniScript->setConstant("$APPLICATION::CPU", string("ARM64"));
+	#elif defined(__arm__) || defined(_M_ARM)
+		miniScript->setConstant("$APPLICATION::CPU", string("ARM"));
+	#elif defined(__powerpc64__)
+		miniScript->setConstant("$APPLICATION::CPU", string("PPC64"));
+	#elif defined(__powerpc__)
+		miniScript->setConstant("$APPLICATION::CPU", string("PPC"));
+	#else
+		miniScript->setConstant("$APPLICATION::CPU", string("Unknown"));
+	#endif
 }
 
 const string ApplicationMethods::execute(const string& command) {
@@ -94,6 +132,36 @@ void ApplicationMethods::registerMethods(MiniScript* miniScript) {
 				}
 			};
 			miniScript->registerMethod(new MethodApplicationGetArguments(miniScript));
+		}
+		{
+			//
+			class MethodApplicationExit: public MiniScript::Method {
+			private:
+				MiniScript* miniScript { nullptr };
+			public:
+				MethodApplicationExit(MiniScript* miniScript):
+					MiniScript::Method(
+						{
+							{ .type = MiniScript::TYPE_INTEGER, .name = "exitCode", .optional = true, .reference = false, .nullable = false },
+						}
+					),
+					miniScript(miniScript) {}
+				const string getMethodName() override {
+					return "application.exit";
+				}
+				void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+					int64_t exitCode = 0ll;
+					if (MiniScript::getIntegerValue(arguments, 0, exitCode, true) == true) {
+						miniScript->getContext()->setExitCode(static_cast<int>(exitCode));
+						miniScript->stopScriptExecution();
+						miniScript->stopRunning();
+					} else {
+						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+						miniScript->startErrorScript();
+					}
+				}
+			};
+			miniScript->registerMethod(new MethodApplicationExit(miniScript));
 		}
 	}
 }

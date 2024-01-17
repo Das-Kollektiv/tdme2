@@ -1,0 +1,54 @@
+# initialize
+on: initialize
+	console.log("-------------------------")
+	console.log("switch-test: Initialize")
+	console.log("-------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("----------------------")
+	console.log("switch-test: Nothing")
+	console.log("----------------------")
+	console.log()
+	#
+	$i = 1
+	$j = b
+	switch($i)
+		case(0)
+			console.log("$i = 0")
+		end
+		case(1)
+			console.log("$i = 1")
+			switch($j)
+				case("a")
+					console.log("$j = a")
+				end
+				case("b")
+					console.log("$j = b")
+				end
+				case("c")
+					console.log("$j = c")
+				end
+			end
+		end
+		case(2)
+			console.log("$i = 2")
+		end
+		default
+			console.log("default: $i = " + $i)
+		end
+	end
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("--------------------")
+	console.log("switch-test: Error")
+	console.log("--------------------")
+	console.log("An error occurred")
+	script.stop()
+end

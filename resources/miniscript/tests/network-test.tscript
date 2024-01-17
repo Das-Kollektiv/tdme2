@@ -36,16 +36,22 @@ on: nothing
 	end
 	#
 	$httpDownloadClient = HTTPDownloadClient()
-	$httpDownloadClient->setURL("https://mindty.com")
-	$httpDownloadClient->setFile("mindty.com.html")
+	$httpDownloadClient->setURL("https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso")
+	$httpDownloadClient->setFile("FreeBSD-14.0-RELEASE-amd64-bootonly.iso")
+	$httpDownloadClient->setHeaders({a: 1})
 	console.log("HTTP download client: " + $httpDownloadClient)
-	$httpDownloadClient->execute()
+	$httpDownloadClient->start()
+	console.print("[")
 	forCondition($httpDownloadClient->isFinished() == false)
-		console.log($httpDownloadClient->getProgress())
+		console.print("-")
 		script.wait(1000)
 	end
-	if (filesystem.removeFile(".", "mindty.com.html") == false)
-		console.log("Could not remove file mindty.com.html.")
+	console.println("]")
+	$httpDownloadClient->join()
+	console.log("HTTP Download status code: " + $httpDownloadClient->getStatusCode())
+	console.log("HTTP Download response headers: " + $httpDownloadClient->getResponseHeaders())
+	if (filesystem.removeFile(".", "FreeBSD-14.0-RELEASE-amd64-bootonly.iso") == false)
+		console.log("Could not remove file FreeBSD-14.0-RELEASE-amd64-bootonly.iso.")
 	end
 	#
 	script.stop()

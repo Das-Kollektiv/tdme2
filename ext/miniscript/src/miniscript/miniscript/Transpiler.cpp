@@ -1359,7 +1359,7 @@ void Transpiler::generateArrayAccessMethods(
 												if (arrayAccessStatementAsScriptVariable.getFloatValue(floatValue) == true) {
 													generatedDefinitions+= lamdaIndent + "// Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement, statement index " + to_string(statement.statementIdx) + ", argument indices " + MiniScript::getArgumentIndicesAsString(nextArgumentIndices, ", ") + ", array access statement index " + to_string(arrayAccessStatementIdx) + "\n";
 													generatedDefinitions+= lamdaIndent + "auto array_access_statement_" + to_string(statement.statementIdx) + "_" + MiniScript::getArgumentIndicesAsString(nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx) + " = [&](const Statement& statement) -> Variable {" + "\n";
-													generatedDefinitions+= lamdaIndent + "	return Variable(static_cast<int64_t>(" + to_string(static_cast<int64_t>(floatValue)) + "ll));" + "\n"; + "\n";
+													generatedDefinitions+= lamdaIndent + "	return Variable(static_cast<int64_t>(" + to_string(static_cast<int64_t>(floatValue)) + "ll));" + "\n";
 													generatedDefinitions+= lamdaIndent + "};" + "\n";
 												}
 												// literals

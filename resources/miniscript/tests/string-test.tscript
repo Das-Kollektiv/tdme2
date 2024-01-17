@@ -1,0 +1,29 @@
+# initialize
+on: initialize
+	console.log("-------------------------")
+	console.log("string-test: Initialize")
+	console.log("-------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("----------------------")
+	console.log("string-test: Nothing")
+	console.log("----------------------")
+	console.log()
+	console.println("Hi, lets produce\na newline, and\nanother one: \"yarrrrr\"")
+	console.println("Some Umlauts love: äöü >>> ÄÖÜ")
+	console.println("Some more Umlauts love: \U000000fc")
+	console.println("Beep\a")
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("--------------------")
+	console.log("string-test: Error")
+	console.log("--------------------")
+	console.log("An error occurred")
+	script.stop()
+end

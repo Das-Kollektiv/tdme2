@@ -1,5 +1,9 @@
 #include <miniscript/miniscript/MiniScript.h>
 
+#if defined(_MSC_VER)
+	#include <windows.h>
+#endif
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -125,6 +129,10 @@ const string MiniScript::Variable::TYPENAME_SET = "Set";
 const vector<string> MiniScript::Method::CONTEXTFUNCTIONS_ALL = {};
 
 void MiniScript::initialize() {
+	//
+	#if defined(_MSC_VER)
+		SetConsoleOutputCP(65001);
+	#endif
 	//
 	registerDataType(new HTTPDownloadClientClass());
 	//
@@ -785,7 +793,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 		if (viewIsVariableAccess(argument) == true) {
 			//
 			Variable value;
-			value.setValue(deescape(argument));
+			value.setValue(deescape(argument, statement));
 
 			// look up getVariable method
 			string methodName = argumentIdx >= argumentReferences.size() || argumentReferences[argumentIdx] == false?"getVariable":"getVariableReference";
@@ -805,7 +813,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 
 			syntaxTree.arguments.emplace_back(
 				SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
-				MiniScript::Variable(deescape(methodName)),
+				MiniScript::Variable(deescape(methodName, statement)),
 				method,
 				initializer_list<SyntaxTreeNode>
 					{
@@ -853,7 +861,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 				_StringTools::viewEndsWith(argument, "'") == true)) {
 				//
 				Variable value;
-				value.setValue(deescape(_StringTools::viewSubstring(argument, 1, argument.size() - 1)));
+				value.setValue(deescape(_StringTools::viewSubstring(argument, 1, argument.size() - 1), statement));
 				//
 				syntaxTree.arguments.emplace_back(
 					SyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
@@ -880,7 +888,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 	// try first user functions
 	if (functionIdx != SCRIPTIDX_NONE) {
 		syntaxTree.type = SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
-		syntaxTree.value.setValue(deescape(methodName));
+		syntaxTree.value.setValue(deescape(methodName, statement));
 		syntaxTree.setFunctionScriptIdx(functionIdx);
 		//
 		return true;
@@ -888,7 +896,7 @@ bool MiniScript::createStatementSyntaxTree(const string_view& methodName, const 
 	// try methods next
 	if (method != nullptr) {
 		syntaxTree.type = SyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
-		syntaxTree.value.setValue(deescape(methodName));
+		syntaxTree.value.setValue(deescape(methodName, statement));
 		syntaxTree.setMethod(method);
 		//
 		return true;

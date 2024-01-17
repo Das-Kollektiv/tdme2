@@ -862,6 +862,7 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/os/network/TCPSocket.cpp \
 	ext/miniscript/src/miniscript/utilities/Base64.cpp \
 	ext/miniscript/src/miniscript/utilities/Console.cpp \
+	ext/miniscript/src/miniscript/utilities/ErrorConsole.cpp \
 	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
 	ext/miniscript/src/miniscript/utilities/Float.cpp \
 	ext/miniscript/src/miniscript/utilities/Hex.cpp \

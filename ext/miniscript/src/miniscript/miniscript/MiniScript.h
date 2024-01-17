@@ -20,6 +20,7 @@
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Exception.h>
 #include <miniscript/utilities/Float.h>
+#include <miniscript/utilities/Hex.h>
 #include <miniscript/utilities/Integer.h>
 #include <miniscript/utilities/StringTools.h>
 #include <miniscript/utilities/Time.h>
@@ -46,6 +47,7 @@ using _Character = miniscript::utilities::Character;
 using _Console = miniscript::utilities::Console;
 using _Exception = miniscript::utilities::Exception;
 using _Float = miniscript::utilities::Float;
+using _Hex = miniscript::utilities::Hex;
 using _Integer = miniscript::utilities::Integer;
 using _StringTools = miniscript::utilities::StringTools;
 using _Time = miniscript::utilities::Time;
@@ -58,6 +60,7 @@ using _Library = miniscript::miniscript::Library;
  * @author Andreas Drewke
  */
 class miniscript::miniscript::MiniScript {
+	friend class ApplicationMethods;
 	friend class BaseMethods;
 	friend class JSONMethods;
 	friend class ScriptMethods;
@@ -1967,7 +1970,7 @@ public:
 			if (viewIsVariableAccess(value) == true) {
 				setFunctionCallStatement("getVariable(\"" + string(value) + "\")", miniScript, statement);
 			} else {
-				setValue(deescape(value));
+				setValue(miniScript->deescape(value, statement));
 			}
 		}
 
@@ -3147,15 +3150,52 @@ private:
 	/**
 	 * Deescape string
 	 * @param str string
+	 * @param statement statement
 	 * @return deescaped string
 	 */
-	inline static const string deescape(const string_view& str) {
+	inline const string deescape(const string_view& str, const Statement& statement) {
 		string deescapedStr;
 		auto lc = '\0';
 		for (auto i = 0; i < str.size(); i++) {
 			auto c = str[i];
 			if (c != '\\' || lc == '\\') {
-				deescapedStr+= c;
+				// escape sequences
+				//	see: https://en.cppreference.com/w/cpp/language/escape
+				// \0 null character
+				if (lc == '\\' && c == '0') deescapedStr+= '\0'; else
+				// \a audible bell
+				if (lc == '\\' && c == 'a') deescapedStr+= '\a'; else
+				// \b backspace
+				if (lc == '\\' && c == 'b') deescapedStr+= '\b'; else
+				// \f form feed - new page
+				if (lc == '\\' && c == 'f') deescapedStr+= '\f'; else
+				// \n line feed - new line
+				if (lc == '\\' && c == 'n') deescapedStr+= '\n'; else
+				// \r carriage return
+				if (lc == '\\' && c == 'r') deescapedStr+= '\r'; else
+				// \t horizontal tab
+				if (lc == '\\' && c == 't') deescapedStr+= '\t'; else
+				// \v vertical tab
+				if (lc == '\\' && c == 'v') deescapedStr+= '\v'; else
+				// unicode \Unnnnnnnn
+				if (lc == '\\' && c == 'U') {
+					string unicodeHexadecimalSequence;
+					auto j = 0;
+					auto valid = true;
+					for (i++; i < str.size() && j < 8; i++ && j++) {
+						c = str[i];
+						unicodeHexadecimalSequence+= c;
+						if (((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) == false) break;
+					}
+					i--;
+					if (valid == false || j != 8) {
+						_Console::println(getStatementInformation(statement) + ": Invalid hexadecimal unicode character sequence: " + unicodeHexadecimalSequence);
+					} else {
+						_Character::appendToString(deescapedStr, _Hex::decodeInt(unicodeHexadecimalSequence));
+					}
+				} else
+					deescapedStr+= c;
+				//
 				lc = '\0';
 				continue;
 			}

@@ -1,0 +1,29 @@
+# initialize
+on: initialize
+	console.log("-----------------------")
+	console.log("pipe-test: Initialize")
+	console.log("-----------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("--------------------")
+	console.log("pipe-test: Nothing")
+	console.log("--------------------")
+	console.log()
+	console.println("Reading from pipe or console input stream: ")
+	$input = console.readAllAsArray()
+	console.println("Input was: ")
+	console.println($input)
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("-------------------")
+	console.log("pipe-test: Error")
+	console.log("-------------------")
+	console.log("An error occurred")
+	script.stop()
+end

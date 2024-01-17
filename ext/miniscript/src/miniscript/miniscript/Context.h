@@ -23,6 +23,7 @@ private:
 	unordered_map<string, MiniScript*> scriptsById;
 	vector<MiniScript*> scriptCallStack;
 	vector<string> argumentValues;
+	int exitCode { 0 };
 
 public:
 	// forbid class copy
@@ -101,6 +102,21 @@ public:
 	 */
 	inline void pop() {
 		scriptCallStack.erase(scriptCallStack.begin() + scriptCallStack.size() - 1);
+	}
+
+	/**
+	 * Set exit code
+	 * @param exitCode exit code
+	 */
+	inline void setExitCode(int exitCode) {
+		this->exitCode = exitCode;
+	}
+
+	/**
+	 * @return exit code
+	 */
+	inline int getExitCode() {
+		return exitCode;
 	}
 
 };

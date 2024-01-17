@@ -13,9 +13,12 @@ on: nothing
 	console.log("---------------------------")
 	console.log()
 	console.log("application.getArguments(): " + application.getArguments())
-	console.log("application.execute('ls'): " + application.execute('ls'))
-	#
-	script.stop()
+	if ($APPLICATION::OS == "Windows-MSC")
+		console.log("application.execute('dir'): " + application.execute('dir'))
+	else
+		console.log("application.execute('ls'): " + application.execute('ls'))
+	end
+	application.exit(2)
 end
 
 # an error has occurred

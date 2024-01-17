@@ -164,6 +164,7 @@ int main(int argc, char** argv)
 			//
 			if (script->isValid() == false) {
 				Console::println(pathToScript + ": Script not valid. Exiting!");
+				return EXIT_SUCCESS;
 			} else {
 				// TODO: we need a MiniScript startup routine
 				Network::initialize();
@@ -181,6 +182,8 @@ int main(int argc, char** argv)
 				}
 				context->pop();
 			}
+		} else {
+			return EXIT_FAILURE;
 		}
 	} else
 	if (version == false) {
@@ -202,5 +205,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	return script == nullptr || script->isValid() == false?EXIT_FAILURE:EXIT_SUCCESS;
+	return context->getExitCode();
 }

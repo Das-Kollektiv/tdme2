@@ -6,6 +6,7 @@ namespace utilities {
 	class Base64;
 	class Character;
 	class Console;
+	class ErrorConsole;
 	class ExceptionBase;
 	class Float;
 	class Hex;
