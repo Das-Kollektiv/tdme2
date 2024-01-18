@@ -46,11 +46,11 @@ GUIGradientNode::Gradient GUIGradientNode::createGradient(const string& colors, 
 	for (const auto& color: colorsArray) {
 		auto colorComponents = StringTools::tokenize(color, "=");
 		if (colorComponents.size() != 2) {
-			Console::println("GUIGradientNode::createGradient():color invalid: " + color);
+			Console::printLine("GUIGradientNode::createGradient():color invalid: " + color);
 			continue;
 		}
 		if (StringTools::endsWith(colorComponents[0], "%") == false) {
-			Console::println("GUIGradientNode::createGradient():color start invalid: " + colorComponents[0]);
+			Console::printLine("GUIGradientNode::createGradient():color start invalid: " + colorComponents[0]);
 			continue;
 		}
 		colorComponents[0] = StringTools::trim(colorComponents[0]);

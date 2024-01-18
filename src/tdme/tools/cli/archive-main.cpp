@@ -159,7 +159,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		strm.opaque = Z_NULL;
 		ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
 		if (ret != Z_OK) {
-			Console::println("processFile(): Error compressing file: Aborting");
+			Console::printLine("processFile(): Error compressing file: Aborting");
 			return;
 		}
 
@@ -211,28 +211,28 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	fileInformations.push_back(fileInformation);
 
 	// done
-	Console::println(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
+	Console::printLine(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
 }
 
 int main(int argc, char** argv)
 {
-	Console::println(string("archive ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("archive ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 1) {
-		Console::println("Usage: archive");
+		Console::printLine("Usage: archive");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	// scan files
-	Console::println("Scanning files");
+	Console::printLine("Scanning files");
 	vector<string> files;
 	scanPath("resources", files);
 	scanPath("shader", files);
 
 	// processing
-	Console::println("Processing files");
+	Console::printLine("Processing files");
 
 	// reset archive
 	{

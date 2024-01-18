@@ -298,7 +298,7 @@ void Installer::performScreenAction() {
 
 						void run() {
 							//
-							Console::println("CheckForUpdateThread::run(): init");
+							Console::printLine("CheckForUpdateThread::run(): init");
 
 							//
 							auto currentTimestamp = installer->timestamp;
@@ -314,14 +314,14 @@ void Installer::performScreenAction() {
 								FileSystem::getStandardFileSystem()->list("installer", files);
 								for (const auto& file: files) {
 									if (StringTools::startsWith(file, completionFileName) == true) {
-										Console::println("CheckForUpdateThread: Have upload completion file: " + file);
+										Console::printLine("CheckForUpdateThread: Have upload completion file: " + file);
 										installer->timestamp = StringTools::substring(file, completionFileName.size());
 										repairHaveLocalFile = true;
 									}
 								}
 							}
 							if (installer->timestamp.empty() == false) {
-								Console::println("CheckForUpdateThread::run(): filesystem: newest timestamp: " + installer->timestamp);
+								Console::printLine("CheckForUpdateThread::run(): filesystem: newest timestamp: " + installer->timestamp);
 							}
 
 							//
@@ -351,7 +351,7 @@ void Installer::performScreenAction() {
 											}
 										}
 									} catch (Exception& exception) {
-										Console::println(string("CheckForUpdateThread::run(): An error occurred: ") + exception.what());
+										Console::printLine(string("CheckForUpdateThread::run(): An error occurred: ") + exception.what());
 									}
 								} else
 								if (installer->installerMode == INSTALLERMODE_REPAIR && repairHaveLocalFile == false) {
@@ -360,7 +360,7 @@ void Installer::performScreenAction() {
 
 								// download archives if newer
 								if (timestampWeb.empty() == false) {
-									Console::println("CheckForUpdateThread::run(): repository: newest timestamp: " + timestampWeb);
+									Console::printLine("CheckForUpdateThread::run(): repository: newest timestamp: " + timestampWeb);
 
 									// we use web installer archives
 									installer->timestamp = timestampWeb;
@@ -371,16 +371,16 @@ void Installer::performScreenAction() {
 										auto componentId = componentIdx == 0?"installer":"component" + to_string(componentIdx);
 										auto componentName = installer->installerProperties.get(componentId, "");
 										if (componentName.empty() == true) break;
-										Console::println("CheckForUpdateThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
+										Console::printLine("CheckForUpdateThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
 										auto componentInclude = installer->installerProperties.get(componentId + "_include", "");
 										if (componentInclude.empty() == true) {
-											Console::println("CheckForUpdateThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+											Console::printLine("CheckForUpdateThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 											continue;
 										}
 										auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringTools::replace(StringTools::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
 
 										//
-										Console::println("CheckForUpdateThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
+										Console::printLine("CheckForUpdateThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
 										//
 										installer->installThreadMutex.lock();
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
@@ -411,7 +411,7 @@ void Installer::performScreenAction() {
 										if (httpDownloadClient.getStatusCode() != 200) {
 											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + ".sha256(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
-											Console::println("CheckForUpdateThread::run(): done");
+											Console::printLine("CheckForUpdateThread::run(): done");
 											//
 											return;
 										}
@@ -437,7 +437,7 @@ void Installer::performScreenAction() {
 										if (httpDownloadClient.getStatusCode() != 200) {
 											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + "(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
-											Console::println("CheckForUpdateThread::run(): done");
+											Console::printLine("CheckForUpdateThread::run(): done");
 											//
 											return;
 										}
@@ -449,7 +449,7 @@ void Installer::performScreenAction() {
 							if (installer->installerMode == INSTALLERMODE_UPDATE && installer->timestamp <= currentTimestamp) {
 								installer->popUps->getInfoDialogScreenController()->show("Information", "No update available");
 								//
-								Console::println("CheckForUpdateThread::run(): done");
+								Console::printLine("CheckForUpdateThread::run(): done");
 								//
 								return;
 							}
@@ -461,7 +461,7 @@ void Installer::performScreenAction() {
 							installer->installThreadMutex.unlock();
 
 							//
-							Console::println("CheckForUpdateThread::run(): done");
+							Console::printLine("CheckForUpdateThread::run(): done");
 						}
 				};
 				//
@@ -491,7 +491,7 @@ void Installer::performScreenAction() {
 						}
 						void run() {
 							//
-							Console::println("InstallThread::run(): init");
+							Console::printLine("InstallThread::run(): init");
 
 							// we can not just overwrite executables on windows specially the installer exe or the libraries of it
 							// we need to install them with .update suffix and remove the suffix after installer is closed
@@ -526,7 +526,7 @@ void Installer::performScreenAction() {
 									auto file = dynamic_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName();
 									{
 										vector<uint8_t> content;
-										Console::println("InstallThread::run(): Installer: Copy: " + file);
+										Console::printLine("InstallThread::run(): Installer: Copy: " + file);
 										FileSystem::getStandardFileSystem()->getContent(
 											FileSystem::getStandardFileSystem()->getPathName(file),
 											FileSystem::getStandardFileSystem()->getFileName(file),
@@ -545,7 +545,7 @@ void Installer::performScreenAction() {
 									file+= ".sha256";
 									{
 										vector<uint8_t> content;
-										Console::println("InstallThread::run(): Installer: Copy: " + file);
+										Console::printLine("InstallThread::run(): Installer: Copy: " + file);
 										FileSystem::getStandardFileSystem()->getContent(
 											FileSystem::getStandardFileSystem()->getPathName(file),
 											FileSystem::getStandardFileSystem()->getFileName(file),
@@ -599,14 +599,14 @@ void Installer::performScreenAction() {
 									components.push_back(componentName);
 
 									//
-									Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
+									Console::printLine("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
 									auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
 									if (componentInclude.empty() == true) {
-										Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+										Console::printLine("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 										continue;
 									}
 									//
-									Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
+									Console::printLine("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 									//
 									installer->installThreadMutex.lock();
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
@@ -637,7 +637,7 @@ void Installer::performScreenAction() {
 										}
 										for (const auto& file: files) {
 											vector<uint8_t> content;
-											Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
+											Console::printLine("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
 											archiveFileSystem->getContent(
 												archiveFileSystem->getPathName(file),
 												archiveFileSystem->getFileName(file),
@@ -738,13 +738,13 @@ void Installer::performScreenAction() {
 														auto iconFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
 														if (FileSystem::getInstance()->exists("resources/platforms/win32/" + iconFileName) == false &&
 															FileSystem::getInstance()->exists(executablePathName + "/resources/platforms/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
-														Console::println(
+														Console::printLine(
 															StringTools::replace(StringTools::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 															"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
 															"\"" + StringTools::replace(linkFile, "/", "\\") + "\" " +
 															"\"resources\\platforms\\win32\\" + iconFileName + "\" "
 														);
-														Console::println(
+														Console::printLine(
 															Application::execute(
 																StringTools::replace(StringTools::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 																"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
@@ -863,7 +863,7 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 							}
 							// determine set names
-							Console::println("InstallThread::run(): done");
+							Console::printLine("InstallThread::run(): done");
 						}
 					private:
 						Installer* installer;
@@ -895,7 +895,7 @@ void Installer::performScreenAction() {
 					}
 					void run() {
 						//
-						Console::println("UninstallThread::run(): init");
+						Console::printLine("UninstallThread::run(): init");
 
 						//
 						installer->installThreadMutex.lock();
@@ -939,7 +939,7 @@ void Installer::performScreenAction() {
 										);
 									}
 								} catch (Exception& innerException) {
-									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
+									Console::printLine(string("UninstallThread::run(): An error occurred: ") + innerException.what());
 									#if defined(_WIN32)
 										if (installer->installerMode == INSTALLERMODE_UNINSTALL &&
 											(StringTools::endsWith(log[i], ".dll") == true ||
@@ -1001,7 +1001,7 @@ void Installer::performScreenAction() {
 										false
 									);
 								} catch (Exception& exception) {
-									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+									Console::printLine(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
 							}
 
@@ -1015,7 +1015,7 @@ void Installer::performScreenAction() {
 										installerFiles
 									);
 								} catch (Exception& exception) {
-									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+									Console::printLine(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
 								for (const auto& installerFile: installerFiles) {
 									if (StringTools::endsWith(installerFile, ".ta") == true ||
@@ -1026,14 +1026,14 @@ void Installer::performScreenAction() {
 												installerFile
 											);
 										} catch (Exception& exception) {
-											Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+											Console::printLine(string("UninstallThread::run(): An error occurred: ") + exception.what());
 										}
 									}
 								}
 								try {
 									FileSystem::getStandardFileSystem()->removePath(installPath + "installer", false);
 								} catch (Exception& exception) {
-									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+									Console::printLine(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
 							}
 						}
@@ -1056,7 +1056,7 @@ void Installer::performScreenAction() {
 							try {
 								FileSystem::getStandardFileSystem()->removePath(installPath, false);
 							} catch (Exception& exception) {
-								Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+								Console::printLine(string("UninstallThread::run(): An error occurred: ") + exception.what());
 							}
 						}
 
@@ -1086,7 +1086,7 @@ void Installer::performScreenAction() {
 							}
 						}
 						// determine set names
-						Console::println("UninstallThread::run(): done");
+						Console::printLine("UninstallThread::run(): done");
 					}
 				private:
 					Installer* installer;
@@ -1098,7 +1098,7 @@ void Installer::performScreenAction() {
 			break;
 		}
 		default:
-			Console::println("Installer::performScreenAction(): Unhandled screen: " + to_string(screen));
+			Console::printLine("Installer::performScreenAction(): Unhandled screen: " + to_string(screen));
 			break;
 	}
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
@@ -1156,7 +1156,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 				try {
 					timestamp = FileSystem::getStandardFileSystem()->getContentAsString(".", "install.version.db");
 				} catch (Exception& exception) {
-					Console::println(string("Installer::onAction(): An error occurred: ") + exception.what());
+					Console::printLine(string("Installer::onAction(): An error occurred: ") + exception.what());
 				}
 				screen = SCREEN_WELCOME2;
 			} else
@@ -1184,7 +1184,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 				try {
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadedFile);
 				} catch (Exception& exception) {
-					Console::println("Installer::onAction(): Removing downloaded file failed: " + downloadedFile);
+					Console::printLine("Installer::onAction(): Removing downloaded file failed: " + downloadedFile);
 				}
 			}
 			Application::exit(0);
@@ -1305,7 +1305,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 }
 
 void Installer::onChange(GUIElementNode* node) {
-	Console::println(node->getName() + ": onChange(): " + node->getController()->getValue().getString());
+	Console::printLine(node->getName() + ": onChange(): " + node->getController()->getValue().getString());
 }
 
 void Installer::display()
@@ -1324,7 +1324,7 @@ void Installer::display()
 }
 
 void Installer::mountInstallerFileSystem(const string& timestamp, bool remountInstallerArchive) {
-	Console::println("Installer::mountInstallerFileSystem(): timestamp: " + (timestamp.empty() == false?timestamp:"no timestamp"));
+	Console::printLine("Installer::mountInstallerFileSystem(): timestamp: " + (timestamp.empty() == false?timestamp:"no timestamp"));
 	// determine installer tdme archive
 	try {
 		auto installerArchiveFileNameStart = Application::getOSName() + "-" + Application::getCPUName() + "-Installer-" + (timestamp.empty() == false?timestamp + ".ta":"");
@@ -1335,12 +1335,12 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 		for (const auto& file: files) {
 			if (StringTools::startsWith(file, installerArchiveFileNameStart) == true &&
 				StringTools::endsWith(file, ".ta") == true) {
-				Console::println("Installer::main(): Have installer tdme archive file: " + file);
+				Console::printLine("Installer::main(): Have installer tdme archive file: " + file);
 				installerArchiveFileName = file;
 			}
 		}
 		if (installerArchiveFileName.empty() == true) {
-			Console::println("Installer::main(): No installer TDME archive found. Exiting.");
+			Console::printLine("Installer::main(): No installer TDME archive found. Exiting.");
 			Application::exit(1);
 		}
 		// file system
@@ -1348,14 +1348,14 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
 			throw ExceptionBase("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
 		}
-		Console::println("Installer::mountInstallerFileSystem(): unmounting");
+		Console::printLine("Installer::mountInstallerFileSystem(): unmounting");
 		// check if to remove old installer file system
 		auto lastInstallerArchiveFileName = remountInstallerArchive == true?static_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName():string();
 		FileSystem::unsetFileSystem();
 		// so? Also check if new installer archive file name is same as currently used installer archive file name
 		if (lastInstallerArchiveFileName.empty() == false && lastInstallerArchiveFileName != "installer/" + installerArchiveFileName) {
 			// yep
-			Console::println("Installer::mountInstallerFileSystem(): deleting installer tdme archive file: " + lastInstallerArchiveFileName);
+			Console::printLine("Installer::mountInstallerFileSystem(): deleting installer tdme archive file: " + lastInstallerArchiveFileName);
 			try {
 				FileSystem::getStandardFileSystem()->removeFile(
 					FileSystem::getStandardFileSystem()->getPathName(lastInstallerArchiveFileName),
@@ -1366,24 +1366,24 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 					FileSystem::getStandardFileSystem()->getFileName(lastInstallerArchiveFileName) + ".sha256"
 				);
 			} catch (Exception& exception) {
-				Console::println(string("Installer::mountInstallerFileSystem(): An error occurred: ") + exception.what());
+				Console::printLine(string("Installer::mountInstallerFileSystem(): An error occurred: ") + exception.what());
 			}
 		}
-		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
+		Console::printLine("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
 		FileSystem::setupFileSystem(installerFileSystem.release());
 	} catch (Exception& exception) {
-		Console::println(string("Installer::mountInstallerFileSystem(): ") + exception.what());
+		Console::printLine(string("Installer::mountInstallerFileSystem(): ") + exception.what());
 		Application::exit(1);
 	}
 }
 
 int Installer::main(int argc, char** argv)
 {
-	Console::println(string("Installer ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("Installer ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc > 1) {
-		Console::println("Usage: Installer");
+		Console::printLine("Usage: Installer");
 		Application::exit(1);
 	}
 	#if defined(__APPLE__)
@@ -1426,7 +1426,7 @@ void Installer::createPathRecursively(const string& pathName) {
 			pathCreating+= "/" + pathComponent;
 		#endif
 		if (FileSystem::getStandardFileSystem()->isDrive(pathCreating) == false && FileSystem::getStandardFileSystem()->exists(pathCreating) == false) {
-			Console::println("Creating: " + pathCreating);
+			Console::printLine("Creating: " + pathCreating);
 			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}
 	}

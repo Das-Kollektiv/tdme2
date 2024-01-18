@@ -54,7 +54,7 @@ void PrototypeParticleSystem::unsetType() {
 	if (type == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 		fps = nullptr;
 	} else {
-		Console::println(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
+		Console::printLine(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
 	}
 }
 
@@ -74,7 +74,7 @@ void PrototypeParticleSystem::setType(PrototypeParticleSystem_Type* type)
 	if (type == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 		fps = make_unique<PrototypeParticleSystem_FogParticleSystem>();
 	} else {
-		Console::println(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
+		Console::printLine(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
 	}
 }
 
@@ -97,7 +97,7 @@ void PrototypeParticleSystem::unsetEmitter() {
 	if (emitter == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 		spe = nullptr;
 	} else {
-		Console::println(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
+		Console::printLine(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
 	}
 }
 
@@ -123,6 +123,6 @@ void PrototypeParticleSystem::setEmitter(PrototypeParticleSystem_Emitter* emitte
 	if (emitter == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 		spe = make_unique<PrototypeParticleSystem_SphereParticleEmitter>();
 	} else {
-		Console::println(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
+		Console::printLine(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
 	}
 }

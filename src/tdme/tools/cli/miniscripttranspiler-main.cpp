@@ -27,13 +27,13 @@ using tdme::miniscript::EngineMiniScript;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscripttranspiler ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscripttranspiler ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc < 3) {
-		Console::println("Usage: miniscripttranspiler script_filename transpilation_filename [miniscript_extension_file1] [miniscript_extension_fileN]");
+		Console::printLine("Usage: miniscripttranspiler script_filename transpilation_filename [miniscript_extension_file1] [miniscript_extension_fileN]");
 		return EXIT_FAILURE;
 	}
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 		)
 	);
 	if (miniScript->isValid() == false) {
-		Console::println(scriptFileName + ": Script not valid. Exiting!");
+		Console::printLine(scriptFileName + ": Script not valid. Exiting!");
 	} else {
 		//
 		Transpiler::transpile(miniScript.get(), argv[2], miniScriptExtensionFileNames);

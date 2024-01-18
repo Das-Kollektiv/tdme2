@@ -74,7 +74,7 @@ void parseXMLNode(TiXmlElement* xmlParentNode, map<string, set<string>>& element
 					FileSystem::getInstance()->getPathName(definitionFileName),
 					FileSystem::getInstance()->getFileName(definitionFileName)
 				);
-			Console::println("parseXMLNode(): Opened compound definition: " + definitionFileName);
+			Console::printLine("parseXMLNode(): Opened compound definition: " + definitionFileName);
 			auto i = 0;
 			while (i < xml.size()) {
 				auto attributeStartIdx = xml.find("{", i);
@@ -103,7 +103,7 @@ void parseXMLNode(TiXmlElement* xmlParentNode, map<string, set<string>>& element
 }
 
 void processFile(const string& fileName, map<string, set<string>>& elementAttributeMap) {
-	Console::println("processFile(): " + fileName);
+	Console::printLine("processFile(): " + fileName);
 	auto xml =
 		FileSystem::getInstance()->getContentAsString(
 			FileSystem::getInstance()->getPathName(fileName),
@@ -113,7 +113,7 @@ void processFile(const string& fileName, map<string, set<string>>& elementAttrib
 	xmlDocument.Parse(xml.c_str());
 	if (xmlDocument.Error() == true) {
 		string message = string("processFile(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + xml;
-		Console::println(message);
+		Console::printLine(message);
 		return;
 	}
 	parseXMLNode(xmlDocument.RootElement(), elementAttributeMap);
@@ -121,23 +121,23 @@ void processFile(const string& fileName, map<string, set<string>>& elementAttrib
 
 int main(int argc, char** argv)
 {
-	Console::println(string("collectguitags ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("collectguitags ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc < 2) {
-		Console::println("Usage: collectguitags path_to_xmls [path_to_xmls]");
+		Console::printLine("Usage: collectguitags path_to_xmls [path_to_xmls]");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	vector<string> files;
 	for (auto i = 1; i < argc; i++) {
 		auto pathToHeaders = string(argv[i]);
-		Console::println("Scanning files: " + pathToHeaders);
+		Console::printLine("Scanning files: " + pathToHeaders);
 		scanPath(pathToHeaders, files);
 	}
 
-	Console::println("Processing files");
+	Console::printLine("Processing files");
 	map<string, set<string>> elementAttributeMap;
 	for (const auto& fileName: files) {
 		processFile(fileName, elementAttributeMap);
@@ -145,11 +145,11 @@ int main(int argc, char** argv)
 
 	//
 	for (const auto& [elementName, elementAttributeVector]: elementAttributeMap) {
-		Console::println(elementName);
+		Console::printLine(elementName);
 		for (const auto& attribute: elementAttributeVector) {
-			Console::println("\t" + attribute);
+			Console::printLine("\t" + attribute);
 		}
-		Console::println();
+		Console::printLine();
 	}
 
 	//

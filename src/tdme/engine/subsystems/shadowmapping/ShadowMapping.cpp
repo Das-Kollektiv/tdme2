@@ -227,7 +227,7 @@ void ShadowMapping::updateTextureMatrix(int contextIdx)
 			Engine::getShadowMapRenderShader()->updateTextureMatrix(contextIdx);
 			break;
 		default:
-			Console::println(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -244,7 +244,7 @@ void ShadowMapping::updateMatrices(int contextIdx)
 			Engine::getShadowMapRenderShader()->updateMatrices(contextIdx);
 			break;
 		default:
-			Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -261,7 +261,7 @@ void ShadowMapping::updateMaterial(int contextIdx) {
 			Engine::getShadowMapRenderShader()->updateMaterial(contextIdx);
 			break;
 		default:
-			Console::println(string("ShadowMapping::updateMaterial(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::updateMaterial(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -284,7 +284,7 @@ void ShadowMapping::bindTexture(int contextIdx, int32_t textureId) {
 			Engine::getShadowMapRenderShader()->bindTexture(contextIdx, textureId);
 			break;
 		default:
-			Console::println(string("ShadowMapping::bindTexture(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::bindTexture(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -321,7 +321,7 @@ void ShadowMapping::setShader(int contextIdx, const string& id) {
 			Engine::getShadowMapRenderShader()->setShader(contextIdx, id);
 			break;
 		default:
-			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -338,7 +338,7 @@ void ShadowMapping::updateShaderParameters(int contextIdx) {
 			Engine::getShadowMapRenderShader()->updateShaderParameters(contextIdx);
 			break;
 		default:
-			Console::println(string("ShadowMapping::updateShaderParameters(): unsupported run state '" + to_string(runState)));
+			Console::printLine(string("ShadowMapping::updateShaderParameters(): unsupported run state '" + to_string(runState)));
 	}
 }
 

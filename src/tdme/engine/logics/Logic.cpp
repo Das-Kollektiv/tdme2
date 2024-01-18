@@ -30,5 +30,5 @@ void Logic::onLogicsProcessed() {
 
 void Logic::logState(int indent) {
 	for (auto i = 0; i < indent; i++) Console::print("\t");
-	Console::println(id + ": no state reported");
+	Console::printLine(id + ": no state reported");
 }

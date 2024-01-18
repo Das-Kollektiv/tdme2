@@ -59,7 +59,7 @@ void Console::setLogger(Console::Logger* logger) {
 	Console::logger = logger;
 }
 
-void Console::println(const string_view& str)
+void Console::printLine(const string_view& str)
 {
 	mutex.lock();
 	//
@@ -68,7 +68,7 @@ void Console::println(const string_view& str)
 	if (messages.size() == HISTORY_LINECOUNT) messages.erase(messages.begin());
 	newline = true;
 	//
-	if (logger != nullptr) logger->println(str);
+	if (logger != nullptr) logger->printLine(str);
 	cout << str << endl;
 	cout.flush();
 	//
@@ -91,7 +91,7 @@ void Console::print(const string_view& str)
 	mutex.unlock();
 }
 
-void Console::println()
+void Console::printLine()
 {
 	mutex.lock();
 	//
@@ -99,7 +99,7 @@ void Console::println()
 	if (messages.size() == HISTORY_LINECOUNT) messages.erase(messages.begin());
 	newline = true;
 	//
-	if (logger != nullptr) logger->println();
+	if (logger != nullptr) logger->printLine();
 	cout << endl;
 	cout.flush();
 	//

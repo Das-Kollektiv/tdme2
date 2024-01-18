@@ -80,7 +80,7 @@ void EnvMapEditorTabView::initialize()
 		envMapEditorTabController = make_unique<EnvMapEditorTabController>(this);
 		envMapEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::println("EnvMapEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("EnvMapEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	// TODO: reloadTabOutliner

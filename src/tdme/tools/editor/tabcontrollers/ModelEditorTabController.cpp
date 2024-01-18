@@ -608,7 +608,7 @@ void ModelEditorTabController::onLODLoad(int lodLevel) {
 					)
 				);
 			} catch (Exception& exception) {
-				Console::println("OnLODLoad::performAction(): An error occurred: " + string(exception.what()));
+				Console::printLine("OnLODLoad::performAction(): An error occurred: " + string(exception.what()));
 				modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 			}
 
@@ -659,7 +659,7 @@ void ModelEditorTabController::setMaterialBaseDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_base"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setMaterialBaseDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setMaterialBaseDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -685,7 +685,7 @@ void ModelEditorTabController::updateMaterialBaseDetails() {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_lightningmodel"))->getController()->setValue(MutableString("pbrspecular"));
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::updateMaterialBaseDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::updateMaterialBaseDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -709,7 +709,7 @@ void ModelEditorTabController::applyMaterialBaseDetails() {
 			model->setShaderModel(ShaderModel::SPECULARPBR);
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applyMaterialBaseDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applyMaterialBaseDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -737,7 +737,7 @@ void ModelEditorTabController::setMaterialDetails() {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_pbr"))->getActiveConditions().add("open");
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setMaterialDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setMaterialDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -875,7 +875,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->setValue(MutableString(pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?"1":""));
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::updateMaterialDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::updateMaterialDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -901,7 +901,7 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()));
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -917,7 +917,7 @@ void ModelEditorTabController::applySpecularMaterialDetails() {
 		specularMaterialProperties->setReflection(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applySpecularMaterialDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applySpecularMaterialDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -936,7 +936,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 			updateMaterialDetails();
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -950,7 +950,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 		pbrMaterialProperties->setExposure(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_exposure"))->getController()->getValue().getString()));
 		pbrMaterialProperties->setBaseColorTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -989,7 +989,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationsXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -1007,7 +1007,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->setValue(animationSetup->getOverlayFromNodeId());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->setDisabled(defaultAnimation == true);
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -1037,7 +1037,7 @@ void ModelEditorTabController::applyAnimationDetails() {
 
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setAnimationDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -1067,7 +1067,7 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_base_scrollarea"))->replaceSubNodes(animationsXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -1088,17 +1088,17 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay1_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay2_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay3_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -1117,14 +1117,14 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_attachment1_bone_scrollarea"))->replaceSubNodes(bonesXML, true);
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animationpreview"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -1139,7 +1139,7 @@ void ModelEditorTabController::setPreviewAnimationsAttachment1Model(const string
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(attachment1ModelFileName);
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(attachment1ModelFileName);
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setPreviewAnimationsAttachment1Model(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setPreviewAnimationsAttachment1Model(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -1200,7 +1200,7 @@ void ModelEditorTabController::applyAnimationPreviewDetails() {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_overlay3"))->getController()->getValue().getString()
 		);
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applyAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applyAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -2053,7 +2053,7 @@ void ModelEditorTabController::renameAnimation() {
 				throw ExceptionBase("Could not rename animation");
 			}
 		} catch (Exception& exception) {
-			Console::println("ModelEditorTabController::renameAnimation(): An error occurred: " + string(exception.what()));
+			Console::printLine("ModelEditorTabController::renameAnimation(): An error occurred: " + string(exception.what()));
 			showInfoPopUp("Warning", string(exception.what()));
 		}
 	}
@@ -2091,7 +2091,7 @@ void ModelEditorTabController::createAnimationSetup(int lodLevel) {
 			throw ExceptionBase("Could not create animation");
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::createAnimationSetup(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::createAnimationSetup(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -2134,7 +2134,7 @@ void ModelEditorTabController::createLOD() {
 						nullptr
 				);
 			} catch (Exception& exception) {
-				Console::println("OnLoadLODModel::performAction(): An error occurred: " + string(exception.what()));
+				Console::printLine("OnLoadLODModel::performAction(): An error occurred: " + string(exception.what()));
 				modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 			}
 			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevelIdx) + ".model");
@@ -2156,7 +2156,7 @@ void ModelEditorTabController::createLOD() {
 
 	PrototypeLODLevel* lodLevel = nullptr;
 	if (view->getPrototype()->getLODLevel2() != nullptr && view->getPrototype()->getLODLevel3() != nullptr) {
-		Console::println("ModelEditorTabController::createLOD(): LOD level 2 and LOD level 3 is already in use");
+		Console::printLine("ModelEditorTabController::createLOD(): LOD level 2 and LOD level 3 is already in use");
 		showInfoPopUp("Warning", "LOD level 2 and LOD level 3 is already in use");
 		return;
 	}
@@ -2205,7 +2205,7 @@ void ModelEditorTabController::setLODDetails(int lodLevel) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_lod"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->setValue(prototypeLODLevel->getMinDistance());
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::setLODDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::setLODDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -2228,7 +2228,7 @@ void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()));
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()));
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::updateLODColorDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::updateLODColorDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -2247,7 +2247,7 @@ void ModelEditorTabController::applyLODDetails(int lodLevel) {
 	try {
 		prototypeLODLevel->setMinDistance(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabController::applyLODDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabController::applyLODDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }

@@ -140,7 +140,7 @@ bool PrototypeReader::readThumbnail(const string& pathName, const string& fileNa
 
 		return true;
 	} catch (Exception& exception) {
-		Console::println("PrototypeReader::readThumbnail(): An error occurred: " + pathName + "/" + fileName + ": " + exception.what());
+		Console::printLine("PrototypeReader::readThumbnail(): An error occurred: " + pathName + "/" + fileName + ": " + exception.what());
 		return false;
 	}
 }
@@ -229,7 +229,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 				prototype->setScript(getResourcePathName(pathName, scriptFileName) + "/" + FileSystem::getInstance()->getFileName(scriptFileName));
 			} catch (Exception& exception) {
 				Console::print(string("PrototypeReader::read(): An error occurred: "));
-				Console::println(string(exception.what()));
+				Console::printLine(string(exception.what()));
 			}
 		}
 	}
@@ -247,7 +247,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 				prototype->getDecal()->setTextureFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
 			} catch (Exception& exception) {
 				Console::print(string("PrototypeReader::read(): An error occurred: "));
-				Console::println(string(exception.what()));
+				Console::printLine(string(exception.what()));
 			}
 		}
 		if (jPrototypeRoot.FindMember("dths") != jPrototypeRoot.MemberEnd()) prototype->getDecal()->setTextureHorizontalSprites(jPrototypeRoot["dths"].GetInt());
@@ -401,7 +401,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("PrototypeReader::read(): An error occurred: ") + exception.what());
+					Console::printLine(string("PrototypeReader::read(): An error occurred: ") + exception.what());
 					continue;
 				}
 
@@ -448,7 +448,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 							foliagePrototypeTransform.getTranslation().getZ() < partitionTop ||
 							foliagePrototypeTransform.getTranslation().getX() > partitionRight ||
 							foliagePrototypeTransform.getTranslation().getZ() > partitionBottom) {
-							Console::println(
+							Console::printLine(
 								"PrototypeReader::read(): foliage entity not in partition: " +
 								to_string(foliagePrototypeTransform.getTranslation().getX()) + ", " + to_string(foliagePrototypeTransform.getTranslation().getZ()) + " ! in " +
 								to_string(partitionLeft) + ", " + to_string(partitionTop) + ", " +
@@ -600,7 +600,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(Prototype* prototy
 			}
 		} catch (Exception& exception) {
 			Console::print(string("PrototypeReader::parseBoundingVolume(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::printLine(string(exception.what()));
 		}
 	}
 	if (jBv.FindMember("g") != jBv.MemberEnd()) prototypeBoundingVolume->setGenerated(jBv["g"].GetBool());
@@ -726,7 +726,7 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 				);
 			} catch (Exception& exception) {
 				Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
-				Console::println(string(exception.what()));
+				Console::printLine(string(exception.what()));
 			}
 		} else
 		if (particleSystemType == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
@@ -749,7 +749,7 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 					if (jPointParticleSystem.FindMember("fps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureSpritesFPS(jPointParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
 					Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
-					Console::println(string(exception.what()));
+					Console::printLine(string(exception.what()));
 				}
 			}
 			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].GetBool());
@@ -774,11 +774,11 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 					if (jFogParticleSystem.FindMember("fps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureSpritesFPS(jFogParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
 					Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
-					Console::println(string(exception.what()));
+					Console::printLine(string(exception.what()));
 				}
 			}
 		} else {
-			Console::println(
+			Console::printLine(
 				string(
 					 "PrototypeWriter::export(): unknown particle system type '" +
 					 particleSystem->getType()->getName() +
@@ -1071,7 +1071,7 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 			);
 			emitter->setRadius(static_cast<float>(jSphereParticleEmitter["r"].GetFloat()));
 		} else {
-			Console::println(
+			Console::printLine(
 				"PrototypeWriter::export(): unknown particle system emitter '" +
 				particleSystem->getEmitter()->getName() +
 				"'"

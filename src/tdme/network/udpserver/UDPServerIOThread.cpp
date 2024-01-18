@@ -70,7 +70,7 @@ UDPServerIOThread::~UDPServerIOThread() {
 }
 
 void UDPServerIOThread::run() {
-	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): start");
+	Console::printLine("UDPServerIOThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
 	startUpBarrier->wait();
@@ -215,7 +215,7 @@ void UDPServerIOThread::run() {
 							}
 						} catch(Exception& exception) {
 							// log
-							Console::println(
+							Console::printLine(
 								"UDPServerIOThread[" +
 								to_string(id) +
 								"]::run(): " +
@@ -300,7 +300,7 @@ void UDPServerIOThread::run() {
 	//
 	} catch (Exception &exception) {
 		// log
-		Console::println(
+		Console::printLine(
 			"UDPServerIOThread[" +
 			to_string(id) +
 			"]::run(): " +
@@ -315,7 +315,7 @@ void UDPServerIOThread::run() {
 	socket->close();
 
 	// log
-	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): done");
+	Console::printLine("UDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
 void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deletePacket) {

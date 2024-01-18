@@ -246,7 +246,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		auto foundLanguage = false;
 		for (const auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
-				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
+				// Console::printLine("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
 				const auto& code = textNode->getText().getString();
 				const auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
@@ -281,7 +281,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 					while (nextNewLineIndex < code.size() && code[nextNewLineIndex] != '\n') nextNewLineIndex++;
 					charEndIdx = nextNewLineIndex;
 				}
-				// Console::println("void TextFormatter::format2(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
+				// Console::printLine("void TextFormatter::format2(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				textNode->unsetTextStyle(charStartIdx, charEndIdx);
 				lc = charStartIdx - 1 >= 0 && charStartIdx - 1 < code.size()?code[charStartIdx - 1]:'\0';
 				llc = charStartIdx - 2 >= 0 && charStartIdx - 2 < code.size()?code[charStartIdx - 2]:'\0';
@@ -348,7 +348,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 								if (Integer::is(literalWord) == true || Float::is(literalWord) == true) {
 									textNode->setTextStyle(startIdx, endIdx - 1, literalColor);
 								} else {
-									// Console::println("Word: '" + word + "'; " + to_string(startIdx) + " ... " + to_string(endIdx));
+									// Console::printLine("Word: '" + word + "'; " + to_string(startIdx) + " ... " + to_string(endIdx));
 									for (const auto& keyword: keywords1) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword1Color);
@@ -476,7 +476,7 @@ const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const str
 				codeCompletion->statementDelimiter = language.statementDelimiter;
 				return codeCompletion;
 			} catch (Exception &exception) {
-				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + string(exception.what()));
+				Console::printLine("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + string(exception.what()));
 			}
 			break;
 		}

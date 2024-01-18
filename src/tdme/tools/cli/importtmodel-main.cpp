@@ -102,7 +102,7 @@ public:
 		try {
 			unique_ptr<Prototype> prototype;
 			// load model
-			Console::println("Loading model: " + modelFileName);
+			Console::printLine("Loading model: " + modelFileName);
 			auto model = unique_ptr<Model>(
 				ModelReader::read(
 					FileSystem::getInstance()->getPathName(modelFileName),
@@ -112,7 +112,7 @@ public:
 			);
 			// load tmm
 			if (FileSystem::getInstance()->exists(tModelFileName) == false) {
-				Console::println("Creating tmodel: " + tModelFileName);
+				Console::printLine("Creating tmodel: " + tModelFileName);
 				auto pathName = FileSystem::getInstance()->getPathName(tModelFileName);
 				auto fileName = FileSystem::getInstance()->getFileName(tModelFileName);
 				auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
@@ -127,7 +127,7 @@ public:
 					model.release()
 				);
 			} else {
-				Console::println("Loading tmodel: " + tModelFileName);
+				Console::printLine("Loading tmodel: " + tModelFileName);
 				prototype = unique_ptr<Prototype>(
 					PrototypeReader::read(
 						FileSystem::getInstance()->getPathName(tModelFileName),
@@ -142,7 +142,7 @@ public:
 			GenerateConvexMeshes::removeConvexMeshes(prototype.get());
 			// load new convex meshes bv model
 			if (bvsModelFileName.empty() == false) {
-				Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
+				Console::printLine("Loading convex mesh bounding volumes model: " + bvsModelFileName);
 				vector<vector<uint8_t>> convexMeshTMsData;
 				if (GenerateConvexMeshes::generateConvexMeshes(
 						prototype.get(),
@@ -158,13 +158,13 @@ public:
 							prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
 							prototype->addBoundingVolume(prototypeBoundingVolume.release());
 						} catch (Exception& exception) {
-							Console::println(string("An error occurred: ") + exception.what());
+							Console::printLine(string("An error occurred: ") + exception.what());
 						}
 					}
 					//
 				}
 			}
-			Console::println("Saving tmodel: " + tModelFileName);
+			Console::printLine("Saving tmodel: " + tModelFileName);
 			PrototypeWriter::write(
 				FileSystem::getInstance()->getPathName(tModelFileName),
 				FileSystem::getInstance()->getFileName(tModelFileName),
@@ -172,7 +172,7 @@ public:
 				useBC7TextureCompression
 			);
 		} catch (Exception& exception) {
-			Console::println("An error occurred: " + string(exception.what()));
+			Console::printLine("An error occurred: " + string(exception.what()));
 		}
 		Application::exit(0);
 	}
@@ -196,11 +196,11 @@ public:
 
 int main(int argc, char** argv)
 {
-	Console::println(string("importtmodel ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("importtmodel ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc < 3) {
-		Console::println("Usage: importtmodel [--no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
+		Console::printLine("Usage: importtmodel [--no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	return tdme::tools::cli::ImportTModelApplication::main(argc, argv);

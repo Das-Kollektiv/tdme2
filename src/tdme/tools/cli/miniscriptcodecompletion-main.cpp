@@ -32,9 +32,9 @@ using tdme::utilities::Properties;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("createminiscriptcodecompletion ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("createminiscriptcodecompletion ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	Properties methodDescriptions;
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 			if (description.empty() == true) description = methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), string());
 			if (description.empty() == true) description = methodDescriptions.get("miniscript.logicmethod." + scriptMethod->getMethodName(), string());
 			if (description.empty() == true) description = methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), string());
-			Console::println("Adding method: " + scriptMethod->getMethodName());
+			Console::printLine("Adding method: " + scriptMethod->getMethodName());
 			lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
 			lines.push_back("		<overload return-value=\"" + EngineMiniScript::Variable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
 			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
@@ -107,22 +107,22 @@ int main(int argc, char** argv)
 
 	//
 	lines.push_back("</code-completion>");
-	for (const auto& line: lines) Console::println(line);
-	Console::println();
+	for (const auto& line: lines) Console::printLine(line);
+	Console::printLine();
 
 	// syntax highlighting
-	Console::println("Syntax highlighting: ");
+	Console::printLine("Syntax highlighting: ");
 	Console::print("Syntax highlighting: keywords1: ");
 	for (const auto& keyword1: keywords1) Console::print(keyword1 + " ");
-	Console::println();
+	Console::printLine();
 
 	Console::print("Syntax highlighting: keywords2: ");
 	for (const auto& keyword2: keywords2) Console::print(keyword2 + " ");
-	Console::println();
-	Console::println();
+	Console::printLine();
+	Console::printLine();
 
 	// store
-	Console::println("Saving to: resources/engine/code-completion/tscript.xml");
+	Console::printLine("Saving to: resources/engine/code-completion/tscript.xml");
 	FileSystem::getInstance()->setContentFromStringArray("resources/engine/code-completion", "tscript.xml", lines);
 
 	//

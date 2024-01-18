@@ -54,7 +54,7 @@ UDPServer::~UDPServer() {
 }
 
 void UDPServer::run() {
-	Console::println("UDPServer::run(): start");
+	Console::printLine("UDPServer::run(): start");
 
 	{
 		// create start up barrier for io threads
@@ -85,7 +85,7 @@ void UDPServer::run() {
 
 	// init worker thread pool
 	//
-	Console::println("UDPServer::run(): ready");
+	Console::printLine("UDPServer::run(): ready");
 
 	// do main event loop, waiting until stop requested
 	auto lastCleanUpClientsTime = Time::getCurrentMillis();
@@ -151,7 +151,7 @@ void UDPServer::run() {
 	workerThreadPool = nullptr;
 
 	//
-	Console::println("UDPServer::run(): done");
+	Console::printLine("UDPServer::run(): done");
 }
 
 UDPServerClient* UDPServer::accept(const uint32_t clientId, const std::string& ip, const uint16_t port) {

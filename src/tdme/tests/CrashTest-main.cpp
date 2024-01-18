@@ -9,7 +9,7 @@ class CrashTestClass {
 public:
 	static void crash() {
 		char* i = nullptr;
-		Console::println(string("CrashTestClass::crash(): message: ") + i);
+		Console::printLine(string("CrashTestClass::crash(): message: ") + i);
 	}
 };
 
@@ -19,9 +19,9 @@ static void crashTestFunction() {
 
 int main(int argc, char** argv) {
 	Application::installExceptionHandler();
-	Console::println("CrashTest: init");
+	Console::printLine("CrashTest: init");
 	crashTestFunction();
-	Console::println("CrashTest: done");
+	Console::printLine("CrashTest: done");
 	//
 	Console::shutdown();
 	return 0;

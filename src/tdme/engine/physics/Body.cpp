@@ -85,7 +85,7 @@ Body::Body(World* world, const string& id, BodyType type, uint16_t collisionType
 			rigidBody->setIsAllowedToSleep(true);
 			break;
 		default:
-			Console::println("Body::Body(): unsupported type: " + to_string(type) + ": using collision body");
+			Console::printLine("Body::Body(): unsupported type: " + to_string(type) + ": using collision body");
 			break;
 	}
 	rigidBody->setUserData(this);

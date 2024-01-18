@@ -30,7 +30,7 @@ ApplicationServerClient::ApplicationServerClient(const uint32_t clientId, const 
 }
 
 ApplicationServerClient::~ApplicationServerClient() {
-	Console::println("ApplicationServerClient::~ApplicationServerClient()");
+	Console::printLine("ApplicationServerClient::~ApplicationServerClient()");
 }
 
 void ApplicationServerClient::onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {
@@ -64,15 +64,15 @@ void ApplicationServerClient::onRequest(const UDPPacket* packet, const uint32_t 
 }
 
 void ApplicationServerClient::onInit() {
-	Console::println("Initiated connection with '" + getIp() + ":" + to_string(getPort()) + "', sending key");
+	Console::printLine("Initiated connection with '" + getIp() + ":" + to_string(getPort()) + "', sending key");
 }
 
 void ApplicationServerClient::onClose() {
-	Console::println("Closed connection with '" + getIp() + ":" + to_string(getPort()) + "'");
+	Console::printLine("Closed connection with '" + getIp() + ":" + to_string(getPort()) + "'");
 }
 
 void ApplicationServerClient::onCustom(const string& type) {
-	Console::println("Custom event '" + type + "' with '" + getIp() + ":" + to_string(getPort()) + "'");
+	Console::printLine("Custom event '" + type + "' with '" + getIp() + ":" + to_string(getPort()) + "'");
 }
 
 Mutex& ApplicationServerClient::getNetworkPacketsMutex() {

@@ -123,7 +123,7 @@ void PhysicsTest1::display()
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
-	Console::println(
+	Console::printLine(
 		string("PhysicsTest1::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
@@ -335,7 +335,7 @@ void PhysicsTest1::initialize()
 		world->addRigidBody("tire2", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest1::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		Application::exit(1);
 	}
 }

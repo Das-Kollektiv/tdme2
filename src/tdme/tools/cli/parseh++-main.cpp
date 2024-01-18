@@ -63,16 +63,16 @@ struct ClassDeclarationParserValues {
 };
 
 static void parseDeclaration(const string& description, const string& token) {
-	Console::println("parseDeclaration():");
+	Console::printLine("parseDeclaration():");
 	auto descriptionLines = StringTools::tokenize(description, "\n");
-	Console::println("\tDescription");
-	for (const auto& descriptionLine: descriptionLines) Console::println("\t\t" + descriptionLine);
-	Console::println("\tDeclaration");
-	Console::println(token);
+	Console::printLine("\tDescription");
+	for (const auto& descriptionLine: descriptionLines) Console::printLine("\t\t" + descriptionLine);
+	Console::printLine("\tDeclaration");
+	Console::printLine(token);
 }
 
 static void parseHpp(const string& hppFileName) {
-	Console::println("Processing file: " + hppFileName);
+	Console::printLine("Processing file: " + hppFileName);
 
 	//
 	map<string, string> usings;
@@ -228,7 +228,7 @@ static void parseHpp(const string& hppFileName) {
 				{
 					if (c == '{') {
 						token = StringTools::trim(token);
-						Console::println(TOKENTYPENAME[tokenType] + "(" + to_string(tokenType) + "): '" + token + "'");
+						Console::printLine(TOKENTYPENAME[tokenType] + "(" + to_string(tokenType) + "): '" + token + "'");
 						tokenTypeStack.push(TOKENTYPE_CLASS_DECLARATION);
 						ClassDeclaration classDeclaration;
 						auto classDeclarationComponents = StringTools::tokenize(token, " \t\n");
@@ -280,39 +280,39 @@ static void parseHpp(const string& hppFileName) {
 				}
 			default:
 			{
-				Console::println("Unknown token type: " + TOKENTYPENAME[tokenType] + "(" + to_string(tokenType) + ")");
+				Console::printLine("Unknown token type: " + TOKENTYPENAME[tokenType] + "(" + to_string(tokenType) + ")");
 			}
 		}
 		lc = c;
 	}
 
-	Console::println("Summary: ");
-	Console::println();
-	Console::println("Usings: ");
+	Console::printLine("Summary: ");
+	Console::printLine();
+	Console::printLine("Usings: ");
 	for (const auto& [usingShortClassName, usingFullClassName]: usings) {
-		Console::println("\t" + usingShortClassName + " --> " + usingFullClassName);
+		Console::printLine("\t" + usingShortClassName + " --> " + usingFullClassName);
 	}
-	Console::println("Classes: ");
+	Console::printLine("Classes: ");
 	for (const auto& [className, classDeclaration]: classes) {
-		Console::println("\t" + classDeclaration.name + "(" + classDeclaration.namespaceName + ")");
-		Console::println("\t\tDescription:");
+		Console::printLine("\t" + classDeclaration.name + "(" + classDeclaration.namespaceName + ")");
+		Console::printLine("\t\tDescription:");
 		auto descriptionLines = StringTools::tokenize(classDeclaration.description, "\n");
-		for (const auto& descriptionLine: descriptionLines) Console::println("\t\t\t" + descriptionLine);
+		for (const auto& descriptionLine: descriptionLines) Console::printLine("\t\t\t" + descriptionLine);
 		for (const auto& friendClass: classDeclaration.friendClasses) {
-			Console::println("\t\tFriend Class: " + friendClass);
+			Console::printLine("\t\tFriend Class: " + friendClass);
 		}
 	}
 }
 
 int main(int argc, char** argv)
 {
-	Console::println(string("parsec++") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("parsec++") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc < 2) {
-		Console::println("Usage: parseh++ path/to/file.h");
+		Console::printLine("Usage: parseh++ path/to/file.h");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 

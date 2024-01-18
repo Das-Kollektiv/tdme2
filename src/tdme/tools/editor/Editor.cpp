@@ -68,9 +68,9 @@ Editor::~Editor() {
 
 int Editor::main(int argc, char** argv)
 {
-	Console::println(string("Editor ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("Editor ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	//
 	EngineMiniScript::initialize();
 	//

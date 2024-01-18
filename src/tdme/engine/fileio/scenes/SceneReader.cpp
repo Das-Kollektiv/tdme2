@@ -206,7 +206,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 				prototype->setEmbedded(false);
 			}
 		} catch (Exception& exception) {
-			Console::println(string() + "SceneReader::read(): An error occurred: " + exception.what() + ": Using empty prototype");
+			Console::printLine(string() + "SceneReader::read(): An error occurred: " + exception.what() + ": Using empty prototype");
 			//
 			string prototypeName = "Missing-Prototype-" + to_string(jPrototype["id"].GetInt());
 			//
@@ -222,7 +222,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			);
 		}
 		if (prototype == nullptr) {
-			Console::println("SceneReader::read(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
+			Console::printLine("SceneReader::read(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
 			continue;
 		}
 		if (jPrototype.FindMember("properties") != jPrototype.MemberEnd()) {
@@ -245,7 +245,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		const auto& jSceneEntity = jEntities[i];
 		auto prototype = scene->getLibrary()->getPrototype(jSceneEntity["mid"].GetInt());
 		if (prototype == nullptr) {
-			Console::println("SceneReader::read(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
+			Console::printLine("SceneReader::read(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
 
 			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 			progressStepCurrent++;
@@ -384,7 +384,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 		}
 	}
 	if (haveName == false) {
-		Console::println(
+		Console::printLine(
 			string(
 				"SceneReader::doImportFromModel(): Skipping model '" +
 				modelName +
@@ -581,7 +581,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 				}
 				prototype = emptyPrototype;
 			} else {
-				Console::println(string("SceneReader::readFromModel(): unknown entity type. Skipping"));
+				Console::printLine(string("SceneReader::readFromModel(): unknown entity type. Skipping"));
 				continue;
 			}
 			Transform sceneEntityTransform;
@@ -613,7 +613,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			scene.get()
 		);
 	} catch (Exception& exception) {
-		Console::println("SceneReader::readFromModel(): An error occurred: " + string(exception.what()));
+		Console::printLine("SceneReader::readFromModel(): An error occurred: " + string(exception.what()));
 		throw exception;
 	}
 

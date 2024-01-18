@@ -394,7 +394,7 @@ void ConvexMesh::destroyCollisionShape() {
 
 void ConvexMesh::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("ConvexMesh::createCollisionShape(): already attached to a world.");
+		Console::printLine("ConvexMesh::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 
@@ -419,7 +419,7 @@ void ConvexMesh::createCollisionShape(World* world) {
 		// create convex mesh shape
 		collisionShape = world->physicsCommon.createConvexMeshShape(polyhedronMesh);
 	} catch (Exception& exception) {
-		Console::println("ConvexMesh::createCollisionShape(): an error occurred: " + string(exception.what()));
+		Console::printLine("ConvexMesh::createCollisionShape(): an error occurred: " + string(exception.what()));
 		if (collisionShape != nullptr) {
 			this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
 			collisionShape = nullptr;

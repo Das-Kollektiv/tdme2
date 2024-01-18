@@ -25,7 +25,7 @@ MathOperatorTest::MathOperatorTest()
 int MathOperatorTest::main()
 {
 	MathOperatorTest mt;
-	Console::println(string("Math operator tests:"));
+	Console::printLine(string("Math operator tests:"));
 	mt.testVector2Operators();
 	mt.testVector3Operators();
 	mt.testVector4Operators();
@@ -43,55 +43,55 @@ void MathOperatorTest::testVector2Operators()
 	Vector2 v2, v3, v4 = Vector2(0.48, 19.33);
 	float f = 3.4;
 
-	Console::println(string("\nVector2 operators\n-----------------"));
+	Console::printLine(string("\nVector2 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((v1 == v1) == (v1.equals(v1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((v1 != v2) == (v1.equals(v2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +
 	Console::print(string("operator +: "));
 	if (v2 + v1 == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -
 	v3 = v2;
 	Console::print(string("operator -: "));
 	if (v2 - v1 == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	v3 = v2;
 	Console::print(string("operator *(float): "));
 	if (v3 * f == v3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 	v3 = v2;
 	Console::print(string("operator *(Vector2&): "));
 	if (v3 * v2 == v3.scale(v2)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /
@@ -99,9 +99,9 @@ void MathOperatorTest::testVector2Operators()
 	v3 = v4;
 	Console::print(string("operator /(float): "));
 	if (v2 / f == v3.scale(1.0f / f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	v2 = v4;
@@ -109,18 +109,18 @@ void MathOperatorTest::testVector2Operators()
 	auto vInverted = Vector2(1.0f / v1[0], 1.0f / v1[1]);
 	Console::print(string("operator /(Vector2&): "));
 	if ((v2 / v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +=
 	v3 = v2;
 	Console::print(string("operator +=: "));
 	if ((v2 += v1) == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -=
@@ -128,9 +128,9 @@ void MathOperatorTest::testVector2Operators()
 	v3 = v4;
 	Console::print(string("operator -=: "));
 	if ((v2 -= v1) == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
@@ -138,9 +138,9 @@ void MathOperatorTest::testVector2Operators()
 	v3 = v4;
 	Console::print(string("operator *=: "));
 	if ((v2 *= v1) == v3.scale(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /=
@@ -149,9 +149,9 @@ void MathOperatorTest::testVector2Operators()
 	vInverted = Vector2(1.0f / v1[0], 1.0f / v1[1]);
 	Console::print(string("operator /=: "));
 	if ((v2 /= v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }
 
@@ -161,55 +161,55 @@ void MathOperatorTest::testVector3Operators()
 	Vector3 v2, v3, v4 = Vector3(0.48, 19.33, 7.209);
 	float f = 3.4;
 
-	Console::println(string("\nVector3 operators\n-----------------"));
+	Console::printLine(string("\nVector3 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((v1 == v1) == (v1.equals(v1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((v1 != v2) == (v1.equals(v2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +
 	Console::print(string("operator +: "));
 	if (v2 + v1 == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -
 	v3 = v2;
 	Console::print(string("operator -: "));
 	if (v2 - v1 == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	v3 = v2;
 	Console::print(string("operator *(float): "));
 	if (v3 * f == v3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 	v3 = v2;
 	Console::print(string("operator *(Vector3&): "));
 	if (v3 * v2 == v3.scale(v2)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /
@@ -217,9 +217,9 @@ void MathOperatorTest::testVector3Operators()
 	v3 = v4;
 	Console::print(string("operator /(float): "));
 	if (v2 / f == v3.scale(1.0f / f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	v2 = v4;
@@ -227,18 +227,18 @@ void MathOperatorTest::testVector3Operators()
 	auto vInverted = Vector3(1.0f / v1[0], 1.0f / v1[1], 1.0f / v1[2]);
 	Console::print(string("operator /(Vector3&): "));
 	if ((v2 / v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +=
 	v3 = v2;
 	Console::print(string("operator +=: "));
 	if ((v2 += v1) == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -=
@@ -246,9 +246,9 @@ void MathOperatorTest::testVector3Operators()
 	v3 = v4;
 	Console::print(string("operator -=: "));
 	if ((v2 -= v1) == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
@@ -256,9 +256,9 @@ void MathOperatorTest::testVector3Operators()
 	v3 = v4;
 	Console::print(string("operator *=: "));
 	if ((v2 *= v1) == v3.scale(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /=
@@ -267,9 +267,9 @@ void MathOperatorTest::testVector3Operators()
 	vInverted = Vector3(1.0f / v1[0], 1.0f / v1[1], 1.0f / v1[2]);
 	Console::print(string("operator /=: "));
 	if ((v2 /= v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }
 
@@ -278,55 +278,55 @@ void MathOperatorTest::testVector4Operators() {
 	Vector4 v2, v3, v4 = Vector4(0.48, 19.33, 7.209, 5.905);
 	float f = 3.4;
 
-	Console::println(string("\nVector4 operators\n-----------------"));
+	Console::printLine(string("\nVector4 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((v1 == v1) == (v1.equals(v1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((v1 != v2) == (v1.equals(v2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +
 	Console::print(string("operator +: "));
 	if (v2 + v1 == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -
 	v3 = v2;
 	Console::print(string("operator -: "));
 	if (v2 - v1 == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	v3 = v2;
 	Console::print(string("operator *(float): "));
 	if (v3 * f == v3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 	v3 = v2;
 	Console::print(string("operator *(Vector3&): "));
 	if (v3 * v2 == v3.scale(v2)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /
@@ -334,9 +334,9 @@ void MathOperatorTest::testVector4Operators() {
 	v3 = v4;
 	Console::print(string("operator /(float): "));
 	if (v2 / f == v3.scale(1.0f / f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	v2 = v4;
@@ -344,18 +344,18 @@ void MathOperatorTest::testVector4Operators() {
 	auto vInverted = Vector4(1.0f / v1[0], 1.0f / v1[1], 1.0f / v1[2], 1.0f / v1[3]);
 	Console::print(string("operator /(Vector3&): "));
 	if ((v2 / v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +=
 	v3 = v2;
 	Console::print(string("operator +=: "));
 	if ((v2 += v1) == v3.add(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -=
@@ -363,9 +363,9 @@ void MathOperatorTest::testVector4Operators() {
 	v3 = v4;
 	Console::print(string("operator -=: "));
 	if ((v2 -= v1) == v3.sub(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
@@ -373,9 +373,9 @@ void MathOperatorTest::testVector4Operators() {
 	v3 = v4;
 	Console::print(string("operator *=: "));
 	if ((v2 *= v1) == v3.scale(v1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /=
@@ -384,9 +384,9 @@ void MathOperatorTest::testVector4Operators() {
 	vInverted = Vector4(1.0f / v1[0], 1.0f / v1[1], 1.0f / v1[2], 1.0f / v1[3]);
 	Console::print(string("operator /=: "));
 	if ((v2 /= v1) == v3.scale(vInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }
 
@@ -395,56 +395,56 @@ void MathOperatorTest::testQuaternionOperators() {
 	Quaternion q2, q3, q4 = Quaternion(0.48, 19.33, 7.209, 5.905);
 	float f = 3.4;
 
-	Console::println(string("\nQuaternion operators\n-----------------"));
+	Console::printLine(string("\nQuaternion operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((q1 == q1) == (q1.equals(q1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((q1 != q2) == (q1.equals(q2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +
 	Console::print(string("operator +: "));
 	if (q2 + q1 == q3.add(q1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -
 	q3 = q2;
 	Console::print(string("operator -: "));
 	if (q2 - q1 == q3.sub(q1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	q3 = q2;
 	Console::print(string("operator *(float): "));
 	if (q3 * f == q3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	q3 = q2;
 	Console::print(string("operator *(Quaternion&): "));
 	if (q3 * q2 == q3.multiply(q2)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	q3 = q2;
@@ -452,9 +452,9 @@ void MathOperatorTest::testQuaternionOperators() {
 	Console::print(string("operator *(Vector3&): "));
 	auto v2 = q3.multiply(v1);
 	if (q3 * v1 == v2) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /
@@ -462,9 +462,9 @@ void MathOperatorTest::testQuaternionOperators() {
 	q3 = q4;
 	Console::print(string("operator /(float): "));
 	if (q2 / f == q3.scale(1.0f / f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	q2 = q4;
@@ -472,18 +472,18 @@ void MathOperatorTest::testQuaternionOperators() {
 	auto qInverted = Quaternion(1.0f / q1[0], 1.0f / q1[1], 1.0f / q1[2], 1.0f / q1[3]);
 	Console::print(string("operator /(Quaternion&): "));
 	if ((q2 / q1) == q3.multiply(qInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator +=
 	q3 = q2;
 	Console::print(string("operator +=: "));
 	if ((q2 += q1) == q3.add(q1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator -=
@@ -491,9 +491,9 @@ void MathOperatorTest::testQuaternionOperators() {
 	q3 = q4;
 	Console::print(string("operator -=: "));
 	if ((q2 -= q1) == q3.sub(q1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
@@ -501,9 +501,9 @@ void MathOperatorTest::testQuaternionOperators() {
 	q3 = q4;
 	Console::print(string("operator *=: "));
 	if ((q2 *= q1) == q3.multiply(q1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator /=
@@ -512,9 +512,9 @@ void MathOperatorTest::testQuaternionOperators() {
 	qInverted = Quaternion(1.0f / q1[0], 1.0f / q1[1], 1.0f / q1[2], 1.0f / q1[3]);
 	Console::print(string("operator /=: "));
 	if ((q2 /= q1) == q3.multiply(qInverted)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }
 
@@ -524,55 +524,55 @@ void MathOperatorTest::testMatrix3x3Operators() {
 	float f = 3.4;
 
 
-	Console::println(string("\nMatrix3x3 operators\n-----------------"));
+	Console::printLine(string("\nMatrix3x3 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((m1 == m1) == (m1.equals(m1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((m1 != m2) == (m1.equals(m2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	Console::print(string("operator *(float): "));
 	if (m2 * f == m3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	Console::print(string("operator *(Matrix3x3&): "));
 	if (m2 * m3 == m2.multiply(m3)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	auto v1 = Vector2(4.75, 0.98);
 	Console::print(string("operator *(Vector2&): "));
 	auto v2 = m2.multiply(v1);
 	if (m3 * v1 == v2) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
 	m2 = m3;
 	Console::print(string("operator *=: "));
 	if ((m2 *= m1) == m3.multiply(m1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }
 
@@ -584,61 +584,61 @@ void MathOperatorTest::testMatrix4x4Operators() {
 	float f = 3.4;
 
 
-	Console::println(string("\nMatrix4x4 operators\n-----------------"));
+	Console::printLine(string("\nMatrix4x4 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((m1 == m1) == (m1.equals(m1) )) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator !=
 	Console::print(string("operator !=: "));
 	if ((m1 != m2) == (m1.equals(m2) == false)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *
 	Console::print(string("operator *(float): "));
 	if (m2 * f == m3.scale(f)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	Console::print(string("operator *(Matrix4x4&): "));
 	if (m2 * m3 == m2.multiply(m3)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	Console::print(string("operator *(Vector3&): "));
 	auto v03 = m2.multiply(v3);
 	if (m3 * v3 == v03) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	Console::print(string("operator *(Vector4&): "));
 	auto v04 = m2.multiply(v4);
 	if (m3 * v4 == v04) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 
 	// operator *=
 	m2 = m3;
 	Console::print(string("operator *=: "));
 	if ((m2 *= m1) == m3.multiply(m1)) {
-		Console::println(string(this->success));
+		Console::printLine(string(this->success));
 	} else {
-		Console::println(string(this->fail));
+		Console::printLine(string(this->fail));
 	}
 }

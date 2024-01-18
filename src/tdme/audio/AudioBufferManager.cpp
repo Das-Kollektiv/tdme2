@@ -51,6 +51,6 @@ bool AudioBufferManager::removeAudioBuffer(const string& id)
 		}
 	}
 	// should never happen
-	Console::println(string("Warning: audio buffer not loaded by audio buffer manager"));
+	Console::printLine(string("Warning: audio buffer not loaded by audio buffer manager"));
 	return false;
 }

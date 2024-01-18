@@ -369,7 +369,7 @@ void TextEditorTabController::onFocus(GUIElementNode* node) {
 	if (node->getScreenNode() == screenNode) {
 		view->getEngine()->getGUI()->invalidateFocussedNode();
 	} else {
-		Console::println("TextEditorTabController::onFocus(): Unknown screen node");
+		Console::printLine("TextEditorTabController::onFocus(): Unknown screen node");
 	}
 }
 

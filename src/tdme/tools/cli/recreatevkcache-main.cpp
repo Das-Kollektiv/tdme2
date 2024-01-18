@@ -70,7 +70,7 @@ public:
 	void initialize() override {
 		Engine::getInstance()->initialize();
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
-			Console::println("Note: recreatevkcache does not run with --vulkan, Vulkan shader cache can not get created. Exiting.");
+			Console::printLine("Note: recreatevkcache does not run with --vulkan, Vulkan shader cache can not get created. Exiting.");
 			Application::exit(0);
 		}
 	}
@@ -86,27 +86,27 @@ public:
 
 int main(int argc, char** argv)
 {
-	Console::println(string("recreatevkcache ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("recreatevkcache ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
-	Console::println("Deleting shader/vk path");
+	Console::printLine("Deleting shader/vk path");
 	try {
 		FileSystem::getInstance()->removePath("shader/vk", true);
 	} catch (Exception& exception) {
-		Console::println(string() + "An error occurred: " + exception.what());
+		Console::printLine(string() + "An error occurred: " + exception.what());
 	}
 	try {
 		if (FileSystem::getInstance()->exists("shader/vk") == false) {
 			FileSystem::getInstance()->createPath("shader/vk");
 		}
 	} catch (Exception& exception) {
-		Console::println(string() + "An error occurred: " + exception.what());
+		Console::printLine(string() + "An error occurred: " + exception.what());
 	}
-	Console::println("Creating shader/vk shader cache");
+	Console::printLine("Creating shader/vk shader cache");
 	tdme::tools::cli::RecreateVKCacheApplication::main(argc, argv);
-	Console::println("Done");
+	Console::printLine("Done");
 
 	//
 	Application::exit(Application::EXITCODE_SUCCESS);

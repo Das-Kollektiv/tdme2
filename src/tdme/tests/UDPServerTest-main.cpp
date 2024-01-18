@@ -60,7 +60,7 @@ unique_ptr<EchoUDPServer> server;
 unique_ptr<ServerBroadcaster> bc;
 
 void sigHandlerINT(int signal) {
-	Console::println("Interrupt signal catched");
+	Console::printLine("Interrupt signal catched");
 	if (server != nullptr) {
 		// stop broad caster
 		server->stop();
@@ -70,7 +70,7 @@ void sigHandlerINT(int signal) {
 int main(int argc, char *argv[]) {
 	// install SIGNINT handler
 	if (signal(SIGINT, sigHandlerINT) == SIG_ERR) {
-		Console::println("Can't install signal handler for SIGINT");
+		Console::printLine("Can't install signal handler for SIGINT");
 	}
 
 	// initialize network module

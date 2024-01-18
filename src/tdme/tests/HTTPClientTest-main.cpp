@@ -23,19 +23,19 @@ int main(int argc, char *argv[]) {
 		httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
 		httpClient.setURL("http://www.drewke.net/tdme2/");
 		httpClient.execute();
-		Console::println("HTTP status code: " + to_string(httpClient.getStatusCode()));
+		Console::printLine("HTTP status code: " + to_string(httpClient.getStatusCode()));
 		for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
-			Console::println("Response Header: " + headerName + ": " + headerValue);
+			Console::printLine("Response Header: " + headerName + ": " + headerValue);
 		}
-		Console::println("Response: ");
+		Console::printLine("Response: ");
 		char c;
 		while (httpClient.getResponse().eof() == false) {
 			httpClient.getResponse().get(c);
 			Console::print(string() + c);
 		}
-		Console::println();
+		Console::printLine();
 	} catch (Exception& exception) {
-		Console::println(string("Fail: ") + exception.what());
+		Console::printLine(string("Fail: ") + exception.what());
 	}
 	//
 	Console::shutdown();

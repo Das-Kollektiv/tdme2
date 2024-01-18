@@ -177,7 +177,7 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 		model = move(convexMeshModel);
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: " + convexMeshFile + ": "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		setupNone();
 	}
 }
@@ -202,7 +202,7 @@ void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
 		model = move(convexMeshModel);
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		setupNone();
 	}
 }

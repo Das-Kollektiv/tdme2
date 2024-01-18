@@ -21,15 +21,15 @@ int main(int argc, char *argv[]) {
 		httpDownloadClient.setFile("haiku-r1beta4-x86_64-anyboot.iso");
 		httpDownloadClient.setURL("http://mirror.rit.edu/haiku/r1beta4/haiku-r1beta4-x86_64-anyboot.iso");
 		httpDownloadClient.start();
-		Console::println("Download started");
+		Console::printLine("Download started");
 		while (httpDownloadClient.isFinished() == false) {
-			Console::println("Download progress: " + to_string(httpDownloadClient.getProgress() * 100.0f));
+			Console::printLine("Download progress: " + to_string(httpDownloadClient.getProgress() * 100.0f));
 			Thread::sleep(1000LL);
 		}
 		httpDownloadClient.join();
-		Console::println("Download finished");
+		Console::printLine("Download finished");
 	} catch (Exception& exception) {
-		Console::println(string("Fail: ") + exception.what());
+		Console::printLine(string("Fail: ") + exception.what());
 	}
 	//
 	Console::shutdown();

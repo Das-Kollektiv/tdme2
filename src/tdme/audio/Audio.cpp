@@ -71,7 +71,7 @@ void Audio::addEntity(AudioEntity* entity)
 		if (audioEntityIt != audioEntities.end()) {
 			// check if we want to add this entity a second time
 			if (entity == audioEntityIt->second) {
-				Console::println("Audio::addEntity(): " + entity->getId() + ": entity already added!");
+				Console::printLine("Audio::addEntity(): " + entity->getId() + ": entity already added!");
 				return;
 			}
 			// remove old other entity
@@ -79,7 +79,7 @@ void Audio::addEntity(AudioEntity* entity)
 		}
 		audioEntities[entity->getId()] = entity;
 	} else {
-		Console::println(string("Audio::addEntity(): adding '" + entity->getId() + "' failed"));
+		Console::printLine(string("Audio::addEntity(): adding '" + entity->getId() + "' failed"));
 	}
 }
 

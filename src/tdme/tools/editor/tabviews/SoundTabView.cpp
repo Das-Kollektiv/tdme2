@@ -70,7 +70,7 @@ void SoundTabView::initialize()
 		screenNode->addTooltipRequestListener(soundTabController.get());
 		soundTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::println("SoundTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("SoundTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }

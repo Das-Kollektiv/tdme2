@@ -163,7 +163,7 @@ void ObjectAnimation::setAnimation(const string& id, float speed)
 			baseAnimationLast.endAtTime = baseAnimationLast.currentAtTime;
 		}
 	} else {
-		Console::println("ObjectAnimation::setAnimation(): " + model->getId() + ": missing animation: " + id);
+		Console::printLine("ObjectAnimation::setAnimation(): " + model->getId() + ": missing animation: " + id);
 	}
 }
 
@@ -269,7 +269,7 @@ const Matrix4x4 ObjectAnimation::getNodeTransformMatrix(const string& id)
 		if (transformMatrixIt != transformMatrices[0].end()) {
 			return *transformMatrixIt->second;
 		}
-		Console::println("ObjectAnimation::getTransformMatrix(): " + id + ": node not found");
+		Console::printLine("ObjectAnimation::getTransformMatrix(): " + id + ": node not found");
 	}
 	return Matrix4x4().identity();
 }

@@ -155,7 +155,7 @@ void GUITabsController::setValue(const MutableString& value)
 		tabsHeaderController->select(tabElementNode);
 		setTabContentSelected(tabElementNode->getId());
 	} else {
-		Console::println("GUITabsController::setValue(): tab with id '" + value.getString() + "' not found");
+		Console::printLine("GUITabsController::setValue(): tab with id '" + value.getString() + "' not found");
 	}
 }
 

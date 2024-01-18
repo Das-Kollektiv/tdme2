@@ -25,13 +25,13 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("imageprocessor ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("imageprocessor ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc != 3) {
-		Console::println("Usage: imageprocessor input.png output.png");
+		Console::printLine("Usage: imageprocessor input.png output.png");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
@@ -41,14 +41,14 @@ int main(int argc, char** argv)
 
 	//
 	try {
-		Console::println("Loading image: " + inputImageFileName);
+		Console::printLine("Loading image: " + inputImageFileName);
 		auto image = TextureReader::read(
 			FileSystem::getInstance()->getPathName(inputImageFileName),
 			FileSystem::getInstance()->getFileName(inputImageFileName)
 		);
 
 		//
-		Console::println("Processing image");
+		Console::printLine("Processing image");
 
 		// for now: do black pixel -> transparent pixels, every other pixel gets white
 		//	later we can provide color transform matrices with preset matrices
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 		image = smoothedTexture;
 
 		//
-		Console::println("Saving image: " + outputImageFileName);
+		Console::printLine("Saving image: " + outputImageFileName);
 		PNGTextureWriter::write(
 			image,
 			FileSystem::getInstance()->getPathName(outputImageFileName),
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 		//
 		image->releaseReference();
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

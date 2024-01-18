@@ -342,7 +342,7 @@ void DecalEditorTabController::setDecalTexture(const string& fileName) {
 			physicsSubView->updateGizmo(prototype);
 		}
 	} catch (Exception& exception) {
-		Console::println("OnDecalTextureFileOpenAction::performAction(): An error occurred: " + string(exception.what()));
+		Console::printLine("OnDecalTextureFileOpenAction::performAction(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 	//
@@ -389,7 +389,7 @@ void DecalEditorTabController::setDecalDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_vertical_sprites"))->getController()->setValue(MutableString(decal->getTextureVerticalSprites()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_fps"))->getController()->setValue(MutableString(decal->getTextureSpritesFPS()));
 	} catch (Exception& exception) {
-		Console::println("DecalEditorTabController::setDecalDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("DecalEditorTabController::setDecalDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }

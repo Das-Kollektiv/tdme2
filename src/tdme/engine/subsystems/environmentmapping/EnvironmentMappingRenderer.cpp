@@ -119,7 +119,7 @@ void EnvironmentMappingRenderer::initialize()
 	if (geometryBuffer != nullptr) {
 		// TODO: fix me by using a hash map or something to match static geometry buffers with env maps of given dimension
 		if (geometryBuffer->getWidth() != width || geometryBuffer->getHeight() != height) {
-			Console::println("EnvironmentMappingRenderer::initialize(): " + to_string(geometryBuffer->getId()) + ": geometry buffer width != width, height != height!");
+			Console::printLine("EnvironmentMappingRenderer::initialize(): " + to_string(geometryBuffer->getId()) + ": geometry buffer width != width, height != height!");
 		}
 	}
 }

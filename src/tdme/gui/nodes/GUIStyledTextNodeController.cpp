@@ -177,14 +177,14 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 							urlAreaHit = &urlArea;
 							if (Application::getMouseCursor() != MOUSE_CURSOR_HAND) {
 								Application::setMouseCursor(MOUSE_CURSOR_HAND);
-								Console::println("hand: " + node->getId() + "(" + urlAreaHit->url + ")");
+								Console::printLine("hand: " + node->getId() + "(" + urlAreaHit->url + ")");
 							}
 							break;
 						}
 						if (urlAreaHit == nullptr) {
 							if (Application::getMouseCursor() != MOUSE_CURSOR_ENABLED) {
 								Application::setMouseCursor(MOUSE_CURSOR_ENABLED);
-								Console::println("normal: " + node->getId());
+								Console::printLine("normal: " + node->getId());
 							}
 						}
 
@@ -996,7 +996,7 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 }
 
 void GUIStyledTextNodeController::storeTypingHistoryEntry() {
-	Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry()");
+	Console::printLine("GUIStyledTextNodeController::storeTypingHistoryEntry()");
 
 	// if no char has been typed we have nothing to do
 	if (typedChars == false) {
@@ -1062,12 +1062,12 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
+		Console::printLine("GUIStyledTextNodeController::storeTypingHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
 }
 
 void GUIStyledTextNodeController::storeTypingHistoryEntry2(int index, const string& data) {
-	Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry2()");
+	Console::printLine("GUIStyledTextNodeController::storeTypingHistoryEntry2()");
 
 	// we need to remove history from now on
 	if (historyIdx != -1 && historyIdx < history.size()) {
@@ -1104,12 +1104,12 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry2(int index, const stri
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry2(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
+		Console::printLine("GUIStyledTextNodeController::storeTypingHistoryEntry2(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
 }
 
 void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int count) {
-	Console::println("GUIStyledTextNodeController::storeDeletionHistoryInternal(): " + to_string(index) + " / " + to_string(count));
+	Console::printLine("GUIStyledTextNodeController::storeDeletionHistoryInternal(): " + to_string(index) + " / " + to_string(count));
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	const auto& text = styledTextNode->getText();
@@ -1142,7 +1142,7 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeDeletionHistoryInternal(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
+		Console::printLine("GUIStyledTextNodeController::storeDeletionHistoryInternal(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
 	//
 }
@@ -1152,7 +1152,7 @@ void GUIStyledTextNodeController::redo() {
 	storeTypingHistoryEntry();
 
 	//
-	Console::println("GUIStyledTextNodeController::redo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
+	Console::printLine("GUIStyledTextNodeController::redo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
 
 	// exit if no history
 	if (history.empty() == true) return;
@@ -1203,7 +1203,7 @@ void GUIStyledTextNodeController::undo() {
 	storeTypingHistoryEntry();
 
 	//
-	// Console::println("GUIStyledTextNodeController::undo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
+	// Console::printLine("GUIStyledTextNodeController::undo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
 
 	// skip if empty history
 	if (history.empty() == true) return;

@@ -60,7 +60,7 @@ void InfoDialogScreenController::initialize()
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("infodialog_tabs-header"));
 		messageNode = dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("infodialog_message"));
 	} catch (Exception& exception) {
-		Console::println("InfoDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("InfoDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

@@ -611,7 +611,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 							try {
 								styleSize = Integer::parse(argument);
 							} catch (Exception& exception) {
-								Console::println("GUIStyledTextNode::setText(): size: unknown value: " + argument);
+								Console::printLine("GUIStyledTextNode::setText(): size: unknown value: " + argument);
 							}
 							styleStartIdx = this->text.size();
 						} else
@@ -629,25 +629,25 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 							for (const auto& imageOption: imageOptions) {
 								auto nameValuePair = StringTools::tokenize(imageOption, ":");
 								if (nameValuePair.size() != 2) {
-									Console::println("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
+									Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
 								} else {
 									auto name = StringTools::trim(nameValuePair[0]);
 									auto value = StringTools::trim(nameValuePair[1]);
 									if (name.empty() == true || value.empty() == true) {
-										Console::println("GUIStyledTextNode::setText(): unknown image style command option: name or value empty");
+										Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: name or value empty");
 									} else
 									if (name == "width") {
 										try {
 											imageWidth = Integer::parse(value);
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: width: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: width: unknown value: " + value);
 										}
 									} else
 									if (name == "height") {
 										try {
 											imageHeight = Integer::parse(value);
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: height: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: height: unknown value: " + value);
 										}
 									} else
 									if (name == "horizontal-scale") {
@@ -658,7 +658,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 												imageHorizontalScale = Float::parse(value);
 											}
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
 										}
 									} else
 									if (name == "vertical-scale") {
@@ -669,29 +669,29 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 												imageVerticalScale = Float::parse(value);
 											}
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: vertical-scale: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: vertical-scale: unknown value: " + value);
 										}
 									} else
 									if (name == "effect-color-mul") {
 										try {
 											imageEffectColorMul = GUIColor(value);
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-mul: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: effect-color-mul: unknown value: " + value);
 										}
 									} else
 									if (name == "effect-color-add") {
 										try {
 											imageEffectColorAdd = GUIColor(value);
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-add: unknown value: " + value);
+											Console::printLine("GUIStyledTextNode::setText(): unknown image style command option: effect-color-add: unknown value: " + value);
 										}
 									} else {
-										Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
+										Console::printLine("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
 									}
 								}
 							}
 						} else {
-							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
+							Console::printLine("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
 					} else
 					if (styleTokenized.size() == 1) {
@@ -723,10 +723,10 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 							imageEffectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL;
 							imageEffectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD;
 						} else {
-							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
+							Console::printLine("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
 					} else {
-						Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
+						Console::printLine("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 					}
 					//
 					currentStyle.clear();
@@ -1059,7 +1059,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 		y = startRenderY;
 	}
 
-	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
+	// Console::printLine("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
 	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
@@ -1130,7 +1130,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						linePart += line[j];
 					}
 				}
-			Console::println(
+			Console::printLine(
 					"render line@" + to_string(k) + ": '" + linePart
 							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
 							+ to_string(lineConstraints[k].width) + " / "
@@ -1600,7 +1600,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	}
 
 	//
-	// Console::println("y: " + to_string(y) + " / " + to_string(autoHeight));
+	// Console::printLine("y: " + to_string(y) + " / " + to_string(autoHeight));
 
 	//
 	guiRenderer->render();
@@ -1629,8 +1629,8 @@ void GUIStyledTextNode::unsetStyles() {
 void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
-	// Console::println("'");
-	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::printLine("'");
+	// for (const auto& style: styles) Console::printLine("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	for (auto i = 0; i < styles.size(); i++) {
 		auto& style = styles[i];
 		if (startIdx >= style.startIdx && endIdx <= style.endIdx) {
@@ -1654,7 +1654,7 @@ void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 			i--;
 		}
 	}
-	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::printLine("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, int size, const string& url) {
@@ -1663,7 +1663,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// Console::print("'");
 	// Console::print(", color = " + to_string(color.getRed()) + ", " + to_string(color.getGreen()) + ", " + to_string(color.getBlue()) + ", " + to_string(color.getAlpha()));
 	// Console::print(", url = '" + url + "'");
-	// Console::println();
+	// Console::printLine();
 	unsetTextStyle(startIdx, endIdx);
 	//
 	if (size <= 0) size = this->size;
@@ -1677,9 +1677,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			j = i + 1;
 		}
 	}
-	// Console::println("insert@" + to_string(j));
+	// Console::printLine("insert@" + to_string(j));
 	if (j == -1) j = 0;
-	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::printLine("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	// insert
 	styles.insert(
 		styles.begin() + j,
@@ -1699,7 +1699,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::printLine("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, int size, const string& url) {
@@ -1707,7 +1707,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	// Console::print("'");
 	// Console::print(", url = '" + url + "'");
-	// Console::println();
+	// Console::printLine();
 	unsetTextStyle(startIdx, endIdx);
 	//
 	if (size <= 0) size = this->size;
@@ -1721,8 +1721,8 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			j = i + 1;
 		}
 	}
-	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
-	// Console::println("insert@" + to_string(j));
+	// for (const auto& style: styles) Console::printLine("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::printLine("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
 	styles.insert(
@@ -1743,11 +1743,11 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::printLine("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height, float horizontalScale, float verticalScale, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) {
-	// Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
+	// Console::printLine("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
 	auto _image = image.empty() == true?nullptr:screenNode->getImage(image);
@@ -1759,8 +1759,8 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			j = i + 1;
 		}
 	}
-	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
-	// Console::println("insert@" + to_string(j));
+	// for (const auto& style: styles) Console::printLine("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::printLine("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
 	styles.insert(
@@ -1781,5 +1781,5 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::printLine("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }

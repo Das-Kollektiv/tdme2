@@ -39,7 +39,7 @@ UDPClientMessage* UDPClientMessage::parse(const char message[512], uint16_t byte
 			messageType = MessageType::MESSAGETYPE_MESSAGE;
 			break;
 		default:
-			Console::println("UDPClientMessage::parse(): invalid message type: '" + (string() + message[0]) + "' (" + to_string(message[0]) + ")");
+			Console::printLine("UDPClientMessage::parse(): invalid message type: '" + (string() + message[0]) + "' (" + to_string(message[0]) + ")");
 			return nullptr;
 	}
 

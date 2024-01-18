@@ -86,7 +86,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -120,7 +120,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -152,7 +152,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -187,7 +187,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -218,7 +218,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -347,7 +347,7 @@ bool MiniScriptMatrix4x4::mul(MiniScript* miniScript, const span<MiniScript::Var
 			//
 			return true;
 		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			Console::printLine("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 			miniScript->startErrorScript();
 			//
 			return false;

@@ -198,7 +198,7 @@ void FlowMapTest::doPathFinding() {
 		SceneConnector::BODY_TYPEID_STATIC,
 		path
 	);
-	Console::println("Found a path: steps: " + to_string(path.size()));
+	Console::printLine("Found a path: steps: " + to_string(path.size()));
 	auto center = scene->getBoundingBox()->getCenter();
 	auto depth = Math::ceil(scene->getBoundingBox()->getDimensions().getZ());
 	auto width = Math::ceil(scene->getBoundingBox()->getDimensions().getX());

@@ -67,7 +67,7 @@ ApplicationClient::~ApplicationClient() {
 }
 
 void ApplicationClient::run() {
-	Console::println("ApplicationClient::run(): init");
+	Console::printLine("ApplicationClient::run(): init");
 
 	//
 	auto timeLast = Time::getCurrentMillis();
@@ -86,16 +86,16 @@ void ApplicationClient::run() {
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 8) & 0xFF);
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 16) & 0xFF);
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 24) & 0xFF);
-				Console::println("ApplicationClient::run(): unhandled IN packet: 1s late: " + logicTypeIdString);
-				Console::println("Packet ASCII: ");
+				Console::printLine("ApplicationClient::run(): unhandled IN packet: 1s late: " + logicTypeIdString);
+				Console::printLine("Packet ASCII: ");
 				for (auto i = 0; i < 255; i++) {
 					Console::print(string() + (char)(logicNetworkPacket.getData()[i]));
 				}
-				Console::println("Packet ORD: ");
+				Console::printLine("Packet ORD: ");
 				for (auto i = 0; i < 255; i++) {
 					Console::print(to_string(int(logicNetworkPacket.getData()[i])) + " ");
 				}
-				Console::println();
+				Console::printLine();
 			}
 			logicNetworkPacket.setReinjected();
 			inNetworkPackets.push_back(logicNetworkPacket);
@@ -120,16 +120,16 @@ void ApplicationClient::run() {
 				if (safe == true && udpClient->processSafeMessage(message.get()) == false) {
 					continue;
 				}
-				// Console::println("got packet safe: " + to_string(safe == 1));
+				// Console::printLine("got packet safe: " + to_string(safe == 1));
 				while (packet->getPosition() < UDPPacket::PACKET_MAX_SIZE - 17) {
 					// size
 					auto size = packet->getByte();
-					// Console::println("got packet size " + to_string((int)size));
+					// Console::printLine("got packet size " + to_string((int)size));
 					// end of
 					if (size == 0) break;
 					// message logic type id
 					auto logicTypeId = packet->getInt();
-					// Console::println(string("got packet logic ") + (char)logicTypeId);
+					// Console::printLine(string("got packet logic ") + (char)logicTypeId);
 					// create network packet
 					inNetworkPackets.emplace_back(
 						message->getMessageId(),
@@ -319,7 +319,7 @@ void ApplicationClient::run() {
 		// get some rest
 		int64_t timeDelta = Time::getCurrentMillis() - timeLast;
 		if (timeDelta > 33) {
-			Console::println("ApplicationClient::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
+			Console::printLine("ApplicationClient::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
 			timeDelta = 33;
 		} else
 		if (timeDelta < 16) {
@@ -337,7 +337,7 @@ void ApplicationClient::run() {
 	}
 
 	//
-	Console::println("ApplicationClient::run(): done");
+	Console::printLine("ApplicationClient::run(): done");
 }
 
 void ApplicationClient::handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets) {
@@ -407,7 +407,7 @@ void ApplicationClient::update() {
 		if (queuedSound.attachedToLogic == true) {
 			auto entity = engine->getEntity(queuedSound.gameLogicId);
 			if (entity == nullptr) {
-				// Console::println("WS::display(): " + queuedSound.gameLogicId + ": " + queuedSound.id + ": engine entity not found");
+				// Console::printLine("WS::display(): " + queuedSound.gameLogicId + ": " + queuedSound.id + ": engine entity not found");
 				queuedSound.distanceFromCamera = 100.0f * 100.0f;
 			} else {
 				queuedSound.position = entity->getTranslation();
@@ -440,7 +440,7 @@ void ApplicationClient::update() {
 		for (auto i = 0; i < context->getSoundPoolSize(); i++) {
 			auto sound = audio->getEntity(queuedSound.id + (context->getSoundPoolSize() == 1?"":"." + to_string(i)));
 			if (sound == nullptr) {
-				Console::println("WS::display(): " + queuedSound.gameLogicId + ": " + queuedSound.id + ": sound not found");
+				Console::printLine("WS::display(): " + queuedSound.gameLogicId + ": " + queuedSound.id + ": sound not found");
 				continue;
 			}
 			if (sound->isPlaying() == true) {

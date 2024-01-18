@@ -103,7 +103,7 @@ void Capsule::destroyCollisionShape() {
 
 void Capsule::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("Capsule::createCollisionShape(): already attached to a world.");
+		Console::printLine("Capsule::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 

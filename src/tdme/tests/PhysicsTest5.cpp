@@ -132,7 +132,7 @@ void PhysicsTest5::display()
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
 	/*
-	Console::println(
+	Console::printLine(
 		string("PhysicsTest5::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
@@ -304,7 +304,7 @@ void PhysicsTest5::initialize()
 		*/
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest5::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		Application::exit(1);
 	}
 }

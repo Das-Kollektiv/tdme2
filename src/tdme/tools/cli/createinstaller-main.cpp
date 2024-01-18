@@ -131,13 +131,13 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(path) == false) {
-		Console::println("Error: scanPathResources: file does not exist: " + path);
+		Console::printLine("Error: scanPathResources: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
 		if (listFilter.accept(".", path) == true) {
 			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanPathResources: file exist, but does not match filter: " + path);
+			Console::printLine("Error: scanPathResources: file exist, but does not match filter: " + path);
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
@@ -188,13 +188,13 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(path) == false) {
-		Console::println("Error: scanPathLibraries: file does not exist: " + path);
+		Console::printLine("Error: scanPathLibraries: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
 		if (listFilter.accept(".", path) == true) {
 			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanPathLibraries: file exist, but does not match filter: " + path);
+			Console::printLine("Error: scanPathLibraries: file exist, but does not match filter: " + path);
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
@@ -228,13 +228,13 @@ static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(path) == false) {
-		Console::println("Error: scanPathHeaders: file does not exist: " + path);
+		Console::printLine("Error: scanPathHeaders: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
 		if (listFilter.accept(".", path) == true) {
 			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanPathHeaders: file exist, but does not match filter: " + path);
+			Console::printLine("Error: scanPathHeaders: file exist, but does not match filter: " + path);
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
@@ -298,13 +298,13 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(path) == false) {
-		Console::println("Error: scanPathExecutables: file does not exist: " + path);
+		Console::printLine("Error: scanPathExecutables: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
 		if (listFilter.accept(".", path) == true) {
 			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanPathExecutables: file exist, but does not match filter: " + path);
+			Console::printLine("Error: scanPathExecutables: file exist, but does not match filter: " + path);
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
@@ -362,7 +362,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		strm.opaque = Z_NULL;
 		ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
 		if (ret != Z_OK) {
-			Console::println("processFile(): Error compressing file: Aborting");
+			Console::printLine("processFile(): Error compressing file: Aborting");
 			return;
 		}
 
@@ -414,7 +414,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	fileInformations.push_back(fileInformation);
 
 	// done
-	Console::println(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
+	Console::printLine(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
 }
 
 #if defined(__APPLE__)
@@ -475,8 +475,8 @@ void createMacApplication(const Properties& installerProperties, const string& f
 			);
 		}
 		auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + _pathName + executableFileName + ".app\"";
-		Console::println("Signing '" + fileName + "': " + codeSignCommand);
-		Console::println(Application::execute(codeSignCommand));
+		Console::printLine("Signing '" + fileName + "': " + codeSignCommand);
+		Console::printLine(Application::execute(codeSignCommand));
 	}
 }
 #endif
@@ -486,9 +486,9 @@ int main(int argc, char** argv)
 	// TODO: error handling
 
 	//
-	Console::println(string("create-installer ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("create-installer ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	string tdmePath = "../tdme2";
@@ -503,17 +503,17 @@ int main(int argc, char** argv)
 		auto componentId = componentIdx == 0?"installer":"component" + to_string(componentIdx);
 		auto componentName = installerProperties.get(componentId, "");
 		if (componentName.empty() == true) break;
-		Console::println("Having component: " + to_string(componentIdx) + ": " + componentName);
+		Console::printLine("Having component: " + to_string(componentIdx) + ": " + componentName);
 		auto componentInclude = installerProperties.get(componentId + "_include", "");
 		if (componentInclude.empty() == true) {
-			Console::println("component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+			Console::printLine("component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 			continue;
 		}
 
 		//
 		auto componentFileName = os + "-" + cpu + "-" + StringTools::replace(StringTools::replace(componentName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
 		//
-		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
+		Console::printLine("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 
 		if (FileSystem::getInstance()->exists("installer") == false) {
 			FileSystem::getInstance()->createPath("installer");
@@ -540,10 +540,10 @@ int main(int argc, char** argv)
 			string type = t2.hasMoreTokens() == true?t2.nextToken():"";
 			string file = t2.hasMoreTokens() == true?t2.nextToken():"";
 			if (type.empty() == true || file.empty() == true) {
-				Console::println("Component: " + to_string(componentIdx) + ": type or file empty. Skipping");
+				Console::printLine("Component: " + to_string(componentIdx) + ": type or file empty. Skipping");
 				continue;
 			}
-			Console::println("Component: " + to_string(componentIdx) + ": type = " + type + "; file = " + file);
+			Console::printLine("Component: " + to_string(componentIdx) + ": type = " + type + "; file = " + file);
 
 			// scan files
 			if (type == "exe") {
@@ -572,11 +572,11 @@ int main(int argc, char** argv)
 			if (type == "api") {
 				scanPathHeaders(file, filesData);
 			} else {
-				Console::println("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
+				Console::printLine("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
 			}
 
 			// process files
-			Console::println("Component: " + to_string(componentIdx) + ": Processing files");
+			Console::printLine("Component: " + to_string(componentIdx) + ": Processing files");
 		}
 
 		// add files to archive
@@ -621,8 +621,8 @@ int main(int argc, char** argv)
 					}
 					auto signedFileName = "signed-executables/" + executableFileName;
 					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + signedFileName + "\"";
-					Console::println("Signing '" + fileName + "': " + codeSignCommand);
-					Console::println(Application::execute(codeSignCommand));
+					Console::printLine("Signing '" + fileName + "': " + codeSignCommand);
+					Console::printLine(Application::execute(codeSignCommand));
 					processFile(signedFileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
 					FileSystem::getInstance()->removePath("signed-executables", true);
 				}
@@ -656,7 +656,7 @@ int main(int argc, char** argv)
 		auto archiveFileSystem = make_unique<ArchiveFileSystem>("installer/" + componentFileName);
 		auto archiveHash = archiveFileSystem->computeSHA256Hash();
 		FileSystem::getStandardFileSystem()->setContentFromString("installer", componentFileName + ".sha256", archiveHash);
-		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": hash: " + archiveHash);
+		Console::printLine("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": hash: " + archiveHash);
 	}
 
 	// add completion file

@@ -212,7 +212,7 @@ void ServerThread::run() {
 		for (auto client: clients) {
 			for (auto& packet: clientNetworkPacketsUnhandled[client->getKey()]) {
 				if (timeNow - packet.getTime() > 1000L) {
-					Console::println("ServerThread::run(): unhandled IN packet: 1s late: " + client->getKey() + ": " + to_string(packet.getLogicTypeId()));
+					Console::printLine("ServerThread::run(): unhandled IN packet: 1s late: " + client->getKey() + ": " + to_string(packet.getLogicTypeId()));
 				}
 				packet.setReinjected();
 				clientNetworkPackets[client->getKey()].push_back(packet);
@@ -265,7 +265,7 @@ void ServerThread::run() {
 			client->getNetworkPacketsMutex().lock();
 			clientNetworkPackets[client->getKey()] = client->getNetworkPackets();
 			if (VERBOSE_NETWORK == true && clientNetworkPackets[client->getKey()].size() > 0) {
-				Console::println(
+				Console::printLine(
 					"ServerThread::run(): in: " +
 					client->getKey() + ":" +
 					to_string(clientNetworkPackets[client->getKey()].size()) + ": " +
@@ -439,14 +439,14 @@ void ServerThread::run() {
 				// broadcast datagrams to send for initialization
 				createDatagrams(bcInitialSafeLogicNetworkPackets, bcInitialFastLogicNetworkPackets, bcSendInitialPacketsSafe, bcSendInitialPacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendInitialPacketsSafe.size() > 0) {
-					Console::println(
+					Console::printLine(
 						"ServerThread::run(): initial: bc out: safe: " +
 						to_string(bcSendInitialPacketsSafe.size()) + ": " +
 						getLogicNetworkPacketsLogicTypes(bcInitialSafeLogicNetworkPackets)
 					);
 				}
 				if (VERBOSE_NETWORK == true && bcSendInitialPacketsFast.size() > 0) {
-					Console::println(
+					Console::printLine(
 						"ServerThread::run(): initial: bc out: fast: " +
 						to_string(bcSendInitialPacketsFast.size()) + ": " +
 						getLogicNetworkPacketsLogicTypes(bcInitialFastLogicNetworkPackets)
@@ -469,7 +469,7 @@ void ServerThread::run() {
 					auto& mcInitialFastPacketsClient = mcInitialFastLogicNetworkPackets[client->getKey()];
 					createDatagrams(mcInitialSafePacketsClient, mcInitialFastPacketsClient, mcSendInitialPacketsSafe, mcSendInitialPacketsFast);
 					if (VERBOSE_NETWORK == true && mcSendInitialPacketsSafe.size() > 0) {
-						Console::println(
+						Console::printLine(
 							"ServerThread::run(): initial: mc out: " +
 							client->getKey() +
 							": safe: " + to_string(mcSendInitialPacketsSafe.size()) + ": " +
@@ -477,7 +477,7 @@ void ServerThread::run() {
 						);
 					}
 					if (VERBOSE_NETWORK == true && mcSendInitialPacketsFast.size() > 0) {
-						Console::println(
+						Console::printLine(
 							"ServerThread::run(): initial: mc out: " +
 							client->getKey() +
 							": fast: " + to_string(mcSendInitialPacketsFast.size()) + ": " +
@@ -500,14 +500,14 @@ void ServerThread::run() {
 				// broadcast datagrams to send for update
 				createDatagrams(bcUpdateSafeLogicNetworkPackets, bcUpdateFastLogicNetworkPackets, bcSendUpdatePacketsSafe, bcSendUpdatePacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendUpdatePacketsSafe.size() > 0) {
-					Console::println(
+					Console::printLine(
 						"ServerThread::run(): bc out: safe: " +
 						to_string(bcSendUpdatePacketsSafe.size()) + ": " +
 						getLogicNetworkPacketsLogicTypes(bcUpdateSafeLogicNetworkPackets)
 					);
 				}
 				if (VERBOSE_NETWORK == true && bcSendUpdatePacketsFast.size() > 0) {
-					Console::println(
+					Console::printLine(
 						"ServerThread::run(): bc out: fast: " +
 						to_string(bcSendUpdatePacketsFast.size()) + ": " +
 						getLogicNetworkPacketsLogicTypes(bcUpdateFastLogicNetworkPackets)
@@ -529,7 +529,7 @@ void ServerThread::run() {
 					auto& mcUpdateSafePacketsClient = mcUpdateSafeLogicNetworkPackets[client->getKey()];
 					auto& mcUpdateFastPacketsClient = mcUpdateFastLogicNetworkPackets[client->getKey()];
 					if (VERBOSE_NETWORK == true && mcSendUpdatePacketsSafe.size() > 0) {
-						Console::println(
+						Console::printLine(
 							"ServerThread::run(): mc out: " +
 							client->getKey() + ": safe: " +
 							to_string(mcSendUpdatePacketsSafe.size()) + ": " +
@@ -537,7 +537,7 @@ void ServerThread::run() {
 						);
 					}
 					if (VERBOSE_NETWORK == true && mcSendUpdatePacketsFast.size() > 0) {
-						Console::println(
+						Console::printLine(
 							"ServerThread::run(): mc out: " +
 							client->getKey() + ": fast: " +
 							": fast: " + to_string(mcSendUpdatePacketsFast.size()) + ": " +
@@ -580,7 +580,7 @@ void ServerThread::run() {
 		// get some rest
 		int64_t timeDelta = Time::getCurrentMillis() - timeLast;
 		if (timeDelta > 33) {
-			Console::println("ServerThread::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
+			Console::printLine("ServerThread::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
 			timeDelta = 33;
 		} else
 		if (timeDelta < 16) {

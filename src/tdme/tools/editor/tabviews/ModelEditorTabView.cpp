@@ -258,11 +258,11 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		for (const auto& [originalAnimationSetupId, originalAnimationSetup]: originalAnimationSetups) {
 			auto animationSetup = model->getAnimationSetup(originalAnimationSetupId);
 			if (animationSetup == nullptr) {
-				Console::println("ModelEditorTabView::reimportModel(): missing animation setup: " + originalAnimationSetupId);
+				Console::printLine("ModelEditorTabView::reimportModel(): missing animation setup: " + originalAnimationSetupId);
 				log+= "Missing animation setup: " + originalAnimationSetupId + ", skipping.\n";
 				continue;
 			}
-			Console::println("ModelEditorTabView::reimportModel(): reimport animation setup: " + originalAnimationSetupId);
+			Console::printLine("ModelEditorTabView::reimportModel(): reimport animation setup: " + originalAnimationSetupId);
 			animationSetup->setLoop(originalAnimationSetup.loop);
 			animationSetup->setOverlayFromNodeId(originalAnimationSetup.overlayFromNodeId);
 			animationSetup->setSpeed(originalAnimationSetup.speed);
@@ -375,7 +375,7 @@ void ModelEditorTabView::loadSettings()
 		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
 		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabView::loadSettings(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabView::loadSettings(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -388,7 +388,7 @@ void ModelEditorTabView::initialize()
 		prototypeDisplayView = modelEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypeSoundsView = modelEditorTabController->getPrototypeSoundsSubController()->getView();
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	//
 	loadSettings();
@@ -406,7 +406,7 @@ void ModelEditorTabView::storeSettings()
 		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.store("settings", "modeleditor.properties");
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabView::storeSettings(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabView::storeSettings(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -472,7 +472,7 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 					ModelReader::read(Tools::getPathName(attachmentModelFile), Tools::getFileName(attachmentModelFile))
 			);
 	} catch (Exception& exception) {
-		Console::println("ModelEditorTabView::addAttachment1(): An error occurred: " + string(exception.what()));
+		Console::printLine("ModelEditorTabView::addAttachment1(): An error occurred: " + string(exception.what()));
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
 	if (attachment1Model != nullptr) {

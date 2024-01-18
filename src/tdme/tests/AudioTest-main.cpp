@@ -17,20 +17,20 @@ int main(int argc, char** argv)
 {
 	AudioEntity* sound;
 	AudioEntity* stream;
-	Console::println(string("Starting playing sound"));
+	Console::printLine(string("Starting playing sound"));
 	Audio::getInstance()->addEntity(sound = new Sound("sound", "resources/tests/sounds", "water.ogg"));
 	sound->setLooping(false);
 	sound->setFixed(true);
 	sound->play();
 	while(sound->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
-	Console::println(string("Finished playing sound"));
-	Console::println(string("Starting playing music"));
+	Console::printLine(string("Finished playing sound"));
+	Console::printLine(string("Starting playing music"));
 	Audio::getInstance()->addEntity(stream = new VorbisAudioStream("music", "resources/tests/music", "memento-sanchez_monate_spaeter.ogg"));
 	stream->setLooping(false);
 	stream->setFixed(true);
 	stream->play();
 	while(stream->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
-	Console::println(string("Finished playing music"));
+	Console::printLine(string("Finished playing music"));
 	Audio::shutdown();
 	Console::shutdown();
 }

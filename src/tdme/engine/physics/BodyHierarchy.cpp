@@ -57,7 +57,7 @@ void BodyHierarchy::updateHierarchy(const Transform& parentTransform, BodyHierar
 void BodyHierarchy::addBody(const string& id, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, const string& parentId) {
 	auto _entity = getBody(id);
 	if (_entity != nullptr) {
-		Console::println("BodyHierarchy::addEntity(): " + id + ": body already added!");
+		Console::printLine("BodyHierarchy::addEntity(): " + id + ": body already added!");
 		return;
 	}
 
@@ -67,7 +67,7 @@ void BodyHierarchy::addBody(const string& id, const Transform& transform, const 
 	// add to hierarchy
 	auto parentBodyHierarchyLevel = getBodyHierarchyLevel(parentId);
 	if (parentBodyHierarchyLevel == nullptr) {
-		Console::println("BodyHierarchy::addBody(): parent '" + parentId + "': not found");
+		Console::printLine("BodyHierarchy::addBody(): parent '" + parentId + "': not found");
 		return;
 	}
 	// clone bounding volumes

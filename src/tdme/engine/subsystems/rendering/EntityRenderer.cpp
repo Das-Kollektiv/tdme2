@@ -196,7 +196,7 @@ BatchRendererTriangles* EntityRenderer::acquireTrianglesBatchRenderer()
 		if (batchRenderer->acquire()) return batchRenderer.get();
 
 	}
-	Console::println(string("EntityRenderer::acquireTrianglesBatchRenderer()::failed"));
+	Console::printLine(string("EntityRenderer::acquireTrianglesBatchRenderer()::failed"));
 	// nope
 	return nullptr;
 }

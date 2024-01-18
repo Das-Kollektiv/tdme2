@@ -39,7 +39,7 @@ void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2
 		auto point = pool2Points[i];
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
-			Console::println(string("RenderTransparentRenderPointsPool::merge(): Too many transparent render points"));
+			Console::printLine(string("RenderTransparentRenderPointsPool::merge(): Too many transparent render points"));
 			return;
 		}
 		//

@@ -18,13 +18,13 @@ ProducerThread::ProducerThread(int id, Queue<int>* queue) : Thread("producer"), 
 }
 
 void ProducerThread::run() {
-	Console::println("ProducerThread[" + to_string(id) + "]::init()");
+	Console::printLine("ProducerThread[" + to_string(id) + "]::init()");
 	for(int i = 0; isStopRequested() == false; i++) {
 		auto element = new int;
 		*element = i;
 		queue->addElement(element, false);
-		Console::println("ProducerThread[" + to_string(id) + "]: added " + to_string(i) + " to queue");
+		Console::printLine("ProducerThread[" + to_string(id) + "]: added " + to_string(i) + " to queue");
 		Thread::sleep(50);
 	}
-	Console::println("ProducerThread[" + to_string(id) + "]::done()");
+	Console::printLine("ProducerThread[" + to_string(id) + "]::done()");
 }

@@ -86,7 +86,7 @@ void ContextMenuScreenController::initialize()
 		contextMenuNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("contextmenu"));
 		tscriptMethods.load("resources/engine/code-completion/", "tscript-methods.properties");
 	} catch (Exception& exception) {
-		Console::println("ContextMenuScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("ContextMenuScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

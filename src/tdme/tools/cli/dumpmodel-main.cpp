@@ -28,26 +28,26 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("dumpmodel ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("dumpmodel ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc != 2) {
-		Console::println("Usage: dumpmodel sourcefile");
+		Console::printLine("Usage: dumpmodel sourcefile");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string fileName = string(argv[1]);
 	try {
-		Console::println("Loading source model: " + fileName);
+		Console::printLine("Loading source model: " + fileName);
 		auto model = unique_ptr<Model>(
 			ModelReader::read(
 				FileSystem::getInstance()->getPathName(fileName),
 				FileSystem::getInstance()->getFileName(fileName)
 			)
 		);
-		Console::println("Animation setups:");
+		Console::printLine("Animation setups:");
 		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: model->getAnimationSetups()) {
 			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
-				Console::println(
+				Console::printLine(
 					"Base animation: id = '" + srcAnimationSetup->getId() + "', " +
 					"start frame: " + to_string(srcAnimationSetup->getStartFrame()) + ", " +
 					"end frame: " + to_string(srcAnimationSetup->getEndFrame()) + ", " +
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 					"speed: " + to_string(srcAnimationSetup->getSpeed())
 				);
 			} else {
-				Console::println(
+				Console::printLine(
 					"Overlay animation: id = '" + srcAnimationSetup->getId() + "', " +
 					"overlay node: '" + srcAnimationSetup->getOverlayFromNodeId()  + "', " +
 					"start frame: " + to_string(srcAnimationSetup->getStartFrame()) + ", " +
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

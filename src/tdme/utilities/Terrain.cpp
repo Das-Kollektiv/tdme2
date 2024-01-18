@@ -501,7 +501,7 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& te
 	if (normalCount > 0) {
 		return vertexNormal.normalize();
 	}
-	Console::println("Terrain::computeTerrainVertexNormal(): no vertex normal available: normal count == 0");
+	Console::printLine("Terrain::computeTerrainVertexNormal(): no vertex normal available: normal count == 0");
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
@@ -1177,7 +1177,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 	waterPositionMap[terrainHeightVectorZCenter].insert(terrainHeightVectorXCenter);
 
 	//
-	Console::println("Terrain::determineWaterPositionSet: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
+	Console::printLine("Terrain::determineWaterPositionSet: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
 
 	//
 	determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorXCenter, terrainHeightVectorZCenter, waterHeight, waterPositionMap[terrainHeightVectorZCenter]);
@@ -1262,7 +1262,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 
 	//
 	auto haveWaterPositionSet = waterPositionMap.empty() == false;
-	Console::println("Terrain::determineWaterPositionSet: Have water position set: " + to_string(haveWaterPositionSet));
+	Console::printLine("Terrain::determineWaterPositionSet: Have water position set: " + to_string(haveWaterPositionSet));
 	return haveWaterPositionSet;
 }
 
@@ -1688,7 +1688,7 @@ void Terrain::applyFoliageBrush(
 
 							//
 							if (haveContact == false) {
-								Console::println(
+								Console::printLine(
 									"Terrain::applyFoliageBrush(): no contact@" +
 									to_string(translation.getX()) + ", " +
 									to_string(translation.getZ())
@@ -2004,7 +2004,7 @@ void Terrain::updateFoliageTerrainBrush(
 
 						//
 						if (haveContact == false) {
-							Console::println(
+							Console::printLine(
 								"Terrain::applyFoliageBrush(): no contact@" +
 								to_string(transform.getTranslation().getX()) + ", " +
 								to_string(transform.getTranslation().getZ())
@@ -2170,7 +2170,7 @@ void Terrain::updateFoliageTerrainRampBrush(
 
 						//
 						if (haveContact == false) {
-							Console::println(
+							Console::printLine(
 								"Terrain::applyFoliageBrush(): no contact@" +
 								to_string(transform.getTranslation().getX()) + ", " +
 								to_string(transform.getTranslation().getZ())

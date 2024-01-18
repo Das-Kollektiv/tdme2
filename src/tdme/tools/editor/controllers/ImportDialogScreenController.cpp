@@ -77,7 +77,7 @@ void ImportDialogScreenController::initialize()
 		screenNode->addTooltipRequestListener(this);
 		screenNode->invalidateLayouts();
 	} catch (Exception& exception) {
-		Console::println("ImportDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("ImportDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

@@ -193,7 +193,7 @@ public:
 	 */
 	inline uint8_t getByte() {
 		if (position == 255) {
-			Console::println("LogicNetworkPacket::getByte(): position out of range");
+			Console::printLine("LogicNetworkPacket::getByte(): position out of range");
 			return 0;
 		}
 		return data[position++];
@@ -206,7 +206,7 @@ public:
 	 */
 	inline LogicNetworkPacket& putByte(uint8_t value) {
 		if (position == 255) {
-			Console::println("LogicNetworkPacket::putByte(): position out of range");
+			Console::printLine("LogicNetworkPacket::putByte(): position out of range");
 			return *this;
 		}
 		data[position++] = value;

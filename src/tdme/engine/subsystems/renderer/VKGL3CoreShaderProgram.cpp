@@ -252,7 +252,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 			for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 			if (Integer::is(arraySizeString) == false) {
-				Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
+				Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
 			}
 			arraySize = Integer::parse(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
@@ -428,7 +428,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 					if (isArray == false) uniformStructsArrays.insert(uniformName);
 				}
 			} else {
-				Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType + "@" + prefix + uniform);
+				Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType + "@" + prefix + uniform);
 				return false;
 			}
 		}
@@ -439,7 +439,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 
 void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
-	if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
+	if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
 
 	shader.valid = true;
 	shader.type = (VkShaderStageFlagBits)type;
@@ -454,7 +454,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		Properties vkShaderCache;
 		vkShaderCache.load("shader/vk", shader.cacheId + ".properties");
 		if (shader.hash != vkShaderCache.get("shader.hash", "")) {
-			Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Invalid hash id");
+			Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Invalid hash id");
 			shader.valid = false;
 		}
 		return;
@@ -515,7 +515,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				} else {
 					definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#ifdef ":"#ifndef ").size()));
 				}
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
 				for (const auto& availableDefinition: definitions) {
@@ -525,7 +525,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 					}
 				}
 				if (inverted == true) matched = !matched;
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
 				hadMatchedDefinitions.push_back(matched);
 				newShaderSourceLines.push_back("// " + line);
@@ -534,14 +534,14 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				StringTools::startsWith(line, "#elif !defined(") == true) {
 				auto inverted = StringTools::startsWith(line, "#elif !defined(") == true;
 				// remove old test from stack
-				if (testedDefinitions.size() == 0) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else end: invalid depth"); else {
+				if (testedDefinitions.size() == 0) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else end: invalid depth"); else {
 					testedDefinitions.pop();
 					matchedDefinitions.pop_back();
 				}
 				newShaderSourceLines.push_back("// " + line);
 				// do new test
 				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#elif defined(":"#elif !defined(").size(), (position = line.find(")")) != string::npos?position:line.size()));
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
 				for (const auto& availableDefinition: definitions) {
@@ -551,7 +551,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 					}
 				}
 				if (inverted == true) matched = !matched;
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else test begin: " + definition + ": " + to_string(matched));
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
 				if (matched == true) hadMatchedDefinitions[hadMatchedDefinitions.size() - 1] = matched;
 			} else
@@ -564,23 +564,23 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 					while (t2.hasMoreTokens() == true) definitionValue+= t2.nextToken();
 					preprocessorDefinitions[definitionName] = definitionValue;
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define : " + definition + " --> " + definitionValue);
+					if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define : " + definition + " --> " + definitionValue);
 				} else {
 					definitions.push_back(definition);
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define: " + definition);
+					if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define: " + definition);
 				}
 			} else
 			if (StringTools::startsWith(line, "#else") == true) {
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else: " + line);
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor else: " + line);
 				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1] && hadMatchedDefinitions[matchedDefinitions.size() - 1] == false;
 				newShaderSourceLines.push_back("// " + line);
 				matchedAllDefinitions = true;
 				for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
 			} else
 			if (StringTools::startsWith(line, "#endif") == true) {
-				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test end: " + line);
-				if (testedDefinitions.size() == 0) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else {
+				if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test end: " + line);
+				if (testedDefinitions.size() == 0) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else {
 					testedDefinitions.pop();
 					matchedDefinitions.pop_back();
 					hadMatchedDefinitions.pop_back();
@@ -652,7 +652,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 					}
 					uniforms.push_back(uniform);
 					newShaderSourceLines.push_back("// " + line);
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
+					if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
 				} else
 				if (StringTools::startsWith(line, "out ") == true || StringTools::startsWith(line, "flat out ") == true) {
 					if (shader.type == SHADER_VERTEX_SHADER) {
@@ -682,7 +682,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 							static_cast<uint8_t>(outLocation)
 						);
 						if (VERBOSE == true) {
-							Console::println(
+							Console::printLine(
 								"inOutType: " + inOutType + " / " +
 								"outType: " + outType + " / " +
 								"outName: " + outName + " / " +
@@ -707,13 +707,13 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						auto inType = t2.hasMoreTokens() == true?t2.nextToken():string();
 						auto inName = t2.hasMoreTokens() == true?t2.nextToken():string();
 						if (VERBOSE == true) {
-							Console::println("layout (location = {$IN_ATTRIBUTE_LOCATION_" + inName + "_IDX}) " + line);
+							Console::printLine("layout (location = {$IN_ATTRIBUTE_LOCATION_" + inName + "_IDX}) " + line);
 						}
 						newShaderSourceLines.push_back("layout (location = {$IN_ATTRIBUTE_LOCATION_" + inName + "_IDX}) " + line);
 					}
 				} else
 				if (StringTools::startsWith(line, "layout") == true && line.find("binding=") != string::npos) {
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have layout with binding: " + line);
+					if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have layout with binding: " + line);
 					t2.tokenize(line, "(,)= \t");
 					while (t2.hasMoreTokens() == true) {
 						auto token = t2.nextToken();
@@ -745,7 +745,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			string uniformsBlockIgnore;
 			addToShaderUniformBufferObject(shader, preprocessorDefinitions, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
-			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.uboSize));
+			if (VERBOSE == true) Console::printLine("Shader UBO size: " + to_string(shader.uboSize));
 		}
 
 		// root ubo uniform names
@@ -861,12 +861,12 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			}
 		}
 		if (type == SHADER_VERTEX_SHADER && injectedYFlip == false) {
-			Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Could not inject OpenGL GL like Y and Z correction math");
+			Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Could not inject OpenGL GL like Y and Z correction math");
 		}
 
 		// debug uniforms
 		for (const auto& [uniformName, uniform]: shader.uniforms) {
-			if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Uniform: " + uniform->name + ": " + to_string(uniform->position) + " / " + to_string(uniform->size));
+			if (VERBOSE == true) Console::printLine("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Uniform: " + uniform->name + ": " + to_string(uniform->position) + " / " + to_string(uniform->size));
 		}
 	}
 
@@ -881,7 +881,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	// check if shaders are valid
 	for (auto shader: program.shaders) {
 		if (shader->valid == false) {
-			Console::println("VKGL3CoreShaderProgram::linkProgram(): Cached shader is invalid. Please recreate VK shader cache or delete VK shader cache files");
+			Console::printLine("VKGL3CoreShaderProgram::linkProgram(): Cached shader is invalid. Please recreate VK shader cache or delete VK shader cache files");
 			return false;
 		}
 	}
@@ -895,7 +895,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		Properties vkProgramCache;
 		vkProgramCache.load("shader/vk", "program-" + to_string(program.id) + ".properties");
 		if (Integer::parse(vkProgramCache.get("program.id", "-1")) != program.id) {
-			Console::println("VKGL3CoreShaderProgram::linkProgram(): program id mismatch");
+			Console::printLine("VKGL3CoreShaderProgram::linkProgram(): program id mismatch");
 			return false;
 		}
 		program.layoutBindings = Integer::parse(vkProgramCache.get("program.layout_bindings", "-1"));
@@ -922,7 +922,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 				Properties vkShaderCache;
 				vkShaderCache.load("shader/vk", shader->cacheId + ".properties");
 				if (Integer::parse(vkShaderCache.get("shader.id", "-1")) != shader->id) {
-					Console::println("VKGL3CoreShaderProgram::linkProgram(): shader id mismatch");
+					Console::printLine("VKGL3CoreShaderProgram::linkProgram(): shader id mismatch");
 					return false;
 				}
 				shader->type = static_cast<VkShaderStageFlagBits>(Integer::parse(vkShaderCache.get("shader.type", "-1")));
@@ -1041,7 +1041,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 
 			if (!glslShader.parse(&resources, 100, false, messages)) {
 				// be verbose
-				Console::println(
+				Console::printLine(
 					string(
 						string("VKGL3CoreShaderProgram::") +
 						string(__FUNCTION__) +
@@ -1054,14 +1054,14 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 						glslShader.getInfoDebugLog()
 					 )
 				);
-				Console::println(shader->source);
+				Console::printLine(shader->source);
 				return false;
 			}
 
 			glslProgram.addShader(&glslShader);
 			if (glslProgram.link(messages) == false) {
 				// be verbose
-				Console::println(
+				Console::printLine(
 					string(
 						string("VKGL3CoreShaderProgram::") +
 						string(__FUNCTION__) +
@@ -1074,7 +1074,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 						glslShader.getInfoDebugLog()
 					)
 				);
-				Console::println(shader->source);
+				Console::printLine(shader->source);
 				return false;
 			}
 
@@ -1117,7 +1117,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	if (program.type == 1/*PROGRAM_OBJECTS*/) {
 		for (auto shader: program.shaders) {
 			if (shader->samplerUniformList.size() > TEXTUREDESCRIPTORSET_MAX_TEXTURES) {
-				Console::println(
+				Console::printLine(
 					string("VKGL3CoreShaderProgram::") +
 					string(__FUNCTION__) +
 					string("[") +
@@ -1127,7 +1127,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 					shader->file
 				);
 				for (auto samplerUniform: shader->samplerUniformList) {
-					Console::println("\t" + samplerUniform->name);
+					Console::printLine("\t" + samplerUniform->name);
 				}
 			}
 		}

@@ -107,7 +107,7 @@ void LODTest::display()
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
-	Console::println(
+	Console::printLine(
 		string("LODTest::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +

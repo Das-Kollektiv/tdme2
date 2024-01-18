@@ -59,7 +59,7 @@ void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
 	// open new stream
 	plm = plm_create_with_filename((pathName + "/" + fileName).c_str());
 	if (plm == nullptr) {
-		Console::println("MPEG1Decoder::openFile(): Failed to open: " + pathName + "/" + fileName);
+		Console::printLine("MPEG1Decoder::openFile(): Failed to open: " + pathName + "/" + fileName);
 		throw VideoDecoderException("Failed to open file");
 	}
 

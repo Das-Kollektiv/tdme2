@@ -56,7 +56,7 @@ public:
 	inline void addPoint(const Vector3& point, uint16_t spriteIndex, const Color4& color, int particleSystemType, void* particleSystem) {
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
-			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
+			Console::printLine(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 			return;
 		}
 		// create point in pool

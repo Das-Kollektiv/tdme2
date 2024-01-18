@@ -58,7 +58,7 @@ void EntityHierarchy::setRenderer(Renderer* renderer)
 void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	auto _entity = getEntity(entity->getId());
 	if (_entity == entity) {
-		Console::println("EntityHierarchy::addEntity(): " + entity->getId() + ": entity already added!");
+		Console::printLine("EntityHierarchy::addEntity(): " + entity->getId() + ": entity already added!");
 		return;
 	}
 
@@ -79,7 +79,7 @@ void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	// add to hierarchy
 	auto parentEntityHierarchyLevel = getEntityHierarchyLevel(parentId);
 	if (parentEntityHierarchyLevel == nullptr) {
-		Console::println("EntityHierarchy::addEntity(): parent '" + parentId + "': not found");
+		Console::printLine("EntityHierarchy::addEntity(): parent '" + parentId + "': not found");
 		return;
 	}
 	parentEntityHierarchyLevel->children[entity->getId()] = new EntityHierarchyLevel(entity->getId(), parentEntityHierarchyLevel, entity);

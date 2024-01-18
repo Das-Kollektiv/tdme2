@@ -61,19 +61,19 @@ void scanPath(const string& path, vector<string>& sourceFiles, vector<string>& m
 
 int main(int argc, char** argv)
 {
-	Console::println(string("nmakefilegenerator ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("nmakefilegenerator ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 2) {
-		Console::println("Usage: nmakefilegenerator path_to_source");
+		Console::printLine("Usage: nmakefilegenerator path_to_source");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	auto pathToSource = string(argv[1]);
 
 	try {
-		Console::println("Scanning source files");
+		Console::printLine("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
 		scanPath(pathToSource, sourceFiles, mainSourceFiles);
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 			mainTargets+= StringTools::substring(file, file.rfind('/') + 1, file.find("-main.cpp"));
 		}
 
-		Console::println("Generating Makefile");
+		Console::printLine("Generating Makefile");
 
 		//
 		auto executablePath = StringTools::replace(argv[0], "\\", "/");
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 		//
 		FileSystem::getInstance()->setContentFromString(".", "Makefile.nmake", makefileSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

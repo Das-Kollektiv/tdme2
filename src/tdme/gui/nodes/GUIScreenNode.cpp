@@ -169,7 +169,7 @@ GUIScreenNode::GUIScreenNode(
 			} else
 			// no GUIMiniScript
 			if (dynamic_cast<GUIMiniScript*>(libraryMiniScript.get()) == nullptr) {
-				Console::println("GUIScreenNode::GUIScreenNode(): Native library: Native script not of type GUIMiniScript: " + scriptFileName);
+				Console::printLine("GUIScreenNode::GUIScreenNode(): Native library: Native script not of type GUIMiniScript: " + scriptFileName);
 			} else {
 				// cast to GUIMiniScript
 				this->script = unique_ptr<GUIMiniScript>(dynamic_cast<GUIMiniScript*>(libraryMiniScript.release()));
@@ -188,12 +188,12 @@ GUIScreenNode::GUIScreenNode(
 		if (this->script->isValid() == false) {
 			// nope
 			//
-			Console::println("GUIScreenNode::GUIScreenNode(): Script not valid. Not using it: " + projectScriptFileName);
+			Console::printLine("GUIScreenNode::GUIScreenNode(): Script not valid. Not using it: " + projectScriptFileName);
 			//
 			this->script = nullptr;
 		} else {
 			// yup
-			Console::println(this->script->getInformation());
+			Console::printLine(this->script->getInformation());
 			//
 			this->scriptArguments = scriptArguments;
 			//
@@ -210,20 +210,20 @@ GUIScreenNode::GUIScreenNode(
 			this->scriptOnDragRequestAvailable = this->script->hasFunction("onDragRequest");
 			this->scriptOnTickAvailable = this->script->hasFunction("onTick");
 			//
-			Console::println("Available event script handler functions:");
-			Console::println("onAction: " + string(this->scriptOnActionAvailable == true?"YES":"NO"));
-			Console::println("onChange: " + string(this->scriptOnChangeAvailable == true?"YES":"NO"));
-			Console::println("onMouseOver: " + string(this->scriptOnMouseOverAvailable == true?"YES":"NO"));
-			Console::println("onContextMenuRequest: " + string(this->scriptOnContextMenuRequestAvailable == true?"YES":"NO"));
-			Console::println("onFocus: " + string(this->scriptOnFocusAvailable == true?"YES":"NO"));
-			Console::println("onUnfocus: " + string(this->scriptOnUnfocusAvailable == true?"YES":"NO"));
-			Console::println("onMove: " + string(this->scriptOnMoveAvailable == true?"YES":"NO"));
-			Console::println("onMoveRelease: " + string(this->scriptOnMoveReleaseAvailable == true?"YES":"NO"));
-			Console::println("onTooltipShowRequest: " + string(this->scriptOnTooltipShowRequestAvailable == true?"YES":"NO"));
-			Console::println("onTooltipCloseRequest: " + string(this->scriptOnTooltipCloseRequestAvailable == true?"YES":"NO"));
-			Console::println("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
-			Console::println("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
-			Console::println();
+			Console::printLine("Available event script handler functions:");
+			Console::printLine("onAction: " + string(this->scriptOnActionAvailable == true?"YES":"NO"));
+			Console::printLine("onChange: " + string(this->scriptOnChangeAvailable == true?"YES":"NO"));
+			Console::printLine("onMouseOver: " + string(this->scriptOnMouseOverAvailable == true?"YES":"NO"));
+			Console::printLine("onContextMenuRequest: " + string(this->scriptOnContextMenuRequestAvailable == true?"YES":"NO"));
+			Console::printLine("onFocus: " + string(this->scriptOnFocusAvailable == true?"YES":"NO"));
+			Console::printLine("onUnfocus: " + string(this->scriptOnUnfocusAvailable == true?"YES":"NO"));
+			Console::printLine("onMove: " + string(this->scriptOnMoveAvailable == true?"YES":"NO"));
+			Console::printLine("onMoveRelease: " + string(this->scriptOnMoveReleaseAvailable == true?"YES":"NO"));
+			Console::printLine("onTooltipShowRequest: " + string(this->scriptOnTooltipShowRequestAvailable == true?"YES":"NO"));
+			Console::printLine("onTooltipCloseRequest: " + string(this->scriptOnTooltipCloseRequestAvailable == true?"YES":"NO"));
+			Console::printLine("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
+			Console::printLine("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
+			Console::printLine();
 			//
 			this->context = context;
 		}
@@ -500,7 +500,7 @@ bool GUIScreenNode::addNode(GUINode* node)
 void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets) {
 	auto node = getNodeById(nodeId);
 	if (node == nullptr) {
-		Console::println("GUIScreenNode::removeNodeById(): node not found: " + nodeId);
+		Console::printLine("GUIScreenNode::removeNodeById(): node not found: " + nodeId);
 		return;
 	}
 	if (node->parentNode != nullptr) node->parentNode->removeSubNode(node, resetScrollOffsets);

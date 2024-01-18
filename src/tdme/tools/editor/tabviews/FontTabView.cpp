@@ -62,7 +62,7 @@ void FontTabView::initialize()
 		fontTabController->initialize(editorView->getScreenController()->getScreenNode());
 		screenNode->addTooltipRequestListener(fontTabController.get());
 	} catch (Exception& exception) {
-		Console::println("FontTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("FontTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	// TODO: reloadTabOutliner

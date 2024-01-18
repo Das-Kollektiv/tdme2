@@ -29,9 +29,9 @@ using tdme::miniscript::EngineMiniScript;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("createminiscriptdocumentation ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("createminiscriptdocumentation ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	Properties descriptions;
 	descriptions.load("resources/engine/code-completion", "tscript-methods.properties");
@@ -68,71 +68,71 @@ int main(int argc, char** argv)
 	auto operatorsDocumentation = Documentation::generateOperatorsDocumentation("MiniScript Operators", 10, baseMiniScript.get());
 
 	//
-	Console::println("Classes");
-	Console::println("---------");
-	Console::println(classesDocumentation);
+	Console::printLine("Classes");
+	Console::printLine("---------");
+	Console::printLine(classesDocumentation);
 	//
-	Console::println("Base methods");
-	Console::println("---------");
-	Console::println(baseMethodsDocumentation);
+	Console::printLine("Base methods");
+	Console::printLine("---------");
+	Console::printLine(baseMethodsDocumentation);
 	//
-	Console::println("Logic methods");
-	Console::println("---------");
-	Console::println(logicMethodsDocumentation);
+	Console::printLine("Logic methods");
+	Console::printLine("---------");
+	Console::printLine(logicMethodsDocumentation);
 	//
-	Console::println("GUI methods");
-	Console::println("---------");
-	Console::println(guiMethodsDocumentation);
+	Console::printLine("GUI methods");
+	Console::printLine("---------");
+	Console::printLine(guiMethodsDocumentation);
 	//
-	Console::println("Operators");
-	Console::println("---------");
-	Console::println(operatorsDocumentation);
+	Console::printLine("Operators");
+	Console::printLine("---------");
+	Console::printLine(operatorsDocumentation);
 	// properties
-	Console::println();
-	Console::println("# properties methodname=human readable string");
+	Console::printLine();
+	Console::printLine("# properties methodname=human readable string");
 	//
 	{
-		Console::println("# base methods");
+		Console::printLine("# base methods");
 		//
 		for (const auto& baseMethodCategory: baseMethodCategories) {
-			Console::println("miniscript.basemethod.group." + (baseMethodCategory.empty() == true?"uncategorized":baseMethodCategory) + "=");
+			Console::printLine("miniscript.basemethod.group." + (baseMethodCategory.empty() == true?"uncategorized":baseMethodCategory) + "=");
 		}
 		//
 		auto scriptMethods = baseMiniScript->getMethods();
 		for (auto scriptMethod: scriptMethods) {
-			Console::println("miniscript.basemethod." + scriptMethod->getMethodName() + "=");
+			Console::printLine("miniscript.basemethod." + scriptMethod->getMethodName() + "=");
 		}
 	}
 	{
-		Console::println("# miniscript logic methods");
+		Console::printLine("# miniscript logic methods");
 		//
 		for (const auto& logicMethodCategory: logicMethodCategories) {
-			Console::println("miniscript.logicmethod.group." + (logicMethodCategory.empty() == true?"uncategorized":logicMethodCategory) + "=");
+			Console::printLine("miniscript.logicmethod.group." + (logicMethodCategory.empty() == true?"uncategorized":logicMethodCategory) + "=");
 		}
 		//
 		auto scriptMethods = logicMiniScript->getMethods();
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
-			Console::println("miniscript.logicmethod." + scriptMethod->getMethodName() + "=");
+			Console::printLine("miniscript.logicmethod." + scriptMethod->getMethodName() + "=");
 		}
 	}
 	{
-		Console::println("# miniscript gui methods");
+		Console::printLine("# miniscript gui methods");
 		//
 		for (const auto& guiMethodCategory: guiMethodCategories) {
-			Console::println("miniscript.group." + (guiMethodCategory.empty() == true?"uncategorized":guiMethodCategory) + "=");
+			Console::printLine("miniscript.group." + (guiMethodCategory.empty() == true?"uncategorized":guiMethodCategory) + "=");
 		}
 		//
 		auto scriptMethods = guiMiniScript->getMethods();
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
-			Console::println("miniscript." + scriptMethod->getMethodName() + "=");
+			Console::printLine("miniscript." + scriptMethod->getMethodName() + "=");
 		}
 	}
 
 	//
-	Console::println();
-	Console::println("Keywords: ");
+	Console::printLine();
+	Console::printLine("Keywords: ");
 	set<string> allMethods;
 	{
 		//
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
 	for (const auto& method: allMethods) {
 		Console::print(method + " ");
 	}
-	Console::println();
+	Console::printLine();
 
 	//
 	return EXIT_SUCCESS;

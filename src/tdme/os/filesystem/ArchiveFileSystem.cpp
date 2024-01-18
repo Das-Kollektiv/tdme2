@@ -96,7 +96,7 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 					getFileName(fileName)
 				) == false) continue;
 			} catch (Exception& exception) {
-				Console::println("StandardFileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + exception.what());
+				Console::printLine("StandardFileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + exception.what());
 				continue;
 			}
 			files.push_back(StringTools::substring(fileName, pathName.size()));

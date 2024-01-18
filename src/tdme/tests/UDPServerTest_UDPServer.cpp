@@ -26,7 +26,7 @@ void CRHShutdown::handleRequest(UDPServerClient *client, string& data, const uin
 	}
 
 	// otherwise request shutdown
-	Console::println("received /shutdown, shutting down client");
+	Console::printLine("received /shutdown, shutting down client");
 	client->shutdown();
 }
 
@@ -48,8 +48,8 @@ void CRHDefault::handleRequest(UDPServerClient *client, string& data, const uint
 }
 
 EchoUDPServer::EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU) : UDPServer("echo", host, port, maxCCU) {
-	Console::println("Starting echo udp server @ " + (host) + ":" + to_string(port));
-	Console::println();
+	Console::printLine("Starting echo udp server @ " + (host) + ":" + to_string(port));
+	Console::printLine();
 	setIOThreadCount(2);
 	setWorkerThreadCount(8);
 	requestHandlerHub.addHandler(new CRHShutdown());
@@ -60,7 +60,7 @@ EchoUDPServer::~EchoUDPServer() {
 }
 
 UDPServerClient* EchoUDPServer::accept(const uint32_t clientId, const string& ip, const uint16_t port) {
-	Console::println("accepting client connection with '" + (ip) + ":" + to_string(port) + "'");
+	Console::printLine("accepting client connection with '" + (ip) + ":" + to_string(port) + "'");
 
 	// create client
 	return new EchoUDPServerClient(clientId, ip, port);

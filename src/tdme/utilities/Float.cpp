@@ -73,7 +73,7 @@ float Float::viewParse(const string_view& str) {
 	if (trimmedStr == "-") return -0.0f;
 	// TODO: we need to do this this way as long there is no from_chars with float
 	if (str.size() > 32) {
-		Console::println("Float::viewParse(): str.size() > 32, returning 0.0f");
+		Console::printLine("Float::viewParse(): str.size() > 32, returning 0.0f");
 		return 0.0f;
 	}
 	char buf[33];

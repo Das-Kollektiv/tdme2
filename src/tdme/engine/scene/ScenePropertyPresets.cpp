@@ -54,7 +54,7 @@ ScenePropertyPresets* ScenePropertyPresets::getInstance()
 		try {
 			instance = new ScenePropertyPresets("resources/engine/tools/sceneeditor/gd", "presets.xml");
 		} catch (Exception& exception) {
-			Console::println(string(" ScenePropertyPresets::getInstance(): An error occurred: "));
+			Console::printLine(string(" ScenePropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));
 			Application::exit(1);
 		}

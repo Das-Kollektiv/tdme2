@@ -20,12 +20,12 @@ ConsumerThread::ConsumerThread(int id, Queue<int>* queue) : Thread("consumer"), 
 }
 
 void ConsumerThread::run() {
-	Console::println("ConsumerThread[" + to_string(id) + "]::init()");
+	Console::printLine("ConsumerThread[" + to_string(id) + "]::init()");
 	while(isStopRequested() == false) {
 		auto element = unique_ptr<int>(queue->getElement());
 		if (element == nullptr) break;
-		Console::println("ConsumerThread[" + to_string(id) + "]: got " + to_string(*element) + " from queue");
+		Console::printLine("ConsumerThread[" + to_string(id) + "]: got " + to_string(*element) + " from queue");
 		Thread::sleep(100);
 	}
-	Console::println("ConsumerThread[" + to_string(id) + "]::done()");
+	Console::printLine("ConsumerThread[" + to_string(id) + "]::done()");
 }

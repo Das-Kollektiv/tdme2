@@ -349,7 +349,7 @@ void ObjectNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, int contextIdx
 	// upload
 	if (renderer->isUsingShortIndices() == true) {
 		if (instances * indices.size() > 65535) {
-			Console::println(
+			Console::printLine(
 				"ObjectNodeMesh::setupVertexIndicesBuffer(): " +
 				node->getModel()->getName() + ":" +
 				node->getName() + ":" +
@@ -461,7 +461,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		case 2: indices = &node->getFacesEntities()[0].getLOD2Indices(); break;
 		case 3: indices = &node->getFacesEntities()[0].getLOD3Indices(); break;
 		default:
-			Console::println(
+			Console::printLine(
 				"ObjectNodeMesh::setupLodBuffer(): " +
 				node->getModel()->getName() + ":" +
 				node->getName() + ":" +
@@ -470,7 +470,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 			return;
 	}
 	if (indices->empty() == true) {
-		Console::println(
+		Console::printLine(
 			"ObjectNodeMesh::setupLodBuffer(): " +
 			node->getModel()->getName() + ":" +
 			node->getName() + ":" +
@@ -480,7 +480,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 	}
 	if (renderer->isUsingShortIndices() == true) {
 		if (instances * indices->size() > 65535) {
-			Console::println(
+			Console::printLine(
 				"ObjectNodeMesh::setupLodBuffer(): " +
 				node->getModel()->getName() + ":" +
 				node->getName() + ":" +

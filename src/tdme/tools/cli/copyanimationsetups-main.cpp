@@ -29,35 +29,35 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("copyanimationsetups ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("copyanimationsetups ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc != 3) {
-		Console::println("Usage: copyanimationsetups sourcefile targetfile.tm");
+		Console::printLine("Usage: copyanimationsetups sourcefile targetfile.tm");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string sourceFileName = string(argv[1]);
 	string targetFileName = string(argv[2]);
 	//
 	try {
-		Console::println("Loading source model: " + sourceFileName);
+		Console::printLine("Loading source model: " + sourceFileName);
 		auto srcModel = unique_ptr<Model>(
 			ModelReader::read(
 				FileSystem::getInstance()->getPathName(sourceFileName),
 				FileSystem::getInstance()->getFileName(sourceFileName)
 			)
 		);
-		Console::println("Loading target model: " + targetFileName);
+		Console::printLine("Loading target model: " + targetFileName);
 		auto targetModel = unique_ptr<Model>(
 			ModelReader::read(
 				FileSystem::getInstance()->getPathName(targetFileName),
 				FileSystem::getInstance()->getFileName(targetFileName)
 			)
 		);
-		Console::println("Clearing target animation setups");
+		Console::printLine("Clearing target animation setups");
 		targetModel->clearAnimationSetups();
 		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: srcModel->getAnimationSetups()) {
-			Console::println("Adding target animation setup: " + srcAnimationSetup->getId());
+			Console::printLine("Adding target animation setup: " + srcAnimationSetup->getId());
 			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
 				targetModel->addAnimationSetup(
 					srcAnimationSetup->getId(),
@@ -77,14 +77,14 @@ int main(int argc, char** argv)
 				);
 			}
 		}
-		Console::println("Saving target model: " + targetFileName);
+		Console::printLine("Saving target model: " + targetFileName);
 		TMWriter::write(
 			targetModel.get(),
 			FileSystem::getInstance()->getPathName(targetFileName),
 			FileSystem::getInstance()->getFileName(targetFileName)
 		);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

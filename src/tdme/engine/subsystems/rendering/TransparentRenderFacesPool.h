@@ -78,7 +78,7 @@ public:
 		for (auto i = 0; i < faces.size(); i++) {
 			// check for pool overflow
 			if (transparentRenderFacesPool.size() >= FACES_MAX) {
-				Console::println(string("TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
+				Console::printLine(string("TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
 				break;
 			}
 			// set up face

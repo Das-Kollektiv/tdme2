@@ -49,7 +49,7 @@ static T required_dynamic_cast(U u)
 {
 	auto t = dynamic_cast<T>(u);
 	if (t == nullptr) {
-		Console::println("required_dynamic_cast: unable to perform required dynamic cast @\n\n" + RTTI::backtrace());
+		Console::printLine("required_dynamic_cast: unable to perform required dynamic cast @\n\n" + RTTI::backtrace());
 		throw ExceptionBase("required_dynamic_cast did fail");
 
 	}

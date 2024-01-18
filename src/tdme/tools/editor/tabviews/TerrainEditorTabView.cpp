@@ -279,7 +279,7 @@ void TerrainEditorTabView::initialize()
 		terrainEditorTabController = make_unique<TerrainEditorTabController>(this);
 		terrainEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::println("TerrainEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("TerrainEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	initializeTerrain();

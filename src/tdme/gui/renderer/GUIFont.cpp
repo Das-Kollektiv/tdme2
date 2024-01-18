@@ -72,7 +72,7 @@ GUIFont::GUIFont(const string& pathName, const string& fileName, int size): text
 		.params = nullptr
 	};
 	if (FT_Open_Face(ftLibrary, &ftOpenArgs, 0, &ftFace) != 0) {
-		Console::println("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
+		Console::printLine("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
 		return;
 	}
 
@@ -95,7 +95,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName, int size
 	// init freetype library if not yet done
 	if (ftInitialized == false) {
 		if (FT_Init_FreeType(&ftLibrary) != 0) {
-			Console::println("GUIFont::parse(): Could not initialize freetype library");
+			Console::printLine("GUIFont::parse(): Could not initialize freetype library");
 			return nullptr;
 		}
 		ftInitialized = true;
@@ -113,7 +113,7 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 	//
 	if (FT_Load_Char(ftFace, charId, FT_LOAD_RENDER))
 	{
-		Console::println("GUIFont::addToTextureAtlas(): Could not load glyph: " + Character::toString(charId) + "(" + to_string(charId) + ")");
+		Console::printLine("GUIFont::addToTextureAtlas(): Could not load glyph: " + Character::toString(charId) + "(" + to_string(charId) + ")");
 	    return nullptr;
 	}
 
@@ -193,7 +193,7 @@ void GUIFont::updateFontInternal() {
 		UTF8CharacterIterator u8It(atlasTexture->texture->getId());
 		auto character = getCharacter(u8It.next());
 		if (character == nullptr) {
-			Console::println("GUIFont::updateCharacters(): Could not find character for font character '" + atlasTexture->texture->getId() + "'");
+			Console::printLine("GUIFont::updateCharacters(): Could not find character for font character '" + atlasTexture->texture->getId() + "'");
 			continue;
 		}
 		character->x = atlasTexture->left;

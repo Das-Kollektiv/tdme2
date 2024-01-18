@@ -29,30 +29,30 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("importtscene ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("importtscene ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 2) {
-		Console::println("Usage: importtscene scenemodel");
+		Console::printLine("Usage: importtscene scenemodel");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string sceneModelFileName = string(argv[1]);
 	try {
-		Console::println("Loading scene: " + sceneModelFileName);
+		Console::printLine("Loading scene: " + sceneModelFileName);
 		// TODO: this needs some love, does not work correctly right now
 		auto scene = SceneReader::readFromModel(
 			FileSystem::getInstance()->getPathName(sceneModelFileName),
 			FileSystem::getInstance()->getFileName(sceneModelFileName)
 		);
-		Console::println("Saving scene: " + sceneModelFileName);
+		Console::printLine("Saving scene: " + sceneModelFileName);
 		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(sceneModelFileName),
 			Tools::ensureFileExtension(FileSystem::getInstance()->getFileName(sceneModelFileName), "tscene"),
 			scene
 		);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

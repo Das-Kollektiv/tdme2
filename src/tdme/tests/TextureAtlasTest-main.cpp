@@ -157,7 +157,7 @@ int main(int argc, char** argv)
 	for (auto i = 0;; i++) {
 		auto atlasTexture = atlas.getAtlasTexture(i);
 		if (atlasTexture == nullptr) break;
-		Console::println(
+		Console::printLine(
 			atlasTexture->texture->getId() + ": " +
 			"left: " + to_string(atlasTexture->left) + ", " +
 			"top: " + to_string(atlasTexture->left) + ", " +

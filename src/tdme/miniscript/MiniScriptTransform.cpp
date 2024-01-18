@@ -136,7 +136,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					if (MiniScriptVector3::getVector3Value(arguments, 0, vec3Value, true) == true) {
 						result.setTranslation(vec3Value);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					}
 				}
@@ -145,7 +145,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					if (MiniScriptVector3::getVector3Value(arguments, 1, vec3Value, true) == true) {
 						result.setScale(vec3Value);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					}
 				}
@@ -158,7 +158,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					if (MiniScript::getFloatValue(arguments, i, floatValue, true) == true) {
 						result.setRotationAngle(i - 2, floatValue);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					}
 				}
@@ -196,7 +196,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -233,7 +233,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					arguments[0].setValue(&transform);
 
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -265,7 +265,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -301,7 +301,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					arguments[0].setType(TYPE_TRANSFORM);
 					arguments[0].setValue(&transform);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -337,11 +337,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						returnValue.setType(TYPE_VECTOR3);
 						returnValue.setValue(&result);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -374,11 +374,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					if (idx < transform.getRotationCount()) {
 						returnValue.setValue(transform.getRotationAngle(idx));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -418,11 +418,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						arguments[0].setType(TYPE_TRANSFORM);
 						arguments[0].setValue(&transform);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -458,7 +458,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -509,7 +509,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					arguments[0].setType(TYPE_TRANSFORM);
 					arguments[0].setValue(&transform);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -551,7 +551,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue = Rotation::interpolate(currentAngle, targetAngle, timePassedSeconds, degreesPerSeconds, interpolatedAngle);
 					arguments[4].setValue(interpolatedAngle);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -583,7 +583,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -615,7 +615,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -647,7 +647,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_TRANSFORM);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -704,7 +704,7 @@ bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Var
 			//
 			return true;
 		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			Console::printLine("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 			miniScript->startErrorScript();
 			//
 			return false;

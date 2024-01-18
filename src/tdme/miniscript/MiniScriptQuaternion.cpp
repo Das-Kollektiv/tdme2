@@ -89,7 +89,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -125,7 +125,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -156,7 +156,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -189,7 +189,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR3);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -222,7 +222,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -293,7 +293,7 @@ bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::Va
 			//
 			return true;
 		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			Console::printLine("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -321,7 +321,7 @@ bool MiniScriptQuaternion::add(MiniScript* miniScript, const span<MiniScript::Va
 			//
 			return true;
 		} else  {
-			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
+			Console::printLine("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -345,7 +345,7 @@ bool MiniScriptQuaternion::sub(MiniScript* miniScript, const span<MiniScript::Va
 			//
 			return true;
 		} else  {
-			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
+			Console::printLine("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
 			miniScript->startErrorScript();
 			//
 			return false;

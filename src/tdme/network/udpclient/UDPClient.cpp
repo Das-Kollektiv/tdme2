@@ -89,7 +89,7 @@ UDPClient::~UDPClient() {
 }
 
 void UDPClient::run() {
-	Console::println("UDPClient::run(): start");
+	Console::printLine("UDPClient::run(): start");
 
 	// catch kernel event and server socket exceptions
 	try {
@@ -208,7 +208,7 @@ void UDPClient::run() {
 							}
 						} catch (Exception &exception) {
 							// log
-							Console::println(
+							Console::printLine(
 								"UDPClient::run(): " +
 								RTTI::demangle(typeid(exception).name()) +
 								": " +
@@ -290,7 +290,7 @@ void UDPClient::run() {
 	//
 	} catch (Exception &exception) {
 		// log
-		Console::println(
+		Console::printLine(
 			"UDPClient::run(): " +
 			RTTI::demangle(typeid(exception).name()) +
 			": " +
@@ -303,7 +303,7 @@ void UDPClient::run() {
 	socket->close();
 
 	// log
-	Console::println("UDPClient::run(): done");
+	Console::printLine("UDPClient::run(): done");
 }
 
 void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {

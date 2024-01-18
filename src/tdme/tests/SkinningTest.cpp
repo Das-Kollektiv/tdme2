@@ -106,7 +106,7 @@ void SkinningTest::display()
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
-	Console::println(
+	Console::printLine(
 		string("SkinningTest::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
@@ -199,7 +199,7 @@ void SkinningTest::initialize()
 		characters->setReceivesShadows(true);
 		engine->addEntity(characters);
 	#endif
-	Console::println("Spawned characters: " + to_string(characterIdx));
+	Console::printLine("Spawned characters: " + to_string(characterIdx));
 }
 
 void SkinningTest::reshape(int32_t width, int32_t height)

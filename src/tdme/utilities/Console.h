@@ -34,9 +34,9 @@ public:
 	struct Logger
 	{
 		virtual ~Logger() {}
-		virtual void println(const string_view& str) = 0;
+		virtual void printLine(const string_view& str) = 0;
 		virtual void print(const string_view& str) = 0;
-		virtual void println() = 0;
+		virtual void printLine() = 0;
 	};
 
 	/**
@@ -49,7 +49,7 @@ public:
 	 * Print given string and trailing newline to console
 	 * @param str string
 	 */
-	static void println(const string_view& str);
+	static void printLine(const string_view& str);
 
 	/**
 	 * Print given string
@@ -60,7 +60,7 @@ public:
 	/**
 	 * Print new line to console
 	 */
-	static void println();
+	static void printLine();
 
 	/**
 	 * Shutdown console logging and especially writing log to file

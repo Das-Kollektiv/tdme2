@@ -264,7 +264,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			engineEmitter = make_unique<SphereParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else {
-			Console::println(
+			Console::printLine(
 				string(
 					"SceneConnector::createParticleSystem(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
@@ -324,7 +324,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 					fogParticleSystem->getTextureSpritesFPS()
 				).release();
 		} else {
-			Console::println(
+			Console::printLine(
 				string(
 					"SceneConnector::createParticleSystem(): unknown particle system type '" +
 					particleSystem->getType()->getName() +
@@ -972,7 +972,7 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype, const string& id, const Transform& transform, const string& bodyHierarchyId, const string& bodyHierarchyParentId) {
 	auto bodyHierarchy = world->getBodyHierarchy(bodyHierarchyId);
 	if (bodyHierarchy == nullptr) {
-		Console::println("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
+		Console::printLine("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
 		return nullptr;
 	}
 	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumesPrimitives(), bodyHierarchyParentId);

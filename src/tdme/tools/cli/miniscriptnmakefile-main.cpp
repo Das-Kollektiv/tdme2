@@ -17,13 +17,13 @@ using tdme::utilities::Console;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscriptnmakefile ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscriptnmakefile ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc != 4) {
-		Console::println("Usage: miniscriptnmakefile base_pathname source_pathname makefile_filename");
+		Console::printLine("Usage: miniscriptnmakefile base_pathname source_pathname makefile_filename");
 		return EXIT_FAILURE;
 	}
 

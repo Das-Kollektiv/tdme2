@@ -170,7 +170,7 @@ void EngineTest::display()
 			entityClicked->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 		auto clickWorldPosition = engine->computeWorldCoordinateByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
-		Console::println(
+		Console::printLine(
 			"EngineTest::display(): clicked@" +
 			to_string(clickWorldPosition.getX()) + ", " +
 			to_string(clickWorldPosition.getY()) + ", " +
@@ -374,7 +374,7 @@ void EngineTest::initialize()
 		(dynamic_cast< ParticleSystem* >(engine->getEntity("fire")))->setPickable(true);
 	} catch (Exception& exception) {
 		Console::print(string("EngineTest::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		Application::exit(1);
 	}
 }

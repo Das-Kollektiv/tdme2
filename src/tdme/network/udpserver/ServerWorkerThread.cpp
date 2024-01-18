@@ -40,7 +40,7 @@ ServerWorkerThread::~ServerWorkerThread() {
 }
 
 void ServerWorkerThread::run() {
-	Console::println("ServerWorkerThread[" + to_string(id) + "]::run(): start");
+	Console::printLine("ServerWorkerThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
 	startUpBarrier->wait();
@@ -67,7 +67,7 @@ void ServerWorkerThread::run() {
 				try {
 					client->onRequest(packet.get(), messageId, retries);
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): client: request: " +
@@ -89,7 +89,7 @@ void ServerWorkerThread::run() {
 				try {
 					client->onInit();
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): client: init: " +
@@ -106,7 +106,7 @@ void ServerWorkerThread::run() {
 				try {
 					client->onClose();
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): client: close: " +
@@ -123,7 +123,7 @@ void ServerWorkerThread::run() {
 				try {
 					client->onCustom(request->getCustomEvent());
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): client: custom: " +
@@ -140,7 +140,7 @@ void ServerWorkerThread::run() {
 				try {
 					group->onInit();
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): group: init: " +
@@ -157,7 +157,7 @@ void ServerWorkerThread::run() {
 				try {
 					group->onClose();
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): group: close: " +
@@ -174,7 +174,7 @@ void ServerWorkerThread::run() {
 				try {
 					group->onCustomEvent(request->getCustomEvent());
 				} catch(Exception& exception) {
-					Console::println(
+					Console::printLine(
 						"ServerWorkerThread[" +
 						to_string(id) +
 						"]::run(): group: custom: " +
@@ -193,5 +193,5 @@ void ServerWorkerThread::run() {
 	}
 
 	//
-	Console::println("ServerWorkerThread[" + to_string(id) + "]::run(): done");
+	Console::printLine("ServerWorkerThread[" + to_string(id) + "]::run(): done");
 }

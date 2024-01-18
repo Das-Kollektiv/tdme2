@@ -488,7 +488,7 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 }
 
 Model* Primitives::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
-	Console::println("Primitives::createConvexMeshModel(): This is not supported. Rather load the model and use Primitives::setupConvexMeshModel().");
+	Console::printLine("Primitives::createConvexMeshModel(): This is not supported. Rather load the model and use Primitives::setupConvexMeshModel().");
 	return nullptr;
 }
 
@@ -552,7 +552,7 @@ Model* Primitives::createModel(BoundingVolume* boundingVolume, const string& id)
 	if (dynamic_cast<ConvexMesh*>(boundingVolume) != nullptr) {
 		return Primitives::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
 	} else {
-		Console::println(string("Primitives::createModel(): unsupported bounding volume"));
+		Console::printLine(string("Primitives::createModel(): unsupported bounding volume"));
 		return nullptr;
 	}
 }

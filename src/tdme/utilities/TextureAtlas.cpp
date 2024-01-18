@@ -33,7 +33,7 @@ TextureAtlas::~TextureAtlas() {
 }
 
 int TextureAtlas::addTexture(Texture* texture) {
-	if (VERBOSE == true) Console::println("TextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+	if (VERBOSE == true) Console::printLine("TextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	// check if texture had been added
 	{
 		auto textureIdx = getTextureIdx(texture);
@@ -71,15 +71,15 @@ int TextureAtlas::addTexture(Texture* texture) {
 }
 
 void TextureAtlas::removeTexture(Texture* texture) {
-	if (VERBOSE == true) Console::println("TextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+	if (VERBOSE == true) Console::printLine("TextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	auto textureIdx = getTextureIdx(texture);
 	if (textureIdx == TEXTURE_IDX_NONE) {
-		Console::println("TextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		Console::printLine("TextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 		return;
 	}
 	textureReferenceCounter[texture]--;
 	if (textureReferenceCounter[texture] == 0) {
-		if (VERBOSE == true) Console::println("TextureAtlas::removeTexture(): reference counter = 0, texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		if (VERBOSE == true) Console::printLine("TextureAtlas::removeTexture(): reference counter = 0, texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 		textureReferenceCounter.erase(texture);
 		textureToAtlasTextureIdxMapping.erase(texture);
 		atlasTextureIdxToAtlasTextureMapping.erase(textureIdx);
@@ -93,7 +93,7 @@ void TextureAtlas::update() {
 	// see: https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
 
 	//
-	if (VERBOSE == true) Console::println("TextureAtlas::update(): " + atlasTextureId);
+	if (VERBOSE == true) Console::printLine("TextureAtlas::update(): " + atlasTextureId);
 
 	// release last atlas if we have any
 	if (atlasTexture != nullptr) {
@@ -103,7 +103,7 @@ void TextureAtlas::update() {
 
 	//
 	if (atlasTextureIdxToAtlasTextureMapping.empty() == true) {
-		if (VERBOSE == true) Console::println("TextureAtlas::update(): " + atlasTextureId + ": nothing to do");
+		if (VERBOSE == true) Console::printLine("TextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
 		requiresUpdate = false;
 		//
@@ -256,9 +256,9 @@ void TextureAtlas::update() {
 
 	//
 	if (VERBOSE == true) {
-		Console::println("TextureAtlas::update(): dump textures: ");
+		Console::printLine("TextureAtlas::update(): dump textures: ");
 		for (const auto& [atlasTextureEntityIdx, atlasTextureEntity]: atlasTextureIdxToAtlasTextureMapping) {
-			Console::println(
+			Console::printLine(
 				"TextureAtlas::update(): have texture: " + atlasTextureEntity.texture->getId() + ", " +
 				"left: " + to_string(atlasTextureEntity.left) + ", " +
 				"top: " + to_string(atlasTextureEntity.top) + ", " +

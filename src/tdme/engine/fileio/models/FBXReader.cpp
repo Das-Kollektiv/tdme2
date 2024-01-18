@@ -72,13 +72,13 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	// init fbx sdk
 	auto fbxManager = unique_ptr<FbxManager, decltype([](FbxManager* fbxManager){ fbxManager->Destroy(); })>(FbxManager::Create());
 	if (fbxManager == nullptr) {
-		Console::println("FBXReader::read(): Unable to create FBX manager.");
+		Console::printLine("FBXReader::read(): Unable to create FBX manager.");
 		return nullptr;
 	} else {
-		Console::println(string("FBXReader::read(): Autodesk FBX SDK version ") + string(fbxManager->GetVersion()));
+		Console::printLine(string("FBXReader::read(): Autodesk FBX SDK version ") + string(fbxManager->GetVersion()));
 	}
 
-	Console::println("FBXReader::read(): reading FBX scene");
+	Console::printLine("FBXReader::read(): reading FBX scene");
 
 	auto ios = unique_ptr<FbxIOSettings, decltype([](FbxIOSettings* fbxIOSettings){ fbxIOSettings->Destroy(); })>(FbxIOSettings::Create(fbxManager.get(), IOSROOT));
 	fbxManager->SetIOSettings(ios.get());
@@ -107,15 +107,15 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	}
 
 	//
-	Console::println("FBXReader::read(): Authoring program: " + string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()));
+	Console::printLine("FBXReader::read(): Authoring program: " + string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()));
 
 	//
-	Console::println("FBXReader::read(): triangulating FBX");
+	Console::printLine("FBXReader::read(): triangulating FBX");
 	// triangulate
 	FbxGeometryConverter fbxGeometryConverter(fbxManager.get());
 	fbxGeometryConverter.Triangulate(fbxScene.get(), true);
 
-	Console::println("FBXReader::read(): importing FBX");
+	Console::printLine("FBXReader::read(): importing FBX");
 
 	// create model
 	auto model = make_unique<Model>(
@@ -140,7 +140,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	processScene(fbxScene.get(), model.get(), pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 
 	//
-	Console::println("FBXReader::read(): setting up animations");
+	Console::printLine("FBXReader::read(): setting up animations");
 
 	// parse animations stacks
 	FbxTime::SetGlobalTimeMode(FbxTime::eCustom, 30.0);
@@ -211,15 +211,15 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	FbxArrayDelete(fbxAnimStackNameArray);
 
 	//
-	Console::println("FBXReader::read(): destroying FBX SDK");
-	Console::println("FBXReader::read(): prepare for indexed rendering");
+	Console::printLine("FBXReader::read(): destroying FBX SDK");
+	Console::printLine("FBXReader::read(): prepare for indexed rendering");
 
 	//
 	ModelTools::setupJoints(model.get());
 	ModelTools::fixAnimationLength(model.get());
 	ModelTools::prepareForIndexedRendering(model.get());
 
-	Console::println("FBXReader::read(): done");
+	Console::printLine("FBXReader::read(): done");
 
 	//
 	return model.release();
@@ -559,7 +559,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						);
 					}
 				} else {
-					Console::println("FBXReader::processMeshNode(): unsupported material shading class: " + fbxMaterialName);
+					Console::printLine("FBXReader::processMeshNode(): unsupported material shading class: " + fbxMaterialName);
 				}
 				FbxProperty fbxProperty;
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
@@ -949,7 +949,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 		skinning->setVerticesJointsWeights(verticesJointsWeights);
 		node->setSkinning(skinning.release());
 	} else {
-		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
+		Console::printLine("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
 	}
 	//
 	return node.release();

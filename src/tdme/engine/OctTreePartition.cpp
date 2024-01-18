@@ -77,7 +77,7 @@ void OctTreePartition::addEntity(Entity* entity)
 			// otherwise create a id
 			uniquePartitionId = entityUniquePartitionIdMapping.size() + 1;
 			if (uniquePartitionId >= visibleEntitiesBitSet.size()) {
-				Console::println("OctTreePartition::addEntity(): too many entities: " + to_string(uniquePartitionId) + " >= " + to_string(visibleEntitiesBitSet.size()));
+				Console::printLine("OctTreePartition::addEntity(): too many entities: " + to_string(uniquePartitionId) + " >= " + to_string(visibleEntitiesBitSet.size()));
 				return;
 			}
 		}
@@ -111,7 +111,7 @@ void OctTreePartition::removeEntity(Entity* entity)
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
 	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
-		Console::println(
+		Console::printLine(
 			"OctTreePartition::removeEntity(): '" +
 			entity->getId() +
 			"' not registered"
@@ -172,17 +172,17 @@ const vector<Entity*>& OctTreePartition::getVisibleEntities(Frustum* frustum)
 
 void OctTreePartition::dumpNode(PartitionTreeNode* node, int indent) {
 	for (auto i = 0; i < indent; i++) Console::print("\t");
-	Console::println(to_string(node->x) + "/" + to_string(node->y) + "/" + to_string(node->z) + ": ");
+	Console::printLine(to_string(node->x) + "/" + to_string(node->y) + "/" + to_string(node->z) + ": ");
 	for (auto entity: node->partitionEntities) {
 		for (auto i = 0; i < indent + 1; i++) Console::print("\t");
-		Console::println(entity->getId());
+		Console::printLine(entity->getId());
 	}
 	for (auto& subNode: node->subNodes) dumpNode(&subNode, indent + 1);
 }
 
 void OctTreePartition::findEntity(PartitionTreeNode* node, Entity* entity) {
 	for (auto nodeEntity: node->partitionEntities) {
-		if (nodeEntity == entity) Console::println("OctTreePartition::findEntity(): found entity: " + entity->getId());
+		if (nodeEntity == entity) Console::printLine("OctTreePartition::findEntity(): found entity: " + entity->getId());
 	}
 	for (auto& subNode: node->subNodes) findEntity(&subNode, entity);
 }

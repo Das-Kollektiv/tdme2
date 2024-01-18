@@ -124,7 +124,7 @@ private:
 			// nope, add first one
 			auto batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 			if (batchRendererTriangles == nullptr) {
-				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
+				Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 				return;
 			}
 			batchRenderers.push_back(batchRendererTriangles);
@@ -136,7 +136,7 @@ private:
 		// failed, acquire additionally one
 		batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 		if (batchRendererTriangles == nullptr) {
-			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
+			Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 			return;
 		}
 		// 	add it

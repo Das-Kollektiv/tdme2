@@ -63,14 +63,14 @@ bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 bool EngineGL3Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
 	glfwMakeContextCurrent(glfwWindow);
 	if (glfwGetCurrentContext() == nullptr) {
-		Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		Console::printLine("EngineGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
 		return false;
 	}
 	#if !defined(__APPLE__)
 		//glewExperimental = true;
 		GLenum glewInitStatus = glewInit();
 		if (glewInitStatus != GLEW_OK) {
-			Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+			Console::printLine("EngineGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
 			return false;
 		}
 	#endif
@@ -200,9 +200,9 @@ void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
 extern "C" EngineGL3Renderer* createInstance()
 {
 	if (EngineGL3Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::println("EngineGL3Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineGL3Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
-	Console::println("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");
+	Console::printLine("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");
 	return new EngineGL3Renderer();
 }

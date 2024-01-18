@@ -219,7 +219,7 @@ Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* que
 }
 
 void Engine::EngineThread::run() {
-	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
+	Console::printLine("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 	while (isStopRequested() == false) {
 		auto element = queue->getElement();
 		if (element == nullptr) break;
@@ -257,7 +257,7 @@ void Engine::EngineThread::run() {
 				break;
 		}
 	}
-	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
+	Console::printLine("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 }
 
 void Engine::shutdown() {
@@ -297,7 +297,7 @@ void Engine::loadTextures(const string& pathName) {
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer)
 {
 	if (instance == nullptr || instance->initialized == false) {
-		Console::println(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
+		Console::printLine(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
 		return nullptr;
 	}
 	// create off screen engine
@@ -361,7 +361,7 @@ void Engine::addEntity(Entity* entity)
 		if (entityByIdIt != entitiesById.end()) {
 			// check if we want to add this entity a second time
 			if (entity == entityByIdIt->second) {
-				Console::println("Engine::addEntity(): " + entity->getId() + ": entity already added!");
+				Console::printLine("Engine::addEntity(): " + entity->getId() + ": entity already added!");
 				return;
 			}
 			// dispose old entity if any did exist in engine with same id
@@ -743,7 +743,7 @@ void Engine::initialize()
 	renderer = Application::getRenderer();
 	if (renderer == nullptr) {
 		initialized = false;
-		Console::println("No renderer: Exiting!");
+		Console::printLine("No renderer: Exiting!");
 		Application::exit(0);
 		return;
 	}
@@ -767,7 +767,7 @@ void Engine::initialize()
 		threadCount = 1;
 	}
 
-	Console::println(string("TDME2::Thread count: ") + to_string(threadCount));
+	Console::printLine(string("TDME2::Thread count: ") + to_string(threadCount));
 
 	// initialize object buffers
 	ObjectBuffer::initialize();
@@ -783,8 +783,8 @@ void Engine::initialize()
 	renderer->initializeFrame();
 
 	// graphics device
-	Console::println(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
-	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
+	Console::printLine(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
+	Console::printLine(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
 
 	// create entity renderer
 	entityRenderer = make_unique<EntityRenderer>(this, renderer);
@@ -867,33 +867,33 @@ void Engine::initialize()
 
 	// check if texture compression is available
 	if (renderer->isTextureCompressionAvailable() == true) {
-		Console::println("TDME2::BC7 texture compression is available.");
+		Console::printLine("TDME2::BC7 texture compression is available.");
 	} else {
-		Console::println("TDME2::BC7 texture compression is not available.");
+		Console::printLine("TDME2::BC7 texture compression is not available.");
 	}
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
-		Console::println("TDME2::Using shadow mapping");
+		Console::printLine("TDME2::Using shadow mapping");
 		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = make_unique<ShadowMapping>(this, renderer, entityRenderer.get());
 	} else {
-		Console::println("TDME2::Not using shadow mapping");
+		Console::printLine("TDME2::Not using shadow mapping");
 	}
 
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
-		Console::println("TDME2::Using skinning compute shader");
+		Console::printLine("TDME2::Using skinning compute shader");
 		skinningShader = make_unique<SkinningShader>(renderer);
 		skinningShader->initialize();
 	} else {
-		Console::println("TDME2::Not using skinning compute shader");
+		Console::printLine("TDME2::Not using skinning compute shader");
 	}
 
-	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
+	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::printLine(string("TDME: ") + NAME + ": Not initialized")
 
 	CHECK_INITIALIZED("ShadowMapCreationShader", shadowMappingShaderPre);
 	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
@@ -929,25 +929,25 @@ void Engine::initialize()
 
 	// deferred shading
 	if (renderer->isDeferredShadingAvailable() == true) {
-		Console::println("TDME2::Using deferred shading");
+		Console::printLine("TDME2::Using deferred shading");
 	} else {
-		Console::println("TDME2::Not using deferred shading");
+		Console::printLine("TDME2::Not using deferred shading");
 	}
 
 	//
-	Console::println(string("TDME2::initialized & ready: ") + to_string(initialized));
+	Console::printLine(string("TDME2::initialized & ready: ") + to_string(initialized));
 
 	// shut down engine if not initialized
 	if (initialized == false) {
-		Console::println("Engine not initialized: Exiting!");
+		Console::printLine("Engine not initialized: Exiting!");
 		Application::exit(0);
 		return;
 	}
 
 	// pbr
 	if (renderer->isPBRAvailable() == true) {
-		Console::println("TDME2::PBR shaders are enabled");
-		Console::println("TDME2::Generating brdf LUT texture");
+		Console::printLine("TDME2::PBR shaders are enabled");
+		Console::printLine("TDME2::Generating brdf LUT texture");
 		// brdf lut render shader
 		brdfLUTShader->generate();
 	}
@@ -2156,7 +2156,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	// fetch pixel
 	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
-		Console::println("Engine::makeScreenshot(): Failed to read pixels");
+		Console::printLine("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
 	}
 
@@ -2196,7 +2196,7 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	// fetch pixel
 	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
-		Console::println("Engine::makeScreenshot(): Failed to read pixels");
+		Console::printLine("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
 	}
 
@@ -2651,7 +2651,7 @@ void Engine::dumpShaders() {
 			case SHADERTYPE_SKY: shaderTypeString = "sky"; break;
 			default: break;
 		}
-		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
+		Console::printLine(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
 		const auto shaderParametersDefaults = getShaderParameterDefaults(shaderId);
 		if (shaderParametersDefaults == nullptr) continue;
 		if (shaderParametersDefaults->size() > 0) {
@@ -2841,7 +2841,7 @@ void Engine::dumpShaders() {
 						break;
 				}
 				//
-				Console::println();
+				Console::printLine();
 			}
 		}
 	}
@@ -2892,7 +2892,7 @@ void Engine::dumpEntityHierarchy(EntityHierarchy* entityHierarchy, int indent, c
 				entityType = "Points Particle System";
 				break;
 		}
-		Console::println("\t" + subEntity->getId() + " (" + entityType + ")");
+		Console::printLine("\t" + subEntity->getId() + " (" + entityType + ")");
 		if (subEntity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
 			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(subEntity), indent + 1, string());
 		}
@@ -2902,9 +2902,9 @@ void Engine::dumpEntityHierarchy(EntityHierarchy* entityHierarchy, int indent, c
 }
 
 void Engine::dumpEntities() {
-	Console::println("Engine::dumpEntities()");
-	Console::println();
-	Console::println("Engine Entities:");
+	Console::printLine("Engine::dumpEntities()");
+	Console::printLine();
+	Console::printLine("Engine Entities:");
 	for (const auto& [entityId, entity]: entitiesById) {
 		string entityType;
 		switch (entity->getEntityType()) {
@@ -2948,7 +2948,7 @@ void Engine::dumpEntities() {
 				entityType = "Points Particle System";
 				break;
 		}
-		Console::println("\t" + entity->getId() + " (" + entityType + ")");
+		Console::printLine("\t" + entity->getId() + " (" + entityType + ")");
 		if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
 			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(entity), 2, string());
 		}

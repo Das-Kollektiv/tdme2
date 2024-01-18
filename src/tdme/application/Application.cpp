@@ -164,7 +164,7 @@ void Application::exit(int exitCode) {
 
 		vector<string> backtraceLines;
 		auto backtraceHeaderLine = "windowsExceptionHandler(): process " + to_string((uint64_t)process) + " crashed: Printing stacktrace(thread " + to_string((uint64_t)thread) + ")";
-		Console::println(backtraceHeaderLine);
+		Console::printLine(backtraceHeaderLine);
 		backtraceLines.push_back(backtraceHeaderLine);
 
 		CHAR _pathToExecutable[MAX_PATH];
@@ -174,11 +174,11 @@ void Application::exit(int exitCode) {
 		#if defined(_MSC_VER) == false
 			auto addr2lineToolCmd = StringTools::substring(pathToExecutable, 0, StringTools::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
 			if (FileSystem::getInstance()->exists(addr2lineToolCmd) == false) {
-				Console::println("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
+				Console::printLine("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
 				mutex.unlock();
 
 				//
-				Console::println();
+				Console::printLine();
 
 				// shutdown console
 				Console::shutdown();
@@ -190,7 +190,7 @@ void Application::exit(int exitCode) {
 		#endif
 
 		auto backtraceExecutableLine = "windowsExceptionHandler(): path to executable: " + pathToExecutable;
-		Console::println(backtraceExecutableLine);
+		Console::printLine(backtraceExecutableLine);
 		backtraceLines.push_back(backtraceExecutableLine);
 
 		pathToExecutable = string("\"") + StringTools::replace(pathToExecutable, "\\", "\\\\") + "\"";
@@ -310,15 +310,15 @@ void Application::exit(int exitCode) {
 						addr2LineOutput = StringTools::replace(StringTools::replace(addr2LineOutput, addr2lineFunctionName, RTTI::demangle(addr2lineFunctionName.c_str())), "\n", "");
 					}
 					auto backtraceLine = to_string(frameIdx) + ": " + addr2LineOutput;
-					Console::println(backtraceLine);
+					Console::printLine(backtraceLine);
 					backtraceLines.push_back(backtraceLine);
 				} else {
 					auto backtraceLine = to_string(frameIdx) + ": " + string(RTTI::demangle(_functionName)) + " at " + fileName + ":" + to_string(line);
-					Console::println(backtraceLine);
+					Console::printLine(backtraceLine);
 					backtraceLines.push_back(backtraceLine);
 				}
 			#else
-				Console::println(to_string(frameIdx) + ": " + functionName + " at " + fileName + ":" + to_string(line));
+				Console::printLine(to_string(frameIdx) + ": " + functionName + " at " + fileName + ":" + to_string(line));
 			#endif
 			frameIdx++;
 		}
@@ -330,7 +330,7 @@ void Application::exit(int exitCode) {
 
 		mutex.unlock();
 
-		Console::println();
+		Console::printLine();
 
 		// shutdown console
 		Console::shutdown();
@@ -538,7 +538,7 @@ void Application::setClipboardContent(const string& content) {
 }
 
 static void glfwErrorCallback(int error, const char* description) {
-	Console::println(string("glfwErrorCallback(): ") + description);
+	Console::printLine(string("glfwErrorCallback(): ") + description);
 }
 
 int Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
@@ -567,7 +567,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	Application::inputEventHandler = inputEventHandler;
 	glfwSetErrorCallback(glfwErrorCallback);
 	if (glfwInit() == false) {
-		Console::println("glflInit(): failed!");
+		Console::printLine("glflInit(): failed!");
 		return EXITCODE_FAILURE;
 	}
 
@@ -592,14 +592,14 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	}
 
 	//
-	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
+	Console::printLine("Application::run(): Opening renderer library: " + rendererLibrary);
 
 	// load renderer library
 	#if defined(_MSC_VER)
 		//
 		auto rendererLibraryHandle = LoadLibrary(rendererLibrary.c_str());
 		if (rendererLibraryHandle == nullptr) {
-			Console::println("Application::run(): Could not open renderer library");
+			Console::printLine("Application::run(): Could not open renderer library");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
@@ -607,14 +607,14 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
 		//
 		if (rendererCreateInstance == nullptr) {
-			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+			Console::printLine("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
-			Console::println("Application::run(): Could not create renderer");
+			Console::printLine("Application::run(): Could not create renderer");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
@@ -626,7 +626,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 			auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
 		#endif
 		if (rendererLibraryHandle == nullptr) {
-			Console::println("Application::run(): Could not open renderer library");
+			Console::printLine("Application::run(): Could not open renderer library");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
@@ -634,14 +634,14 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
 		//
 		if (rendererCreateInstance == nullptr) {
-			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+			Console::printLine("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
-			Console::println("Application::run(): Could not create renderer");
+			Console::printLine("Application::run(): Could not create renderer");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
@@ -661,14 +661,14 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 
 	//
 	if (glfwWindow == nullptr) {
-		Console::println("glfwCreateWindow(): Could not create window");
+		Console::printLine("glfwCreateWindow(): Could not create window");
 		glfwTerminate();
 		return EXITCODE_FAILURE;
 	}
 
 	//
 	if (renderer->initializeWindowSystemRendererContext(glfwWindow) == false) {
-		Console::println("glfwCreateWindow(): Could not initialize window system renderer context");
+		Console::printLine("glfwCreateWindow(): Could not initialize window system renderer context");
 		glfwTerminate();
 		return EXITCODE_FAILURE;
 	}
@@ -709,7 +709,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		auto gameControllerDatabase = FileSystem::getInstance()->getContentAsString("resources/engine/misc", "gamecontrollerdb.txt");
 		glfwUpdateGamepadMappings(gameControllerDatabase.c_str());
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//
@@ -731,7 +731,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	//
 	auto localExitCode = exitCode;
 	if (Application::application != nullptr) {
-		Console::println("Application::run(): Shutting down application");
+		Console::printLine("Application::run(): Shutting down application");
 		Application::application->dispose();
 		Engine::shutdown();
 		Audio::shutdown();
@@ -875,10 +875,10 @@ void Application::glfwOnClose(GLFWwindow* window) {
 }
 
 void Application::glfwOnDrop(GLFWwindow* window, int count, const char** paths) {
-	Console::println("Application::glfwOnDrop(): " + to_string(count) + " items have been dropped");
+	Console::printLine("Application::glfwOnDrop(): " + to_string(count) + " items have been dropped");
 	vector<string> pathsVector;
 	for (auto i = 0; i < count; i++) {
-		Console::println("\t" + string(paths[i]));
+		Console::printLine("\t" + string(paths[i]));
 		pathsVector.push_back(paths[i]);
 	}
 	Application::application->onDrop(pathsVector);
@@ -889,14 +889,14 @@ void Application::glfwOnJoystickConnect(int joystickIdx, int event) {
 	//
 	if (event == GLFW_CONNECTED) {
 		if (glfwJoystickIsGamepad(joystickIdx) == GLFW_TRUE) {
-			Console::println("Application::glfwOnJoystickConnect(): connected gamepad with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
+			Console::printLine("Application::glfwOnJoystickConnect(): connected gamepad with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
 			Application::application->connectedGamepads.insert(joystickIdx);
 		} else {
-			Console::println("Application::glfwOnJoystickConnect(): connected joystick with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
+			Console::printLine("Application::glfwOnJoystickConnect(): connected joystick with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
 			Application::application->connectedJoysticks.insert(joystickIdx);
 		}
 	} else if (event == GLFW_DISCONNECTED) {
-		Console::println("Application::glfwOnJoystickConnect(): disconnected joystick/gamepad with idx = " + to_string(joystickIdx));
+		Console::printLine("Application::glfwOnJoystickConnect(): disconnected joystick/gamepad with idx = " + to_string(joystickIdx));
 		Application::application->connectedGamepads.erase(joystickIdx);
 		Application::application->connectedJoysticks.erase(joystickIdx);
 	}

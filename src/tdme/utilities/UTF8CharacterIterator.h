@@ -41,12 +41,12 @@ public:
 		 * @param idx binary index
 		 */
 		inline void removeCache(int64_t binaryIdx, int64_t characterIdx) {
-			// Console::println("MutableString::removeCache(): binary: " + to_string(binaryIdx) + ", character: " + to_string(characterIdx));
+			// Console::printLine("MutableString::removeCache(): binary: " + to_string(binaryIdx) + ", character: " + to_string(characterIdx));
 			// remove succeeding entries from binary cache
 			if (binaryIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
 				auto& _cache = binaryCache;
 				auto removeFromCacheEntryIdx = (binaryIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-				// Console::println("\tRemoving binary: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
+				// Console::printLine("\tRemoving binary: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
 				if (removeFromCacheEntryIdx < _cache.size()) {
 					_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
 				}
@@ -57,7 +57,7 @@ public:
 			if (characterIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
 				auto& _cache = characterCache;
 				auto removeFromCacheEntryIdx = (characterIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-				// Console::println("\tRemoving character: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
+				// Console::printLine("\tRemoving character: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
 				if (removeFromCacheEntryIdx < _cache.size()) {
 					_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
 				}
@@ -250,9 +250,9 @@ private:
 						characterPosition
 					);
 					/*
-					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					Console::printLine("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
 					for (const auto& cacheEntry: _cache) {
-						Console::println("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
+						Console::printLine("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/
 				}
@@ -261,14 +261,14 @@ private:
 			{
 				auto& _cache = cache->characterCache;
 				if (characterPosition > 0 && (characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
-					// Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					// Console::printLine("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
 					_cache.emplace_back(
 						binaryPosition,
 						characterPosition
 					);
 					/*
 					for (const auto& cacheEntry: _cache) {
-						Console::println("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
+						Console::printLine("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/
 				}

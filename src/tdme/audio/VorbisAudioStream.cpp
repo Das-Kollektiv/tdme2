@@ -27,9 +27,9 @@ void VorbisAudioStream::rewind()
 	try {
 		decoder.reset();
 	} catch (FileSystemException &fse) {
-		Console::println(string("VorbisAudioStream::rewind(): '"+ (id) + "': " + fse.what()));
+		Console::printLine(string("VorbisAudioStream::rewind(): '"+ (id) + "': " + fse.what()));
 	} catch (AudioDecoderException &ade) {
-		Console::println(string("VorbisAudioStream::rewind(): '" + (id) + "': " + ade.what()));
+		Console::printLine(string("VorbisAudioStream::rewind(): '" + (id) + "': " + ade.what()));
 	}
 }
 
@@ -44,7 +44,7 @@ bool VorbisAudioStream::initialize()
 	try {
 		// decode ogg vorbis
 		decoder.openFile(pathName, fileName);
-		Console::println(
+		Console::printLine(
 			string(
 				"VorbisAudioStream::initialize(): '" +
 				id +
@@ -60,12 +60,12 @@ bool VorbisAudioStream::initialize()
 		sampleRate = decoder.getSampleRate();
 		channels = decoder.getChannels();
 	} catch (FileSystemException& fse) {
-		Console::println(string("VorbisAudioStream::initialize(): '" + (id) + "': " + fse.what()));
+		Console::printLine(string("VorbisAudioStream::initialize(): '" + (id) + "': " + fse.what()));
 		decoder.close();
 		dispose();
 		return false;
 	} catch (AudioDecoderException& ade) {
-		Console::println(string("VorbisAudioStream::initialize(): '" + (id) + "': " + ade.what()));
+		Console::printLine(string("VorbisAudioStream::initialize(): '" + (id) + "': " + ade.what()));
 		decoder.close();
 		dispose();
 		return false;
@@ -95,9 +95,9 @@ void VorbisAudioStream::fillBuffer(ByteBuffer* data) {
 			decoder.reset();
 		}
 	} catch (FileSystemException& fse) {
-		Console::println(string("Audio stream: '" + (id) + "': " + fse.what()));
+		Console::printLine(string("Audio stream: '" + (id) + "': " + fse.what()));
 	} catch (AudioDecoderException& ade) {
-		Console::println(string("Audio stream: '" + (id) + "': " + ade.what()));
+		Console::printLine(string("Audio stream: '" + (id) + "': " + ade.what()));
 	}
 }
 

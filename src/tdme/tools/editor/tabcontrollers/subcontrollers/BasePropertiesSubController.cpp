@@ -100,7 +100,7 @@ void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseP
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_prototype_entityhierarchy"))->getController()->setValue(MutableString(prototype->isEntityHierarchy() == true?"1":""));
 		}
 	} catch (Exception& exception) {
-		Console::println("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -110,7 +110,7 @@ void BasePropertiesSubController::applyPropertyDetails(BaseProperties* basePrope
 		baseProperties->setName(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->getValue().getString());
 		baseProperties->setDescription(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString());
 	} catch (Exception& exception) {
-		Console::println("PrototypeBaseSubController::applyPrototypeBaseDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeBaseSubController::applyPrototypeBaseDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -127,7 +127,7 @@ void BasePropertiesSubController::setPropertyDetails(BaseProperties* basePropert
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
 	} catch (Exception& exception) {
-		Console::println("PrototypeBaseSubController::setPropertyDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeBaseSubController::setPropertyDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -151,7 +151,7 @@ void BasePropertiesSubController::applyPropertyDetails(BaseProperties* basePrope
 			throw ExceptionBase("Could not apply property details");
 		}
 	} catch (Exception& exception) {
-		Console::println("PrototypeBaseSubController::applyPropertyDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeBaseSubController::applyPropertyDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -183,7 +183,7 @@ void BasePropertiesSubController::createProperty(BaseProperties* baseProperties)
 			throw ExceptionBase("Could not create property");
 		}
 	} catch (Exception& exception) {
-		Console::println("PrototypeBaseSubController::createProperty(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeBaseSubController::createProperty(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 
@@ -223,7 +223,7 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 				throw ExceptionBase("Could not rename property");
 			}
 		} catch (Exception& exception) {
-			Console::println("PrototypeBaseSubController::renameProperty(): An error occurred: " + string(exception.what()));
+			Console::printLine("PrototypeBaseSubController::renameProperty(): An error occurred: " + string(exception.what()));
 			showInfoPopUp("Warning", string(exception.what()));
 		}
 	}

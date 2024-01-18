@@ -36,7 +36,7 @@ SimpleTextureAtlas::~SimpleTextureAtlas() {
 }
 
 int SimpleTextureAtlas::addTexture(Texture* texture) {
-	Console::println("SimpleTextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+	Console::printLine("SimpleTextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	// check if texture had been added
 	{
 		auto textureIdx = getTextureIdx(texture);
@@ -53,7 +53,7 @@ int SimpleTextureAtlas::addTexture(Texture* texture) {
 	} else {
 		textureIdx = textureToAtlasTextureIdxMapping.size();
 		if (textureIdx > 255) {
-			Console::println("SimpleTextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId + ", too many textures!");
+			Console::printLine("SimpleTextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId + ", too many textures!");
 			return TEXTURE_IDX_NONE;
 		}
 	}
@@ -69,15 +69,15 @@ int SimpleTextureAtlas::addTexture(Texture* texture) {
 }
 
 void SimpleTextureAtlas::removeTexture(Texture* texture) {
-	Console::println("SimpleTextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+	Console::printLine("SimpleTextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	auto textureIdx = getTextureIdx(texture);
 	if (textureIdx == TEXTURE_IDX_NONE) {
-		Console::println("SimpleTextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		Console::printLine("SimpleTextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 		return;
 	}
 	textureReferenceCounter[texture]--;
 	if (textureReferenceCounter[texture] == 0) {
-		Console::println("SimpleTextureAtlas::removeTexture(): reference counter = 0, texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		Console::printLine("SimpleTextureAtlas::removeTexture(): reference counter = 0, texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 		textureReferenceCounter.erase(texture);
 		textureToAtlasTextureIdxMapping.erase(texture);
 		atlasTextureIdxToTextureMapping.erase(textureIdx);
@@ -88,7 +88,7 @@ void SimpleTextureAtlas::removeTexture(Texture* texture) {
 }
 
 void SimpleTextureAtlas::update() {
-	Console::println("SimpleTextureAtlas::update(): " + atlasTextureId);
+	Console::printLine("SimpleTextureAtlas::update(): " + atlasTextureId);
 	// release last atlas if we have any
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
@@ -97,7 +97,7 @@ void SimpleTextureAtlas::update() {
 
 	//
 	if (atlasTextureIdxToTextureMapping.empty() == true) {
-		Console::println("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
+		Console::printLine("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
 		requiresUpdate = false;
 		//

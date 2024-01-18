@@ -178,7 +178,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
 				if (nodeController != nullptr && nodeValueController != nullptr) nodeController->setValue(nodeValueController->getValue());
 			} else {
-				Console::println("GUIElementController::executeExpression(): Unknown value in expression: " + value);
+				Console::printLine("GUIElementController::executeExpression(): Unknown value in expression: " + value);
 			}
 		} else
 		// element conditions
@@ -195,7 +195,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 					if (testCondition.empty() == true ||
 						setOnTrueCondition.empty() == true ||
 						setOnFalseCondition.empty() == true) {
-						Console::println("GUIElementController::executeExpression(): = ternary operator requires the following format 'node.condition=a?b:c'");
+						Console::printLine("GUIElementController::executeExpression(): = ternary operator requires the following format 'node.condition=a?b:c'");
 					} else {
 						auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 						if (nodeElementNode != nullptr) {
@@ -243,7 +243,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 				testCondition.empty() == true ||
 				setOnTrueCondition.empty() == true ||
 				setOnFalseCondition.empty() == true) {
-				Console::println("GUIElementController::executeExpression(): ?= ternary operator requires the following format 'node.condition?=a?b:c'");
+				Console::printLine("GUIElementController::executeExpression(): ?= ternary operator requires the following format 'node.condition?=a?b:c'");
 			}
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			if (nodeElementNode != nullptr) {
@@ -275,7 +275,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
 			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
 		} else {
-			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: expression = " + expression + ", sub command = " + subCommand);
+			Console::printLine("GUIElementController::executeExpression(): Unknown sub command in expression: expression = " + expression + ", sub command = " + subCommand);
 		}
 	}
 }

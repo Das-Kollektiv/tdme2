@@ -51,7 +51,7 @@ public:
 unique_ptr<InputThread> inputThread;
 
 void sigHandlerINT(int signal) {
-	Console::println("Interrupt signal catched");
+	Console::printLine("Interrupt signal catched");
 	if (inputThread != nullptr) {
 		inputThread->stop();
 	}
@@ -63,7 +63,7 @@ void sigHandlerINT(int signal) {
 int main(int argc, char *argv[]) {
 	// install SIGNINT handler
 	if (signal(SIGINT, sigHandlerINT) == SIG_ERR) {
-		Console::println("Can't install signal handler for SIGINT");
+		Console::printLine("Can't install signal handler for SIGINT");
 	}
 	// initialize network module
 	Network::initialize();
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 		auto message = unique_ptr<UDPClientMessage>(client->receiveMessage());
 		if (message == nullptr) continue;
 		if (client->processSafeMessage(message.get()) == true) {
-			Console::println("Received message: " + message->getPacket()->getString());
+			Console::printLine("Received message: " + message->getPacket()->getString());
 		}
 	}
 

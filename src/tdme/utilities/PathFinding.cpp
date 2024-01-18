@@ -393,14 +393,14 @@ bool PathFinding::findPathCustom(
 
 	// equal start and end position?
 	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
-		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
+		if (VERBOSE == true) Console::printLine("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(startPosition);
 		path.push_back(endPosition);
 		success = true;
 	} else
 	// nearby start and end position?
 	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
-		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
+		if (VERBOSE == true) Console::printLine("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
 		path.push_back(startPosition);
 		float endYHeight = endPosition.getY();
 		if (isWalkableInternal(
@@ -438,7 +438,7 @@ bool PathFinding::findPathCustom(
 			if (Float::isNaN(sideVector.getX()) ||
 				Float::isNaN(sideVector.getY()) ||
 				Float::isNaN(sideVector.getZ())) {
-				if (VERBOSE == true) Console::println("PathFinding::findPath(): side vector = NaN!");
+				if (VERBOSE == true) Console::printLine("PathFinding::findPath(): side vector = NaN!");
 				endPositionCandidates.push_back(endPosition);
 				startPositionCandidates.push_back(startPosition);
 			} else {
@@ -532,7 +532,7 @@ bool PathFinding::findPathCustom(
 				customTest
 			) == false) {
 				if (VERBOSE == true) {
-					Console::println(
+					Console::printLine(
 						"PathFinding::findPath(): Start position not walkable: " +
 						to_string(startPositionCandidate.getX()) + ", " +
 						to_string(startPositionCandidate.getY()) + ", " +
@@ -564,7 +564,7 @@ bool PathFinding::findPathCustom(
 					customTest
 				) == false) {
 				if (VERBOSE == true) {
-					Console::println(
+					Console::printLine(
 						"PathFinding::findPath(): End position not walkable: " +
 						to_string(endPositionComputed.getX()) + ", " +
 						to_string(endPositionComputed.getY()) + ", " +
@@ -579,7 +579,7 @@ bool PathFinding::findPathCustom(
 			}
 
 			if (VERBOSE == true) {
-				Console::println(
+				Console::printLine(
 					"Finding path: " +
 					to_string(startPositionComputed.getX()) + ", " +
 					to_string(startPositionComputed.getY()) + ", " +
@@ -660,18 +660,18 @@ bool PathFinding::findPathCustom(
 				if (endNode != nullptr) {
 					end.hasPreviousNode = true;
 					end.previousNodeId = endNode->previousNodeId;
-					// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					// Console::printLine("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 					int nodesCount = 0;
 					unordered_map<tuple<int, int, int>, PathFindingNode*, PathFindingNodeId_Hash>::iterator nodeIt;
 					for (auto pathNode = &end; pathNode != nullptr; pathNode = (nodeIt = (pathNode->hasPreviousNode == false?closedNodes.end():closedNodes.find(pathNode->previousNodeId))) != closedNodes.end()?nodeIt->second:nullptr) {
 						nodesCount++;
 						// if (nodesCount > 0 && nodesCount % 100 == 0) {
-						//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
+						//	 Console::printLine("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
 						// }
 						if (Float::isNaN(pathNode->position.getX()) ||
 							Float::isNaN(pathNode->position.getY()) ||
 							Float::isNaN(pathNode->position.getZ())) {
-							Console::println("PathFinding::findPath(): compute path: step: NaN");
+							Console::printLine("PathFinding::findPath(): compute path: step: NaN");
 							done = true;
 							break;
 						}
@@ -680,7 +680,7 @@ bool PathFinding::findPathCustom(
 					reverse(path.begin(), path.end());
 					if (path.size() > 1) path.erase(path.begin());
 					if (path.size() == 0) {
-						// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
+						// Console::printLine("PathFinding::findPath(): path with 0 steps: Fixing!");
 						path.push_back(endPositionComputed);
 					}
 					done = true;
@@ -707,14 +707,14 @@ bool PathFinding::findPathCustom(
 
 		//
 		if (tries == 0) {
-			Console::println("PathFinding::findPath(): end position were not walkable!");
+			Console::printLine("PathFinding::findPath(): end position were not walkable!");
 		}
 	}
 
 	//
 	/*
 	if (stepIdx == stepsMax) {
-		Console::println("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
+		Console::printLine("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
 	}
 	*/
 
@@ -723,7 +723,7 @@ bool PathFinding::findPathCustom(
 	world->removeBody("tdme.pathfinding.actor.slopetest");
 
 	//
-	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries, success = " + to_string(success) + ", path steps: " + to_string(path.size()));
+	if (VERBOSE == true && tries > 1) Console::printLine("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries, success = " + to_string(success) + ", path steps: " + to_string(path.size()));
 
 	// dispose custom test
 	if (customTest != nullptr) customTest->dispose();
@@ -735,7 +735,7 @@ bool PathFinding::findPathCustom(
 FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, PathFindingCustomTest* customTest) {
 	// set up end position in costs map
 	if (path.empty() == true) {
-		Console::println("PathFinding::createFlowMap(): no path given");
+		Console::printLine("PathFinding::createFlowMap(): no path given");
 		return nullptr;
 	}
 
@@ -779,7 +779,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	// set up end position in costs map
 	if (endPositions.size() == 0) {
-		Console::println("PathFinding::createFlowMap(): no end positions given");
+		Console::printLine("PathFinding::createFlowMap(): no end positions given");
 	}
 
 	// end node
@@ -931,7 +931,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 				if (minCostsNode != nullptr) {
 					auto direction = minCostsNode->position.clone().sub(node->position).setY(0.0f).normalize();
 					if (Float::isNaN(direction.getX()) || Float::isNaN(direction.getY()) || Float::isNaN(direction.getZ())) {
-						Console::println(
+						Console::printLine(
 							to_string(minCostsNode->position.getX()) + ", " +
 							to_string(minCostsNode->position.getY()) + ", " +
 							to_string(minCostsNode->position.getZ()) + " -> " +

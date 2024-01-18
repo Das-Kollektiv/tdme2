@@ -60,7 +60,7 @@ void ProgressBarScreenController::initialize()
 		progressBarParent = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar_parent"));
 		progressMessageNode = dynamic_cast<GUITextNode*>(screenNode->getNodeById("progress_message"));
 	} catch (Exception& exception) {
-		Console::println("ProgressBarScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("ProgressBarScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

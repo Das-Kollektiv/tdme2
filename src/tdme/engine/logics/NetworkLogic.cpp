@@ -48,7 +48,7 @@ vector<LogicNetworkPacket>& NetworkLogic::getNetworkPackets() {
 
 void NetworkLogic::sendNetworkPacket(LogicNetworkPacket& packet) {
 	if (networkPackets.size() == 50) {
-		Console::println("NetworkLogic::sendNetworkPacket(): 50 packets: Too many packets!");
+		Console::printLine("NetworkLogic::sendNetworkPacket(): 50 packets: Too many packets!");
 	}
 	networkPackets.push_back(packet);
 }

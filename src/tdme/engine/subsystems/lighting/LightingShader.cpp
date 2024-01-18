@@ -102,7 +102,7 @@ bool LightingShader::isInitialized()
 	bool initialized = true;
 	for (const auto& [shaderId, shader]: shaders) {
 		if (shader->isInitialized() == false) {
-			Console::println("LightingShader::isInitialized(): " + shaderId + ": not initialized!");
+			Console::printLine("LightingShader::isInitialized(): " + shaderId + ": not initialized!");
 		} else {
 			shader->registerShader();
 		}

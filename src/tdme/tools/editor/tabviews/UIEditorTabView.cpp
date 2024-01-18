@@ -206,7 +206,7 @@ void UIEditorTabView::initialize()
 		uiTabController = make_unique<UIEditorTabController>(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::println("UIEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("UIEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 
@@ -477,7 +477,7 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 			Tools::getFileName(fileName)
 		);
 	} catch (Exception& exception) {
-		Console::println("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
+		Console::printLine("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
 	}
 	//
 	uiScreenNodes[screenIdx].fileName = fileName;
@@ -534,7 +534,7 @@ void UIEditorTabView::reAddScreens() {
 		try {
 			xmlRootNode = GUIParser::getRootNode(uiScreenNodes[i].xml);
 		} catch (Exception& exception) {
-			Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+			Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 			// error handling
 			try {
 				screenNode = GUIParser::parse(
@@ -543,7 +543,7 @@ void UIEditorTabView::reAddScreens() {
 					{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
 				);
 			} catch (Exception& exception2) {
-				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
 			}
 		}
 		if (xmlRootNode == "screen") {
@@ -556,7 +556,7 @@ void UIEditorTabView::reAddScreens() {
 					Tools::getFileName(uiScreenNodes[i].fileName)
 				);
 			} catch (Exception& exception) {
-				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 				// error handling
 				try {
 					screenNode = GUIParser::parse(
@@ -565,7 +565,7 @@ void UIEditorTabView::reAddScreens() {
 						{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
 					);
 				} catch (Exception& exception2) {
-					Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+					Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
 				}
 			}
 		} else
@@ -583,7 +583,7 @@ void UIEditorTabView::reAddScreens() {
 			try {
 				templateAttributes = GUIParser::parseTemplateAttributes(uiScreenNodes[i].xml);
 			} catch (Exception& exception) {
-				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 			}
 			//
 			if (templateAttributes.find("preview-id") == templateAttributes.end()) templateAttributes["preview-id"] = "preview-id";
@@ -603,7 +603,7 @@ void UIEditorTabView::reAddScreens() {
 					Tools::getFileName(uiScreenNodes[i].fileName)
 				);
 			} catch (Exception& exception) {
-				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 				// error handling
 				try {
 					screenNode = GUIParser::parse(
@@ -612,7 +612,7 @@ void UIEditorTabView::reAddScreens() {
 						{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
 					);
 				} catch (Exception& exception2) {
-					Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+					Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
 				}
 			}
 		}
@@ -658,7 +658,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	try {
 		prototype = unique_ptr<Prototype>(PrototypeReader::read(pathName, fileName));
 	} catch (Exception& exception) {
-		Console::println("UIEditorTabView::loadPrototype(): An error occurred: " + string(exception.what()));
+		Console::printLine("UIEditorTabView::loadPrototype(): An error occurred: " + string(exception.what()));
 		//
 		return nullptr;
 	}

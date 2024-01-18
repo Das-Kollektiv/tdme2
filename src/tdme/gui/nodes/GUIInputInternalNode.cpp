@@ -87,7 +87,7 @@ int GUIInputInternalNode::createMaxLength(const string& s)
 		return maxLength;
 	} catch (Exception& exception) {
 		Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		return 0;
 	}
 }

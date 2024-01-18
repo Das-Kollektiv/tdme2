@@ -18,7 +18,7 @@ using tdme::utilities::Console;
 
 void PacketAudioStream::rewind()
 {
-	Console::println("PacketAudioStream::rewind(): Not supported!");
+	Console::printLine("PacketAudioStream::rewind(): Not supported!");
 }
 
 bool PacketAudioStream::initialize()

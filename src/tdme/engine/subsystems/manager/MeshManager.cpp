@@ -45,5 +45,5 @@ void MeshManager::removeMesh(const string& meshId)
 		}
 		return;
 	}
-	Console::println(string("Warning: mesh not managed by mesh manager: " + meshId));
+	Console::printLine(string("Warning: mesh not managed by mesh manager: " + meshId));
 }

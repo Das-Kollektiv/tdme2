@@ -34,13 +34,13 @@ void EchoUDPServerClient::onRequest(const UDPPacket* packet, const uint32_t mess
 }
 
 void EchoUDPServerClient::onInit() {
-	Console::println("initiated connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
+	Console::printLine("initiated connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
 void EchoUDPServerClient::onClose() {
-	Console::println("closed connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
+	Console::printLine("closed connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
 void EchoUDPServerClient::onCustom(const string& type) {
-	Console::println("custom event '" + (type) + "' with '" + (getIp()) + ":" + to_string(getPort()) + "'");
+	Console::printLine("custom event '" + (type) + "' with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }

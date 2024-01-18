@@ -474,7 +474,7 @@ void TextEditorTabView::initialize()
 		screenNode->addContextMenuRequestListener(textEditorTabController.get());
 		screenNode->addTooltipRequestListener(textEditorTabController.get());
 	} catch (Exception& exception) {
-		Console::println("TextEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("TextEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }
@@ -534,28 +534,28 @@ void TextEditorTabView::setCodeEditor() {
 				case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
 				case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
 			}
-			Console::println("Node[" + to_string(i++) + "]: " + node.id + ": " + node.value + "(" + nodeType + ")");
+			Console::printLine("Node[" + to_string(i++) + "]: " + node.id + ": " + node.value + "(" + nodeType + ")");
 		}
 	}
 	// dump connections for now
 	{
 		auto i = 0;
 		for (const auto& connection: connections) {
-			Console::println("Connection[" + to_string(i++) + "]");
+			Console::printLine("Connection[" + to_string(i++) + "]");
 			string connectionType;
 			switch (connection.type) {
 				case Connection::CONNECTIONTYPE_NONE: connectionType = "None"; break;
 				case Connection::CONNECTIONTYPE_FLOW: connectionType = "Flow"; break;
 				case Connection::CONNECTIONTYPE_ARGUMENT: connectionType = "Argument"; break;
 			}
-			Console::println("\t" + connection.srcNodeId + " --> " + connection.dstNodeId + "(" + connectionType + ")");
+			Console::printLine("\t" + connection.srcNodeId + " --> " + connection.dstNodeId + "(" + connectionType + ")");
 		}
 	}
 	//
 	string sourceCode;
 	auto startNode = getNodeById(getStartNodeId());
 	createSourceCodeFromNodes(sourceCode, startNode);
-	Console::println(
+	Console::printLine(
 		"Generated Source Code:\n\n" +
 		sourceCode
 	);
@@ -608,7 +608,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 		try {
 			GUIParser::parse(visualisationNode, xml);
 		} catch (Exception& exception) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 		}
 	}
 	//
@@ -632,7 +632,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			// update to be connected
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fi_pin_type_panel"))->getActiveConditions().add("connected");
 		} catch (Exception& exception) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 		}
 	}
 	// inputs aka arguments
@@ -674,7 +674,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 					}
 
 				} catch (Exception& exception) {
-					Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+					Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 				}
 			}
 		}
@@ -697,7 +697,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			// update to be connected
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fo_pin_type_panel"))->getActiveConditions().add("connected");
 		} catch (Exception& exception) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 		}
 	}
 	// return value
@@ -721,7 +721,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			// update to be connected
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 		} catch (Exception& exception) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 		}
 	} else
 	// functions have a return value pin by default for now
@@ -746,7 +746,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			// update to be connected
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 		} catch (Exception& exception) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 		}
 	}
 
@@ -811,7 +811,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
+				Console::printLine("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
 			}
 		}
 		//
@@ -847,7 +847,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_c_pin_type_panel"))->getActiveConditions().add("connected");
 				}
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
+				Console::printLine("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
 			}
 		}
 	}
@@ -860,10 +860,10 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentInputNodeId));
 		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentOutputNodeId));
 		if (argumentInputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 		} else
 		if (argumentOutputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
 		} else {
 
 			//
@@ -975,7 +975,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					try {
 						GUIParser::parse(visualisationNode, xml);
 					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+						Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				//
@@ -999,7 +999,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						// update to be connected
 						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fi_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+						Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				// inputs aka arguments
@@ -1041,7 +1041,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 								}
 
 							} catch (Exception& exception) {
-								Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+								Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 							}
 						}
 					}
@@ -1075,7 +1075,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 								required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 							}
 						} catch (Exception& exception) {
-							Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+							Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 						}
 					}
 				}
@@ -1097,7 +1097,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						// update to be connected
 						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fo_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+						Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				// return value
@@ -1121,7 +1121,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						// update to be connected
 						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+						Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				} else
 				// functions have a return value pin by default for now
@@ -1146,7 +1146,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						// update to be connected
 						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+						Console::printLine("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				break;
@@ -1198,11 +1198,11 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentInputNodeId));
 		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentOutputNodeId));
 		if (argumentInputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 			continue;
 		}
 		if (argumentOutputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
 			continue;
 		}
 
@@ -1304,7 +1304,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
 		}
 		//
@@ -1328,7 +1328,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 				// update to be connected
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fi_pin_type_panel"))->getActiveConditions().add("connected");
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
 		}
 		// pin output aka flow output
@@ -1349,7 +1349,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 				// update to be connected
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fo_pin_type_panel"))->getActiveConditions().add("connected");
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
 		}
 		// inputs aka arguments
@@ -1386,7 +1386,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 					}
 				} catch (Exception& exception) {
-					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+					Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 				}
 			}
 			// flow outputs
@@ -1408,7 +1408,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 					// update to be connected
 					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_b" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 				} catch (Exception& exception) {
-					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+					Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 				}
 			}
 		}
@@ -1459,11 +1459,11 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		auto conditionInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(conditionInputNodeId));
 		auto conditionOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(conditionOutputNodeId));
 		if (conditionInputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition input node: " + conditionInputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition input node: " + conditionInputNodeId);
 			continue;
 		}
 		if (conditionOutputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
+			Console::printLine("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
 			continue;
 		}
 
@@ -2119,7 +2119,7 @@ void TextEditorTabView::deleteNode(const string& nodeId) {
 }
 
 void TextEditorTabView::createConnection(const string& guiNodeId) {
-	Console::println("TextEditorTabView::createConnection(): " + guiNodeId);
+	Console::printLine("TextEditorTabView::createConnection(): " + guiNodeId);
 	// return value as argument
 	if (guiNodeId.find("_r_") != string::npos) {
 		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_r_") + 2);

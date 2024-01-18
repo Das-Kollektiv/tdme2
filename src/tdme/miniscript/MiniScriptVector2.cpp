@@ -60,7 +60,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR2);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -92,7 +92,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					auto length = vec2.computeLength();
 					returnValue.setValue(Float::isInfinite(length) == true || Float::isNaN(length) == true?0.0f:length);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -123,7 +123,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				if (MiniScriptVector2::getVector2Value(arguments, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.computeLengthSquared());
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -157,7 +157,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					MiniScriptVector2::getVector2Value(arguments, 1, b, false) == true) {
 					returnValue.setValue(Vector2::computeDotProduct(a, b));
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -191,7 +191,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 					returnValue.setType(TYPE_VECTOR2);
 					returnValue.setValue(&result);
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -222,7 +222,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				if (MiniScriptVector2::getVector2Value(arguments, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getX());
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -253,7 +253,7 @@ void MiniScriptVector2::registerMethods(MiniScript* miniScript) const {
 				if (MiniScriptVector2::getVector2Value(arguments, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getY());
 				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -291,7 +291,7 @@ bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		if (MiniScript::getFloatValue(arguments, 0, f, false) == true) {
 			a = Vector2(f, f);
 		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			Console::printLine("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -304,7 +304,7 @@ bool MiniScriptVector2::mul(MiniScript* miniScript, const span<MiniScript::Varia
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
 			b = Vector2(f, f);
 		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			Console::printLine("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -336,7 +336,7 @@ bool MiniScriptVector2::div(MiniScript* miniScript, const span<MiniScript::Varia
 		if (MiniScript::getFloatValue(arguments, 1, f, false) == true) {
 			b = Vector2(f, f);
 		} else {
-			Console::println("div(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("div"));
+			Console::printLine("div(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("div"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -366,7 +366,7 @@ bool MiniScriptVector2::add(MiniScript* miniScript, const span<MiniScript::Varia
 			//
 			return true;
 		} else  {
-			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
+			Console::printLine("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
 			miniScript->startErrorScript();
 			//
 			return false;
@@ -390,7 +390,7 @@ bool MiniScriptVector2::sub(MiniScript* miniScript, const span<MiniScript::Varia
 			//
 			return true;
 		} else  {
-			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
+			Console::printLine("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
 			miniScript->startErrorScript();
 			//
 			return false;

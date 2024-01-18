@@ -135,7 +135,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				~VHACDLogger() {};
 				void Log(const char* const msg)
 				{
-					Console::println(msg);
+					Console::printLine(msg);
 				}
 		};
 
@@ -227,7 +227,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				);
 			}
 			*/
-			Console::println("Could not create convex hulls: " + string(exception.what()));
+			Console::printLine("Could not create convex hulls: " + string(exception.what()));
 			convexMeshTMsData.clear();
 			success = false;
 		}
@@ -269,7 +269,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				);
 			}
 			*/
-			Console::println("Could not create convex hulls: " + string(exception.what()));
+			Console::printLine("Could not create convex hulls: " + string(exception.what()));
 			convexMeshTMsData.clear();
 			success = false;
 		}

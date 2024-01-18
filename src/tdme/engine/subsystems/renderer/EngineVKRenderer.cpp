@@ -170,9 +170,9 @@ void EngineVKRenderer::onUpdateShaderParameters(int contextIdx) {
 extern "C" EngineVKRenderer* createInstance()
 {
 	if (EngineVKRenderer::getRendererVersion() != Version::getVersion()) {
-		Console::println("EngineVKRenderer::createInstance(): Engine and renderer version do not match: '" + EngineVKRenderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineVKRenderer::createInstance(): Engine and renderer version do not match: '" + EngineVKRenderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
-	Console::println("EngineVKRenderer::createInstance(): Creating EngineVKRenderer instance!");
+	Console::printLine("EngineVKRenderer::createInstance(): Creating EngineVKRenderer instance!");
 	return new EngineVKRenderer();
 }

@@ -98,7 +98,7 @@ void GUI::dispose()
 void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
 	if (id != screen->getId()) {
-		Console::println("GUI::addScreen(): screen id '" + id + "' must be '" + screen->getId() + "'");
+		Console::printLine("GUI::addScreen(): screen id '" + id + "' must be '" + screen->getId() + "'");
 		return;
 	}
 	screens.emplace(id, screen);

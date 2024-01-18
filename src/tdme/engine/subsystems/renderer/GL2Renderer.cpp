@@ -237,7 +237,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetShaderInfoLog(shaderId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GL2Renderer::loadShader") +
 				string("[") +
@@ -250,7 +250,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLog
 			 )
 		 );
-		Console::println(shaderSource);
+		Console::printLine(shaderSource);
 		// remove shader
 		glDeleteShader(shaderId);
 		//
@@ -288,7 +288,7 @@ bool GL2Renderer::linkProgram(int32_t programId)
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GL2Renderer::linkProgram") +
 				"[" +
@@ -487,12 +487,12 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height, int
 }
 
 int32_t GL2Renderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
-	Console::println("GL2Renderer::createGBufferGeometryTexture(): Not implemented");
+	Console::printLine("GL2Renderer::createGBufferGeometryTexture(): Not implemented");
 	return ID_NONE;
 }
 
 int32_t GL2Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
-	Console::println("GL2Renderer::createGBufferColorTexture(): Not implemented");
+	Console::printLine("GL2Renderer::createGBufferColorTexture(): Not implemented");
 	return ID_NONE;
 }
 
@@ -772,11 +772,11 @@ void GL2Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int
 }
 
 void GL2Renderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("GL2Renderer::resizeGBufferGeometryTexture(): Not implemented");
+	Console::printLine("GL2Renderer::resizeGBufferGeometryTexture(): Not implemented");
 }
 
 void GL2Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("GL2Renderer::resizeGBufferColorTexture(): Not implemented");
+	Console::printLine("GL2Renderer::resizeGBufferColorTexture(): Not implemented");
 }
 
 void GL2Renderer::bindTexture(int contextIdx, int32_t textureId)
@@ -829,7 +829,7 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureId, int32
 	// check FBO status
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: ") + to_string(fboStatus));
+		Console::printLine(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: ") + to_string(fboStatus));
 	}
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -847,7 +847,7 @@ int32_t GL2Renderer::createGeometryBufferObject(
 	int32_t colorBufferTextureId4,
 	int32_t colorBufferTextureId5
 ) {
-	Console::println(string("GL2Renderer::createGeometryBufferObject()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::createGeometryBufferObject()::not implemented yet"));
 	return ID_NONE;
 }
 
@@ -896,7 +896,7 @@ void GL2Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int
 
 void GL2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -956,16 +956,16 @@ void GL2Renderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectId)
 
 void GL2Renderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	Console::println(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
@@ -1006,7 +1006,7 @@ void GL2Renderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t b
 
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
@@ -1019,7 +1019,7 @@ void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t 
 }
 
 void GL2Renderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GL2Renderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
@@ -1114,51 +1114,51 @@ void GL2Renderer::doneGuiMode()
 }
 
 void GL2Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	Console::println("GL2Renderer::dispatchCompute(): Not implemented");
+	Console::printLine("GL2Renderer::dispatchCompute(): Not implemented");
 }
 
 void GL2Renderer::memoryBarrier() {
-	Console::println("GL2Renderer::memoryBarrier(): Not implemented");
+	Console::printLine("GL2Renderer::memoryBarrier(): Not implemented");
 }
 
 void GL2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
 void GL2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
 }
 
 void GL2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+	Console::printLine("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 
 void GL2Renderer::setVSync(bool vSync) {

@@ -222,7 +222,7 @@ void EditorView::handleInputEvents()
 							if (FileSystem::getStandardFileSystem()->exists("./screenshots") == false) FileSystem::getStandardFileSystem()->createPath("./screenshots");
 							Engine::getInstance()->makeScreenshot("./screenshots", "TDME2-Screenshot-" + StringTools::replace(Time::getAsString(), ':', '-') + ".png");
 						} catch (Exception& exception) {
-							Console::println("EditorView::handleInputEvents(): Could not create screenshot: " + string(exception.what()));
+							Console::printLine("EditorView::handleInputEvents(): Could not create screenshot: " + string(exception.what()));
 						}
 					}
 					event.setProcessed(true);
@@ -352,7 +352,7 @@ void EditorView::initialize()
 		engine->getGUI()->addScreen(editorScreenController->getScreenNode()->getId(), editorScreenController->getScreenNode());
 		editorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
-		Console::println("EditorView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	updateGUIElements();
 }

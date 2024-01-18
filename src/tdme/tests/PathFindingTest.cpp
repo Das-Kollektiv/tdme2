@@ -210,8 +210,8 @@ void PathFindingTest::doPathFinding() {
 			SceneConnector::BODY_TYPEID_STATIC,
 			path
 		) == true) {
-		Console::println("Found a path: steps: " + to_string(path.size()));
+		Console::printLine("Found a path: steps: " + to_string(path.size()));
 	} else {
-		Console::println("Found no path");
+		Console::printLine("Found no path");
 	}
 }

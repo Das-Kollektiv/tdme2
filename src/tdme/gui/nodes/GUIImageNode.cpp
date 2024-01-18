@@ -174,7 +174,7 @@ void GUIImageNode::setSource(const string& source) {
 					this->releaseTextureReference = false;
 				}
 			} catch (Exception& exception) {
-				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+				Console::printLine(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else
 		// tmodel
@@ -200,7 +200,7 @@ void GUIImageNode::setSource(const string& source) {
 					this->releaseTextureReference = false;
 				}
 			} catch (Exception& exception) {
-				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+				Console::printLine(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else
 		// gui xml
@@ -209,7 +209,7 @@ void GUIImageNode::setSource(const string& source) {
 				this->texture = screenNode->getImage("resources/engine/images/gui_big.png");
 				this->releaseTextureReference = false;
 			} catch (Exception& exception) {
-				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+				Console::printLine(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else {
 			// other model without thumbnail

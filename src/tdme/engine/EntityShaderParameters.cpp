@@ -42,11 +42,11 @@ const ShaderParameter EntityShaderParameters::getShaderParameter(const string& p
 void EntityShaderParameters::setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 	auto currentShaderParameter = getShaderParameter(parameterName);
 	if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
-		Console::println("EntityShaderParameters::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		Console::printLine("EntityShaderParameters::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 		return;
 	}
 	if (currentShaderParameter.getType() != parameterValue.getType()) {
-		Console::println("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		Console::printLine("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 	}
 	parameters[parameterName] = parameterValue;
 	changed = true;
@@ -55,7 +55,7 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 void EntityShaderParameters::setShaderParameter(const string& parameterName, const string& parameterValueString) {
 	auto currentShaderParameter = getShaderParameter(parameterName);
 	if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
-		Console::println("EntityShaderParameters::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		Console::printLine("EntityShaderParameters::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 		return;
 	}
 	ShaderParameter parameterValue;
@@ -128,7 +128,7 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 			break;
 	}
 	if (currentShaderParameter.getType() != parameterValue.getType()) {
-		Console::println("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		Console::printLine("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 	}
 	parameters[parameterName] = parameterValue;
 	changed = true;

@@ -214,7 +214,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetShaderInfoLog(shaderId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GLES2Renderer::loadShader") +
 				string("[") +
@@ -227,7 +227,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 				infoLog
 			 )
 		 );
-		Console::println(shaderSource);
+		Console::printLine(shaderSource);
 		// remove shader
 		glDeleteShader(shaderId);
 		//
@@ -265,7 +265,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GLES2Renderer::linkProgram") +
 				"[" +
@@ -284,7 +284,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	auto uniformLocation = glGetUniformLocation(programId, name.c_str());
-	// if (uniformLocation == -1) Console::println("GLES2Renderer::getProgramUniformLocation(): " + to_string(programId) + ": " + name + ": not found");
+	// if (uniformLocation == -1) Console::printLine("GLES2Renderer::getProgramUniformLocation(): " + to_string(programId) + ": " + name + ": not found");
 	return uniformLocation;
 }
 
@@ -466,12 +466,12 @@ int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height, i
 }
 
 int32_t GLES2Renderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
-	Console::println("GLES2Renderer::createGBufferGeometryTexture(): Not implemented");
+	Console::printLine("GLES2Renderer::createGBufferGeometryTexture(): Not implemented");
 	return ID_NONE;
 }
 
 int32_t GLES2Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
-	Console::println("GLES2Renderer::createGBufferColorTexture(): Not implemented");
+	Console::printLine("GLES2Renderer::createGBufferColorTexture(): Not implemented");
 	return ID_NONE;
 }
 
@@ -742,11 +742,11 @@ void GLES2Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, i
 }
 
 void GLES2Renderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("GLES2Renderer::resizeGBufferGeometryTexture(): Not implemented");
+	Console::printLine("GLES2Renderer::resizeGBufferGeometryTexture(): Not implemented");
 }
 
 void GLES2Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("GLES2Renderer::resizeGBufferColorTexture(): Not implemented");
+	Console::printLine("GLES2Renderer::resizeGBufferColorTexture(): Not implemented");
 }
 
 void GLES2Renderer::bindTexture(int contextIdx, int32_t textureId)
@@ -791,7 +791,7 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureId, int
 	// check FBO status
 	auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
+		Console::printLine(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -809,7 +809,7 @@ int32_t GLES2Renderer::createGeometryBufferObject(
 	int32_t colorBufferTextureId4,
 	int32_t colorBufferTextureId5
 ) {
-	Console::println(string("GLES2Renderer::createGeometryBufferObject()::not implemented yet"));
+	Console::printLine(string("GLES2Renderer::createGeometryBufferObject()::not implemented yet"));
 	return ID_NONE;
 }
 
@@ -866,7 +866,7 @@ void GLES2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObje
 
 void GLES2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	Console::println("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
+	Console::printLine("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
 }
 
 void GLES2Renderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
@@ -918,16 +918,16 @@ void GLES2Renderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectI
 
 void GLES2Renderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	Console::println("GLES2Renderer::bindTangentsBufferObject()::not implemented");
+	Console::printLine("GLES2Renderer::bindTangentsBufferObject()::not implemented");
 }
 
 void GLES2Renderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
+	Console::printLine("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
 void GLES2Renderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+	Console::printLine(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
 void GLES2Renderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
@@ -968,7 +968,7 @@ void GLES2Renderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t
 
 void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+	Console::printLine(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
@@ -981,7 +981,7 @@ void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_
 }
 
 void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
+	Console::printLine(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GLES2Renderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
@@ -1070,51 +1070,51 @@ void GLES2Renderer::doneGuiMode()
 }
 
 void GLES2Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	Console::println("GLES2Renderer::dispatchCompute(): Not implemented");
+	Console::printLine("GLES2Renderer::dispatchCompute(): Not implemented");
 }
 
 void GLES2Renderer::memoryBarrier() {
-	Console::println("GLES2Renderer::memoryBarrier(): Not implemented");
+	Console::printLine("GLES2Renderer::memoryBarrier(): Not implemented");
 }
 
 void GLES2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+	Console::printLine("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::setVSync(bool vSync) {
@@ -1147,6 +1147,6 @@ void GLES2Renderer::checkGLError()
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		Console::println(string("OpenGL Error: (" + to_string(error) + ") @:"));
+		Console::printLine(string("OpenGL Error: (" + to_string(error) + ") @:"));
 	}
 }

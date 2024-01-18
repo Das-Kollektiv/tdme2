@@ -265,10 +265,10 @@ void ModelTools::createDefaultAnimation(Model* model, int32_t frames)
 	} else {
 		// check default animation setup
 		if (defaultAnimation->getStartFrame() != 0 || defaultAnimation->getEndFrame() != frames - 1) {
-			Console::println(string("Warning: default animation mismatch"));
+			Console::printLine(string("Warning: default animation mismatch"));
 		}
 		if (frames - 1 > defaultAnimation->getEndFrame()) {
-			Console::println(string("Warning: default animation mismatch, will be fixed"));
+			Console::printLine(string("Warning: default animation mismatch, will be fixed"));
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 		}
 	}
@@ -1292,7 +1292,7 @@ void ModelTools::computeTangentsAndBitangents(Node* node)
 {
 	// without texture coordinates we cant compute tangents and bitangents
 	if (node->getTextureCoordinates().empty() == true) {
-		Console::println("ModelTools::computeTangentsAndBitangents(): " + node->getId() + ": No texture coordinates");
+		Console::printLine("ModelTools::computeTangentsAndBitangents(): " + node->getId() + ": No texture coordinates");
 		return;
 	}
 	// see: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/

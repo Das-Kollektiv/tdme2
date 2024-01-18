@@ -67,7 +67,7 @@ GUIColor::GUIColor(const array<float, 4>& color): Color4(color)
 GUIColor::GUIColor(const string& colorString) : Color4()
 {
 	if (colorString.empty() == true) {
-		Console::println("GUI: Warning: No color given");
+		Console::printLine("GUI: Warning: No color given");
 		this->data = GUIColor::GUICOLOR_TRANSPARENT.getArray();
 		return;
 	}
@@ -81,7 +81,7 @@ GUIColor::GUIColor(const string& colorString) : Color4()
 		}
 	}
 	if (StringTools::startsWith(colorString, "#") == false || (colorString.length() != 7 && colorString.length() != 9)) {
-		Console::println("GUI: Warning: Invalid color '" + (colorString) + "'");
+		Console::printLine("GUI: Warning: Invalid color '" + (colorString) + "'");
 		this->data = GUIColor::GUICOLOR_TRANSPARENT.getArray();
 		return;
 	}

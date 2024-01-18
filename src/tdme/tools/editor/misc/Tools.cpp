@@ -587,7 +587,7 @@ void Tools::loadSettings(Application* application) {
 	try {
 		settings.load("settings", "settings.properties");
 	} catch (FileSystemException &exception) {
-		Console::println("Tools::loadSettings(): An error occurred: " + string(exception.what()));
+		Console::printLine("Tools::loadSettings(): An error occurred: " + string(exception.what()));
 	}
 
 	// 4k

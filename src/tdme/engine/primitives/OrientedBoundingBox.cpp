@@ -188,7 +188,7 @@ void OrientedBoundingBox::destroyCollisionShape() {
 
 void OrientedBoundingBox::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("OrientedBoundingBox::createCollisionShape(): already attached to a world.");
+		Console::printLine("OrientedBoundingBox::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 

@@ -61,13 +61,13 @@ void scanPath(const string& path, vector<string>& sourceFiles, vector<string>& m
 
 int main(int argc, char** argv)
 {
-	Console::println(string("makefilegenerator ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("makefilegenerator ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc != 2) {
-		Console::println("Usage: makefilegenerator path_to_source");
+		Console::printLine("Usage: makefilegenerator path_to_source");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 
 	//
 	try {
-		Console::println("Scanning source files");
+		Console::printLine("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
 		scanPath(pathToSource, sourceFiles, mainSourceFiles);
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 		for (const auto& file: mainSourceFiles) mainSourceFilesVariable+= "\t" + file + "\\\n";
 		mainSourceFilesVariable+= "\n";
 
-		Console::println("Generating Makefile");
+		Console::printLine("Generating Makefile");
 
 		auto executablePath = StringTools::replace(argv[0], "\\", "/");
 		auto tdme2Path = StringTools::substring(executablePath, 0, StringTools::toLowerCase(executablePath).rfind("/tdme2/") + string("/tdme2/").length());
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 		makefileSource = StringTools::replace(makefileSource, "{$main-source-files}", mainSourceFilesVariable);
 		FileSystem::getInstance()->setContentFromString(".", "Makefile", makefileSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

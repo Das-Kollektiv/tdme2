@@ -43,24 +43,24 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("scenefixmodelszup2yup ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("scenefixmodelszup2yup ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 2) {
-		Console::println("Usage: scenefixmodelszup2yup scene");
+		Console::printLine("Usage: scenefixmodelszup2yup scene");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string sceneFileName = string(argv[1]);
 	try {
-		Console::println("Loading scene: " + sceneFileName);
+		Console::printLine("Loading scene: " + sceneFileName);
 		auto scene = unique_ptr<Scene>(
 			SceneReader::read(
 				FileSystem::getInstance()->getPathName(sceneFileName),
 				FileSystem::getInstance()->getFileName(sceneFileName)
 			)
 		);
-		Console::println("Fixing scene models up axis from Z-Up to Y-Up");
+		Console::printLine("Fixing scene models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
 		z2yUpMatrix.identity().setAxes(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// scene prototype library
@@ -84,14 +84,14 @@ int main(int argc, char** argv)
 			sceneEntity->getTransform().update();
 		}
 		// TODO: bvs
-		Console::println("Saving scene: " + sceneFileName);
+		Console::printLine("Saving scene: " + sceneFileName);
 		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(sceneFileName),
 			FileSystem::getInstance()->getFileName(sceneFileName),
 			scene.get()
 		);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

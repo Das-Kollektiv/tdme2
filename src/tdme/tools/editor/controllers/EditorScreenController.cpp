@@ -228,14 +228,14 @@ void EditorScreenController::initialize()
 		updateTabsMenuEntries();
 		disableSceneMenuEntry();
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 	//
 	class EditorLogger: public Console::Logger {
 		public:
 			EditorLogger(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {
 			}
-			void println(const string_view& str) {
+			void printLine(const string_view& str) {
 				auto& messages = editorScreenController->logMessages;
 				if (messages.empty() == true || newline == true) messages.push_back(string());
 				messages[messages.size() - 1]+= str;
@@ -251,7 +251,7 @@ void EditorScreenController::initialize()
 				newline = false;
 				editorScreenController->logUpdateRequired = true;
 			}
-			void println() {
+			void printLine() {
 				auto& messages = editorScreenController->logMessages;
 				messages.push_back(string());
 				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
@@ -648,7 +648,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 						//
 						editorScreenController->reload();
 					} catch (Exception& exception) {
-						Console::println("OnDeleteAction::performAction(): An error occurred: " + string(exception.what()));
+						Console::printLine("OnDeleteAction::performAction(): An error occurred: " + string(exception.what()));
 					}
 				}
 			private:
@@ -688,7 +688,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 										// add to library
 										sceneEditorTabView->addPrototype(prototype);
 									} catch (Exception& exception) {
-										Console::println("OnOpenAction::performAction(): An error occurred: " + string(exception.what()));
+										Console::printLine("OnOpenAction::performAction(): An error occurred: " + string(exception.what()));
 										editorScreenController->showInfoPopUp("Warning", exception.what());
 									}
 								}
@@ -724,7 +724,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 							Application::openBrowser(Tools::getPathName(absoluteFileName));
 						}
 					} catch (Exception& exception) {
-						Console::println("OnShowInFileBrowserAction::performAction(): An error occurred: " + string(exception.what()));
+						Console::printLine("OnShowInFileBrowserAction::performAction(): An error occurred: " + string(exception.what()));
 					}
 				}
 			private:
@@ -873,13 +873,13 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(path) == false) {
-		Console::println("EditorScreenController::scanProject(): Error: file does not exist: " + path);
+		Console::printLine("EditorScreenController::scanProject(): Error: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
 		if (listFilter.accept(".", path) == true) {
-			Console::println("EditorScreenController::scanProject(): Error: path is file" + path);
+			Console::printLine("EditorScreenController::scanProject(): Error: path is file" + path);
 		} else {
-			Console::println("EditorScreenController::scanProject(): Error: file exist, but does not match filter: " + path);
+			Console::printLine("EditorScreenController::scanProject(): Error: file exist, but does not match filter: " + path);
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
@@ -966,7 +966,7 @@ void EditorScreenController::startScanFiles() {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::startScanFiles(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::startScanFiles(): An error occurred: " + string(exception.what()));
 	}
 	scanFilesThread = make_unique<ScanFilesThread>(this, projectPath + "/" + relativeProjectPath, StringTools::toLowerCase(fileNameSearchTerm));
 	scanFilesThread->start();
@@ -989,7 +989,7 @@ void EditorScreenController::addPendingFileEntities() {
 			required_dynamic_cast<GUINode*>(screenNode->getNodeById(scrollToNodeId))->scrollToNodeY();
 		}
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 	}
 	//
 	for (const auto& pendingFileEntity: pendingFileEntities) {
@@ -1000,7 +1000,7 @@ void EditorScreenController::addPendingFileEntities() {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
 		} catch (Exception& exception) {
-			Console::println("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
+			Console::printLine("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 		}
 		if (pendingFileEntity->thumbnailTexture != nullptr) pendingFileEntity->thumbnailTexture->releaseReference();
 	}
@@ -1142,13 +1142,13 @@ void EditorScreenController::ScanFilesThread::run() {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->exists(pathName) == false) {
-		Console::println("EditorScreenController::ScanFilesThread::run(): Error: file does not exist: " + pathName);
+		Console::printLine("EditorScreenController::ScanFilesThread::run(): Error: file does not exist: " + pathName);
 	} else
 	if (FileSystem::getInstance()->isPath(pathName) == false) {
 		if (listFilter.accept(".", pathName) == true) {
-			Console::println("EditorScreenController::ScanFilesThread::run(): Error: path is file: " + pathName);
+			Console::printLine("EditorScreenController::ScanFilesThread::run(): Error: path is file: " + pathName);
 		} else {
-			Console::println("EditorScreenController::ScanFilesThread::run(): Error: file exist, but does not match filter: " + pathName);
+			Console::printLine("EditorScreenController::ScanFilesThread::run(): Error: file exist, but does not match filter: " + pathName);
 		}
 	} else {
 		FileSystem::getInstance()->list(pathName, files, &listFilter);
@@ -1301,7 +1301,7 @@ void EditorScreenController::ScanFilesThread::run() {
 			} catch (Exception& exception) {
 				errorMessage = exception.what();
 				error = true;
-				Console::println("EditorScreenController::ScanFilesThread::run(): Error: " + errorMessage);
+				Console::printLine("EditorScreenController::ScanFilesThread::run(): Error: " + errorMessage);
 			}
 		}
 	}
@@ -1517,7 +1517,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
-				Console::println("EditorScreenController::addFile(): An error occurred: " + string(exception.what()));
+				Console::printLine("EditorScreenController::addFile(): An error occurred: " + string(exception.what()));
 				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else
@@ -1527,7 +1527,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
-				Console::println("EditorScreenController::addFile(): An error occurred: " + string(exception.what()));
+				Console::printLine("EditorScreenController::addFile(): An error occurred: " + string(exception.what()));
 				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else {
@@ -1668,7 +1668,7 @@ void EditorScreenController::FileOpenThread::run() {
 		}
 	} catch (Exception& exception) {
 		errorMessage = string(exception.what());
-		Console::println("EditorScreenController::FileOpenThread::run(): An error occurred: " + errorMessage);
+		Console::printLine("EditorScreenController::FileOpenThread::run(): An error occurred: " + errorMessage);
 		error = true;
 	}
 
@@ -1707,7 +1707,7 @@ bool EditorScreenController::selectTab(const string& tabId) {
 void EditorScreenController::openFile(const string& absoluteFileName) {
 	// should never happen but still ...
 	if (fileOpenThread != nullptr) {
-		Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
+		Console::printLine("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
 		showInfoPopUp("Error", string() + "File open thread is already busy with opening a file");
 		return;
 	}
@@ -1916,7 +1916,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 				throw ExceptionBase("Unknown file type.");
 		}
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::openFile(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::openFile(): An error occurred: " + string(exception.what()));
 		view->getPopUps()->getProgressBarScreenController()->close();
 		view->getPopUps()->getInfoDialogScreenController()->close();
 		showInfoPopUp("Error", "An error occurred: " + string(exception.what()));
@@ -2026,7 +2026,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 							FileSystem::getInstance()->getFileName(absoluteFileName)
 						);
 					} catch (Exception& exception) {
-						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + string(exception.what()));
+						Console::printLine("EditorScreenController::openFile(): " + absoluteFileName + ": " + string(exception.what()));
 					}
 					// gui?
 					if (xmlRootNode == "screen" || xmlRootNode == "template") {
@@ -2178,7 +2178,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 			try {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
 			} catch (Exception& exception) {
-				Console::println("EditorScreenController::onOpenFile(): An error occurred: " + string(exception.what()));
+				Console::printLine("EditorScreenController::onOpenFile(): An error occurred: " + string(exception.what()));
 			}
 		}
 		{
@@ -2189,7 +2189,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 			try {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
 			} catch (Exception& exception) {
-				Console::println("EditorScreenController::onOpenFile(): An error occurred: " + string(exception.what()));
+				Console::printLine("EditorScreenController::onOpenFile(): An error occurred: " + string(exception.what()));
 			}
 		}
 		//
@@ -2204,7 +2204,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		tabViewVector.push_back(&tabViews[tabId]);
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::onOpenFileFinish(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::onOpenFileFinish(): An error occurred: " + string(exception.what()));
 		view->getPopUps()->getProgressBarScreenController()->close();
 		view->getPopUps()->getInfoDialogScreenController()->close();
 		showInfoPopUp("Error", "An error occurred: " + string(exception.what()));
@@ -2245,7 +2245,7 @@ void EditorScreenController::setOutlinerContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::setOutlinerContent(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::setOutlinerContent(): An error occurred: " + string(exception.what()));
 	}
 	setOutlinerSelection(outlinerSelection);
 }
@@ -2254,7 +2254,7 @@ void EditorScreenController::setOutlinerAddDropDownContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerAddDropDown->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::setOutlinerAddDropDownContent(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::setOutlinerAddDropDownContent(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -2262,7 +2262,7 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(detailsScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::setDetailsContent(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::setDetailsContent(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -2288,7 +2288,7 @@ void EditorScreenController::updateTabsMenuEntries() {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("menu_view_tabs"))->addSubNodes(xml, true);
 	} catch (Exception& exception) {
-		Console::println("EditorScreenController::updateTabsMenuEntries(): An error occurred: " + string(exception.what()));
+		Console::printLine("EditorScreenController::updateTabsMenuEntries(): An error occurred: " + string(exception.what()));
 	}
 }
 

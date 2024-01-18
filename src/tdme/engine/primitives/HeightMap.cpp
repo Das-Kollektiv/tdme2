@@ -37,7 +37,7 @@ HeightMap::~HeightMap() {
 }
 
 void HeightMap::setScale(const Vector3& scale) {
-	Console::println("HeightMap::setScale(): not supported!");
+	Console::printLine("HeightMap::setScale(): not supported!");
 }
 
 void HeightMap::destroyCollisionShape() {
@@ -49,7 +49,7 @@ void HeightMap::destroyCollisionShape() {
 
 void HeightMap::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("HeightMap::createCollisionShape(): already attached to a world.");
+		Console::printLine("HeightMap::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 

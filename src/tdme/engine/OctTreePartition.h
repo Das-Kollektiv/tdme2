@@ -197,7 +197,7 @@ private:
 	inline void removePartitionNode(PartitionTreeNode* node) {
 		// lowest level node has objects attached?
 		if (node->partitionEntities.size() > 0) {
-			Console::println("OctTreePartition::removePartitionNode(): partition has objects attached!!!");
+			Console::printLine("OctTreePartition::removePartitionNode(): partition has objects attached!!!");
 			node->partitionEntities.clear();
 		} else {
 			// otherwise check top level node sub nodes

@@ -64,7 +64,7 @@ void UDPServerClient::send(UDPPacket* packet, bool safe, bool deleteFrame) {
 		shutdown();
 
 		// log
-		Console::println(
+		Console::printLine(
 			"UDPServerClient::send(): send failed for client '" +
 			ip +
 			"': " +
@@ -110,7 +110,7 @@ bool UDPServerClient::processSafeMessage(const uint32_t messageId) {
 		shutdown();
 
 		// log
-		Console::println(
+		Console::printLine(
 			"UDPServerClient::processSafeMessage(): send failed for client '" +
 			ip +
 			"': " +
@@ -134,7 +134,7 @@ void UDPServerClient::sendConnected() {
 		shutdown();
 
 		// log
-		Console::println(
+		Console::printLine(
 			"UDPServerClient::sendConnected(): send failed for client '" +
 			ip +
 			"': " +
@@ -162,7 +162,7 @@ void UDPServerClient::onPacketReceived(const UDPPacket* packet, const uint32_t m
 	// delegate it to thread pool, but make it declinable
 	if (server->workerThreadPool->addElement(request, true) == false) {
 		// element was declined
-		Console::println("UDPServerClient::onPacketReceived(): client request declined from '" + (ip) + "'. Shutting down client");
+		Console::printLine("UDPServerClient::onPacketReceived(): client request declined from '" + (ip) + "'. Shutting down client");
 		// 	release client reference
 		releaseReference();
 		// 	delete packet

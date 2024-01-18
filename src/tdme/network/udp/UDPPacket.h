@@ -105,11 +105,11 @@ public:
 	 */
 	inline uint8_t getByte() const {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::printLine("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return 0;
 		} else
 		if (position >= size) {
-			Console::println("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
+			Console::printLine("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
 			return 0;
 		}
 		return data[position++];
@@ -122,7 +122,7 @@ public:
 	 */
 	inline UDPPacket* putByte(uint8_t value) {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::printLine("UDPPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return this;
 		}
 		data[position++] = value;
@@ -250,7 +250,7 @@ public:
 	 */
 	inline UDPPacket* putString(const string& value) {
 		if (value.size() > 255) {
-			Console::println("UDPPacket::putString(): string size out of range: string will be clamped to max length of 255 bytes");
+			Console::printLine("UDPPacket::putString(): string size out of range: string will be clamped to max length of 255 bytes");
 		}
 		putByte(value.size() > 255?255:value.size());
 		for (auto i = 0; i < value.size() && i < 256; i++) {

@@ -47,7 +47,7 @@ bool EngineGLES2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 bool EngineGLES2Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
 	glfwMakeContextCurrent(glfwWindow);
 	if (glfwGetCurrentContext() == nullptr) {
-		Console::println("EngineGLES2Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		Console::printLine("EngineGLES2Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
 		return false;
 	}
 	return true;
@@ -176,9 +176,9 @@ void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 extern "C" EngineGLES2Renderer* createInstance()
 {
 	if (EngineGLES2Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::println("EngineGL2Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineGL2Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
-	Console::println("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");
+	Console::printLine("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");
 	return new EngineGLES2Renderer();
 }

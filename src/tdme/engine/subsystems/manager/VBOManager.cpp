@@ -87,5 +87,5 @@ void VBOManager::removeVBO(const string& vboId) {
 		return;
 	}
 	rwLock.unlock();
-	Console::println(string("Warning: vbo not managed by vbo manager: ") + vboId);
+	Console::printLine(string("Warning: vbo not managed by vbo manager: ") + vboId);
 }

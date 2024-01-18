@@ -79,7 +79,7 @@ void EntityHierarchyTest::display()
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
-	Console::println(
+	Console::printLine(
 		string("EntityHierarchyTest::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
@@ -171,12 +171,12 @@ void EntityHierarchyTest::initialize()
 	entityHierarchy->addEntity(entity = new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 0.1f, true), "child3");
 	entity->setTranslation(Vector3(0.0f, 2.0f, 0.0f));
 	entityHierarchy->update();
-	for(auto entity: entityHierarchy->query()) Console::println(entity->getId());
-	for(auto entity: entityHierarchy->query("root")) Console::println("root: " + entity->getId());
-	for(auto entity: entityHierarchy->query("child1")) Console::println("child1: " + entity->getId());
-	for(auto entity: entityHierarchy->query("child2")) Console::println("child2: " + entity->getId());
-	for(auto entity: entityHierarchy->query("child3")) Console::println("child3: " + entity->getId());
-	for(auto entity: entityHierarchy->query("child4")) Console::println("child4: " + entity->getId());
+	for(auto entity: entityHierarchy->query()) Console::printLine(entity->getId());
+	for(auto entity: entityHierarchy->query("root")) Console::printLine("root: " + entity->getId());
+	for(auto entity: entityHierarchy->query("child1")) Console::printLine("child1: " + entity->getId());
+	for(auto entity: entityHierarchy->query("child2")) Console::printLine("child2: " + entity->getId());
+	for(auto entity: entityHierarchy->query("child3")) Console::printLine("child3: " + entity->getId());
+	for(auto entity: entityHierarchy->query("child4")) Console::printLine("child4: " + entity->getId());
 	engine->addEntity(entityHierarchy);
 }
 

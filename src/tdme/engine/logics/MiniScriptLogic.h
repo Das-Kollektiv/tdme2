@@ -116,7 +116,7 @@ public:
 			miniScript->prototypesToAddMutex.lock();
 			for (const auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
 				//
-				Console::println("MiniScriptLogic::updateEngine(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
+				Console::printLine("MiniScriptLogic::updateEngine(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
 				//
 				EntityHierarchy* parentEntity = nullptr;
 				if (prototypeToAdd.hierarchyId.empty() == false) {
@@ -140,7 +140,7 @@ public:
 						attachNodeTransform.fromMatrix(attachNodeTransformMatrix, RotationOrder::ZYX);
 						transform = attachNodeTransform * transform;
 					} else {
-						Console::println("MiniScriptLogic::updateEngine(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
+						Console::printLine("MiniScriptLogic::updateEngine(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
 					}
 					/*
 					// TODO: we need to create structure of attachNodeId ... ROOT
@@ -188,7 +188,7 @@ public:
 			EngineMiniScript::Variable returnValue;
 			span argumentsSpan(arguments);
 			if (miniScript->call("initializeEngine", argumentsSpan, returnValue) == false) {
-				// Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
+				// Console::printLine("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
 			}
 			//
 			engineInitialized = true;
@@ -198,7 +198,7 @@ public:
 		EngineMiniScript::Variable returnValue;
 		span argumentsSpan(arguments);
 		if (miniScript->call("updateEngine", argumentsSpan, returnValue) == false) {
-			// Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
+			// Console::printLine("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
 		}
 	}
 
@@ -209,7 +209,7 @@ public:
 			//
 			for (const auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
 				//
-				Console::println("MiniScriptLogic::updateLogic(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
+				Console::printLine("MiniScriptLogic::updateLogic(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
 				//
 				// add to physics
 				auto transform = prototypeToAdd.transform;
@@ -230,7 +230,7 @@ public:
 						attachNodeTransform.fromMatrix(attachNodeTransformMatrix, RotationOrder::ZYX);
 						transform = attachNodeTransform * transform;
 					} else {
-						Console::println("MiniScriptLogic::updateLogic(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
+						Console::printLine("MiniScriptLogic::updateLogic(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
 					}
 					/*
 					// TODO: we need to create structure of attachNodeId ... ROOT
@@ -288,7 +288,7 @@ public:
 						} else
 						// no LogicMiniScript
 						if (dynamic_cast<LogicMiniScript*>(libraryMiniScript.get()) == nullptr) {
-							Console::println("MiniScriptLogic::updateLogic(): Native library: Native script not of type LogicMiniScript: " + prototype->getScript());
+							Console::printLine("MiniScriptLogic::updateLogic(): Native library: Native script not of type LogicMiniScript: " + prototype->getScript());
 						} else {
 							// cast to LogicMiniScript
 							logicMiniScript = unique_ptr<LogicMiniScript>(dynamic_cast<LogicMiniScript*>(libraryMiniScript.release()));
@@ -305,7 +305,7 @@ public:
 					}
 					// add logic if valid
 					if (logicMiniScript->isValid() == false) {
-						Console::println("MiniScriptLogic::updateLogic(): Script not valid. Not using it: " + prototype->getScript());
+						Console::printLine("MiniScriptLogic::updateLogic(): Script not valid. Not using it: " + prototype->getScript());
 					} else {
 						miniScript->context->addLogic(
 							make_unique<MiniScriptLogic>(
@@ -334,7 +334,7 @@ public:
 			EngineMiniScript::Variable returnValue;
 			span argumentsSpan(arguments);
 			if (miniScript->call("initializeLogic", argumentsSpan, returnValue) == false) {
-				// Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
+				// Console::printLine("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
 			}
 			//
 			logicInitialized = true;
@@ -346,7 +346,7 @@ public:
 		EngineMiniScript::Variable returnValue;
 		span argumentsSpan(arguments);
 		if (miniScript->call("updateLogic", argumentsSpan, returnValue) == false) {
-			// Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
+			// Console::printLine("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
 		}
 	}
 
@@ -356,7 +356,7 @@ public:
 		EngineMiniScript::Variable returnValue;
 		span argumentsSpan(arguments);
 		if (miniScript->call("onLogicAdded", argumentsSpan, returnValue) == false) {
-			// Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
+			// Console::printLine("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
 		}
 	}
 
@@ -366,7 +366,7 @@ public:
 		EngineMiniScript::Variable returnValue;
 		span argumentsSpan(arguments);
 		if (miniScript->call("onLogicsProcessed", argumentsSpan, returnValue) == false) {
-			// Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
+			// Console::printLine("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
 		}
 	}
 

@@ -31,17 +31,17 @@ ApplicationServer::ApplicationServer(const string& name, const string& host, con
 	setWorkerThreadCount(2);
 
 	//
-	Console::println("ApplicationServer::ApplicationServer(): Starting WS UDP server @ " + host + ":" + to_string(port));
+	Console::printLine("ApplicationServer::ApplicationServer(): Starting WS UDP server @ " + host + ":" + to_string(port));
 }
 
 Context* ApplicationServer::createContext() {
-	Console::println("ApplicationServer::createContext()");
+	Console::printLine("ApplicationServer::createContext()");
 	return new Context(true);
 }
 
 void ApplicationServer::start() {
 	// init
-	Console::println("ApplicationServer::ApplicationServer(): Initializing");
+	Console::printLine("ApplicationServer::ApplicationServer(): Initializing");
 
 	//
 	context = unique_ptr<Context>(createContext());
@@ -55,7 +55,7 @@ void ApplicationServer::start() {
 	context->setLogicsMutex(this->logicsThread->getMutex());
 
 	// starting game logic thread
-	Console::println("ApplicationServer::ApplicationServer(): Starting game logic thread");
+	Console::printLine("ApplicationServer::ApplicationServer(): Starting game logic thread");
 	logicsThread->start();
 
 	//
@@ -63,7 +63,7 @@ void ApplicationServer::start() {
 }
 
 ApplicationServer::~ApplicationServer() {
-	Console::println("ApplicationServer::~ApplicationServer(): Shutting down");
+	Console::printLine("ApplicationServer::~ApplicationServer(): Shutting down");
 
 	//
 	logicsThread->stop();
@@ -74,7 +74,7 @@ ApplicationServer::~ApplicationServer() {
 }
 
 UDPServerClient* ApplicationServer::accept(const uint32_t clientId, const std::string& ip, const uint16_t port) {
-	Console::println("Accepting client connection with '" + ip + ":" + to_string(port) + "'");
+	Console::printLine("Accepting client connection with '" + ip + ":" + to_string(port) + "'");
 
 	//
 	return new ApplicationServerClient(clientId, ip, port);

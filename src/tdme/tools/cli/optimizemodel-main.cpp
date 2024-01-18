@@ -31,22 +31,22 @@ using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("optimizemodel ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("optimizemodel ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc < 2) {
-		Console::println("Usage: optimizemodel file.tm [exclude_materials_with_specific_filename1] [exclude_materials_with_specific_filenameN]");
+		Console::printLine("Usage: optimizemodel file.tm [exclude_materials_with_specific_filename1] [exclude_materials_with_specific_filenameN]");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string fileName = string(argv[1]);
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == false) {
-		Console::println("optimizemodel only accepts .tm model files");
+		Console::printLine("optimizemodel only accepts .tm model files");
 		Application::exit(1);
 	}
 	vector<string> excludeDiffuseTextureFileNamePatterns;
 	for (auto i = 2; i < argc; i++) excludeDiffuseTextureFileNamePatterns.push_back(argv[i]);
 	try {
-		Console::println("Loading model: " + fileName);
+		Console::printLine("Loading model: " + fileName);
 		auto model = unique_ptr<Model>(
 			ModelReader::read(
 				FileSystem::getInstance()->getPathName(fileName),
@@ -54,9 +54,9 @@ int main(int argc, char** argv)
 			)
 		);
 		if (ModelTools::isOptimizedModel(model.get()) == true) {
-			Console::println("Already optimized. Skipping.");
+			Console::printLine("Already optimized. Skipping.");
 		} else {
-			Console::println("Optimizing model: " + fileName);
+			Console::printLine("Optimizing model: " + fileName);
 			auto originalModel = model.get();
 			auto optimizedModel = unique_ptr<Model>(
 				ModelTools::optimizeModel(
@@ -66,9 +66,9 @@ int main(int argc, char** argv)
 				)
 			);
 			if (originalModel == optimizedModel.get()) {
-				Console::println("No optimization was required. Skipping.");
+				Console::printLine("No optimization was required. Skipping.");
 			} else {
-				Console::println("Exporting model: " + fileName);
+				Console::printLine("Exporting model: " + fileName);
 				TMWriter::write(
 					optimizedModel.get(),
 					FileSystem::getInstance()->getPathName(fileName),
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 
 	//

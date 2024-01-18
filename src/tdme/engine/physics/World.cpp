@@ -226,11 +226,11 @@ void World::removeBody(const string& id) {
 void World::addFixedJoint(const string& id, Body* body1, Body* body2) {
 	removeJoint(id);
 	if (body1->rigidBody == nullptr) {
-		Console::println("World::createFixedJoint(): body1: no rigid body attached");
+		Console::printLine("World::createFixedJoint(): body1: no rigid body attached");
 		return;
 	} else
 	if (body2->rigidBody == nullptr) {
-		Console::println("World::createFixedJoint(): body2: no rigid body attached");
+		Console::printLine("World::createFixedJoint(): body2: no rigid body attached");
 		return;
 	}
 	Vector3 anchorPoint = body1->getTransform().getTranslation().clone().add(body2->getTransform().getTranslation()).scale(0.5f);
@@ -390,7 +390,7 @@ void World::synchronize(Engine* engine)
 		// synch with engine entity
 		auto entity = engine->getEntity(body->getId());
 		if (entity == nullptr) {
-			Console::println("World::entity '" + body->getId() + "' not found");
+			Console::printLine("World::entity '" + body->getId() + "' not found");
 			continue;
 		}
 
@@ -595,7 +595,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 				clonedBody = clonedWorld->addDynamicCollisionBody(body->id, body->getCollisionTypeId(), body->isEnabled(), body->transform, body->boundingVolumes);
 				break;
 			default:
-				Console::println("World::clone(): Unsupported type: " + to_string(bodyType));
+				Console::printLine("World::clone(): Unsupported type: " + to_string(bodyType));
 				continue;
 		}
 
@@ -625,7 +625,7 @@ void World::synchronize(World* world)
 		auto body = rigidBodiesDynamic.at(i);
 		auto clonedBody = world->getBody(body->id);
 		if (clonedBody == nullptr) {
-			Console::println("Cloned world::entity '" + body->id + "' not found");
+			Console::printLine("Cloned world::entity '" + body->id + "' not found");
 			continue;
 		}
 		// synch rigid bodies

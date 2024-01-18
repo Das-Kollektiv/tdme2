@@ -31,7 +31,7 @@ using tdme::utilities::Time;
 
 
 int main(int argc, char** argv) {
-	Console::println("SplineTest");
+	Console::printLine("SplineTest");
 
 	//
 	auto beginTime = Time::getCurrentMillis();
@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
 	auto endTime = Time::getCurrentMillis();
 
 	//
-	Console::println("Time to generate spline+texture: " + to_string(endTime - beginTime) + "ms");
+	Console::printLine("Time to generate spline+texture: " + to_string(endTime - beginTime) + "ms");
 
 	//
 	auto smoothedTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::smooth(texture.get(), ":smoothed", 0.5f));

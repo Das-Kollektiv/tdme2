@@ -91,7 +91,7 @@ static int compare_includes(const string& lhs, const string& rhs) {
 }
 
 void parseHpp(const string& fileName) {
-	Console::println("Processing file: " + fileName);
+	Console::printLine("Processing file: " + fileName);
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	vector<string> newFileContent;
@@ -175,13 +175,13 @@ void parseHpp(const string& fileName) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("sortincludes ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("sortincludes ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc != 2) {
-		Console::println("Usage: sortincludes path_to_source");
+		Console::printLine("Usage: sortincludes path_to_source");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
@@ -189,12 +189,12 @@ int main(int argc, char** argv)
 	auto pathToSource = string(argv[1]);
 
 	//
-	Console::println("Scanning files");
+	Console::printLine("Scanning files");
 	vector<string> files;
 	scanPath(pathToSource, files);
 
 	//
-	Console::println("Processing files");
+	Console::printLine("Processing files");
 	for (const auto& fileName: files) {
 		parseHpp(fileName);
 	}

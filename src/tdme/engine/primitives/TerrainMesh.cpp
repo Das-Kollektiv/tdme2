@@ -65,14 +65,14 @@ TerrainMesh::~TerrainMesh() {
 void TerrainMesh::setScale(const Vector3& scale) {
 	//
 	if (scale.equals(Vector3(1.0f, 1.0f, 1.0f)) == false) {
-		Console::println("TerrainMesh::setScale(): != 1.0f: Not supported!");
+		Console::printLine("TerrainMesh::setScale(): != 1.0f: Not supported!");
 	}
 	// store new scale
 	this->scale.set(scale);
 }
 
 void TerrainMesh::setTransform(const Transform& transform) {
-	Console::println("TerrainMesh::setTransform(): Not supported!");
+	Console::printLine("TerrainMesh::setTransform(): Not supported!");
 }
 
 void TerrainMesh::destroyCollisionShape() {
@@ -87,7 +87,7 @@ void TerrainMesh::destroyCollisionShape() {
 
 void TerrainMesh::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("TerrainMesh::createCollisionShape(): already attached to a world.");
+		Console::printLine("TerrainMesh::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 

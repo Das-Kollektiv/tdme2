@@ -252,7 +252,7 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 	int height;
 	uint8_t bytesPerPixel;
 	if (readHeader(pngData, width, height, bytesPerPixel) == false) {
-		Console::println("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG header");
+		Console::printLine("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG header");
 		return nullptr;
 	}
 	// make width, height a power of 2
@@ -266,10 +266,10 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 		if (textureWidth != width || textureHeight != height) {
 			auto textureByteBuffer = ByteBuffer(width * height * bytesPerPixel);
 			if (read(pngData, textureByteBuffer) == false) {
-				Console::println("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG bitmap data");
+				Console::printLine("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG bitmap data");
 				return nullptr;
 			}
-			Console::println("PNGTextureReader::read(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			Console::printLine("PNGTextureReader::read(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
 			auto textureByteBufferScaled = ByteBuffer(textureWidth * textureHeight * bytesPerPixel);
 			auto textureYIncrement = (float)textureHeight / (float)height;
 			auto textureYPixelRest = 0.0f;

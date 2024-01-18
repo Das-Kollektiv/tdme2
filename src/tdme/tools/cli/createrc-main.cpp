@@ -23,12 +23,12 @@ using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("createrc ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("createrc ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 4) {
-		Console::println("Usage: createrc path_to_rc file path_to_generated_rc");
+		Console::printLine("Usage: createrc path_to_rc file path_to_generated_rc");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
@@ -67,9 +67,9 @@ int main(int argc, char** argv)
 			rc
 		);
 
-		Console::println(rc);
+		Console::printLine(rc);
 	} catch (Exception& exception) {
-		Console::println(string() + "An error occurred: " + exception.what());
+		Console::printLine(string() + "An error occurred: " + exception.what());
 	}
 
 	//

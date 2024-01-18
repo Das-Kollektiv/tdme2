@@ -249,7 +249,7 @@ void ParticleSystemEditorTabView::initialize()
 		prototypeDisplayView = particleSystemEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypeSoundsView = particleSystemEditorTabController->getPrototypeSoundsSubController()->getView();
 	} catch (Exception& exception) {
-		Console::println("ParticleSystemEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("ParticleSystemEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
@@ -522,7 +522,7 @@ void ParticleSystemEditorTabView::applyParticleSystemTransform(ParticleSystem* p
 				particleSystemEditorTabController->updateSphereParticleSystemEmitter(center, radius);
 			}
 		} else {
-			Console::println("SharedParticleSystemView::applyParticleSystemTransform(): unknown particle system emitter '" + particleSystem->getEmitter()->getName() + "'");
+			Console::printLine("SharedParticleSystemView::applyParticleSystemTransform(): unknown particle system emitter '" + particleSystem->getEmitter()->getName() + "'");
 		}
 	}
 	if (guiOnly == false) {

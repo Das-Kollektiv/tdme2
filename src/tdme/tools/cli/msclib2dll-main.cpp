@@ -27,7 +27,7 @@ using tdme::utilities::StringTools;
 
 
 void parseHpp(const string& fileName) {
-	Console::println("Processing file: " + fileName);
+	Console::printLine("Processing file: " + fileName);
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	StringTokenizer lineStringTokenizer;
@@ -59,13 +59,13 @@ void parseHpp(const string& fileName) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("msclib2dll ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("msclib2dll ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	if (argc != 2) {
-		Console::println("Usage: msclib2dll path_to_file");
-		Console::println("Note: path_to_file can be obtained from dumpbin /LINKERMEMBER xyz.lib");
+		Console::printLine("Usage: msclib2dll path_to_file");
+		Console::printLine("Note: path_to_file can be obtained from dumpbin /LINKERMEMBER xyz.lib");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 

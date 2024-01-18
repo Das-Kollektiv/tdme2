@@ -55,7 +55,7 @@ void Sphere::destroyCollisionShape() {
 
 void Sphere::createCollisionShape(World* world) {
 	if (this->world != nullptr && this->world != world) {
-		Console::println("Sphere::createCollisionShape(): already attached to a world.");
+		Console::printLine("Sphere::createCollisionShape(): already attached to a world.");
 	}
 	this->world = world;
 

@@ -1104,7 +1104,7 @@ void GUINode::scrollToNodeY(GUIParentNode* toNode) {
 void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 	string indentString;
 	for (auto i = 0; i < indent; i++) indentString+= "  ";
-	Console::println(
+	Console::printLine(
 		indentString +
 		node->id + ": " +
 		node->getNodeType() + ": constaints: " +
@@ -1137,7 +1137,7 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 void GUINode::dumpParentNodes(GUINode* node, int indent) {
 	string indentString;
 	for (auto i = 0; i < indent; i++) indentString+= "  ";
-	Console::println(
+	Console::printLine(
 		indentString +
 		node->id + ": " +
 		node->getNodeType() + ": constaints: " +
@@ -1234,7 +1234,7 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 	if (function == "hasCondition") {
 		return cfHasCondition(elementNode, arguments);
 	} else {
-		Console::println("GUINode::cfCall(): Unknown function: " + function + ": returning false");
+		Console::printLine("GUINode::cfCall(): Unknown function: " + function + ": returning false");
 		return false;
 	}
 }
@@ -1249,7 +1249,7 @@ void GUINode::cfCallDetermineElementNodeDependencies(const string& function, con
 	if (function == "hasCondition") {
 		cfHasConditionDetermineElementNodeDependencies(arguments, elementNodeDependencies);
 	} else {
-		Console::println("GUINode::cfCallDetermineElementNodeDependencies(): Unknown function: " + function + ": returning false");
+		Console::printLine("GUINode::cfCallDetermineElementNodeDependencies(): Unknown function: " + function + ": returning false");
 	}
 
 }
@@ -1266,7 +1266,7 @@ bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& 
 		}
 		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
 		if (elementNodeToCheck == nullptr) {
-			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
+			Console::printLine("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
 			continue;
 		}
 		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;

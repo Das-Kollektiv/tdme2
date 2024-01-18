@@ -29,7 +29,7 @@ using tdme::utilities::Console;
 void testthread_test() {
 	// basic thread test
 	SharedData data;
-	Console::println("Hallo World!");
+	Console::printLine("Hallo World!");
 	vector<unique_ptr<TestThread>> tt(TESTTHREAD_THREADS_COUNT);
 	// start threads
 	for(int i = 0; i < TESTTHREAD_THREADS_COUNT; i++) {
@@ -49,23 +49,23 @@ void pc_test() {
 	ConsumerThread c0(0, &queue);
 	ConsumerThread c1(1, &queue);
 
-	Console::println("starting consumer threads");
+	Console::printLine("starting consumer threads");
 	c0.start();
 	c1.start();
 	Thread::sleep(500);
 
-	Console::println("starting producer thread");
+	Console::printLine("starting producer thread");
 	p.start();
 
-	Console::println("waiting 10 seconds");
+	Console::printLine("waiting 10 seconds");
 	Thread::sleep(2000);
 
-	Console::println("stopping producer");
+	Console::printLine("stopping producer");
 	p.stop();
 	p.join();
 
 	Thread::sleep(500);
-	Console::println("stopping consumer and queue");
+	Console::printLine("stopping consumer and queue");
 	c0.stop();
 	c1.stop();
 	queue.stop();
@@ -78,11 +78,11 @@ void atomic_test() {
 	volatile uint32_t intValue = 0;
 	// 5 atomic adds
 	for(int i = 0; i < 5; i++) {
-		Console::println("atomic add, result " + to_string(AtomicOperations::increment(intValue)));
+		Console::printLine("atomic add, result " + to_string(AtomicOperations::increment(intValue)));
 	}
 	// 5 atomic subs
 	for(int i = 0; i < 5; i++) {
-		Console::println("atomic sub, result " + to_string(AtomicOperations::decrement(intValue)));
+		Console::printLine("atomic sub, result " + to_string(AtomicOperations::decrement(intValue)));
 	}
 }
 

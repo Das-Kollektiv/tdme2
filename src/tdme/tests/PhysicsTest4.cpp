@@ -82,7 +82,7 @@ void PhysicsTest4::display()
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
-	Console::println(
+	Console::printLine(
 		string("PhysicsTest4::display::") + to_string(end - start) + "ms; " +
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
@@ -151,7 +151,7 @@ void PhysicsTest4::initialize()
 		world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, Transform(), 0.5f, {terrainMesh});
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest4::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 		Application::exit(1);
 	}
 }

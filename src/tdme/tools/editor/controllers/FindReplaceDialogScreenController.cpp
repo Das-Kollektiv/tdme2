@@ -81,7 +81,7 @@ void FindReplaceDialogScreenController::initialize()
 		replaceButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replace"));
 		replaceAllButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replaceall"));
 	} catch (Exception& exception) {
-		Console::println("FindReplaceDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("FindReplaceDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

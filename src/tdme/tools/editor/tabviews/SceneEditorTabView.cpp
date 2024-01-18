@@ -578,7 +578,7 @@ void SceneEditorTabView::initialize()
 		sceneEditorTabController = make_unique<SceneEditorTabController>(this);
 		sceneEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::println("SceneEditorTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("SceneEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	//
 	SceneConnector::setLights(engine.get(), scene.get());
@@ -1404,7 +1404,7 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 			sceneLibrary->addPrototype(prototype);
 		}
 	} catch (Exception& exception) {
-		Console::println("SceneEditorTabView::addPrototype(): An error occurred: " + string(exception.what()));
+		Console::printLine("SceneEditorTabView::addPrototype(): An error occurred: " + string(exception.what()));
 		sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 	}
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
@@ -1458,7 +1458,7 @@ void SceneEditorTabView::runScene() {
 		//
 		auto scriptLibraryHandle = LoadLibrary(scriptLibraryURI.c_str());
 		if (scriptLibraryHandle == nullptr) {
-			Console::println("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
+			Console::printLine("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
 		} else {
 			//
 			Library* (*scriptLibraryCreateInstance)() = (Library*(*)())GetProcAddress(scriptLibraryHandle, "createInstance");
@@ -1467,7 +1467,7 @@ void SceneEditorTabView::runScene() {
 				FreeLibrary(scriptLibraryHandle);
 				scriptLibraryHandle = nullptr;
 				//
-				Console::println("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
+				Console::printLine("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
 			} else {
 				//
 				scriptLibrary = (Library*)scriptLibraryCreateInstance();
@@ -1475,7 +1475,7 @@ void SceneEditorTabView::runScene() {
 					FreeLibrary(scriptLibraryHandle);
 					scriptLibraryHandle = nullptr;
 					//
-					Console::println("SceneEditorTabView::runScene(): Could not create script library");
+					Console::printLine("SceneEditorTabView::runScene(): Could not create script library");
 				}
 			}
 		}
@@ -1490,7 +1490,7 @@ void SceneEditorTabView::runScene() {
 		#endif
 			//
 		if (scriptLibraryHandle == nullptr) {
-			Console::println("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
+			Console::printLine("SceneEditorTabView::runScene(): Could not open " + scriptLibraryURI);
 		} else {
 			//
 			Library* (*scriptLibraryCreateInstance)() = (Library*(*)())dlsym(scriptLibraryHandle, "createInstance");
@@ -1499,7 +1499,7 @@ void SceneEditorTabView::runScene() {
 				dlclose(scriptLibraryHandle);
 				scriptLibraryHandle = nullptr;
 				//
-				Console::println("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
+				Console::printLine("SceneEditorTabView::runScene(): Could not find script library createInstance() entry point");
 			} else {
 				//
 				scriptLibrary = (Library*)scriptLibraryCreateInstance();
@@ -1507,14 +1507,14 @@ void SceneEditorTabView::runScene() {
 					dlclose(scriptLibraryHandle);
 					scriptLibraryHandle = nullptr;
 					//
-					Console::println("SceneEditorTabView::runScene(): Could not create script library");
+					Console::printLine("SceneEditorTabView::runScene(): Could not create script library");
 				}
 			}
 		}
 	#endif
 
 	//
-	Console::println("SceneEditorTabView::runScene(): native script library @ " + scriptLibraryURI + ": " + string(scriptLibrary != nullptr?"YES":"NO"));
+	Console::printLine("SceneEditorTabView::runScene(): native script library @ " + scriptLibraryURI + ": " + string(scriptLibrary != nullptr?"YES":"NO"));
 
 	// add gui
 	if (scene->getGUIFileName().empty() == false) {
@@ -1530,7 +1530,7 @@ void SceneEditorTabView::runScene() {
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 			engine->getGUI()->addRenderScreen(screenNode->getId());
 		} catch (Exception& exception) {
-			Console::println("SceneEditorTabView::runScene(): an error occurred: " + string(exception.what()));
+			Console::printLine("SceneEditorTabView::runScene(): an error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -1560,7 +1560,7 @@ void SceneEditorTabView::runScene() {
 				} else
 				// no LogicMiniScript
 				if (dynamic_cast<LogicMiniScript*>(libraryMiniScript.get()) == nullptr) {
-					Console::println("SceneEditorTabView::runScene(): Native library: Native script not of type LogicMiniScript: " + entity->getPrototype()->getScript());
+					Console::printLine("SceneEditorTabView::runScene(): Native library: Native script not of type LogicMiniScript: " + entity->getPrototype()->getScript());
 				} else {
 					// cast to LogicMiniScript
 					logicMiniScript = unique_ptr<LogicMiniScript>(dynamic_cast<LogicMiniScript*>(libraryMiniScript.release()));

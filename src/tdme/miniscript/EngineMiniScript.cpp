@@ -74,7 +74,7 @@ EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const str
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptAsStringArray);
 	} catch (Exception& exception) {
-		Console::println("MiniScript::loadScript(): An error occurred: " + string(exception.what()));
+		Console::printLine("MiniScript::loadScript(): An error occurred: " + string(exception.what()));
 		return nullptr;
 	}
 

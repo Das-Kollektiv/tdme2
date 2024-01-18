@@ -154,7 +154,7 @@ Context::PathFindingThread::State Context::PathFindingThread::findPath(
 			if (this->actorId != actorId) {
 				auto now = Time::getCurrentMillis();
 				if (now - timeStateStarted > 1000LL) {
-					Console::println("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): path finding result timeout: " + logicId + ": resetting!");
+					Console::printLine("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): path finding result timeout: " + logicId + ": resetting!");
 					reset();
 				}
 				pathFindingMutex.unlock();
@@ -168,7 +168,7 @@ Context::PathFindingThread::State Context::PathFindingThread::findPath(
 				if (this->actorId != actorId) {
 					auto now = Time::getCurrentMillis();
 					if (now - timeStateStarted > 1000LL) {
-						Console::println("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): path finding result timeout: " + logicId + ": resetting!");
+						Console::printLine("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): path finding result timeout: " + logicId + ": resetting!");
 						reset();
 					}
 					pathFindingMutex.unlock();
@@ -176,7 +176,7 @@ Context::PathFindingThread::State Context::PathFindingThread::findPath(
 				}
 				path = this->path;
 				if (this->endPosition.equals(endPosition) == false) {
-					Console::println("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): " + actorId + ": position changed!");
+					Console::printLine("Context::PathFindingThread[" + to_string(idx) + "]::findPath(): " + actorId + ": position changed!");
 				}
 				auto returnState = endPosition.equals(this->endPosition) == true?STATE_PATHFINDING_SUCCESS:State::STATE_PATHFINDING_OTHER;
 				if (createFlowMap == true) {
@@ -244,7 +244,7 @@ void Context::PathFindingThread::cancel(const string& actorId) {
 }
 
 void Context::PathFindingThread::run() {
-	Console::println(string(context->server == true?"SERVER::":"CLIENT") + "|ws::Context::PathFindingThread[" + to_string(idx) + "]::run(): init");
+	Console::printLine(string(context->server == true?"SERVER::":"CLIENT") + "|ws::Context::PathFindingThread[" + to_string(idx) + "]::run(): init");
 	while (isStopRequested() == false) {
 		// synch path finding physics world with world
 		context->logicsMutex->lock();
@@ -388,7 +388,7 @@ void Context::PathFindingThread::run() {
 		// get some rest
 		sleep(50L);
 	}
-	Console::println(string(context->server == true?"SERVER::":"CLIENT") + "|ws::Context::PathFindingThread[" + to_string(idx) + "]::run(): done");
+	Console::printLine(string(context->server == true?"SERVER::":"CLIENT") + "|ws::Context::PathFindingThread[" + to_string(idx) + "]::run(): done");
 }
 
 string Context::PathFindingThread::getActorId() {
@@ -597,12 +597,12 @@ void Context::ContextWorldListener::onRemovedSubBody(const string& id, Body::Bod
 }
 
 Context::Context(bool server): pathFinding(this), world(nullptr), server(server), initialized(false) {
-	Console::println("Context::Context(): " + to_string(server));
+	Console::printLine("Context::Context(): " + to_string(server));
 	timeStarted = -1;
 }
 
 Context::~Context() {
-	Console::println("Context::~Context()");
+	Console::printLine("Context::~Context()");
 }
 
 void Context::initialize() {
@@ -622,7 +622,7 @@ void Context::initialize() {
 }
 
 void Context::shutdown() {
-	Console::println("Context::shutdown()");
+	Console::printLine("Context::shutdown()");
 	//
 	world->removeWorldListener(worldListener.get());
 	pathFinding.shutdown();
@@ -633,16 +633,16 @@ void Context::shutdown() {
 }
 
 void Context::addLogic(Logic* logic) {
-	Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
+	Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
 	// check if exists in current game logics
 	if (logicsById.find(logic->getId()) != logicsById.end()) {
-		Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+		Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 		return;
 	}
 	// check if exists in new game logics
 	for (auto newLogic: newLogics) {
 		if (logic->getId() == newLogic->getId()) {
-			Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+			Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 			return;
 		}
 	}
@@ -664,7 +664,7 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 		}
 	}
 	for (const auto& packetToRemove: packetsToRemove) {
-		// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + packetToRemove + ": removing");
+		// Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + packetToRemove + ": removing");
 		packetStates.erase(packetToRemove);
 	}
 
@@ -681,7 +681,7 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 		packetState.timeCreated = now;
 		packetState.messageId = packet.getMessageId();
 		packetStates[_key] = packetState;
-		// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + _key + ": new (" + to_string(packetStates.size()) + ")");
+		// Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + _key + ": new (" + to_string(packetStates.size()) + ")");
 		return true;
 	} else {
 		auto& packetState = packetStateIt->second;
@@ -690,7 +690,7 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 		} else {
 			packetState.messageId = packet.getMessageId();
 			packetState.timeCreated = Time::getCurrentMillis();
-			// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + _key + " " + to_string(packet.getMessageId()) + " > " + to_string(packetState.messageId) + " " + to_string(packetStates.size()) + ")");
+			// Console::printLine(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + _key + " " + to_string(packet.getMessageId()) + " > " + to_string(packetState.messageId) + " " + to_string(packetStates.size()) + ")");
 			return true;
 		}
 	}

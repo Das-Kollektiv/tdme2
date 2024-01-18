@@ -58,45 +58,45 @@ void processFile(const string& indent, const string& fileName) {
 	auto _fileName = StringTools::startsWith(fileName, "./") == true?StringTools::substring(fileName, 2, fileName.size()):fileName;
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, lines);
-	Console::println(indent + _fileName);
+	Console::printLine(indent + _fileName);
 	Console::print(indent);
 	for (auto i = 0; i < _fileName.size() + 2; i++) Console::print("-");
-	Console::println();
-	Console::println();
+	Console::printLine();
+	Console::printLine();
 	for (const auto& line: lines) {
 		if (StringTools::trim(line).size() == 0) {
-			Console::println();
+			Console::printLine();
 		} else {
-			Console::println(indent + "\t" + line);
+			Console::printLine(indent + "\t" + line);
 		}
 	}
-	Console::println();
-	Console::println();
+	Console::printLine();
+	Console::printLine();
 }
 
 int main(int argc, char** argv)
 {
-	Console::println(string("generatelicenses ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("generatelicenses ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	auto pathToHeaders = "."; // we do search in pwd
 	auto indent = argc > 1?string(argv[1]):string();
 
 	if (argc > 2 || (argc == 2 && indent.empty() == false && indent != "--indent")) {
-		Console::println("Usage: generatelicenses [--indent]");
+		Console::printLine("Usage: generatelicenses [--indent]");
 		Application::exit(1);
 	}
 
 	if (indent == "--indent") indent = "\t";
 
-	Console::println("Scanning files");
+	Console::printLine("Scanning files");
 	vector<string> files;
 	scanPath(pathToHeaders, files);
 
-	Console::println("Processing files");
-	Console::println("------------------");
-	Console::println();
+	Console::printLine("Processing files");
+	Console::printLine("------------------");
+	Console::printLine();
 	for (const auto& fileName: files) {
 		if (fileName == "./LICENSE") continue; // ignore own project license
 		processFile(indent, fileName);

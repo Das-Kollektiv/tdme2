@@ -855,7 +855,7 @@ public:
 	 */
 	inline static void registerShader(ShaderType type, const string& shaderId, const vector<Shader::ParameterDefaults>& parameterDefaults = {}, bool internal = false) {
 		if (shadersById.find(shaderId) != shadersById.end()) {
-			Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
+			Console::printLine("Engine::registerShader(): Shader already registered: " + shaderId);
 			return;
 		}
 		shaders.push_back(
@@ -882,7 +882,7 @@ public:
 	inline static const vector<Shader::ParameterDefaults>* getShaderParameterDefaults(const string& shaderId) {
 		auto shaderIt = shadersById.find(shaderId);
 		if (shaderIt == shadersById.end()) {
-			Console::println("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
+			Console::printLine("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
 			return nullptr;
 		}
 		return &shaderIt->second->parameterDefaults;
@@ -897,7 +897,7 @@ public:
 		vector<string> shaderParameterNames;
 		auto shaderIt = shadersById.find(shaderId);
 		if (shaderIt == shadersById.end()) {
-			Console::println("Engine::getShaderParameterNames(): No registered shader: " + shaderId);
+			Console::printLine("Engine::getShaderParameterNames(): No registered shader: " + shaderId);
 			return shaderParameterNames;
 		}
 		for (const auto& shaderParameterName: shaderIt->second->parameterDefaults) {
@@ -917,7 +917,7 @@ public:
 		auto shaderIt = shadersById.find(shaderId);
 		if (shaderIt == shadersById.end()) {
 			// not found, return empty shader parameter
-			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
+			Console::printLine("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
 			return nullptr;
 		}
 		// fetch from defaults
@@ -925,7 +925,7 @@ public:
 		auto shaderParameterIt = shader->parameterDefaultsByName.find(parameterName);
 		if (shaderParameterIt == shader->parameterDefaultsByName.end()) {
 			// not found
-			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			Console::printLine("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return nullptr;
 		}
 		// done
@@ -970,11 +970,11 @@ public:
 	inline void setShaderParameter(const string& shaderId, const string& parameterName, const ShaderParameter& parameterValue) {
 		auto currentShaderParameter = getShaderParameter(shaderId, parameterName);
 		if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
-			Console::println("Engine::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			Console::printLine("Engine::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return;
 		}
 		if (currentShaderParameter.getType() != parameterValue.getType()) {
-			Console::println("Engine::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			Console::printLine("Engine::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 		}
 		shaderParameters[shaderId][parameterName] = parameterValue;
 	}
@@ -1556,7 +1556,7 @@ private:
 				// otherwise create a id
 				uniqueModelId = objectUniqueModelIdMapping.size() + 1;
 				if (uniqueModelId >= UNIQUEMODELID_MAX) {
-					Console::println("Engine::registerModel(): too many models: " + to_string(uniqueModelId) + " >= " + to_string(UNIQUEMODELID_MAX));
+					Console::printLine("Engine::registerModel(): too many models: " + to_string(uniqueModelId) + " >= " + to_string(UNIQUEMODELID_MAX));
 					return -1;
 				}
 			}

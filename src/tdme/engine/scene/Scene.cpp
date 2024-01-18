@@ -204,7 +204,7 @@ void Scene::addEntity(SceneEntity* entity)
 	auto _entity = getEntity(entity->getId());
 	if (_entity != nullptr) {
 		removeEntity(entity->getId());
-		Console::println(
+		Console::printLine(
 			"Scene::addEntity():: entity with id '" +
 			entity->getId() +
 			"' already exists. Removing it!"

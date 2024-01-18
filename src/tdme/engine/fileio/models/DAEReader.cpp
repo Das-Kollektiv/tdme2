@@ -232,7 +232,7 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
 				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
 			} else {
-				Console::println(string("Warning: Unknown up axis: " + upAxis));
+				Console::printLine(string("Warning: Unknown up axis: " + upAxis));
 			}
 		}
 	}
@@ -383,7 +383,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 									for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
 										if (frameIdx >= frames) {
 											// TODO: check me again!
-											// Console::println(string("Warning: skipping frame: ") + to_string(frameIdx));
+											// Console::printLine(string("Warning: skipping frame: ") + to_string(frameIdx));
 											frameIdx++;
 											continue;
 										}
@@ -951,7 +951,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		}
 	}
 	if (xmlEffectId.length() == 0) {
-		Console::println(
+		Console::printLine(
 			string(
 				 "Could not determine effect id for '" +
 				 xmlNodeId +

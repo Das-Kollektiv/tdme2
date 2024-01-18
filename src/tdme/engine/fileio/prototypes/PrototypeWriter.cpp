@@ -308,7 +308,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					jFogParticleSystem.AddMember("fps", Value(particleSystem->getFogParticleSystem()->getTextureSpritesFPS()), jAllocator);
 					jParticleSystem.AddMember("fps", jFogParticleSystem, jAllocator);
 				} else {
-					Console::println(
+					Console::printLine(
 						string(
 							"PrototypeWriter::export(): unknown particle system type '" +
 							particleSystem->getType()->getName() +
@@ -492,7 +492,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					jParticleSystem.AddMember("spe", jSphereParticleEmitter, jAllocator);
 				} else
 				{
-					Console::println(
+					Console::printLine(
 						string(
 							"PrototypeWriter::export(): unknown particle system emitter '" +
 							particleSystem->getEmitter()->getName() +

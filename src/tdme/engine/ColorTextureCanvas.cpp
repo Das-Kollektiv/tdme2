@@ -21,7 +21,7 @@ using tdme::utilities::Console;
 
 void ColorTextureCanvas::drawBezier(const vector<Vector2>& controlPoints, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
 	if (controlPoints.empty() == true) {
-		Console::println("ColorTextureCanvas::drawBezier(): no control points given");
+		Console::printLine("ColorTextureCanvas::drawBezier(): no control points given");
 		return;
 	}
 
@@ -58,7 +58,7 @@ void ColorTextureCanvas::drawBezier(const vector<Vector2>& controlPoints, uint8_
 
 void ColorTextureCanvas::debugBezier(const vector<Vector2>& controlPoints, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
 	if (controlPoints.empty() == true) {
-		Console::println("ColorTextureCanvas::debugBezier(): no control points given");
+		Console::printLine("ColorTextureCanvas::debugBezier(): no control points given");
 		return;
 	}
 

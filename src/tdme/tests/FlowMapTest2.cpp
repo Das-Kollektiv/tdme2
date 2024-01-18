@@ -126,7 +126,7 @@ void FlowMapTest2::display()
 	if (mouseClicked == true) {
 		mouseClicked = false;
 		auto worldClickPosition = engine->computeWorldCoordinateByMousePosition(mouseClickPosition[0], mouseClickPosition[1]);
-		Console::println(
+		Console::printLine(
 			"FlowMapTest2::display(): " +
 			to_string(worldClickPosition.getX()) + ", " +
 			to_string(worldClickPosition.getY()) + ", " +
@@ -157,14 +157,14 @@ void FlowMapTest2::display()
 			auto distanceSquared = combatUnit.endPosition.clone().sub(combatUnit.object->getTranslation()).computeLengthSquared();
 			if (distanceSquared < Math::square(0.2f)) {
 				combatUnit.finished = true;
-				Console::println(to_string(combatUnit.idx) + ": finished");
+				Console::printLine(to_string(combatUnit.idx) + ": finished");
 			} else
 			if (combatUnit.path.empty() == true &&
 				distanceSquared <= Math::square(8.0f)) {
 
 				FlowMapCell* endPositionCell = nullptr;
 				if (flowMap == nullptr) {
-					Console::println(to_string(combatUnit.idx) + ": finding path for finish: no flowmap");
+					Console::printLine(to_string(combatUnit.idx) + ": finding path for finish: no flowmap");
 				} else
 				if ((endPositionCell = flowMap->getCell(combatUnit.endPosition.getX(), combatUnit.endPosition.getZ())) == nullptr) {
 					//
@@ -195,10 +195,10 @@ void FlowMapTest2::display()
 					}
 					if (haveNearestEndPosition == true) {
 						combatUnit.endPosition = nearestEndPosition;
-						Console::println(to_string(combatUnit.idx) + ": finding path for finish: UPDATED END POSITION");
+						Console::printLine(to_string(combatUnit.idx) + ": finding path for finish: UPDATED END POSITION");
 					}
 				}
-				Console::println(to_string(combatUnit.idx) + ": finding path for finish");
+				Console::printLine(to_string(combatUnit.idx) + ": finding path for finish");
 				if (pathFinding->findPath(
 					combatUnit.object->getTransform().getTranslation(),
 					combatUnit.endPosition,
@@ -207,7 +207,7 @@ void FlowMapTest2::display()
 					6, // TODO: check me
 					6
 				) == false) {
-					Console::println(to_string(combatUnit.idx) + ": finding path for finish: No path found: finish");
+					Console::printLine(to_string(combatUnit.idx) + ": finding path for finish: No path found: finish");
 					combatUnit.finished = true;
 				}
 				combatUnit.pathIdx = 0;
@@ -348,7 +348,7 @@ void FlowMapTest2::display()
 					bool foundPath = false;
 					if (combatUnitTranslation.clone().sub(flowMapPosition).computeLengthSquared() < Math::square(0.1f)) {
 						for (auto i = 0; i < 3; i++) {
-							Console::println(to_string(combatUnit.idx) + ": finding path back to flow map");
+							Console::printLine(to_string(combatUnit.idx) + ": finding path back to flow map");
 							if (pathFinding->findPath(
 								combatUnitTranslation,
 								flowMapPosition,
@@ -760,7 +760,7 @@ void FlowMapTest2::initialize()
 			emptyName,
 			formationLinePrototype->getImportTransformMatrix(),
 			transformMatrix) == false) {
-			Console::println("FlowMapTest2::initialize(): Missing '" + emptyName + "'");
+			Console::printLine("FlowMapTest2::initialize(): Missing '" + emptyName + "'");
 		}
 		combatUnitFormationTransform[i].fromMatrix(transformMatrix, RotationOrder::ZYX);
 	}
@@ -807,14 +807,14 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 	}
 
 	//
-	Console::println("Finding path for flow map");
+	Console::printLine("Finding path for flow map");
 	pathFinding->findPath(
 		combatUnits[0].object->getTransform().getTranslation(),
 		endPosition,
 		SceneConnector::BODY_TYPEID_STATIC,
 		path
 	);
-	Console::println("Found a path: steps: " + to_string(path.size()));
+	Console::printLine("Found a path: steps: " + to_string(path.size()));
 	auto center = scene->getBoundingBox()->getCenter();
 	auto depth = Math::ceil(scene->getBoundingBox()->getDimensions().getZ());
 	auto width = Math::ceil(scene->getBoundingBox()->getDimensions().getX());
@@ -839,7 +839,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 				pathB.push_back(path[i]);
 			}
 		}
-		Console::println("Creating flowmap 1");
+		Console::printLine("Creating flowmap 1");
 		flowMap = pathFinding->createFlowMap(
 			{
 				pathA[pathA.size() - 1]
@@ -851,7 +851,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			pathA,
 			false
 		);
-		Console::println("Creating flowmap 2");
+		Console::printLine("Creating flowmap 2");
 		auto flowMap2 = pathFinding->createFlowMap(
 			{
 				path[path.size() - 1]
@@ -863,11 +863,11 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			pathB,
 			true
 		);
-		Console::println("Creating flowmap done");
+		Console::printLine("Creating flowmap done");
 		flowMap->merge(flowMap2);
 		flowMap2->releaseReference();
 	} else {
-		Console::println("Creating flowmap 1");
+		Console::printLine("Creating flowmap 1");
 		flowMap = pathFinding->createFlowMap(
 			{
 				path[path.size() - 1]
@@ -879,7 +879,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			path,
 			true
 		);
-		Console::println("Creating flowmap done");
+		Console::printLine("Creating flowmap done");
 	}
 	{
 		auto i = 0;

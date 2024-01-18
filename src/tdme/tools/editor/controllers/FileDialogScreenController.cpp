@@ -96,7 +96,7 @@ void FileDialogScreenController::initialize()
 		fileNameNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
 		typeDropDownNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -146,7 +146,7 @@ bool FileDialogScreenController::setupFiles()
 		ExtensionFilter extensionsFilter(this, typeDropDownNode->getController()->getValue().getString());
 		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter);
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
 		success = false;
 	}
 	setupFiles(fileList);
@@ -170,7 +170,7 @@ void FileDialogScreenController::setupFiles(const vector<string>& fileNameList, 
 		try {
 			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + fileName) == true) fileImageName = "folder";
 		} catch (Exception& exception) {
-			Console::println("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
+			Console::printLine("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
 		}
 		filesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
@@ -186,7 +186,7 @@ void FileDialogScreenController::setupFiles(const vector<string>& fileNameList, 
 	try {
 		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setupFileDialogListBox(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -211,7 +211,7 @@ void FileDialogScreenController::setupFavorites() {
 	try {
 		favoritesInnerNode->replaceSubNodes(favoritesInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setupFavorites(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setupFavorites(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -238,7 +238,7 @@ void FileDialogScreenController::setupRecents() {
 	try {
 		recentsInnerNode->replaceSubNodes(recentsInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setupRecents(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setupRecents(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -252,7 +252,7 @@ void FileDialogScreenController::setupDrives() {
 			try {
 				if (FileSystem::getStandardFileSystem()->exists(fileName + "/") == true) drives.push_back(fileName);
 			} catch (Exception& exception) {
-				Console::println("FileDialogScreenController::setupDrives(): " + string(exception.what()));
+				Console::printLine("FileDialogScreenController::setupDrives(): " + string(exception.what()));
 			}
 		}
 	#else
@@ -277,7 +277,7 @@ void FileDialogScreenController::setupDrives() {
 	try {
 		drivesInnerNode->replaceSubNodes(drivesInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setupDrives(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setupDrives(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -305,7 +305,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 			this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 		}
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::show(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::show(): An error occurred: " + string(exception.what()));
 		this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	}
 	setupFiles();
@@ -358,7 +358,7 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 				}
 			}
 		} catch (Exception& exception) {
-			Console::println("FileDialogScreenController::onChange(): An error occurred: " + string(exception.what()));
+			Console::printLine("FileDialogScreenController::onChange(): An error occurred: " + string(exception.what()));
 			fileNameNode->getController()->setValue(MutableString());
 		}
 	}
@@ -383,7 +383,7 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 					try {
 						cwd = FileSystem::getStandardFileSystem()->getCanonicalURI(cwd, selectedFile);
 					} catch (Exception& exception) {
-						Console::println("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
+						Console::printLine("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
 					}
 					if (setupFiles() == false) {
 						cwd = lastCwd;
@@ -397,7 +397,7 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 					fileNameNode->getController()->setValue(selectedFile);
 				}
 			} catch (Exception& exception) {
-				Console::println("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
+				Console::printLine("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
 				fileNameNode->getController()->setValue(MutableString());
 			}
 		} else
@@ -523,7 +523,7 @@ void FileDialogScreenController::loadSettings() {
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setDefaultCWD(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setDefaultCWD(): An error occurred: " + string(exception.what()));
 	}
 
 }
@@ -552,7 +552,7 @@ void FileDialogScreenController::saveSettings() {
 		}
 		settings.store(settingsPathName.empty() == false?settingsPathName:defaultCwd, settingsFileName, FileSystem::getStandardFileSystem());
 	} catch (Exception& exception) {
-		Console::println("FileDialogScreenController::setDefaultCWD(): An error occurred: " + string(exception.what()));
+		Console::printLine("FileDialogScreenController::setDefaultCWD(): An error occurred: " + string(exception.what()));
 	}
 }
 

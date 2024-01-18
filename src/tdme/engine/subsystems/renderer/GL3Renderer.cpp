@@ -124,7 +124,7 @@ bool GL3Renderer::isSupportingMultithreadedRendering() {
 
 #if defined (__APPLE__) && !defined(__aarch64__)
 	void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
-		Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
+		Console::printLine(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
 	}
 #endif
 
@@ -173,7 +173,7 @@ void GL3Renderer::initialize()
 		cl_char clDeviceDeviceName[1024] = {0};
 		clError = clGetDeviceInfo(clDeviceId, CL_DEVICE_VENDOR, sizeof(clDeviceVendorName) - 1, clDeviceVendorName, &clSize);
 		clError|= clGetDeviceInfo(clDeviceId, CL_DEVICE_NAME, sizeof(clDeviceDeviceName) - 1, clDeviceDeviceName, &clSize);
-		Console::println(string("GL3Renderer::initialize(): Using OpenCL CL device: ") + (char*)clDeviceVendorName + ": " + (char*)clDeviceDeviceName);
+		Console::printLine(string("GL3Renderer::initialize(): Using OpenCL CL device: ") + (char*)clDeviceVendorName + ": " + (char*)clDeviceDeviceName);
 
 		// CL context, skinning kernel
 		cl_context_properties properties[] = {
@@ -325,7 +325,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetShaderInfoLog(shaderId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GL3Renderer::loadShader") +
 				string("[") +
@@ -338,7 +338,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLog
 			 )
 		 );
-		Console::println(shaderSource);
+		Console::printLine(shaderSource);
 		// remove shader
 		glDeleteShader(shaderId);
 		//
@@ -376,7 +376,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
 		string infoLog(infoLogLength, static_cast<char>(0));
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
-		Console::println(
+		Console::printLine(
 			string(
 				string("GL3Renderer::linkProgram") +
 				"[" +
@@ -1065,7 +1065,7 @@ int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureId, int32
 	// check FBO status
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
+		Console::printLine(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1131,7 +1131,7 @@ int32_t GL3Renderer::createGeometryBufferObject(
 	// check FBO status
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
+		Console::printLine(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1183,7 +1183,7 @@ void GL3Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int
 
 void GL3Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	Console::println(string("GL3Renderer::uploadIndicesBufferObject()::not implemented yet"));
+	Console::printLine(string("GL3Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
 void GL3Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -1439,7 +1439,7 @@ void GL3Renderer::checkGLError(int line)
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		Console::println(string("OpenGL Error: (" + to_string(error) + ") @: " + __FILE__ + ":" + to_string(line)));
+		Console::printLine(string("OpenGL Error: (" + to_string(error) + ") @: " + __FILE__ + ":" + to_string(line)));
 	}
 }
 

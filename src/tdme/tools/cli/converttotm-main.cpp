@@ -96,7 +96,7 @@ public:
 
 	// overridden methods
 	void display() override {
-		Console::println("Exporting models: Using BC7 texture compression: " + string(useBC7TextureCompression == true?"true":"false"));
+		Console::printLine("Exporting models: Using BC7 texture compression: " + string(useBC7TextureCompression == true?"true":"false"));
 		try {
 			//
 			auto scaleTo = 1024.0f;
@@ -104,7 +104,7 @@ public:
 			for (const auto& inputFileName: modelFileNames) {
 				auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 				try {
-					Console::println("Loading model: " + inputFileName);
+					Console::printLine("Loading model: " + inputFileName);
 					auto model = unique_ptr<Model>(
 						ModelReader::read(
 							FileSystem::getInstance()->getPathName(inputFileName),
@@ -208,7 +208,7 @@ public:
 						}
 					}
 					//
-					Console::println("Exporting model: " + outputFileName);
+					Console::printLine("Exporting model: " + outputFileName);
 					TMWriter::write(
 						model.get(),
 						FileSystem::getInstance()->getPathName(outputFileName),
@@ -216,11 +216,11 @@ public:
 						useBC7TextureCompression
 					);
 				} catch (Exception& exception) {
-					Console::println("An error occurred: " + string(exception.what()));
+					Console::printLine("An error occurred: " + string(exception.what()));
 				}
 			}
 		} catch (Exception& exception) {
-			Console::println("An error occurred: " + string(exception.what()));
+			Console::printLine("An error occurred: " + string(exception.what()));
 		}
 		Application::exit(0);
 	}
@@ -244,11 +244,11 @@ public:
 
 int main(int argc, char** argv)
 {
-	Console::println(string("converttotm ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("converttotm ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 	if (argc < 2) {
-		Console::println("Usage: converttotm [--no-texture-compression] inputfile1 [inputfileN]");
+		Console::printLine("Usage: converttotm [--no-texture-compression] inputfile1 [inputfileN]");
 		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	return tdme::tools::cli::ConvertToTMApplication::main(argc, argv);

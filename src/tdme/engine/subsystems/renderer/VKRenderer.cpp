@@ -77,7 +77,7 @@ using std::to_string;
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define ERR_EXIT(err_msg, err_class) \
     do { \
-        Console::println(err_msg); \
+        Console::printLine(err_msg); \
         Application::exit(1); \
     } while (0)
 
@@ -842,7 +842,7 @@ inline void VKRenderer::prepareMipMapTextureImage(int contextIdx, struct texture
 }
 
 void VKRenderer::initializeSwapChain() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	VkResult err;
 	VkSwapchainKHR oldSwapchain = windowSwapchain;
@@ -1007,7 +1007,7 @@ bool VKRenderer::isSupportingMultithreadedRendering() {
 
 void VKRenderer::initialize()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// create VK shader cache path
 	try {
@@ -1015,7 +1015,7 @@ void VKRenderer::initialize()
 			FileSystem::getInstance()->createPath("shader/vk");
 		}
 	} catch (Exception& exception) {
-		Console::println(string() + "An error occurred: " + exception.what());
+		Console::printLine(string() + "An error occurred: " + exception.what());
 	}
 
 	//
@@ -1050,7 +1050,7 @@ void VKRenderer::initialize()
 	// enable validation layers if app runs in debug mode
 	auto enableValidationLayers = Application::getApplication()->isDebuggingEnabled();
 	if (enableValidationLayers == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): \"--debug\" mode enabled: Enabling validation layers");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): \"--debug\" mode enabled: Enabling validation layers");
 
 		VkBool32 validationFound = 0;
 		err = vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
@@ -1363,7 +1363,7 @@ void VKRenderer::initialize()
 		}
 	}
 	if (windowFormat == VK_FORMAT_UNDEFINED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): No format given");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): No format given");
 		ERR_EXIT(
 			"Could not use VK_FORMAT_R8G8B8A8_UNORM as format\n",
 			"Format Failure"
@@ -1660,7 +1660,7 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 	if (boundFrameBufferId != ID_NONE) {
 		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			usedFrameBuffer = frameBuffer->frameBuffer;
 			vkRenderPass = frameBuffer->renderPass;
@@ -1715,13 +1715,13 @@ void VKRenderer::initializeFrameBuffers() {
 }
 
 void VKRenderer::reshape() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
 	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&windowWidth, (int32_t*)&windowHeight);
 
 	//
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(windowWidth) + " x " + to_string(windowHeight));
+	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(windowWidth) + " x " + to_string(windowHeight));
 
 	// dispose old frame buffers
 	for (auto i = 0; i < windowFramebufferBuffers.size(); i++) {
@@ -1747,7 +1747,7 @@ void VKRenderer::reshape() {
 
 void VKRenderer::initializeFrame()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// work around for AMD drivers not telling if window needs to be reshaped
 	{
@@ -1865,7 +1865,7 @@ inline void VKRenderer::invalidatePipelines() {
 	disposeMutex.unlock();
 
 	//
-	Console::println(
+	Console::printLine(
 		"VKRenderer::" + string(__FUNCTION__) + "(): " +
 		"cleared pipelines parents: " + to_string(clearedPipelinesParents) + ", " +
 		"cleared pipelines: " + to_string(clearedPipelines)
@@ -1874,7 +1874,7 @@ inline void VKRenderer::invalidatePipelines() {
 
 void VKRenderer::finishFrame()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
 	finishRendering();
@@ -1980,7 +1980,7 @@ void VKRenderer::finishFrame()
 		for (auto textureId: disposeTextures) {
 			auto texture = unique_ptr<texture_type>(getTextureInternal(textureId));
 			if (texture == nullptr) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
+				Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
 				continue;
 			}
 			// mark for deletion
@@ -2018,7 +2018,7 @@ void VKRenderer::finishFrame()
 		for (auto bufferObjectId: disposeBuffers) {
 			auto buffer = unique_ptr<buffer_object_type>(getBufferObjectInternal(bufferObjectId));
 			if (buffer == nullptr) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
+				Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
 				continue;
 			}
 			for (auto& reusableBufferIt: buffer->buffers) {
@@ -2136,7 +2136,7 @@ int32_t VKRenderer::getTextureUnits()
 
 int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
 
 	auto shaderPtr = new shader_type();
 	shaders[shaderIdx] = shaderPtr;
@@ -2357,7 +2357,7 @@ void VKRenderer::createGUIRenderingPipeline(int contextIdx, program_type* progra
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			usedRenderPass = frameBuffer->renderPass;
 		} else {
-			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
+			if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
 		}
 	}
 
@@ -2535,7 +2535,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			usedRenderPass = frameBuffer->renderPass;
 		} else {
-			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
+			if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
 		}
 	}
 
@@ -3322,7 +3322,7 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 
 	//
 	if (programId < ID_NONE || programId >= programVector.size()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
 		return;
 	}
 
@@ -3333,9 +3333,9 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 
 int32_t VKRenderer::createProgram(int type)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (programVector.size() >= PROGRAMS_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not create program, maximum is " + to_string(PROGRAMS_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not create program, maximum is " + to_string(PROGRAMS_MAX));
 		return ID_NONE;
 	}
 	auto programPtr = new program_type();
@@ -3354,20 +3354,20 @@ int32_t VKRenderer::createProgram(int type)
 		}
 	}
 	programVector.push_back(programPtr);
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program id: " + to_string(program.id));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): program id: " + to_string(program.id));
 	return program.id;
 }
 
 void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto shaderIt = shaders.find(shaderId);
 	if (shaderIt == shaders.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
 		return;
 	}
 	if (programId < 0 || programId >= programVector.size()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return;
 	}
 	auto program = programVector[programId];
@@ -3377,9 +3377,9 @@ void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 	if (programId < 0 || programId >= programVector.size()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return false;
 	}
 
@@ -3415,7 +3415,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 						void* mmData;
 						vmaMapMemory(vmaAllocator, uniformBufferBuffer.allocation, &mmData);
 					} else {
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable uniform buffer");
+						Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable uniform buffer");
 					}
 				}
 			};
@@ -3437,7 +3437,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			err = vkCreateShaderModule(device, &shaderModuleCreateInfo, nullptr, &shader->module);
 			if (err == VK_SUCCESS) {
 				if (VERBOSE == true) {
-					Console::println(
+					Console::printLine(
 						string(
 							string("VKRenderer::") +
 							string(__FUNCTION__) +
@@ -3449,7 +3449,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 					);
 				}
 			} else {
-				Console::println(
+				Console::printLine(
 					string(
 						string("VKRenderer::") +
 						string(__FUNCTION__) +
@@ -3459,7 +3459,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 						string(": FAILED")
 					 )
 				);
-				Console::println(shader->source);
+				Console::printLine(shader->source);
 				return false;
 			}
 	    }
@@ -3475,7 +3475,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 	if (program.type == PROGRAM_COMPUTE) {
 		createSkinningComputingProgram(&program);
 	} else {
-		Console::println(
+		Console::printLine(
 			string("VKRenderer::") +
 			string(__FUNCTION__) +
 			string("[") +
@@ -3492,16 +3492,16 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + name);
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + name);
 	if (programId < 0 || programId >= programVector.size()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return -1;
 	}
 	auto program = programVector[programId];
 	for (const auto& [uniformLocation, uniformName]: program->uniformLocations) {
 		if (uniformName == name) return uniformLocation;
 	}
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
 	return -1;
 }
 
@@ -3513,7 +3513,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 	for (auto shader: currentContext.program->shaders) {
 		//
 		if (uniformId < 0 || uniformId >= shader->uniformList.size()) {
-			Console::println(
+			Console::printLine(
 				"VKRenderer::" +
 				string(__FUNCTION__) +
 				"(): program: uniform id out of uniform list bounds: " +
@@ -3522,7 +3522,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				to_string(uniformId) + " / " +
 				to_string(shader->uniformList.size())
 			);
-			Console::println(
+			Console::printLine(
 				string("\t") +
 				to_string(currentContext.idx) + ": " +
 				to_string(currentContext.program->id) + ": " +
@@ -3540,7 +3540,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_UNIFORM) {
 			/*
 			if (currentContext.uniformBuffers[shaderIdx] == nullptr) {
-				Console::println(
+				Console::printLine(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
 					"(): shader: no shader uniform buffer in context: " +
@@ -3554,7 +3554,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				continue;
 			} else
 			if (size != shaderUniform.size) {
-				Console::println(
+				Console::printLine(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
 					"(): program: uniform size != given size: " +
@@ -3572,7 +3572,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				continue;
 			}
 			if (currentContext.uniformBuffers[shaderIdx]->size < shaderUniform.position + size) {
-				Console::println(
+				Console::printLine(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
 					"(): program: uniform buffer is too small: " +
@@ -3801,7 +3801,7 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
 	beginDrawCommandBuffer(0);
@@ -3855,10 +3855,10 @@ void VKRenderer::clear(int32_t mask)
 
 int32_t VKRenderer::createTexture()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -3878,22 +3878,22 @@ int32_t VKRenderer::createTexture()
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -3915,7 +3915,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	//
 	auto& depthBufferTexture = *getTextureInternal(textureId);
@@ -4041,22 +4041,22 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -4078,7 +4078,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *getTextureInternal(textureId);
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
@@ -4208,22 +4208,22 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 }
 
 int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -4244,22 +4244,22 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 }
 
 int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -4281,7 +4281,7 @@ int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 
 void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	if (VERBOSE == true) {
-		Console::println(
+		Console::printLine(
 			"VKRenderer::" + string(__FUNCTION__) + "(): " +
 			textureLeft->getId() + " / " +
 			textureRight->getId() + " / " +
@@ -4299,7 +4299,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	//
 	auto textureObjectPtr = getTextureInternal(boundTexture.id);
 	if (textureObjectPtr == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
 	auto& texture = *textureObjectPtr;
@@ -4307,7 +4307,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	// already uploaded
 	/*
 	if (texture.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		return;
 	}
 	*/
@@ -4459,25 +4459,25 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() > TEXTURES_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
 		texturesMutex.unlock();
 		return ID_NONE;
 	}
@@ -4685,7 +4685,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	auto textureObjectPtr = getTextureInternal(boundTexture.id);
 	if (textureObjectPtr == nullptr) {
 		texturesMutex.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
 	auto& textureType = *textureObjectPtr;
@@ -4693,7 +4693,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	// already uploaded
 	/*
 	if (textureType.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		texturesMutex.unlock();
 		return;
 	}
@@ -5152,7 +5152,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 
 void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
@@ -5335,7 +5335,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5344,18 +5344,18 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	auto texturePtr = getTextureInternal(textureId);
 	if (texturePtr == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
@@ -5376,7 +5376,7 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5385,18 +5385,18 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	auto texturePtr = getTextureInternal(textureId);
 	if (texturePtr == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
@@ -5416,7 +5416,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5425,18 +5425,18 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	auto texturePtr = getTextureInternal(textureId);
 	if (texturePtr == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
@@ -5456,7 +5456,7 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 }
 
 void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5465,18 +5465,18 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 
 	//
 	if (width <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
 		width = 1;
 	}
 	if (height <= 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
 		height = 1;
 	}
 
 	//
 	auto texturePtr = getTextureInternal(textureId);
 	if (texturePtr == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
@@ -5534,10 +5534,10 @@ void VKRenderer::disposeTexture(int32_t textureId)
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 	auto frameBuffer = frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 	if (frameBuffer == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): frame buffer not found: " + to_string(frameBufferId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): frame buffer not found: " + to_string(frameBufferId));
 		return;
 	}
 	auto& frameBufferStruct = *frameBuffer;
@@ -5548,10 +5548,10 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		texture_type* colorBufferTexture = getTextureInternal(frameBufferStruct.colorTextureId);
 
 		if (depthBufferTexture == nullptr) {
-			if (frameBufferStruct.depthTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depthTextureId));
+			if (frameBufferStruct.depthTextureId != ID_NONE) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depthTextureId));
 		}
 		if (colorBufferTexture == nullptr) {
-			if (frameBufferStruct.colorTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.colorTextureId));
+			if (frameBufferStruct.colorTextureId != ID_NONE) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.colorTextureId));
 		}
 
 		//
@@ -5570,7 +5570,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		if (depthBufferTexture != nullptr && colorBufferTexture != nullptr &&
 			(depthBufferTexture->width != colorBufferTexture->width ||
 			depthBufferTexture->height != colorBufferTexture->height)) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: attachments with different dimension found: Not creating!");
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: attachments with different dimension found: Not creating!");
 			return;
 		}
 
@@ -5717,7 +5717,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			depthBufferTexture->width != colorBufferTexture3->width || depthBufferTexture->height != colorBufferTexture3->height ||
 			depthBufferTexture->width != colorBufferTexture4->width || depthBufferTexture->height != colorBufferTexture4->height ||
 			depthBufferTexture->width != colorBufferTexture5->width || depthBufferTexture->height != colorBufferTexture5->height) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): geometry buffer: attachments with different dimension found: Not creating!");
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): geometry buffer: attachments with different dimension found: Not creating!");
 			return;
 		}
 
@@ -5837,7 +5837,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureId) + ", " + to_string(colorBufferTextureId) + " / " + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureId) + ", " + to_string(colorBufferTextureId) + " / " + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex));
 
 	// try to reuse a frame buffer id
 	auto reuseIndex = -1;
@@ -5860,7 +5860,7 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_
 	if (cubeMapTextureId != ID_NONE) {
 		auto cubeMapTexture = getTextureInternal(cubeMapTextureId);
 		if (cubeMapTexture == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): missing cube map texture with id: " + to_string(cubeMapTextureId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): missing cube map texture with id: " + to_string(cubeMapTextureId));
 		} else {
 			cubeMapTexture->bindTexture = cubeMapTexture;
 		}
@@ -5890,7 +5890,7 @@ int32_t VKRenderer::createGeometryBufferObject(
 	int32_t colorBufferTextureId5
 ) {
 	if (VERBOSE == true) {
-		Console::println(
+		Console::printLine(
 			"VKRenderer::" + string(__FUNCTION__) + "(): " +
 			to_string(depthBufferTextureId) + ", " +
 			to_string(geometryBufferTextureId1) + ", " +
@@ -5937,14 +5937,14 @@ int32_t VKRenderer::createGeometryBufferObject(
 
 	//
 	createFramebufferObject(frameBuffer.id);
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new geometry frame buffer: " + to_string(frameBuffer.id));
+	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): new geometry frame buffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
 }
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	//
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(boundFrameBufferId) + " --> " + to_string(frameBufferId));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(boundFrameBufferId) + " --> " + to_string(frameBufferId));
 
 	//
 	if (frameBufferId == boundFrameBufferId) return;
@@ -5959,7 +5959,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	if (boundFrameBufferId != ID_NONE) {
 		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -5998,7 +5998,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					}
 					applyImageLayoutChange(0, colorBufferTexture.frameBufferUnbindImageLayoutChange, &colorBufferTexture, false);
 				}
-				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": color buffer: unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
+				if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": color buffer: unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 			} else
 			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -6053,7 +6053,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					colorBufferTexturesImageLayoutChanges[i++] = colorBufferTexture->frameBufferUnbindImageLayoutChange;
 				}
 				applyImageLayoutChanges(0, colorBufferTexturesImageLayoutChanges, colorBufferTextures, false);
-				if (VERBOSE == true) Console::println(
+				if (VERBOSE == true) Console::printLine(
 					"VKRenderer::" + string(__FUNCTION__) + "(): " +
 					to_string(frameBufferId) +
 					": geometry buffer: unbinding: " +
@@ -6075,7 +6075,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	if (frameBufferId != ID_NONE) {
 		auto frameBuffer = frameBufferId < 0 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 			frameBufferId = ID_NONE;
 		}
 	}
@@ -6085,7 +6085,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	if (boundFrameBufferId != ID_NONE) {
 		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -6124,7 +6124,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					}
 					applyImageLayoutChange(0, colorBufferTexture.frameBufferBindImageLayoutChange, &colorBufferTexture, false);
 				}
-				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
+				if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 			} else
 			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -6179,7 +6179,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					colorBufferTexturesImageLayoutChanges[i++] = colorBufferTexture->frameBufferBindImageLayoutChange;
 				}
 				applyImageLayoutChanges(0, colorBufferTexturesImageLayoutChanges, colorBufferTextures, false);
-				if (VERBOSE == true) Console::println(
+				if (VERBOSE == true) Console::printLine(
 					"VKRenderer::" + string(__FUNCTION__) + "(): " +
 					to_string(frameBufferId) +
 					": geometry buffer: binding: " +
@@ -6203,10 +6203,10 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 	auto frameBuffer = unique_ptr<framebuffer_object_type>(frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId]);
 	if (frameBuffer == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 		return;
 	}
 	vkDestroyRenderPass(device, frameBuffer->renderPass, nullptr);
@@ -6218,11 +6218,11 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 
 vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
 	buffersMutex.lock();
 	if (bufferIdx - freeBufferIds.size() > BUFFERS_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): coud not allocate buffer object, maximum is " + to_string(BUFFERS_MAX));
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): coud not allocate buffer object, maximum is " + to_string(BUFFERS_MAX));
 		buffersMutex.unlock();
 		return bufferIds;
 	}
@@ -6767,7 +6767,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 							};
 							break;
 						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 							break;
 					}
 				} else {
@@ -6789,7 +6789,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 								};
 								break;
 							default:
-								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+								Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 								break;
 						}
 					} else {
@@ -6859,7 +6859,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
 	drawInstancedIndexedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, 1);
@@ -6908,7 +6908,7 @@ void VKRenderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangle
 
 void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
@@ -6952,7 +6952,7 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 						};
 						break;
 					default:
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 						break;
 				}
 			} else {
@@ -6974,7 +6974,7 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 							};
 							break;
 						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 							break;
 					}
 				} else {
@@ -7069,7 +7069,7 @@ void VKRenderer::setLineWidth(float lineWidth)
 
 void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
@@ -7112,7 +7112,7 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 						};
 						break;
 					default:
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 						break;
 				}
 			} else {
@@ -7134,7 +7134,7 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 							};
 							break;
 						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 							break;
 					}
 				} else {
@@ -7254,7 +7254,7 @@ void VKRenderer::setTextureUnit(int contextIdx, int32_t textureUnit)
 
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
 	auto pixelDepth = -1.0f;
@@ -7270,7 +7270,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	if (frameBuffer == nullptr) {
 		auto depthBufferTexture = getTextureInternal(depthBufferDefault);
 		if (depthBufferTexture == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(depthBufferDefault));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(depthBufferDefault));
 			return pixelDepth;
 		}
 		usedFormat = depthBufferTexture->format;
@@ -7282,7 +7282,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	} else {
 		auto depthBufferTexture = getTextureInternal(frameBuffer->depthBufferTextureId);
 		if (depthBufferTexture == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(frameBuffer->depthBufferTextureId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(frameBuffer->depthBufferTextureId));
 			return pixelDepth;
 		} else {
 			usedFormat = depthBufferTexture->format;
@@ -7314,7 +7314,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	auto memoryMapped = (memoryFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 	if (memoryMapped == false) {
 		vmaSpinlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable buffer");
+		Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable buffer");
 		return pixelDepth;
 	}
 
@@ -7386,7 +7386,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	deleteMutex.unlock();
 
 	//
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(pixelDepth));
+	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(pixelDepth));
 
 	//
 	return pixelDepth;
@@ -7394,7 +7394,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 
 ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// determine image to read
 	VkFormat usedFormat = VK_FORMAT_UNDEFINED;
@@ -7415,7 +7415,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	} else {
 		auto colorBufferTexture = getTextureInternal(frameBuffer->colorTextureId);
 		if (colorBufferTexture == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBuffer->colorTextureId));
+			Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBuffer->colorTextureId));
 			return nullptr;
 		} else {
 			usedFormat = colorBufferTexture->format;
@@ -7837,7 +7837,7 @@ void VKRenderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffer
 }
 
 void VKRenderer::setVSync(bool vSync) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(this->vSync) + " --> " + to_string(vSync));
+	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(this->vSync) + " --> " + to_string(vSync));
 	if (this->vSync == vSync) return;
 	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;
 	this->vSync = vSync;

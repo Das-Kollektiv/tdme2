@@ -65,7 +65,7 @@ void MarkdownTabView::initialize()
 		markdownTabController->initialize(editorView->getScreenController()->getScreenNode());
 		screenNode->addTooltipRequestListener(markdownTabController.get());
 	} catch (Exception& exception) {
-		Console::println("MarkdownTabView::initialize(): An error occurred: " + string(exception.what()));
+		Console::printLine("MarkdownTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }

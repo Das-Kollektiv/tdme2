@@ -87,7 +87,7 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_script"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println("PrototypeScriptSubController::setScriptDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeScriptSubController::setScriptDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 	//
@@ -105,7 +105,7 @@ void PrototypeScriptSubController::updateScriptDetails(Prototype* prototype) {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setTooltip(prototype->getScript());
 		}
 	} catch (Exception& exception) {
-		Console::println("PrototypeScriptSubController::updateScriptDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("PrototypeScriptSubController::updateScriptDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }

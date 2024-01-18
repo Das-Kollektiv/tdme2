@@ -175,7 +175,7 @@ const string GUIParser::getRootNode(const string& xml) {
 	xmlDocument.Parse(xml.c_str());
 	if (xmlDocument.Error() == true) {
 		string message = string("GUIParser::getRootNode(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + xml;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	//
@@ -210,7 +210,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	xmlDocument.Parse(newXML.c_str());
 	if (xmlDocument.Error() == true) {
 		string message = string("GUIParser::parse(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
@@ -321,7 +321,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 	xmlDocument.Parse((string("<gui-element>") + newXML + string("</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
 		auto message = "GUIParser::parse(): Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	TiXmlElement* xmlNode = xmlDocument.RootElement();
@@ -1579,7 +1579,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 		newTemplateDocument.Parse(newTemplateXML.c_str());
 		if (newTemplateDocument.Error() == true) {
 			string message = "GUIParser::parseTemplate(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + templateXML;
-			Console::println(message);
+			Console::printLine(message);
 			throw GUIParserException(message);
 		}
 		auto defaultsNodes = getChildrenByTagName(newTemplateDocument.RootElement(), "defaults");
@@ -1593,7 +1593,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 						templateAttributes[name] = value;
 					}
 				} else {
-					Console::println("GUIParser::parseTemplate(): unknown defaults node: " + nodeTagName);
+					Console::printLine("GUIParser::parseTemplate(): unknown defaults node: " + nodeTagName);
 				}
 			}
 		}
@@ -1630,7 +1630,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 	newTemplateDocument.Parse(newTemplateXML.c_str());
 	if (newTemplateDocument.Error() == true) {
 		string message = "GUIParser::parseTemplate(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + newTemplateXML;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	parseGUINode(parentNode, parentElementId, newTemplateDocument.RootElement(), guiElement);
@@ -1710,7 +1710,7 @@ int GUIParser::parseInteger(const string& value, int defaultValue) {
 	try {
 		return Integer::parse(value);
 	} catch (Exception& exception) {
-		Console::println("GUIParser::parseInteger(): Unknown integer value: '" + value + "': using default value: " + to_string(defaultValue));
+		Console::printLine("GUIParser::parseInteger(): Unknown integer value: '" + value + "': using default value: " + to_string(defaultValue));
 		return defaultValue;
 	}
 }
@@ -1755,7 +1755,7 @@ unordered_map<string, string> GUIParser::parseTemplateAttributes(const string& t
 	newTemplateDocument.Parse(newTemplateXML.c_str());
 	if (newTemplateDocument.Error() == true) {
 		string message = "GUIParser::parseTemplateAttributes(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + templateXML;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	auto defaultsNodes = getChildrenByTagName(newTemplateDocument.RootElement(), "defaults");
@@ -1767,7 +1767,7 @@ unordered_map<string, string> GUIParser::parseTemplateAttributes(const string& t
 				auto value = string(AVOID_NULLPTR_STRING(node->Attribute("value")));
 				templateAttributes[name] = value;
 			} else {
-				Console::println("GUIParser::parseTemplateAttributes(): unknown defaults node: " + nodeTagName);
+				Console::printLine("GUIParser::parseTemplateAttributes(): unknown defaults node: " + nodeTagName);
 			}
 		}
 	}
@@ -1782,7 +1782,7 @@ const string GUIParser::getInnerXml(const string& xml) {
 	xmlDocument.Parse(xml.c_str());
 	if (xmlDocument.Error() == true) {
 		string message = string("GUIParser::getInnerXml(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + xml;
-		Console::println(message);
+		Console::printLine(message);
 		throw GUIParserException(message);
 	}
 	//
@@ -1830,237 +1830,237 @@ void GUIParser::initialize()
 		engineThemeProperties.load("./resources/engine/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		projectThemeProperties.load("./resources/project/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUICheckbox();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIRadioButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISelectBox();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISelectBoxOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISelectBoxParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIDropDown();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIDropDownOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUITabs();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUITabsHeader();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUITab();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUITabsContent();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUITabContent();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIInput();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIScrollArea();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISliderH();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISliderV();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIKnob();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIImageButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIProgressBar();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIMenuHeader();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIMenuHeaderItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIMenuSeparator();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIContextMenu();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIContextMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISelectorH();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUISelectorHOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIStyledInput();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIMoveable();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIGrid();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 	try {
 		auto guiElement = new GUIGridItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 }
 
@@ -2074,6 +2074,6 @@ void GUIParser::loadProjectThemeProperties(const string& pathName) {
 		projectThemeProperties.load(pathName + "/resources/project/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::loadProjectThemeProperties(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::printLine(string(exception.what()));
 	}
 }

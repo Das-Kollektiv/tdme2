@@ -240,7 +240,7 @@ void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_y"))->getController()->setValue(MutableString(environmentMapTranslation.getY()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->setValue(MutableString(environmentMapTranslation.getZ()));
 	} catch (Exception& exception) {
-		Console::println("EnvMapEditorTabController::updateDetails(): An error occurred: " + string(exception.what()));
+		Console::printLine("EnvMapEditorTabController::updateDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -277,7 +277,7 @@ void EnvMapEditorTabController::applyRenderPasses() {
 		view->setEnvironmentMapRenderPassMask(renderPassMask);
 		prototype->setEnvironmentMapRenderPassMask(renderPassMask);
 	} catch (Exception& exception) {
-		Console::println("EnvMapEditorTabController::applyRenderPasses(): An error occurred: " + string(exception.what()));
+		Console::printLine("EnvMapEditorTabController::applyRenderPasses(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
@@ -291,7 +291,7 @@ void EnvMapEditorTabController::applyLocation() {
 		);
 		view->setEnvironmentMapTranslation(environmentMapTranslation);
 	} catch (Exception& exception) {
-		Console::println("EnvMapEditorTabController::applyLocation(): An error occurred: " + string(exception.what()));
+		Console::printLine("EnvMapEditorTabController::applyLocation(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
