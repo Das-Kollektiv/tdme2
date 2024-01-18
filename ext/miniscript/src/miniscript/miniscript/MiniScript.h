@@ -116,7 +116,18 @@ public:
 		STATEMACHINESTATE_WAIT_FOR_CONDITION
 	};
 
+	/**
+	 * Statement
+	 */
 	struct Statement {
+		/**
+		 * Constructor
+		 * @param line line
+		 * @param statementIdx statement index
+		 * @param statement statement
+		 * @param executableStatement executable statement
+		 * @param gotoStatementIdx goto statement index
+		 */
 		Statement(
 			int line,
 			int statementIdx,
@@ -130,6 +141,7 @@ public:
 			executableStatement(executableStatement),
 			gotoStatementIdx(gotoStatementIdx)
 		{}
+		//
 		int line;
 		int statementIdx;
 		string statement;
@@ -903,7 +915,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::copyScriptVariable(): unknown data type with id " + to_string(dataTypeIdx));
+						_Console::printLine("ScriptVariable::copyScriptVariable(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->copyVariable(to, from);
@@ -1091,7 +1103,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
+						_Console::printLine("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->unsetVariableValue(*this);
@@ -1147,7 +1159,7 @@ public:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
+						_Console::printLine("ScriptVariable::setType(): unknown data type with id " + to_string(dataTypeIdx));
 						return;
 					}
 					MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this);
@@ -1228,7 +1240,7 @@ public:
 					value = getIntegerValueReference();
 					return true;
 				case TYPE_FLOAT:
-					_Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+					_Console::printLine("MiniScript::getIntegerValue(): converting float to integer: precision loss");
 					value = getFloatValueReference();
 					return true;
 				case TYPE_STRING:
@@ -1239,7 +1251,7 @@ public:
 							return true;
 						} else
 						if (_Float::is(stringValue) == true) {
-							_Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+							_Console::printLine("MiniScript::getIntegerValue(): converting float to integer: precision loss");
 							value = static_cast<int64_t>(_Float::parse(stringValue));
 							return true;
 						} else {
@@ -1324,9 +1336,9 @@ public:
 				return true;
 			} else {
 				if (statement != nullptr) {
-					_Console::println(miniScript->getStatementInformation(*statement) + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
+					_Console::printLine(miniScript->getStatementInformation(*statement) + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
 				} else {
-					_Console::println(miniScript->getScriptFileName() + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
+					_Console::printLine(miniScript->getScriptFileName() + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
 				}
 			}
 			return false;
@@ -1452,7 +1464,7 @@ public:
 			// custom data type
 			auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_DATATYPES;
 			if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-				_Console::println("ScriptVariable::setValue(): unknown data type with id " + to_string(dataTypeIdx));
+				_Console::printLine("ScriptVariable::setValue(): unknown data type with id " + to_string(dataTypeIdx));
 				return;
 			}
 			MiniScript::dataTypes[dataTypeIdx]->setVariableValue(*this, value);
@@ -2240,7 +2252,7 @@ public:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(getType()) - TYPE_PSEUDO_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::dataTypes.size()) {
-						_Console::println("ScriptVariable::getValueAsString(): unknown data type with id " + to_string(dataTypeIdx));
+						_Console::printLine("ScriptVariable::getValueAsString(): unknown data type with id " + to_string(dataTypeIdx));
 						return result;
 					}
 					return MiniScript::dataTypes[dataTypeIdx]->getValueAsString(*this);
@@ -2426,6 +2438,9 @@ public:
 		bool returnValueNullable;
 	};
 
+	/**
+	 * Syntax Tree Node
+	 */
 	struct SyntaxTreeNode {
 		enum Type {
 			SCRIPTSYNTAXTREENODE_NONE,
@@ -2433,12 +2448,22 @@ public:
 			SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
 			SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 		};
+		/**
+		 * Constructor
+		 */
 		SyntaxTreeNode():
 			type(SCRIPTSYNTAXTREENODE_NONE),
 			value(Variable()),
 			pointer(0ll),
 			arguments({})
 		{}
+		/**
+		 * Constructor
+		 * @param type type
+		 * @param value value
+		 * @param pointer pointer to method
+		 * @param arguments arguments
+		 */
 		SyntaxTreeNode(
 			Type type,
 			const Variable& value,
@@ -2450,6 +2475,13 @@ public:
 			pointer((uint64_t)method),
 			arguments(arguments)
 		{}
+		/**
+		 * Constructor
+		 * @param type type
+		 * @param value value
+		 * @param functionIdx function index
+		 * @param arguments arguments
+		 */
 		SyntaxTreeNode(
 			Type type,
 			const Variable& value,
@@ -2461,18 +2493,33 @@ public:
 			pointer(functionIdx),
 			arguments(arguments)
 		{}
+		/**
+		 * @return method
+		 */
 		inline Method* getMethod() const {
 			return (Method*)pointer;
 		}
+		/**
+		 * Set method
+		 * @param method method
+		 */
 		inline void setMethod(Method* method) {
 			pointer = (uint64_t)method;
 		}
+		/**
+		 * @return function script index
+		 */
 		inline uint64_t getFunctionScriptIdx() const {
 			return pointer;
 		}
+		/**
+		 * Set function script index
+		 * @param scriptIdx script index
+		 */
 		inline void setFunctionScriptIdx(uint64_t scriptIdx) {
 			pointer = scriptIdx;
 		}
+		//
 		Type type;
 		Variable value;
 		uint64_t pointer;
@@ -2483,7 +2530,15 @@ public:
 	 * Script
 	 */
 	struct Script {
+		/**
+		 * Function Argument
+		 */
 		struct FunctionArgument {
+			/**
+			 * Constructor
+			 * @param name name
+			 * @param reference reference
+			 */
 			FunctionArgument(
 				const string& name,
 				bool reference
@@ -2491,10 +2546,27 @@ public:
 				name(name),
 				reference(reference)
 			{}
+			//
 			string name;
 			bool reference;
 		};
+		//
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		/**
+		 * Constructor
+		 * @param scriptType script type
+		 * @param line line
+		 * @param condition condition
+		 * @param executableCondition executable condition
+		 * @param conditionStatement condition statement
+		 * @param conditionSyntaxTree condition syntax tree
+		 * @param name name
+		 * @param emitCondition emit condition
+		 * @param statements statements
+		 * @param syntaxTree syntax tree
+		 * @param callableFunction callable function
+		 * @param functionArguments function arguments
+		 */
 		Script(
 			ScriptType scriptType,
 			int line,
@@ -2525,6 +2597,7 @@ public:
 			callableFunction(callableFunction),
 			functionArguments(functionArguments)
 		{}
+		//
 		ScriptType scriptType;
 		int line;
 		string condition;
@@ -2618,9 +2691,18 @@ protected:
 	static constexpr int LINE_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
+	/**
+	 * Script state
+	 */
 	struct ScriptState {
 		enum BlockType { BLOCKTYPE_NONE, BLOCKTYPE_BLOCK, BLOCKTYPE_FOR, BLOCKTYPE_FORTIME, BLOCKTYPE_IF, BLOCKTYPE_SWITCH, BLOCKTYPE_CASE };
+		/**
+		 * Block
+		 */
 		struct Block {
+			/**
+			 * Constructor
+			 */
 			Block():
 				type(BLOCKTYPE_NONE),
 				match(false),
@@ -2628,6 +2710,14 @@ protected:
 				breakStatement(nullptr),
 				switchVariable(Variable())
 			{}
+			/**
+			 * Constructor
+			 * @param type type
+			 * @param match match
+			 * @param continueStatement continue statement
+			 * @param breakStatement break statement
+			 * @param switchVariable switch variable
+			 */
 			Block(
 				BlockType type,
 				bool match,
@@ -2641,6 +2731,7 @@ protected:
 				breakStatement(breakStatement),
 				switchVariable(switchVariable)
 			{}
+			//
 			BlockType type;
 			bool match;
 			const Statement* continueStatement;
@@ -3189,7 +3280,7 @@ private:
 					}
 					i--;
 					if (valid == false || j != 8) {
-						_Console::println(getStatementInformation(statement) + ": Invalid hexadecimal unicode character sequence: " + unicodeHexadecimalSequence);
+						_Console::printLine(getStatementInformation(statement) + ": Invalid hexadecimal unicode character sequence: " + unicodeHexadecimalSequence);
 					} else {
 						_Character::appendToString(deescapedStr, _Hex::decodeInt(unicodeHexadecimalSequence));
 					}
@@ -3590,7 +3681,7 @@ public:
 	inline const string getArgumentInformation(const string& methodName) {
 		auto scriptMethod = getMethod(methodName);
 		if (scriptMethod == nullptr) {
-			_Console::println("MiniScript::getArgumentInformation(): method not found: " + methodName);
+			_Console::printLine("MiniScript::getArgumentInformation(): method not found: " + methodName);
 			return "No information available";
 		}
 		return scriptMethod->getArgumentsInformation();
@@ -3719,12 +3810,12 @@ public:
 	 */
 	inline bool isVariableAccess(const string& candidate, const Statement* statement = nullptr) {
 		if (candidate.size() < 2) {
-			_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": empty variable statement");
+			_Console::printLine((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": empty variable statement");
 			return false;
 		}
 		auto i = 0;
 		if (candidate[i++] != '$') {
-			_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must begin with an $");
+			_Console::printLine((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must begin with an $");
 			return false;
 		}
 		if (candidate[i] == '$') i++;
@@ -3739,16 +3830,16 @@ public:
 				squareBracketCount--;
 			} else
 			if (squareBracketCount == 0 && _Character::isAlphaNumeric(c) == false && c != '_' && c != '.' && c != ':') {
-				_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": invalid character in variable statement: '" + c + "'");
+				_Console::printLine((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": invalid character in variable statement: '" + c + "'");
 				return false;
 			}
 		}
 		if (candidate.size() == 2 && string_view(candidate) == string_view("$$", 2)) {
-			_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must not be $$");
+			_Console::printLine((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must not be $$");
 			return false;
 		}
 		if (candidate.size() == 7 && string_view(candidate) == string_view("$GLOBAL", 7)) {
-			_Console::println((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must not be $GLOBAL");
+			_Console::printLine((statement != nullptr?getStatementInformation(*statement):scriptFileName) + ": variable: " + candidate + ": variable statement must not be $GLOBAL");
 			return false;
 		}
 		return true;
@@ -3915,7 +4006,7 @@ public:
 					// if we set a variable in variable scope that did exist before, we can safely remove the constness
 					existingVariable->setValue(variable);
 				} else {
-					_Console::println(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
+					_Console::printLine(getStatementInformation(*statement) + ": constant: " + variableStatement + ": Assignment of constant is not allowed");
 				}
 				return;
 			} else {

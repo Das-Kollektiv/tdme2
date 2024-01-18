@@ -16,13 +16,13 @@ using miniscript::utilities::Console;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscriptuntranspiler ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscriptuntranspiler ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if (argc < 3) {
-		Console::println("Usage: miniscriptuntranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file");
+		Console::printLine("Usage: miniscriptuntranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file");
 		return EXIT_FAILURE;
 	}
 

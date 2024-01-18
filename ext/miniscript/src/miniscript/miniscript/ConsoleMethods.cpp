@@ -25,28 +25,6 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	// console
 	{
 		//
-		class MethodConsoleLog: public MiniScript::Method {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			MethodConsoleLog(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "console.log";
-			}
-			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				for (const auto& argument: arguments) {
-					_Console::print(argument.getValueAsString());
-				}
-				_Console::println();
-			}
-			bool isVariadic() const override {
-				return true;
-			}
-		};
-		miniScript->registerMethod(new MethodConsoleLog(miniScript));
-	}
-	{
-		//
 		class MethodConsoleDump: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -63,10 +41,10 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if (arguments.size() != 1) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					_Console::println(arguments[0].getValueAsString(true));
+					_Console::printLine(arguments[0].getValueAsString(true));
 				}
 			}
 		};
@@ -95,45 +73,45 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	}
 	{
 		//
-		class MethodConsolePrintln: public MiniScript::Method {
+		class MethodConsolePrintLine: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			MethodConsolePrintln(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			MethodConsolePrintLine(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "console.println";
+				return "console.printLine";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				for (const auto& argument: arguments) {
 					_Console::print(argument.getValueAsString());
 				}
-				_Console::println();
+				_Console::printLine();
 			}
 			bool isVariadic() const override {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new MethodConsolePrintln(miniScript));
+		miniScript->registerMethod(new MethodConsolePrintLine(miniScript));
 	}
 	{
 		//
-		class MethodConsoleReadln: public MiniScript::Method {
+		class MethodConsoleReadLine: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			MethodConsoleReadln(MiniScript* miniScript):
+			MethodConsoleReadLine(MiniScript* miniScript):
 				MiniScript::Method({}, MiniScript::TYPE_STRING),
 				miniScript(miniScript) {
 				//
 			}
 			const string getMethodName() override {
-				return "console.readln";
+				return "console.readLine";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
-				returnValue.setValue(_Console::readln());
+				returnValue.setValue(_Console::readLine());
 			}
 		};
-		miniScript->registerMethod(new MethodConsoleReadln(miniScript));
+		miniScript->registerMethod(new MethodConsoleReadLine(miniScript));
 	}
 	{
 		//
@@ -200,25 +178,25 @@ void ConsoleMethods::registerMethods(MiniScript* miniScript) {
 	}
 	{
 		//
-		class MethodConsoleErrorPrintln: public MiniScript::Method {
+		class MethodConsoleErrorPrintLine: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			MethodConsoleErrorPrintln(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
+			MethodConsoleErrorPrintLine(MiniScript* miniScript): MiniScript::Method(), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "console.error.println";
+				return "console.error.printLine";
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				for (const auto& argument: arguments) {
 					_ErrorConsole::print(argument.getValueAsString());
 				}
-				_ErrorConsole::println();
+				_ErrorConsole::printLine();
 			}
 			bool isVariadic() const override {
 				return true;
 			}
 		};
-		miniScript->registerMethod(new MethodConsoleErrorPrintln(miniScript));
+		miniScript->registerMethod(new MethodConsoleErrorPrintLine(miniScript));
 	}
 }
 

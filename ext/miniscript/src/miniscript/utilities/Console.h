@@ -23,7 +23,7 @@ public:
 	 * Print given string and trailing newline to console
 	 * @param str string
 	 */
-	static void println(const string_view& str);
+	static void printLine(const string_view& str);
 
 	/**
 	 * Print given string without trainling newline to console
@@ -34,12 +34,12 @@ public:
 	/**
 	 * Print newline to console
 	 */
-	static void println();
+	static void printLine();
 
 	/**
 	 * Read line from console
 	 */
-	static const string readln();
+	static const string readLine();
 
 	/**
 	 * Read all input from console into string

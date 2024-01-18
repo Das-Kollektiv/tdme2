@@ -41,7 +41,7 @@ bool Network::initialize() {
 		WSADATA wsaData;
 		auto result = WSAStartup(MAKEWORD(2,2), &wsaData);
 		if (result != 0) {
-			Console::println("WinSock2 initialization failed: " + to_string(result));
+			Console::printLine("WinSock2 initialization failed: " + to_string(result));
 			return false;
 		}
 	#endif

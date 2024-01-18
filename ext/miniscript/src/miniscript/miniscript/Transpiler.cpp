@@ -45,7 +45,7 @@ using miniscript::utilities::StringTools;
 void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFileName, const vector<string>& miniScriptExtensionFileNames) {
 	auto scriptFileName = miniScript->getScriptPathName() + "/" + miniScript->getScriptFileName();
 	//
-	Console::println(scriptFileName + ": Processing script");
+	Console::printLine(scriptFileName + ": Processing script");
 	//
 	auto replace = [](const vector<string> input, const string& startTag, const string& endTag, const string& replacement, vector<string>& output) -> bool {
 		auto reject = false;
@@ -103,7 +103,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				auto bracketCount = 0;
 				string className;
 				if (StringTools::firstIndexOf(StringTools::substring(trimmedLine, 14), "new") == string::npos) {
-					Console::println(transpilationUnit + ": registerMethod @ " + to_string(i) + ": '" + trimmedLine + "': unable to determine class name");
+					Console::printLine(transpilationUnit + ": registerMethod @ " + to_string(i) + ": '" + trimmedLine + "': unable to determine class name");
 				} else {
 					auto classNameStartIdx = trimmedLine.find("registerMethod") + 14 + 5;
 					for (auto j = classNameStartIdx; j < trimmedLine.size(); j++) {
@@ -126,7 +126,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	transpilationUnitUsings.erase(unique(transpilationUnitUsings.begin(), transpilationUnitUsings.end()), transpilationUnitUsings.end());
 
 	//
-	Console::println(miniScript->getInformation());
+	Console::printLine(miniScript->getInformation());
 
 	//
 	const auto& scripts = miniScript->getScripts();
@@ -146,7 +146,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 			// method name
 			string methodName =
 				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
-					"":
+					"function_":
 					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
@@ -355,7 +355,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 			// method name
 			string methodName =
 				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
-					"":
+					"function_":
 					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
@@ -559,7 +559,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 	{
 		string emitDefinitionIndent = "\t";
 		emitDefinition+= emitDefinitionIndent + "{" + "\n";
-		emitDefinition+= emitDefinitionIndent + "\t" + "_Console::println(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
+		emitDefinition+= emitDefinitionIndent + "\t" + "_Console::printLine(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
 		emitDefinition+= emitDefinitionIndent + "}" + "\n";
 		emitDefinition+= string() + "}" + "\n";
 	}
@@ -614,7 +614,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				generatedMiniScriptCPP
 			);
 			if (injectedGeneratedCode == false) {
-				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_END__*/ tags in file " + transpilationFileName + "?");
+				Console::printLine(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_END__*/ tags in file " + transpilationFileName + "?");
 			} else {
 				miniScriptCPP = generatedMiniScriptCPP;
 				generatedMiniScriptCPP.clear();
@@ -634,7 +634,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				generatedMiniScriptCPP
 			);
 			if (injectedGeneratedCode == false) {
-				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_END__*/ tags in file " + transpilationFileName + "?");
+				Console::printLine(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_END__*/ tags in file " + transpilationFileName + "?");
 			} else {
 				miniScriptCPP = generatedMiniScriptCPP;
 				generatedMiniScriptCPP.clear();
@@ -650,7 +650,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				generatedMiniScriptCPP
 			);
 			if (injectedGeneratedCode == false) {
-				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ tags in file " + transpilationFileName + "?");
+				Console::printLine(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ tags in file " + transpilationFileName + "?");
 			} else {
 				miniScriptCPP.clear();
 			}
@@ -663,7 +663,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				generatedMiniScriptCPP
 			);
 			//
-			Console::println(scriptFileName + ": Injected generated C++ code in file " + transpilationCPPFileName + ". Dont forget to rebuild your sources.");
+			Console::printLine(scriptFileName + ": Injected generated C++ code in file " + transpilationCPPFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 
@@ -693,7 +693,7 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 		);
 		//
 		if (injectedGeneratedCode == false) {
-			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ tags in file " + transpilationFileName + "?");
+			Console::printLine(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ tags in file " + transpilationFileName + "?");
 		} else {
 			//
 			FileSystem::setContentFromStringArray(
@@ -702,13 +702,13 @@ void Transpiler::transpile(MiniScript* miniScript, const string& transpilationFi
 				generatedMiniScriptClassHeader
 			);
 			//
-			Console::println(scriptFileName + ": Injected generated C++ code in header file " + transpilationHeaderFileName + ". Dont forget to rebuild your sources.");
+			Console::printLine(scriptFileName + ": Injected generated C++ code in header file " + transpilationHeaderFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 }
 
 void Transpiler::untranspile(const string& scriptFileName, const string& transpilationFileName) {
-	Console::println(scriptFileName + ": Processing script");
+	Console::printLine(scriptFileName + ": Processing script");
 	//
 	auto replace = [](const vector<string> input, const string& startTag, const string& endTag, const string& replacement, vector<string>& output) -> bool {
 		auto reject = false;
@@ -777,7 +777,7 @@ void Transpiler::untranspile(const string& scriptFileName, const string& transpi
 		}
 		//
 		if (injectedGeneratedCode == false) {
-			Console::println(scriptFileName + ": Could not remove generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ markers in file " + transpilationFileName + "?");
+			Console::printLine(scriptFileName + ": Could not remove generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ markers in file " + transpilationFileName + "?");
 		} else {
 			//
 			FileSystem::setContentFromStringArray(
@@ -786,7 +786,7 @@ void Transpiler::untranspile(const string& scriptFileName, const string& transpi
 				miniScriptClassNew
 			);
 			//
-			Console::println(scriptFileName + ": Removed generated C++ code in file " + transpilationCPPFileName + ". Dont forget to rebuild your sources.");
+			Console::printLine(scriptFileName + ": Removed generated C++ code in file " + transpilationCPPFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 	//
@@ -807,7 +807,7 @@ void Transpiler::untranspile(const string& scriptFileName, const string& transpi
 		);
 		//
 		if (injectedGeneratedCode == false) {
-			Console::println(scriptFileName + ": Could not remove generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ markers in file " + transpilationFileName + "?");
+			Console::printLine(scriptFileName + ": Could not remove generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ markers in file " + transpilationFileName + "?");
 		} else {
 			//
 			FileSystem::setContentFromStringArray(
@@ -816,7 +816,7 @@ void Transpiler::untranspile(const string& scriptFileName, const string& transpi
 				miniScriptClassHeaderNew
 			);
 			//
-			Console::println(scriptFileName + ": Removed generated C++ code in header file " + transpilationHeaderFileName + ". Dont forget to rebuild your sources.");
+			Console::printLine(scriptFileName + ": Removed generated C++ code in header file " + transpilationHeaderFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 }
@@ -978,7 +978,7 @@ void Transpiler::gatherMethodCode(
 	}
 	// nope
 	if (classDefinitionLine == -1) {
-		Console::println("Transpiler::gatherMethodCode(): did not found '" + className + "' definition");
+		Console::printLine("Transpiler::gatherMethodCode(): did not found '" + className + "' definition");
 		return;
 	}
 	//
@@ -1095,12 +1095,12 @@ void Transpiler::gatherMethodCode(
 	//
 	auto methodCodeMapIt = methodCodeMap.find(methodName);
 	if (methodCodeMapIt != methodCodeMap.end()) {
-		Console::println("Transpiler::gatherMethodCode(): Not registering method with methodName: '" + methodName + "': method already registered");
+		Console::printLine("Transpiler::gatherMethodCode(): Not registering method with methodName: '" + methodName + "': method already registered");
 		return;
 	}
 
 	//
-	Console::println("Transpiler::gatherMethodCode(): registering method with methodName: '" + methodName + "'");
+	Console::printLine("Transpiler::gatherMethodCode(): registering method with methodName: '" + methodName + "'");
 
 	//
 	methodCodeMap[methodName] = executeMethodCode;
@@ -1170,7 +1170,7 @@ void Transpiler::generateVariableAccess(
 						generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", \"$\" + StringTools::substring(arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), " + to_string(globalVariableIdx) + "), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 					}
 				} else {
-					generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+					generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::printLine(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
 					generatedCode+= createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 					if (setConstant == true) {
 						generatedCode+= indent + "setConstant(" + createGlobalVariableName(globalVariable) + ");" + "\n";
@@ -1202,7 +1202,7 @@ void Transpiler::generateVariableAccess(
 						generatedCode+= indent + "setVariable(&" + createLocalVariableName(localVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); returnValue = arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 					}
 				} else {
-					generatedCode+= indent + "if (" + createLocalVariableName(localVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+					generatedCode+= indent + "if (" + createLocalVariableName(localVariable) + ".isConstant() == true) _Console::printLine(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
 					generatedCode+= createLocalVariableName(localVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 					if (setConstant == true) {
 						generatedCode+= indent + "setConstant(" + createLocalVariableName(localVariable) + ");" + "\n";
@@ -1236,7 +1236,7 @@ void Transpiler::generateVariableAccess(
 					generatedCode+= indent + "setVariable(&" + createGlobalVariableName(globalVariable) + ", arguments[" + to_string(getArgumentIdx) + "].getValueAsString(), arguments[" + to_string(setArgumentIdx) + "], &statement); " + returnValueStatement + "arguments[" + to_string(getArgumentIdx) + "]" + statementEnd;
 				}
 			} else {
-				generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::println(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
+				generatedCode+= indent + "if (" + createGlobalVariableName(globalVariable) + ".isConstant() == true) _Console::printLine(getStatementInformation(statement) + \": constant: Assignment of constant is not allowed\"); else ";
 				generatedCode+= createGlobalVariableName(globalVariable) + ".setValue(arguments[" + to_string(setArgumentIdx) + "]); " + returnValueStatement + "arguments[" + to_string(setArgumentIdx) + "]" + statementEnd;
 				if (setConstant == true) {
 					generatedCode+= indent + "setConstant(" + createGlobalVariableName(globalVariable) + ");" + "\n";
@@ -1938,7 +1938,7 @@ bool Transpiler::transpileScriptStatement(
 					// asign script.call method
 					auto method = miniScript->getMethod(callSyntaxTreeNode.value.getValueAsString());
 					if (method == nullptr) {
-						Console::println("Transpiler::transpileScriptStatement(): method code not found: '" + callSyntaxTreeNode.value.getValueAsString() + "'");
+						Console::printLine("Transpiler::transpileScriptStatement(): method code not found: '" + callSyntaxTreeNode.value.getValueAsString() + "'");
 						return false;
 					}
 					callSyntaxTreeNode.setMethod(method);
@@ -1962,7 +1962,7 @@ bool Transpiler::transpileScriptStatement(
 						additionalIndent
 					);
 				} else {
-					Console::println("Transpiler::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueAsString() + "'");
+					Console::printLine("Transpiler::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueAsString() + "'");
 					return false;
 				}
 				//
@@ -2043,7 +2043,7 @@ bool Transpiler::transpileScriptStatement(
 			//
 			break;
 		default:
-			Console::println("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' syntaxTree");
+			Console::printLine("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' syntaxTree");
 			return false;
 
 	}
@@ -2054,7 +2054,7 @@ bool Transpiler::transpileScriptStatement(
 	// find method code in method code map
 	auto methodCodeMapIt = methodCodeMap.find(method);
 	if (methodCodeMapIt == methodCodeMap.end()) {
-		Console::println("Transpiler::transpileScriptStatement(): method code not found: '" + method + "'");
+		Console::printLine("Transpiler::transpileScriptStatement(): method code not found: '" + method + "'");
 		return false;
 	}
 	const auto& methodCode = methodCodeMapIt->second;
@@ -2062,7 +2062,7 @@ bool Transpiler::transpileScriptStatement(
 	// script method
 	auto scriptMethod = miniScript->getMethod(string(method));
 	if (scriptMethod == nullptr) {
-		Console::println("Transpiler::transpileScriptStatement(): method not found: '" + method + "'");
+		Console::printLine("Transpiler::transpileScriptStatement(): method not found: '" + method + "'");
 		return false;
 	}
 
@@ -2168,7 +2168,7 @@ bool Transpiler::transpileScriptStatement(
 										const auto& script = miniScript->getScripts()[scriptConditionIdx != MiniScript::SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
 										string methodName =
 											(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
-												"":
+												"function_":
 												(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 											) +
 											(script.name.empty() == false?script.name:(
@@ -2184,7 +2184,7 @@ bool Transpiler::transpileScriptStatement(
 									break;
 								default:
 									{
-										Console::println("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
+										Console::printLine("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
 										break;
 									}
 							}
@@ -2222,7 +2222,7 @@ bool Transpiler::transpileScriptStatement(
 	// enabled named conditions
 	if (method == MiniScript::METHOD_ENABLENAMEDCONDITION && syntaxTree.arguments.empty() == false) {
 		if (syntaxTree.arguments.size() != 1) {
-			Console::println("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": " + MiniScript::METHOD_ENABLENAMEDCONDITION + "(): expected string argument @ 0");
+			Console::printLine("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": " + MiniScript::METHOD_ENABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
 			string name = syntaxTree.arguments[0].value.getValueAsString();
 			enabledNamedConditions.erase(
@@ -2238,7 +2238,7 @@ bool Transpiler::transpileScriptStatement(
 	} else
 	if (method == MiniScript::METHOD_DISABLENAMEDCONDITION && syntaxTree.arguments.empty() == false) {
 		if (syntaxTree.arguments.size() != 1) {
-			Console::println("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": " + MiniScript::METHOD_DISABLENAMEDCONDITION + "(): expected string argument @ 0");
+			Console::printLine("Transpiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": " + MiniScript::METHOD_DISABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
 			string name = syntaxTree.arguments[0].value.getValueAsString();
 			enabledNamedConditions.erase(
@@ -2284,7 +2284,7 @@ bool Transpiler::transpileScriptStatement(
 							string(),
 							additionalIndent
 						) == false) {
-							Console::println("Transpiler::transpileScriptStatement(): transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": '" + syntaxTree.value.getValueAsString() + "(" + miniScript->getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
+							Console::printLine("Transpiler::transpileScriptStatement(): transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": '" + syntaxTree.value.getValueAsString() + "(" + miniScript->getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
 						}
 					}
 					//
@@ -2393,7 +2393,7 @@ bool Transpiler::transpileScriptStatement(
 			codeLine = StringTools::replace(codeLine, "getMethodName()", "string(\"" + string(method) + "\")");
 			// replace returns with gotos
 			if (StringTools::regexMatch(codeLine, "[\\ \\t]*return[\\ \\t]*;.*") == true) {
-				Console::println("Transpiler::transpileScriptStatement(): method '" + string(method) + "': return statement not supported!");
+				Console::printLine("Transpiler::transpileScriptStatement(): method '" + string(method) + "': return statement not supported!");
 				return false;
 			} else
 			if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->gotoStatementGoto[\\ \\t]*\\([\\ \\t]*statement[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
@@ -2445,7 +2445,7 @@ bool Transpiler::transpileScriptStatement(
 
 bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const unordered_set<string>& allMethods) {
 	if (scriptIdx < 0 || scriptIdx >= miniScript->getScripts().size()) {
-		Console::println("Transpiler::transpile(): invalid script index");
+		Console::printLine("Transpiler::transpile(): invalid script index");
 		return false;
 	}
 
@@ -2463,7 +2463,7 @@ bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int sc
 			)
 		);
 
-	Console::println("Transpiler::transpile(): transpiling code for " + scriptType + " = '" + script.condition + "', with name '" + script.name + "'");
+	Console::printLine("Transpiler::transpile(): transpiling code for " + scriptType + " = '" + script.condition + "', with name '" + script.name + "'");
 
 	//
 	string methodIndent = "\t";
@@ -2482,7 +2482,7 @@ bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int sc
 	// method name
 	string methodName =
 		(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
-			"":
+			"function_":
 			(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 		) +
 		(script.name.empty() == false?script.name:(
@@ -2560,7 +2560,7 @@ bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int sc
 	generatedCode+= methodIndent + "setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);" + "\n";
 
 	//
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != STATEMENTIDX_FIRST) _Console::println(\"Transpiler::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != STATEMENTIDX_FIRST) _Console::printLine(\"Transpiler::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;
@@ -2568,7 +2568,7 @@ bool Transpiler::transpile(MiniScript* miniScript, string& generatedCode, int sc
 
 bool Transpiler::transpileScriptCondition(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const unordered_set<string>& allMethods, const string& returnValue, const string& injectCode, int depth) {
 	if (scriptIdx < 0 || scriptIdx >= miniScript->getScripts().size()) {
-		Console::println("Transpiler::transpileScriptCondition(): invalid script index");
+		Console::printLine("Transpiler::transpileScriptCondition(): invalid script index");
 		return false;
 	}
 
@@ -2576,7 +2576,7 @@ bool Transpiler::transpileScriptCondition(MiniScript* miniScript, string& genera
 	const auto& script = miniScript->getScripts()[scriptIdx];
 
 	//
-	Console::println("Transpiler::transpileScriptCondition(): transpiling code condition for condition = '" + script.condition + "', with name '" + script.name + "'");
+	Console::printLine("Transpiler::transpileScriptCondition(): transpiling code condition for condition = '" + script.condition + "', with name '" + script.name + "'");
 
 	//
 	auto statementIdx = MiniScript::STATEMENTIDX_FIRST;

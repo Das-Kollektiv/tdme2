@@ -193,7 +193,7 @@ void HTTPClient::execute() {
 		if (StringTools::startsWith(url, "http://") == true) {
 			auto ip = Network::getIpByHostname(hostname);
 			if (ip.empty() == true) {
-				Console::println("HTTPClient::execute(): failed");
+				Console::printLine("HTTPClient::execute(): failed");
 				throw HTTPClientException("Could not resolve host IP by hostname");
 			}
 			//
@@ -229,7 +229,7 @@ void HTTPClient::execute() {
 	} catch (Exception& exception) {
 		if (socket != nullptr) socket->shutdown();
 		//
-		Console::println(string("HTTPClient::execute(): performed HTTP request: FAILED: ") + exception.what());
+		Console::printLine(string("HTTPClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 		// rethrow
 		throw;
 	}

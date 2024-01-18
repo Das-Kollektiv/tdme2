@@ -9,7 +9,7 @@ using std::endl;
 
 using miniscript::utilities::ErrorConsole;
 
-void ErrorConsole::println(const string_view& str)
+void ErrorConsole::printLine(const string_view& str)
 {
 	cerr << str << endl;
 	cerr.flush();
@@ -21,7 +21,7 @@ void ErrorConsole::print(const string_view& str)
 	cerr.flush();
 }
 
-void ErrorConsole::println()
+void ErrorConsole::printLine()
 {
 	cerr << endl;
 	cerr.flush();

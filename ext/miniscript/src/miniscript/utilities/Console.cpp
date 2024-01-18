@@ -17,7 +17,7 @@ using std::vector;
 
 using miniscript::utilities::Console;
 
-void Console::println(const string_view& str)
+void Console::printLine(const string_view& str)
 {
 	cout << str << endl;
 	cout.flush();
@@ -29,13 +29,13 @@ void Console::print(const string_view& str)
 	cout.flush();
 }
 
-void Console::println()
+void Console::printLine()
 {
 	cout << endl;
 	cout.flush();
 }
 
-const string Console::readln()
+const string Console::readLine()
 {
 	string line;
 	getline(cin, line);

@@ -15,13 +15,13 @@ using miniscript::utilities::Console;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscriptmakefile ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscriptmakefile ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if ((argc != 3 && argc != 4) || (argc == 4 && string(argv[1]) != "--library")) {
-		Console::println("Usage: miniscriptmakefile [--library] source_pathname makefile_filename");
+		Console::printLine("Usage: miniscriptmakefile [--library] source_pathname makefile_filename");
 		return EXIT_FAILURE;
 	}
 

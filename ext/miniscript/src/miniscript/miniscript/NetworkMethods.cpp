@@ -155,10 +155,10 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
 					} catch (_Exception& exception) {
-						_Console::println("An error occurred: " + string(exception.what()));
+						_Console::printLine("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -238,10 +238,10 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
 					} catch (_Exception& exception) {
-						_Console::println("An error occurred: " + string(exception.what()));
+						_Console::printLine("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -340,10 +340,10 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
 					} catch (_Exception& exception) {
-						_Console::println("An error occurred: " + string(exception.what()));
+						_Console::printLine("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -442,10 +442,10 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
 					} catch (_Exception& exception) {
-						_Console::println("An error occurred: " + string(exception.what()));
+						_Console::printLine("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -517,10 +517,10 @@ void NetworkMethods::registerMethods(MiniScript* miniScript) {
 						}
 						returnValue.setMapEntry("headers", responseHeaders);
 					} catch (_Exception& exception) {
-						_Console::println("An error occurred: " + string(exception.what()));
+						_Console::printLine("An error occurred: " + string(exception.what()));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}

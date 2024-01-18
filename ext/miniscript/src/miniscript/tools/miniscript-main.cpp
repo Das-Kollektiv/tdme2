@@ -36,13 +36,13 @@ using miniscript::utilities::Exception;
 using miniscript::utilities::StringTools;
 
 static void printInformation() {
-	Console::println(string("miniscript ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
-	Console::println("Usage: miniscript [--version] [--verbose] [path_to_script | < path_to_script] --arguments [script command line arguments...]");
-	Console::println();
-	Console::println("If you do not provide a path to the script or do not pipe a script into the standard input stream,");
-	Console::println("you get a prompt to enter your script. You can finish inputting by hitting Ctrl-D on Unix or Ctrl-Z on Windows.");
+	Console::printLine(string("miniscript ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
+	Console::printLine("Usage: miniscript [--version] [--verbose] [path_to_script | < path_to_script] --arguments [script command line arguments...]");
+	Console::printLine();
+	Console::printLine("If you do not provide a path to the script or do not pipe a script into the standard input stream,");
+	Console::printLine("you get a prompt to enter your script. You can finish inputting by hitting Ctrl-D on Unix or Ctrl-Z on Windows.");
 }
 
 int main(int argc, char** argv)
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 			break;
 		} else {
 			if (pathToScript.empty() == false) {
-				Console::println("Path to script already given");
+				Console::printLine("Path to script already given");
 				return EXIT_FAILURE;
 			} else {
 				pathToScript = argument;
@@ -77,8 +77,8 @@ int main(int argc, char** argv)
 
 	// version
 	if (version == true) {
-		Console::println(string("miniscript ") + Version::getVersion());
-		Console::println(Version::getCopyright());
+		Console::printLine(string("miniscript ") + Version::getVersion());
+		Console::printLine(Version::getCopyright());
 		return EXIT_FAILURE;
 	}
 
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 			tmpFile = pathToScript;
 		} catch (Exception& exception) {
 			pathToScript.clear();
-			Console::println("An error occurred: " + string(exception.what()));
+			Console::printLine("An error occurred: " + string(exception.what()));
 		}
 	}
 	// do we have a script to run?
@@ -160,10 +160,10 @@ int main(int argc, char** argv)
 		);
 		if (script != nullptr) {
 			// verbose
-			if (verbose == true) Console::println(script->getInformation());
+			if (verbose == true) Console::printLine(script->getInformation());
 			//
 			if (script->isValid() == false) {
-				Console::println(pathToScript + ": Script not valid. Exiting!");
+				Console::printLine(pathToScript + ": Script not valid. Exiting!");
 				return EXIT_SUCCESS;
 			} else {
 				// TODO: we need a MiniScript startup routine
@@ -200,7 +200,7 @@ int main(int argc, char** argv)
 			);
 		} catch (Exception& exception) {
 			pathToScript.clear();
-			Console::println("An error occurred: " + string(exception.what()));
+			Console::printLine("An error occurred: " + string(exception.what()));
 		}
 	}
 

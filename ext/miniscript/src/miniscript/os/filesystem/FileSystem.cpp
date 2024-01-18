@@ -50,7 +50,7 @@ void FileSystem::list(const string& pathName, vector<string>& files, FileNameFil
 			try {
 				if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
 			} catch (Exception& exception) {
-				Console::println("FileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + string(exception.what()));
+				Console::printLine("FileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + string(exception.what()));
 				continue;
 			}
 			files.push_back(fileName);
@@ -76,7 +76,7 @@ void FileSystem::list(const string& pathName, vector<string>& files, FileNameFil
 				try {
 					if (exists(fileName + "/") == true) files.insert(files.begin() + (drive - 'C'), fileName);
 				} catch (Exception& exception) {
-					Console::println("FileSystem::list(): fileExists(): " + pathName + "/" + fileName + ": " + string(exception.what()));
+					Console::printLine("FileSystem::list(): fileExists(): " + pathName + "/" + fileName + ": " + string(exception.what()));
 				}
 			}
 		}

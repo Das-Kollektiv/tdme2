@@ -19,7 +19,7 @@ public:
 	 * Print given string and trailing newline to error console
 	 * @param str string
 	 */
-	static void println(const string_view& str);
+	static void printLine(const string_view& str);
 
 	/**
 	 * Print given string to error console without trainling new line
@@ -30,6 +30,6 @@ public:
 	/**
 	 * Print newline to error console
 	 */
-	static void println();
+	static void printLine();
 
 };

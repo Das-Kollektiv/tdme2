@@ -22,7 +22,7 @@ _Library::~Library() {
 }
 
 MiniScript* _Library::loadScript(const string& pathName, const string& fileName, const string& basePathName) {
-	_Console::println("Library::loadScript(): " + pathName + "/" + fileName + (basePathName.empty() == false?"@" + basePathName:""));
+	_Console::printLine("Library::loadScript(): " + pathName + "/" + fileName + (basePathName.empty() == false?"@" + basePathName:""));
 	auto script = make_unique<MiniScript>();
 	script->setContext(context);
 	script->setLibrary(this);

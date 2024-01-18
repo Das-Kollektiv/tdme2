@@ -31,7 +31,7 @@ void Context::addScript(const string& id, MiniScript* script) {
 	// do we already have a script registered with this id?
 	if (scriptsById.find(id) != scriptsById.end()) {
 		// yep
-		Console::println("An error occurred: a script with id " + id + " is already registered");
+		Console::printLine("An error occurred: a script with id " + id + " is already registered");
 		return;
 	}
 	// no, add it
@@ -42,14 +42,14 @@ void Context::removeScript(const string& id) {
 	// get script
 	auto scriptsIt = scriptsById.find(id);
 	if (scriptsIt == scriptsById.end()) {
-		Console::println("An error occurred: no script with id " + id + " is registered");
+		Console::printLine("An error occurred: no script with id " + id + " is registered");
 		return;
 	}
 	auto script = scriptsIt->second;
 	// do we have this script in use currently
 	if (find(scriptCallStack.begin(), scriptCallStack.end(), script) != scriptCallStack.end()) {
 		// yes
-		Console::println("An error occurred: script with id " + id + " is currently in use");
+		Console::printLine("An error occurred: script with id " + id + " is currently in use");
 		return;
 	}
 	// its safe to remove it

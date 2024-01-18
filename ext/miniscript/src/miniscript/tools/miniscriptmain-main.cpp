@@ -20,13 +20,13 @@ using miniscript::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscriptmain ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscriptmain ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	if ((argc != 4 && argc != 5) || (argc == 5 && string(argv[4]) != "--use-library")) {
-		Console::println("Usage: miniscriptmain script_filename script_class_name main_filename [--use-library]");
+		Console::printLine("Usage: miniscriptmain script_filename script_class_name main_filename [--use-library]");
 		return EXIT_FAILURE;
 	}
 
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 
 	//
 	if (StringTools::endsWith(mainURI, "-main.cpp") == false) {
-		Console::println("Error: main_filename must end with '-main.cpp'");
+		Console::printLine("Error: main_filename must end with '-main.cpp'");
 		return EXIT_FAILURE;
 	}
 

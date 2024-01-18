@@ -200,7 +200,7 @@ void HTTPDownloadClient::start() {
 						//
 						auto ip = Network::getIpByHostname(hostname);
 						if (ip.empty() == true) {
-							Console::println("HTTPDownloadClient::execute(): failed");
+							Console::printLine("HTTPDownloadClient::execute(): failed");
 							throw HTTPClientException("Could not resolve host IP by hostname");
 						}
 						//
@@ -319,7 +319,7 @@ void HTTPDownloadClient::start() {
 				} catch (Exception& exception) {
 					if (socket != nullptr) socket->shutdown();
 					downloadClient->finished = true;
-					Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
+					Console::printLine(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 				}
 			}
 		private:

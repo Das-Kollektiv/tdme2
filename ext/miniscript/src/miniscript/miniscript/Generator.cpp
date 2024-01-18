@@ -38,7 +38,7 @@ void Generator::generateMain(
 	}
 	//
 	try {
-		Console::println("Generating main C++ file: " + mainURI);
+		Console::printLine("Generating main C++ file: " + mainURI);
 
 		auto mainSource = FileSystem::getContentAsString("./resources/miniscript/templates/transpilation", "script-main.cpp");
 		mainSource = StringTools::replace(mainSource, "{$script}", scriptURI);
@@ -46,7 +46,7 @@ void Generator::generateMain(
 		mainSource = StringTools::replace(mainSource, "{$library}", library);
 		FileSystem::setContentFromString(FileSystem::getPathName(mainURI), FileSystem::getFileName(mainURI), mainSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -68,20 +68,20 @@ void Generator::generateLibrary(
 
 	//
 	try {
-		Console::println("Generating library C++ file");
+		Console::printLine("Generating library C++ file");
 		auto mainSource = FileSystem::getContentAsString("./resources/miniscript/templates/transpilation", "NativeLibrary.cpp");
 		mainSource = StringTools::replace(mainSource, "{$library-includes}", libraryIncludes);
 		mainSource = StringTools::replace(mainSource, "{$library-code}", libraryCode);
 		FileSystem::setContentFromString(FileSystem::getPathName(libraryURI), FileSystem::getFileName(libraryURI), mainSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 }
 
 void Generator::generateMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath, const vector<string>& excludePaths) {
 	//
 	try {
-		Console::println("Scanning source files");
+		Console::printLine("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
 		scanPath((basePath.empty() == true?"":basePath + "/") + srcPath, sourceFiles, mainSourceFiles);
@@ -119,7 +119,7 @@ void Generator::generateMakefile(const string& srcPath, const string& makefileUR
 		mainSourceFilesVariable+= "\n";
 
 		//
-		Console::println("Generating Makefile");
+		Console::printLine("Generating Makefile");
 
 		//
 		auto makefileSource = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", library == true?"Library-Makefile":"Makefile");
@@ -128,14 +128,14 @@ void Generator::generateMakefile(const string& srcPath, const string& makefileUR
 		if (library == false) makefileSource = StringTools::replace(makefileSource, "{$main-source-files}", mainSourceFilesVariable);
 		FileSystem::setContentFromString(FileSystem::getPathName(makefileURI), FileSystem::getFileName(makefileURI), makefileSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 }
 
 void Generator::generateNMakefile(const string& srcPath, const string& makefileURI, bool library, const string& basePath, const vector<string>& excludePaths) {
 	//
 	try {
-		Console::println("Scanning source files");
+		Console::printLine("Scanning source files");
 		vector<string> sourceFiles;
 		vector<string> mainSourceFiles;
 		scanPath((basePath.empty() == true?"":basePath + "/") + srcPath, sourceFiles, mainSourceFiles);
@@ -172,7 +172,7 @@ void Generator::generateNMakefile(const string& srcPath, const string& makefileU
 
 		//
 		if (library == true) {
-			Console::println("Generating Makefile");
+			Console::printLine("Generating Makefile");
 			//
 			makefileSource = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", "Library-Makefile.nmake");
 			auto makefileMainSourceTemplate = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", "Makefile.nmake.main");
@@ -186,7 +186,7 @@ void Generator::generateNMakefile(const string& srcPath, const string& makefileU
 				mainTargets+= StringTools::substring(file, file.rfind('/') + 1, file.find("-main.cpp"));
 			}
 			//
-			Console::println("Generating Makefile");
+			Console::printLine("Generating Makefile");
 			//
 			makefileSource = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", "Makefile.nmake");
 			auto makefileMainSourceTemplate = FileSystem::getContentAsString("./resources/miniscript/templates/makefiles", "Makefile.nmake.main");
@@ -209,7 +209,7 @@ void Generator::generateNMakefile(const string& srcPath, const string& makefileU
 		//
 		FileSystem::setContentFromString(FileSystem::getPathName(makefileURI), FileSystem::getFileName(makefileURI), makefileSource);
 	} catch (Exception& exception) {
-		Console::println("An error occurred: " + string(exception.what()));
+		Console::printLine("An error occurred: " + string(exception.what()));
 	}
 }
 

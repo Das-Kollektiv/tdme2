@@ -64,7 +64,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() != 2 ||
 					arguments[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].insertSetKey(key);
@@ -97,7 +97,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() < 2 ||
 					arguments[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(arguments[0].hasSetKey(key));
@@ -130,7 +130,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 				if (arguments.size() < 2 ||
 					arguments[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(arguments, 1, key, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].removeSetKey(key);
@@ -160,7 +160,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 				//
 				if (arguments.size() != 1 ||
 					arguments[0].getType() != MiniScript::TYPE_SET) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto keys = arguments[0].getSetKeys();
@@ -192,7 +192,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 			}
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				if ((arguments.size() != 1 || arguments[0].getType() != MiniScript::TYPE_SET)) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					arguments[0].clearSet();
@@ -225,7 +225,7 @@ void SetMethods::registerMethods(MiniScript* miniScript) {
 				if ((arguments.size() != 2 && arguments.size() != 3) ||
 					arguments[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(arguments, 1, function, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto setPtr = arguments[0].getSetPointer();

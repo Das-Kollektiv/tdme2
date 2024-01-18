@@ -38,9 +38,9 @@ using miniscript::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("miniscriptdocumentation ") + Version::getVersion());
-	Console::println(Version::getCopyright());
-	Console::println();
+	Console::printLine(string("miniscriptdocumentation ") + Version::getVersion());
+	Console::printLine(Version::getCopyright());
+	Console::printLine();
 
 	//
 	Properties descriptions;
@@ -70,45 +70,45 @@ int main(int argc, char** argv)
 	auto operatorsDocumentation = Documentation::generateOperatorsDocumentation("Operators", 9, miniScript.get());
 
 	//
-	Console::println("Classes");
-	Console::println("---------");
-	Console::println(classesDocumentation);
+	Console::printLine("Classes");
+	Console::printLine("---------");
+	Console::printLine(classesDocumentation);
 
 	//
-	Console::println("Methods");
-	Console::println("---------");
-	Console::println(methodsDocumentation);
+	Console::printLine("Methods");
+	Console::printLine("---------");
+	Console::printLine(methodsDocumentation);
 
 	//
-	Console::println("Variables");
-	Console::println("-----------");
-	Console::println(variablesDocumentation);
+	Console::printLine("Variables");
+	Console::printLine("-----------");
+	Console::printLine(variablesDocumentation);
 
 	//
-	Console::println("Operators");
-	Console::println("-----------");
-	Console::println(operatorsDocumentation);
+	Console::printLine("Operators");
+	Console::printLine("-----------");
+	Console::printLine(operatorsDocumentation);
 
 	//
-	Console::println();
-	Console::println("# properties methodname=human readable string");
+	Console::printLine();
+	Console::printLine("# properties methodname=human readable string");
 	//
 	{
-		Console::println("# base methods");
+		Console::printLine("# base methods");
 		//
 		for (const auto& baseMethodCategory: baseMethodCategories) {
-			Console::println("miniscript.basemethod.group." + (baseMethodCategory.empty() == true?"uncategorized":baseMethodCategory) + "=");
+			Console::printLine("miniscript.basemethod.group." + (baseMethodCategory.empty() == true?"uncategorized":baseMethodCategory) + "=");
 		}
 		//
 		auto scriptMethods = miniScript->getMethods();
 		for (auto scriptMethod: scriptMethods) {
-			Console::println("miniscript.basemethod." + scriptMethod->getMethodName() + "=");
+			Console::printLine("miniscript.basemethod." + scriptMethod->getMethodName() + "=");
 		}
 	}
 
 	//
-	Console::println();
-	Console::println("Keywords: ");
+	Console::printLine();
+	Console::printLine("Keywords: ");
 	set<string> allMethods;
 	{
 		//
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 	for (const auto& method: allMethods) {
 		Console::print(method + " ");
 	}
-	Console::println();
+	Console::printLine();
 
 	//
 	return EXIT_SUCCESS;

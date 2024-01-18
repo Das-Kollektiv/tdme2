@@ -40,7 +40,7 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				//
 				if (arguments.size() != 1) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(arguments[0].getValueAsString(false, true));
@@ -69,7 +69,7 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				string json;
 				if (MiniScript::getStringValue(arguments, 0, json, false) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					json = _StringTools::trim(json);
@@ -79,7 +79,7 @@ void JSONMethods::registerMethods(MiniScript* miniScript) {
 					if (_StringTools::startsWith(json, "[") == true) {
 						returnValue = MiniScript::initializeArray(json, miniScript, statement);
 					} else {
-						_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": JSON string not valid");
+						_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": JSON string not valid");
 					}
 				}
 			}

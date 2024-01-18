@@ -46,7 +46,7 @@ void XMLMethods::registerMethods(MiniScript* miniScript) {
 				if (MiniScript::getStringValue(arguments, 0, name, false) == false ||
 					(arguments.size() >= 2 && arguments[1].getType() != MiniScript::TYPE_MAP) ||
 					MiniScript::getStringValue(arguments, 2, innerXML, true) == false) {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto mapPtr = arguments[1].getMapPointer();

@@ -77,7 +77,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->getUsername());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -109,7 +109,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					MiniScript::getStringValue(arguments, 1, userName, false) == true) {
 					httpDownloadClient->setUsername(userName);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -138,7 +138,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->getPassword());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -170,7 +170,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					MiniScript::getStringValue(arguments, 1, password, false) == true) {
 					httpDownloadClient->setPassword(password);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -199,7 +199,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->getURL());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -231,7 +231,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					MiniScript::getStringValue(arguments, 1, url, false) == true) {
 					httpDownloadClient->setURL(url);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -260,7 +260,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->getFile());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -292,7 +292,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					MiniScript::getStringValue(arguments, 1, file, false) == true) {
 					httpDownloadClient->setFile(file);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -321,7 +321,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					httpDownloadClient->reset();
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -350,7 +350,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					httpDownloadClient->start();
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -379,7 +379,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					httpDownloadClient->cancel();
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -408,7 +408,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					httpDownloadClient->join();
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -437,7 +437,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->getProgress());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -466,7 +466,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(httpDownloadClient->isFinished());
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -495,7 +495,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 				if (HTTPDownloadClientClass::getHTTPDownloadClientValue(arguments, 0, httpDownloadClient, false) == true) {
 					returnValue.setValue(static_cast<int64_t>(httpDownloadClient->getStatusCode()));
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -527,7 +527,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 						returnValue.setMapEntry(headerName, MiniScript::Variable(string(headerValue)));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -559,7 +559,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 						returnValue.setMapEntry(parameterName, MiniScript::Variable(string(parameterValue)));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -596,7 +596,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					}
 					httpDownloadClient->setGETParameters(getParameters);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -628,7 +628,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 						returnValue.setMapEntry(headerName, MiniScript::Variable(string(headerValue)));
 					}
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -665,7 +665,7 @@ void HTTPDownloadClientClass::registerMethods(MiniScript* miniScript) const {
 					}
 					httpDownloadClient->setHeaders(headers);
 				} else {
-					_Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					_Console::printLine(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
