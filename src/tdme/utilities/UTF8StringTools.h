@@ -1,5 +1,5 @@
 #pragma once
-
+#include <regex>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -8,10 +8,12 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
+using std::smatch;
 using std::string;
 using std::string_view;
 using std::vector;
 
+using tdme::utilities::UTF8CharacterIterator;
 /**
  * UTF8 String tools class
  * @author Andreas Drewke
@@ -77,7 +79,7 @@ public:
 		const string& what,
 		const string& by,
 		int64_t beginIndex = 0,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
+		UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
 	);
 
 	/**
@@ -92,7 +94,7 @@ public:
 		const string& str,
 		const string& what,
 		int64_t beginIndex = 0,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
+		UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
 	) {
 		return firstIndexOf(str, what, beginIndex, cache);
 	}
@@ -109,7 +111,7 @@ public:
 		const string& str,
 		const string& what,
 		int64_t beginIndex = 0,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
+		UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
 	);
 
 	/**
@@ -124,7 +126,7 @@ public:
 		const string& str,
 		const string& what,
 		int64_t endIndex = string::npos,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
+		UTF8CharacterIterator::UTF8PositionCache* cache = nullptr
 	);
 
 	/**
@@ -136,7 +138,7 @@ public:
 	 * @param whatCache what UTF8 position cache
 	 * @return index or string::npos if not found
 	 */
-	static int64_t firstIndexOfChars(const string& str, const string& what, int64_t beginIndex = 0, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* whatCache = nullptr);
+	static int64_t firstIndexOfChars(const string& str, const string& what, int64_t beginIndex = 0, UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, UTF8CharacterIterator::UTF8PositionCache* whatCache = nullptr);
 
 	/**
 	 * Finds last index of characters provided within given string
@@ -147,7 +149,7 @@ public:
 	 * @param whatCache what UTF8 position cache
 	 * @return index or string::npos if not found
 	 */
-	static int64_t lastIndexOfChars(const string& str, const string& what, int64_t endIndex = string::npos, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* whatCache = nullptr);
+	static int64_t lastIndexOfChars(const string& str, const string& what, int64_t endIndex = string::npos, UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, UTF8CharacterIterator::UTF8PositionCache* whatCache = nullptr);
 
 	/**
 	 * Returns substring of given string from begin index to end index
@@ -157,7 +159,7 @@ public:
 	 * @param cache str UTF8 position cache
 	 * @return substring result
 	 */
-	inline static const string substring(const string& str, int64_t beginIndex, int64_t endIndex = string::npos, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr) {
+	inline static const string substring(const string& str, int64_t beginIndex, int64_t endIndex = string::npos, UTF8CharacterIterator::UTF8PositionCache* srcCache = nullptr, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr) {
 		auto result = viewSubstring(string_view(str), beginIndex, endIndex, cache);
 		return string(result.data(), result.size());
 	}
@@ -170,7 +172,7 @@ public:
 	 * @param cache str UTF8 position cache
 	 * @return substring result
 	 */
-	static const string_view viewSubstring(const string_view& str, int64_t beginIndex, int64_t endIndex, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string_view viewSubstring(const string_view& str, int64_t beginIndex, int64_t endIndex, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Checks if strings equal ignoring case
@@ -183,8 +185,8 @@ public:
 	static bool equalsIgnoreCase(
 		const string& string1,
 		const string& string2,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* string1Cache = nullptr,
-		::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* string2Cache = nullptr
+		UTF8CharacterIterator::UTF8PositionCache* string1Cache = nullptr,
+		UTF8CharacterIterator::UTF8PositionCache* string2Cache = nullptr
 	);
 
 	/**
@@ -193,7 +195,7 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return trimmed string
 	 */
-	static const string trim(const string& str, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string trim(const string& str, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Trim string
@@ -201,7 +203,7 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return trimmed string
 	 */
-	static const string_view viewTrim(const string_view& str, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string_view viewTrim(const string_view& str, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Transform string to lower case
@@ -209,7 +211,7 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return lowercase string
 	 */
-	static const string toLowerCase(const string& str, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string toLowerCase(const string& str, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Transform string to upper case
@@ -217,23 +219,25 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return uppercase string
 	 */
-	static const string toUpperCase(const string& str, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string toUpperCase(const string& str, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Check if pattern matches whole string
 	 * @param str string
 	 * @param pattern pattern
+	 * @param matches matches
 	 * @return if pattern matches whole string
 	 */
-	static bool regexMatch(const string& str, const string& pattern);
+	static bool regexMatch(const string& str, const string& pattern, smatch* matches = nullptr);
 
 	/**
 	 * Do regex pattern search
 	 * @param str string
 	 * @param pattern pattern
+	 * @param matches matches
 	 * @return if search was successful
 	 */
-	static bool regexSearch(const string& str, const string& pattern);
+	static bool regexSearch(const string& str, const string& pattern, smatch* matches = nullptr);
 
 	/**
 	 * Replace regex pattern with given string
@@ -261,7 +265,7 @@ public:
 	 * @param cache str UTF8 position cache
 	 * @return padded string
 	 */
-	static const string padLeft(const string& str, const string& by, int64_t toLength, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string padLeft(const string& str, const string& by, int64_t toLength, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Pad a string right
@@ -271,7 +275,7 @@ public:
 	 * @param cache str UTF8 position cache
 	 * @return padded string
 	 */
-	static const string padRight(const string& str, const string& by, int64_t toLength, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string padRight(const string& str, const string& by, int64_t toLength, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Indent a string
@@ -304,7 +308,7 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return UTF8 string length
 	 */
-	static int64_t getLength(const string& str, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static int64_t getLength(const string& str, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Get UTF8 character at given index
@@ -312,7 +316,7 @@ public:
 	 * @param index index
 	 * @param cache UTF8 position cache
 	 */
-	static const string getCharAt(const string& str, int64_t index, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static const string getCharAt(const string& str, int64_t index, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 	/**
 	 * Get UTF8 binary buffer index
@@ -321,7 +325,7 @@ public:
 	 * @param cache UTF8 position cache
 	 * @return UTF binary buffer position from given character/code point index
 	 */
-	static int64_t getUTF8BinaryIndex(const string& str, int64_t charIdx, ::tdme::utilities::UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
+	static int64_t getUTF8BinaryIndex(const string& str, int64_t charIdx, UTF8CharacterIterator::UTF8PositionCache* cache = nullptr);
 
 };
 
