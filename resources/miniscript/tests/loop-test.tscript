@@ -1,17 +1,17 @@
 # initialize
 on: initialize
-	console.log("-----------------------")
-	console.log("loop-test: Initialize")
-	console.log("-----------------------")
-	console.log()
+	console.printLine("-----------------------")
+	console.printLine("loop-test: Initialize")
+	console.printLine("-----------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("--------------------")
-	console.log("loop-test: Nothing")
-	console.log("--------------------")
-	console.log()
+	console.printLine("--------------------")
+	console.printLine("loop-test: Nothing")
+	console.printLine("--------------------")
+	console.printLine()
 	$array = [1,2,3,4,5,6]
 	$i = 0
 	# tests for continue, break
@@ -24,16 +24,16 @@ on: nothing
 		if ($i == 5)
 			break
 		end
-		console.log($i)
+		console.printLine($i)
 	end
 	script.stop()
 end
 
 # an error has occurred
 on: error
-	console.log("------------------")
-	console.log("loop-test: Error")
-	console.log("------------------")
-	console.log("An error occurred")
+	console.printLine("------------------")
+	console.printLine("loop-test: Error")
+	console.printLine("------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

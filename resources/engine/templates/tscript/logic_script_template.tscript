@@ -1,71 +1,71 @@
 # on logic added
 function: onLogicAdded()
-	console.log("-----------------------------")
-	console.log("onLogicAdded(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("onLogicAdded(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # initialize engine
 function: initializeEngine()
-	console.log("-----------------------------")
-	console.log("initializeEngine(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("initializeEngine(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # update engine
 function: updateEngine()
-	console.log("-----------------------------")
-	console.log("updateEngine(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("updateEngine(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # initialize logic
 function: initializeLogic()
-	console.log("-----------------------------")
-	console.log("initializeLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("initializeLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # update logic
 function: updateLogic()
-	console.log("-----------------------------")
-	console.log("updateLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("updateLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # on logics processed
 function: onLogicsProcessed()
-	console.log("-----------------------------")
-	console.log("onLogicsProcessed(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("onLogicsProcessed(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # on initialize
 on: initialize
-	console.log("-----------------------------")
-	console.log("on: initialize: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("on: initialize: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("-----------------------------")
-	console.log("on-nothing: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("on-nothing: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # on error
 on: error
-	console.log("-----------------------------")
-	console.log("on-error: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
+	console.printLine("-----------------------------")
+	console.printLine("on-error: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.printLine("-----------------------------")
 	script.stop()
 end

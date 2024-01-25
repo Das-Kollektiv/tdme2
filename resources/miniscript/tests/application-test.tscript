@@ -1,31 +1,31 @@
 # initialize
 on: initialize
-	console.log("------------------------------")
-	console.log("application-test: Initialize")
-	console.log("------------------------------")
-	console.log()
+	console.printLine("------------------------------")
+	console.printLine("application-test: Initialize")
+	console.printLine("------------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("---------------------------")
-	console.log("application-test: Nothing")
-	console.log("---------------------------")
-	console.log()
-	console.log("application.getArguments(): " + application.getArguments())
+	console.printLine("---------------------------")
+	console.printLine("application-test: Nothing")
+	console.printLine("---------------------------")
+	console.printLine()
+	console.printLine("application.getArguments(): " + application.getArguments())
 	if ($APPLICATION::OS == "Windows-MSC")
-		console.log("application.execute('dir'): " + application.execute('dir'))
+		console.printLine("application.execute('dir'): " + application.execute('dir'))
 	else
-		console.log("application.execute('ls'): " + application.execute('ls'))
+		console.printLine("application.execute('ls'): " + application.execute('ls'))
 	end
 	application.exit(2)
 end
 
 # an error has occurred
 on: error
-	console.log("-------------------------")
-	console.log("application-test: Error")
-	console.log("-------------------------")
-	console.log("An error occurred")
+	console.printLine("-------------------------")
+	console.printLine("application-test: Error")
+	console.printLine("-------------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

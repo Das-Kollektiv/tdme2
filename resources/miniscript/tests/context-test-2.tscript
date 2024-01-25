@@ -1,35 +1,35 @@
 # initialize
 on: initialize
-	console.log("--------------------------")
-	console.log("context-test: Initialize")
-	console.log("--------------------------")
-	console.log()
+	console.printLine("--------------------------")
+	console.printLine("context-test: Initialize")
+	console.printLine("--------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("-----------------------")
-	console.log("context-test: Nothing")
-	console.log("-----------------------")
-	console.log()
+	console.printLine("-----------------------")
+	console.printLine("context-test: Nothing")
+	console.printLine("-----------------------")
+	console.printLine()
 	#
 	script.stop()
 end
 
 # an error has occurred
 on: error
-	console.log("---------------------")
-	console.log("context-test: Error")
-	console.log("---------------------")
-	console.log("An error occurred")
+	console.printLine("---------------------")
+	console.printLine("context-test: Error")
+	console.printLine("---------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end
 
 callable: hello2($name)
-	console.log("context-test-2 runs natively: " + script.isNative())
-	console.log("Hello from context-test-2 " + $name)
-	console.log("context-test-2: Trying to remove script 'context-test-2'")
+	console.printLine("context-test-2 runs natively: " + script.isNative())
+	console.printLine("Hello from context-test-2 " + $name)
+	console.printLine("context-test-2: Trying to remove script 'context-test-2'")
 	context.script.removeScript("context-test-2")
-	console.log("context-test-2: Trying to remove script 'application'")
+	console.printLine("context-test-2: Trying to remove script 'application'")
 	context.script.removeScript("application")
 end

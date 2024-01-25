@@ -1,43 +1,43 @@
 # initialize
 on: initialize
-	console.log("-------------------------")
-	console.log("switch-test: Initialize")
-	console.log("-------------------------")
-	console.log()
+	console.printLine("-------------------------")
+	console.printLine("switch-test: Initialize")
+	console.printLine("-------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("----------------------")
-	console.log("switch-test: Nothing")
-	console.log("----------------------")
-	console.log()
+	console.printLine("----------------------")
+	console.printLine("switch-test: Nothing")
+	console.printLine("----------------------")
+	console.printLine()
 	#
 	$i = 1
 	$j = b
 	switch($i)
 		case(0)
-			console.log("$i = 0")
+			console.printLine("$i = 0")
 		end
 		case(1)
-			console.log("$i = 1")
+			console.printLine("$i = 1")
 			switch($j)
 				case("a")
-					console.log("$j = a")
+					console.printLine("$j = a")
 				end
 				case("b")
-					console.log("$j = b")
+					console.printLine("$j = b")
 				end
 				case("c")
-					console.log("$j = c")
+					console.printLine("$j = c")
 				end
 			end
 		end
 		case(2)
-			console.log("$i = 2")
+			console.printLine("$i = 2")
 		end
 		default
-			console.log("default: $i = " + $i)
+			console.printLine("default: $i = " + $i)
 		end
 	end
 	#
@@ -46,9 +46,9 @@ end
 
 # an error has occurred
 on: error
-	console.log("--------------------")
-	console.log("switch-test: Error")
-	console.log("--------------------")
-	console.log("An error occurred")
+	console.printLine("--------------------")
+	console.printLine("switch-test: Error")
+	console.printLine("--------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

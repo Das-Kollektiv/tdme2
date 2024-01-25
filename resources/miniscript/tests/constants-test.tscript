@@ -1,17 +1,17 @@
 # initialize
 on: initialize
-	console.log("----------------------------")
-	console.log("constants-test: Initialize")
-	console.log("----------------------------")
-	console.log()
+	console.printLine("----------------------------")
+	console.printLine("constants-test: Initialize")
+	console.printLine("----------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("-------------------------")
-	console.log("constants-test: Nothing")
-	console.log("-------------------------")
-	console.log()
+	console.printLine("-------------------------")
+	console.printLine("constants-test: Nothing")
+	console.printLine("-------------------------")
+	console.printLine()
 	# setting some constants
 	setConstant("$ARRAY", [1,2,3,4])
 	setConstant("$MAP", {a: 1, b: 2, c: 3, d: 4})
@@ -24,16 +24,16 @@ on: nothing
 	$MAP = {a: 1, b: 2, c: 3, d: 4}
 	$MAP.a = 5
 	# printing original constants
-	console.log(script.getVariables())
+	console.printLine(script.getVariables())
 	# done
 	script.stop()
 end
 
 # an error has occurred
 on: error
-	console.log("-----------------------")
-	console.log("constants-test: Error")
-	console.log("-----------------------")
-	console.log("An error occurred")
+	console.printLine("-----------------------")
+	console.printLine("constants-test: Error")
+	console.printLine("-----------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

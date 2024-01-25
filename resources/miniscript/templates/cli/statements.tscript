@@ -1,5 +1,5 @@
 on: error
-	console.log("An error has occurred. Exiting")
+	console.printLine("An error has occurred. Exiting")
 	script.stop()
 end
 

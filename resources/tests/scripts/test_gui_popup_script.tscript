@@ -1,19 +1,19 @@
 function: initialize($context)
-	console.log("----------------------------------------------------------")
-	console.log("initialize(): " + gui.screennode.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
+	console.printLine("----------------------------------------------------------")
+	console.printLine("initialize(): " + gui.screennode.getId())
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
 	$GLOBAL.context = $context
 	$GLOBAL.context.screenIdx = 2
-	console.log($GLOBAL.context)
+	console.printLine($GLOBAL.context)
 end
 
 # on action
 function: onAction($actionType, $elementNodeId)
-	#console.log("----------------------------------------------------------")
-	#console.log("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
-	#console.log("----------------------------------------------------------")
-	#console.log()
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
 		if ($elementNodeId == "popup_apply")
 			gui.screen.call("test_gui_script2", "setWelcome", "Hi, now that we know us: " + gui.node.controller.getValue("popup_inputtext"))
@@ -27,30 +27,30 @@ end
 
 # on change
 function: onChange($elementNodeId)
-	#console.log("----------------------------------------------------------")
-	#console.log("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
-	#console.log("----------------------------------------------------------")
-	#console.log()
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine()
 end
 
 # on mouse over
 function: onMouseOver($elementNodeId)
-	#console.log("----------------------------------------------------------")
-	#console.log("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
-	#console.log("----------------------------------------------------------")
-	#console.log()
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine()
 end
 
 # on tick
 function: onTick()
-	#console.log("----------------------------------------------------------")
-	#console.log("onTick(): " + gui.screennode.getId())
-	#console.log("----------------------------------------------------------")
-	#console.log()
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine("onTick(): " + gui.screennode.getId())
+	#console.printLine("----------------------------------------------------------")
+	#console.printLine()
 end
 
 # on error
 on: error
-	console.log("An error occurred")
+	console.printLine("An error occurred")
 	script.stop()
 end

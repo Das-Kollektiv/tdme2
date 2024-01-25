@@ -1,17 +1,17 @@
 # initialize
 on: initialize
-	console.log("------------------------")
-	console.log("class-test: Initialize")
-	console.log("------------------------")
-	console.log()
+	console.printLine("------------------------")
+	console.printLine("class-test: Initialize")
+	console.printLine("------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("---------------------")
-	console.log("class-test: Nothing")
-	console.log("---------------------")
-	console.log()
+	console.printLine("---------------------")
+	console.printLine("class-test: Nothing")
+	console.printLine("---------------------")
+	console.printLine()
 	#
 	$car = {
 		# member variables
@@ -33,7 +33,7 @@ on: nothing
 			},
 		showMeWhatYouGot: () ->
 			{
-				console.log(
+				console.printLine(
 					"This amazing car has ", 
 					$this.wheelCount,
 					" wheels, is colored ", 
@@ -65,7 +65,7 @@ on: nothing
 	$color = null
 	$horsePower = null
 	$car->getProperties($wheelCount, $color, $horsePower)
-	console.log(
+	console.printLine(
 		"Car properties, wheels: ", 
 		$wheelCount,
 		", color: ", 
@@ -79,9 +79,9 @@ end
 
 # an error has occurred
 on: error
-	console.log("------------------")
-	console.log("class-test: Error")
-	console.log("------------------")
-	console.log("An error occurred")
+	console.printLine("------------------")
+	console.printLine("class-test: Error")
+	console.printLine("------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

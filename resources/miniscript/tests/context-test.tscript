@@ -1,45 +1,45 @@
 # initialize
 on: initialize
-	console.log("--------------------------")
-	console.log("context-test: Initialize")
-	console.log("--------------------------")
-	console.log()
+	console.printLine("--------------------------")
+	console.printLine("context-test: Initialize")
+	console.printLine("--------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("-----------------------")
-	console.log("context-test: Nothing")
-	console.log("-----------------------")
-	console.log()
-	console.log("context-test runs natively: " + script.isNative())
+	console.printLine("-----------------------")
+	console.printLine("context-test: Nothing")
+	console.printLine("-----------------------")
+	console.printLine()
+	console.printLine("context-test runs natively: " + script.isNative())
 	# show context script ids, it should show the "application" script, which is context-test.tscript
-	console.log("Context script ids: " + context.script.getScriptIds())
+	console.printLine("Context script ids: " + context.script.getScriptIds())
 	# load context-test-2 script
-	console.log("Loading script: context-test-2.tscript")
+	console.printLine("Loading script: context-test-2.tscript")
 	context.script.loadScript("context-test-2", "resources/miniscript/tests", "context-test-2.tscript")
 	# show context script ids, it should show the "application" and "context-test-2" script
-	console.log("Context script ids: " + context.script.getScriptIds())
+	console.printLine("Context script ids: " + context.script.getScriptIds())
 	# checking if callable hello2() does exist in context-test-2
-	console.log("Checking if callable hello2() does exist in context-test-2")
+	console.printLine("Checking if callable hello2() does exist in context-test-2")
 	if (context.script.hasCallable("context-test-2", "hello2") == true)
-		console.log("Calling hello2 from context-test-2")
+		console.printLine("Calling hello2 from context-test-2")
 		context.script.call("context-test-2", "hello2", "Andreas")
 	end
 	# removing script context-test-2
-	console.log("Removing script context-test-2")
+	console.printLine("Removing script context-test-2")
 	context.script.removeScript("context-test-2")
 	# show context script ids, it should show the "application" script
-	console.log("Context script ids: " + context.script.getScriptIds())
+	console.printLine("Context script ids: " + context.script.getScriptIds())
 	# done
 	script.stop()
 end
 
 # an error has occurred
 on: error
-	console.log("---------------------")
-	console.log("context-test: Error")
-	console.log("---------------------")
-	console.log("An error occurred")
+	console.printLine("---------------------")
+	console.printLine("context-test: Error")
+	console.printLine("---------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

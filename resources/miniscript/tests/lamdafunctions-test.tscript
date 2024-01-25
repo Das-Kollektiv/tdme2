@@ -1,39 +1,39 @@
 # initialize
 on: initialize
-	console.log("---------------------------------")
-	console.log("lamdafunctions-test: Initialize")
-	console.log("---------------------------------")
-	console.log()
+	console.printLine("---------------------------------")
+	console.printLine("lamdafunctions-test: Initialize")
+	console.printLine("---------------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("------------------------------")
-	console.log("lamdafunctions-test: Nothing")
-	console.log("------------------------------")
-	console.log()
+	console.printLine("------------------------------")
+	console.printLine("lamdafunctions-test: Nothing")
+	console.printLine("------------------------------")
+	console.printLine()
 	# log array values to console using array.forEach
-	console.log("array.forEach() log test: [1, 2, 3, 4, 5, 6]")
+	console.printLine("array.forEach() log test: [1, 2, 3, 4, 5, 6]")
 	$array = [1, 2, 3, 4, 5, 6]
-	$array->forEach(($element) -> { console.log($element) })
+	$array->forEach(($element) -> { console.printLine($element) })
 	# log array values to console using array.forRange
-	console.log("array.forRange(1,3,2) log test: [1, 2, 3, 4, 5, 6]")
-	$array->forRange(($element) -> { console.log($element) }, 1, 3, 2)
+	console.printLine("array.forRange(1,3,2) log test: [1, 2, 3, 4, 5, 6]")
+	$array->forRange(($element) -> { console.printLine($element) }, 1, 3, 2)
 	# sum array values using array.forEach
 	$sum = 0
 	$array->forEach(($element, &$sum) -> { $sum = $sum + $element }, $sum)
-	console.log("array.forEach() sum test: [1, 2, 3, 4, 5, 6]: " + $sum)
+	console.printLine("array.forEach() sum test: [1, 2, 3, 4, 5, 6]: " + $sum)
 	# sort array values descending
-	console.log("array.sort() desc test")
+	console.printLine("array.sort() desc test")
 	$array->sort(($a, $b) -> { return($a > $b) })
 	# log array values to console using array.forEach
-	console.log("array.forEach() log test: [6, 5, 4, 3, 2, 1]")
-	$array->forEach(($element) -> { console.log($element) })
-	console.log("set.forEach() log test: {aaa, bbb, ccc}")
+	console.printLine("array.forEach() log test: [6, 5, 4, 3, 2, 1]")
+	$array->forEach(($element) -> { console.printLine($element) })
+	console.printLine("set.forEach() log test: {aaa, bbb, ccc}")
 	# log set keys to console using set.forEach
 	$set = {aaa, bbb, ccc}
-	$set->forEach(($key) -> { console.log($key) })
-	console.log("set.forEach() log test: {aaa, bbb, ccc}")
+	$set->forEach(($key) -> { console.printLine($key) })
+	console.printLine("set.forEach() log test: {aaa, bbb, ccc}")
 	# concatenate set values using set.forEach
 	$setConcat = ""
 	$set->forEach(($key, &$setConcat) -> 
@@ -45,23 +45,23 @@ on: nothing
 		}, 
 		$setConcat
 	)
-	console.log("set.forEach() concatenate test: {aaa, bbb, ccc}: " + $setConcat)
+	console.printLine("set.forEach() concatenate test: {aaa, bbb, ccc}: " + $setConcat)
 	# log map key, value pairs to console using set.forEach
 	$map = {a: 1, b: 2, c: 3}
-	$map->forEach(($key, $value) -> { console.log($key + " = " + $value) })
+	$map->forEach(($key, $value) -> { console.printLine($key + " = " + $value) })
 	# sum map values using map.forEach
 	$sum = 0
 	$map->forEach(($key, $value, &$sum) -> { $sum = $sum + $value }, $sum)
-	console.log("map.forEach() sum test: {a: 1, b: 2, c: 3}: " + $sum)
+	console.printLine("map.forEach() sum test: {a: 1, b: 2, c: 3}: " + $sum)
 	# done
 	script.stop()
 end
 
 # an error has occurred
 on: error
-	console.log("----------------------------")
-	console.log("lamdafunctions-test: Error")
-	console.log("----------------------------")
-	console.log("An error occurred")
+	console.printLine("----------------------------")
+	console.printLine("lamdafunctions-test: Error")
+	console.printLine("----------------------------")
+	console.printLine("An error occurred")
 	script.stop()
 end

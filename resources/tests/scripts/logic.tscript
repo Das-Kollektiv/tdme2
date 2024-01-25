@@ -1,9 +1,9 @@
 # update engine
 function: updateEngine()
-	#console.log("-----------------------------")
-	#console.log("updateEngine(): " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	#console.printLine("-----------------------------")
+	#console.printLine("updateEngine(): " + logic.getId())
+	#console.printLine("-----------------------------")
+	#console.printLine()
 
 	# camera
 	engine.camera.setLookAt($GLOBAL.transform->getTranslation())
@@ -77,17 +77,17 @@ function: updateEngine()
 			$GLOBAL.pathFinding.enabled = true
 			$GLOBAL.pathFinding.start = $GLOBAL.transform->getTranslation()
 			$GLOBAL.pathFinding.end = $clickWorldPosition
-			console.log("Clicked@worldposition: ", $clickWorldPosition)
+			console.printLine("Clicked@worldposition: ", $clickWorldPosition)
 		end
 	end
 end
 
 # update logic
 function: updateLogic()
-	#console.log("-----------------------------")
-	#console.log("updateLogic(): " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	#console.printLine("-----------------------------")
+	#console.printLine("updateLogic(): " + logic.getId())
+	#console.printLine("-----------------------------")
+	#console.printLine()
 	# path finding
 	if ($GLOBAL.pathFinding.pathIdx >= 0)
 		$GLOBAL.velocity = getPathFindingMovementDirection() * $GLOBAL.speed 
@@ -122,11 +122,11 @@ function: updateLogic()
 		$state = pathfinding.findPath(logic.getId(), $GLOBAL.pathFinding.start, $GLOBAL.pathFinding.end, $GLOBAL.pathFinding.path)
 		if ($state == pathfinding.STATE_PATHFINDING_SUCCESS())
 			$GLOBAL.pathFinding.enabled = false
-			console.log("Pathfinding: Success: ", $GLOBAL.pathFinding.path)
+			console.printLine("Pathfinding: Success: ", $GLOBAL.pathFinding.path)
 			$GLOBAL.pathFinding.pathIdx = 0
 		elseif ($state == pathfinding.STATE_PATHFINDING_FAILED())
 			$GLOBAL.pathFinding.enabled = false
-			console.log("Pathfinding: Fail: ")
+			console.printLine("Pathfinding: Fail: ")
 		end
 	end
 	#
@@ -149,10 +149,10 @@ end
 
 # logic added
 function: onLogicAdded()
-	#console.log("-----------------------------")
-	#console.log("onLogicAdded(): " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	#console.printLine("-----------------------------")
+	#console.printLine("onLogicAdded(): " + logic.getId())
+	#console.printLine("-----------------------------")
+	#console.printLine()
 	#
 	$GLOBAL.transform = engine.entity.getTransform(logic.getId())
 	$GLOBAL.velocity = Vector3(0.0, 0.0, 0.0)
@@ -170,36 +170,36 @@ function: onLogicAdded()
 		path: [],
 		pathIdx: -1
 	}
-	console.log($GLOBAL.pathFinding)
+	console.printLine($GLOBAL.pathFinding)
 	
 end
 
 # logics processed
 function: onLogicsProcessed()
-	#console.log("-----------------------------")
-	#console.log("onLogicsProcessed(): " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	#console.printLine("-----------------------------")
+	#console.printLine("onLogicsProcessed(): " + logic.getId())
+	#console.printLine("-----------------------------")
+	#console.printLine()
 end
 
 on: initialize
-	console.log("-----------------------------")
-	console.log("on: initialize: " + logic.getId())
-	console.log("-----------------------------")
-	console.log()
+	console.printLine("-----------------------------")
+	console.printLine("on: initialize: " + logic.getId())
+	console.printLine("-----------------------------")
+	console.printLine()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	#console.log("-----------------------------")
-	#console.log("on: nothing: " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	#console.printLine("-----------------------------")
+	#console.printLine("on: nothing: " + logic.getId())
+	#console.printLine("-----------------------------")
+	#console.printLine()
 end
 
 # an error has occurred
 on: error
-	console.log("An error occurred")
+	console.printLine("An error occurred")
 	script.stop()
 end
 
