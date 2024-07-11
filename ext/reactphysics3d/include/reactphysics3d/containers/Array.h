@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -95,19 +95,19 @@ class Array {
 
                 /// Deferencable
                 reference operator*() {
-                    assert(mCurrentIndex >= 0 && mCurrentIndex < mSize);
+                    assert(mCurrentIndex < mSize);
                     return mBuffer[mCurrentIndex];
                 }
 
                 /// Const Deferencable
                 const_reference operator*() const {
-                    assert(mCurrentIndex >= 0 && mCurrentIndex < mSize);
+                    assert(mCurrentIndex < mSize);
                     return mBuffer[mCurrentIndex];
                 }
 
                 /// Deferencable
                 const_pointer operator->() const {
-                    assert(mCurrentIndex >= 0 && mCurrentIndex < mSize);
+                    assert(mCurrentIndex < mSize);
                     return &(mBuffer[mCurrentIndex]);
                 }
 
@@ -190,7 +190,7 @@ class Array {
 
                 /// Equality operator (it == end())
                 bool operator==(const Iterator& iterator) const {
-                    assert(mCurrentIndex >= 0 && mCurrentIndex <= mSize);
+                    assert(mCurrentIndex <= mSize);
 
                     // If both iterators points to the end of the array
                     if (mCurrentIndex == mSize && iterator.mCurrentIndex == iterator.mSize) {
@@ -251,6 +251,9 @@ class Array {
 
             if (capacity <= mCapacity) return;
 
+            // Make sure capacity is an integral multiple of alignment
+            capacity = std::ceil(capacity / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+
             // Allocate memory for the new array
             void* newMemory = mAllocator.allocate(capacity * sizeof(T));
             T* destination = static_cast<T*>(newMemory);
@@ -283,7 +286,7 @@ class Array {
 
             // If we need to allocate more memory
             if (mSize == mCapacity) {
-                reserve(mCapacity == 0 ? 1 : mCapacity * 2);
+                reserve(mCapacity == 0 ? GLOBAL_ALIGNMENT : mCapacity * 2);
             }
 
             // Use the constructor to construct the element
@@ -298,7 +301,7 @@ class Array {
 
             // If we need to allocate more memory
             if (mSize == mCapacity) {
-                reserve(mCapacity == 0 ? 1 : mCapacity * 2);
+                reserve(mCapacity == 0 ? GLOBAL_ALIGNMENT : mCapacity * 2);
             }
 
             // Construct the element directly at its location in the array
@@ -433,13 +436,13 @@ class Array {
 
         /// Overloaded index operator
         T& operator[](const uint64 index) {
-           assert(index >= 0 && index < mSize);
+           assert(index < mSize);
            return mBuffer[index];
         }
 
         /// Overloaded const index operator
         const T& operator[](const uint64 index) const {
-           assert(index >= 0 && index < mSize);
+           assert(index < mSize);
            return mBuffer[index];
         }
 

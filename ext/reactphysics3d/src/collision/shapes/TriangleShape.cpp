@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -46,6 +46,9 @@ TriangleShape::TriangleShape(const Vector3* vertices, const Vector3* verticesNor
 
     // Compute the triangle normal
     mNormal = (vertices[1] - vertices[0]).cross(vertices[2] - vertices[0]);
+
+    assert(mNormal.length() > MACHINE_EPSILON);
+
     mNormal.normalize();
 
     mVerticesNormals[0] = verticesNormals[0];
@@ -109,16 +112,16 @@ void TriangleShape::computeSmoothMeshContact(Vector3 localContactPointTriangle, 
     // Re-align the local contact point on the other shape such that it is aligned along the new contact normal
     Vector3 otherShapePointTriangleSpace = localContactPointTriangle - triangleLocalNormal * penetrationDepth;
     Vector3 otherShapePoint = worldToOtherShapeTransform * triangleShapeToWorldTransform * otherShapePointTriangleSpace;
+
     outNewLocalContactPointOtherShape.setAllValues(otherShapePoint.x, otherShapePoint.y, otherShapePoint.z);
 }
 
-// Update the AABB of a body using its collision shape
+// Compute the transformed AABB of the collision shape given a transform
 /**
- * @param[out] aabb The axis-aligned bounding box (AABB) of the collision shape
- *                  computed in world-space coordinates
- * @param transform Transform used to compute the AABB of the collision shape
+ * @param transform Transform to use for the space conversion
+ * @return aabb The transformed axis-aligned bounding box (AABB) of the collision shape
  */
-void TriangleShape::computeAABB(AABB& aabb, const Transform& transform) const {
+AABB TriangleShape::computeTransformedAABB(const Transform& transform) const {
 
     RP3D_PROFILE("TriangleShape::computeAABB()", mProfiler);
 
@@ -129,8 +132,9 @@ void TriangleShape::computeAABB(AABB& aabb, const Transform& transform) const {
     const Vector3 xAxis(worldPoint1.x, worldPoint2.x, worldPoint3.x);
     const Vector3 yAxis(worldPoint1.y, worldPoint2.y, worldPoint3.y);
     const Vector3 zAxis(worldPoint1.z, worldPoint2.z, worldPoint3.z);
-    aabb.setMin(Vector3(xAxis.getMinValue(), yAxis.getMinValue(), zAxis.getMinValue()));
-    aabb.setMax(Vector3(xAxis.getMaxValue(), yAxis.getMaxValue(), zAxis.getMaxValue()));
+
+    return AABB(Vector3(xAxis.getMinValue(), yAxis.getMinValue(), zAxis.getMinValue()),
+                Vector3(xAxis.getMaxValue(), yAxis.getMaxValue(), zAxis.getMaxValue()));
 }
 
 // Raycast method with feedback information
@@ -183,14 +187,15 @@ bool TriangleShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, Collider* 
 
     // Compute the barycentric coordinates (u, v, w) to determine the
     // intersection point R, R = u * a + v * b + w * c
-    decimal denom = decimal(1.0) / (u + v + w);
+    const decimal denom = decimal(1.0) / (u + v + w);
     u *= denom;
     v *= denom;
     w *= denom;
 
     // Compute the local hit point using the barycentric coordinates
     const Vector3 localHitPoint = u * mPoints[0] + v * mPoints[1] + w * mPoints[2];
-    const decimal hitFraction = (localHitPoint - ray.point1).length() / pq.length();
+    const Vector3 point1ToHitPoint = localHitPoint - ray.point1;
+    const decimal hitFraction = point1ToHitPoint.dot(pq) / pq.lengthSquare();
 
     if (hitFraction < decimal(0.0) || hitFraction > ray.maxFraction) return false;
 

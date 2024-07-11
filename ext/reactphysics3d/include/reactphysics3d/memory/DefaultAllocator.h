@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,15 +28,20 @@
 
 // Libraries
 #include <reactphysics3d/memory/MemoryAllocator.h>
+#include <reactphysics3d/configuration.h>
 #include <cstdlib>
+#include <cassert>
 #include <iostream>
+#include <stdlib.h>
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
 
 // Class DefaultAllocator
 /**
- * This class represents a default memory allocator that uses default malloc/free methods
+ * This class represents a default memory allocator that uses standard C++ functions
+ * to allocated 16-bytes aligned memory.
+ *
  */
 class DefaultAllocator : public MemoryAllocator {
 
@@ -49,15 +54,37 @@ class DefaultAllocator : public MemoryAllocator {
         DefaultAllocator& operator=(DefaultAllocator& allocator) = default;
 
         /// Allocate memory of a given size (in bytes) and return a pointer to the
-        /// allocated memory.
+        /// allocated memory. The returned allocated memory must be 16 bytes aligned.
         virtual void* allocate(size_t size) override {
 
-            return std::malloc(size);
+            assert(size % GLOBAL_ALIGNMENT == 0);
+
+// If compiler is Visual Studio
+#ifdef RP3D_PLATFORM_WINDOWS
+
+                // Visual Studio doesn't not support standard std:aligned_alloc() method from C++ 17
+                return _aligned_malloc(size, GLOBAL_ALIGNMENT);
+#else
+
+                // Return 16-bytes aligned memory
+                void* address = nullptr;
+                posix_memalign(&address, GLOBAL_ALIGNMENT, size);
+                return address;
+#endif
         }
 
         /// Release previously allocated memory.
         virtual void release(void* pointer, size_t /*size*/) override {
-            std::free(pointer);
+
+            // If compiler is Visual Studio
+#ifdef RP3D_COMPILER_VISUAL_STUDIO
+
+                // Visual Studio doesn't not support standard std:aligned_alloc() method from c++ 17
+                return _aligned_free(pointer);
+#else
+
+                return std::free(pointer);
+#endif
         }
 };
 

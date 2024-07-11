@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <reactphysics3d/collision/shapes/ConvexMeshShape.h>
+#include <reactphysics3d/utils/Message.h>
 
 #include <tdme/engine/fileio/models/WFObjWriter.h>
 
@@ -383,12 +384,12 @@ void ConvexMesh::setScale(const Vector3& scale) {
 void ConvexMesh::destroyCollisionShape() {
 	if (collisionShape == nullptr) return;
 	this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
-	this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
+	this->world->physicsCommon.destroyConvexMesh(convexMesh);
 	polygonVertexArray = nullptr;
 	verticesByteBuffer = nullptr;
 	indicesByteBuffer = nullptr;
 	collisionShape = nullptr;
-	polyhedronMesh = nullptr;
+	convexMesh = nullptr;
 	world = nullptr;
 }
 
@@ -412,21 +413,37 @@ void ConvexMesh::createCollisionShape(World* world) {
 			reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
 			reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
 		);
-		polyhedronMesh = world->physicsCommon.createPolyhedronMesh(polygonVertexArray.get());
-		if (polyhedronMesh == nullptr) {
+		vector<reactphysics3d::Message> messages;
+		convexMesh = world->physicsCommon.createConvexMesh(*polygonVertexArray.get(), messages);
+		// dump messages
+		for (const auto& message: messages) {
+			auto getMessageTypeText = [](const reactphysics3d::Message& message) -> const string {
+				switch (message.type) {
+					case reactphysics3d::Message::Type::Error:
+						return "ERROR";
+					case reactphysics3d::Message::Type::Warning:
+						return "WARNING";
+					case reactphysics3d::Message::Type::Information:
+						return "INFORMATION";
+				}
+			};
+			Console::printLine("ConvexMesh::createCollisionShape(): " + getMessageTypeText(message) + ": " + message.text);
+		}
+		//
+		if (convexMesh == nullptr) {
 			throw ExceptionBase("Invalid polyhedron mesh");
 		}
 		// create convex mesh shape
-		collisionShape = world->physicsCommon.createConvexMeshShape(polyhedronMesh);
+		collisionShape = world->physicsCommon.createConvexMeshShape(convexMesh);
 	} catch (Exception& exception) {
 		Console::printLine("ConvexMesh::createCollisionShape(): an error occurred: " + string(exception.what()));
 		if (collisionShape != nullptr) {
 			this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
 			collisionShape = nullptr;
 		}
-		if (polyhedronMesh != nullptr) {
-			this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
-			polyhedronMesh = nullptr;
+		if (convexMesh != nullptr) {
+			this->world->physicsCommon.destroyConvexMesh(convexMesh);
+			convexMesh = nullptr;
 		}
 		polygonVertexArray = nullptr;
 		this->world = nullptr;

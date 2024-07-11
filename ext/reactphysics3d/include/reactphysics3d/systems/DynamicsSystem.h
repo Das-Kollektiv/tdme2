@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,7 +28,7 @@
 
 // Libraries
 #include <reactphysics3d/utils/Profiler.h>
-#include <reactphysics3d/components/CollisionBodyComponents.h>
+#include <reactphysics3d/components/BodyComponents.h>
 #include <reactphysics3d/components/RigidBodyComponents.h>
 #include <reactphysics3d/components/TransformComponents.h>
 #include <reactphysics3d/components/ColliderComponents.h>
@@ -52,7 +52,7 @@ class DynamicsSystem {
         PhysicsWorld& mWorld;
 
         /// Reference to the collision body components
-        CollisionBodyComponents& mCollisionBodyComponents;
+        BodyComponents& mBodyComponents;
 
         /// Reference to the rigid body components
         RigidBodyComponents& mRigidBodyComponents;
@@ -80,7 +80,7 @@ class DynamicsSystem {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        DynamicsSystem(PhysicsWorld& world, CollisionBodyComponents& collisionBodyComponents,
+        DynamicsSystem(PhysicsWorld& world, BodyComponents& bodyComponents,
                        RigidBodyComponents& rigidBodyComponents, TransformComponents& transformComponents,
                        ColliderComponents& colliderComponents, bool& isGravityEnabled, Vector3& gravity);
 

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -40,7 +40,7 @@ namespace reactphysics3d {
 /// Enumeration for the type of narrow-phase
 /// collision detection algorithm
 enum class NarrowPhaseAlgorithmType {
-    None,
+    NoCollisionTest,
     SphereVsSphere,
     SphereVsCapsule,
     CapsuleVsCapsule,
@@ -61,6 +61,14 @@ class CollisionDispatch {
 
         /// Memory allocator
         MemoryAllocator& mAllocator;
+
+        /// Allocation sizes
+        size_t mSphereVsSphereAllocatedSize;
+        size_t mSphereVsCapsuleAllocatedSize;
+        size_t mCapsuleVsCapsuleAllocatedSize;
+        size_t mSphereVsConvexPolyAllocatedSize;
+        size_t mCapsuleVsConvexPolyAllocatedSize;
+        size_t mConvexPolyVsConvexPolyAllocatedSize;
 
         /// True if the sphere vs sphere algorithm is the default one
         bool mIsSphereVsSphereDefault = true;

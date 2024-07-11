@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -34,9 +34,10 @@
 namespace reactphysics3d {
 
 // Declarations
-class CollisionBody;
+class Body;
 class DefaultAllocator;
 class PhysicsCommon;
+class AABB;
 
 // Class BoxShape
 /**
@@ -88,13 +89,13 @@ class BoxShape : public ConvexPolyhedronShape {
         BoxShape& operator=(const BoxShape& shape) = delete;
 
         /// Return the half-extents of the box
-        Vector3 getHalfExtents() const;
+        const Vector3& getHalfExtents() const;
 
         /// Set the half-extents of the box
         void setHalfExtents(const Vector3& halfExtents);
 
         /// Return the local bounds of the shape in x, y and z directions
-        virtual void getLocalBounds(Vector3& min, Vector3& max) const override;
+        virtual AABB getLocalBounds() const override;
 
         /// Return the local inertia tensor of the collision shape
         virtual Vector3 getLocalInertiaTensor(decimal mass) const override;
@@ -141,7 +142,7 @@ class BoxShape : public ConvexPolyhedronShape {
 /**
  * @return The vector with the three half-extents of the box shape
  */
-RP3D_FORCE_INLINE Vector3 BoxShape::getHalfExtents() const {
+RP3D_FORCE_INLINE const Vector3& BoxShape::getHalfExtents() const {
     return mHalfExtents;
 }
 
@@ -155,21 +156,6 @@ RP3D_FORCE_INLINE void BoxShape::setHalfExtents(const Vector3& halfExtents) {
     mHalfExtents = halfExtents;
 
     notifyColliderAboutChangedSize();
-}
-
-// Return the local bounds of the shape in x, y and z directions
-/// This method is used to compute the AABB of the box
-/**
- * @param min The minimum bounds of the shape in local-space coordinates
- * @param max The maximum bounds of the shape in local-space coordinates
- */
-RP3D_FORCE_INLINE void BoxShape::getLocalBounds(Vector3& min, Vector3& max) const {
-
-    // Maximum bounds
-    max = mHalfExtents;
-
-    // Minimum bounds
-    min = -max;
 }
 
 // Return the number of bytes used by the collision shape

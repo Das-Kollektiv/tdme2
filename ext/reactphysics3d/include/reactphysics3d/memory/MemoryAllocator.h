@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,6 +28,7 @@
 
 // Libraries
 #include <cstring>
+#include <reactphysics3d/configuration.h>
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
@@ -50,11 +51,17 @@ class MemoryAllocator {
         MemoryAllocator& operator=(MemoryAllocator& allocator) = default;
 
         /// Allocate memory of a given size (in bytes) and return a pointer to the
-        /// allocated memory.
+        /// allocated memory. The return allocated memory must be 16 bytes aligned.
         virtual void* allocate(size_t size)=0;
 
         /// Release previously allocated memory.
         virtual void release(void* pointer, size_t size)=0;
+
+        /// Given a pointer to memory, this method returns the next aligned address
+        static void* alignAddress(void* pointer, uint8 alignment);
+
+        /// Given a pointer to memory, this method returns the next aligned address and also output the alignment offset
+        static void* alignAddress(void* pointer, uint8 alignment, ptrdiff_t& alignmentOffset);
 };
 
 }

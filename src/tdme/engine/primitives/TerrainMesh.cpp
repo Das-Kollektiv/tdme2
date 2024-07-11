@@ -6,6 +6,7 @@
 #include <reactphysics3d/collision/shapes/ConcaveMeshShape.h>
 #include <reactphysics3d/collision/TriangleMesh.h>
 #include <reactphysics3d/collision/TriangleVertexArray.h>
+#include <reactphysics3d/utils/Message.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/World.h>
@@ -104,8 +105,23 @@ void TerrainMesh::createCollisionShape(World* world) {
 	);
 
 	// add the triangle vertex array to the triangle mesh
-	triangleMesh = world->physicsCommon.createTriangleMesh();
-	triangleMesh->addSubpart(triangleVertexArray.get());
+	vector<reactphysics3d::Message> messages;
+	triangleMesh = world->physicsCommon.createTriangleMesh(*triangleVertexArray.get(), messages);
+
+	// dump messages
+	for (const auto& message: messages) {
+		auto getMessageTypeText = [](const reactphysics3d::Message& message) -> const string {
+			switch (message.type) {
+				case reactphysics3d::Message::Type::Error:
+					return "ERROR";
+				case reactphysics3d::Message::Type::Warning:
+					return "WARNING";
+				case reactphysics3d::Message::Type::Information:
+					return "INFORMATION";
+			}
+		};
+		Console::printLine("TerrainMesh::createCollisionShape(): " + getMessageTypeText(message) + ": " + message.text);
+	}
 
 	// create the concave mesh shape
 	collisionShape = world->physicsCommon.createConcaveMeshShape(triangleMesh);

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,9 +31,9 @@
 using namespace reactphysics3d;
 
 // Constructor
-Components::Components(MemoryAllocator& allocator, size_t componentDataSize)
+Components::Components(MemoryAllocator& allocator, size_t componentDataSize, size_t alignmentMarginSize)
     : mMemoryAllocator(allocator), mNbComponents(0), mComponentDataSize(componentDataSize),
-      mNbAllocatedComponents(0), mBuffer(nullptr), mMapEntityToComponentIndex(allocator),
+      mAlignmentMarginSize(alignmentMarginSize), mNbAllocatedComponents(0), mBuffer(nullptr), mMapEntityToComponentIndex(allocator),
       mDisabledStartIndex(0) {
 
 }
@@ -57,8 +57,15 @@ Components::~Components() {
     }
 }
 
+// Initialize the components:
+void Components::init() {
+
+    // Allocate memory for the components data
+    allocate(INIT_NB_ALLOCATED_COMPONENTS);
+}
+
 // Compute the index where we need to insert the new component
-uint32 Components::prepareAddComponent(bool isSleeping) {
+uint32 Components::prepareAddComponent(bool isDisabled) {
 
     // If we need to allocate more components
     if (mNbComponents == mNbAllocatedComponents) {
@@ -68,7 +75,7 @@ uint32 Components::prepareAddComponent(bool isSleeping) {
     uint32 index;
 
     // If the component to add is part of a disabled entity or there are no disabled entity
-    if (isSleeping) {
+    if (isDisabled) {
 
         // Add the component at the end of the array
         index = mNbComponents;

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,7 +28,7 @@
 
 // Libraries
 #include <cassert>
-#include <reactphysics3d/body/CollisionBody.h>
+#include <reactphysics3d/body/Body.h>
 #include <reactphysics3d/mathematics/mathematics.h>
 
 /// Namespace reactphysics3d
@@ -45,16 +45,22 @@ enum class BodyType;
  * This class represents a rigid body of the physics
  * engine. A rigid body is a non-deformable body that
  * has a constant mass. This class inherits from the
- * CollisionBody class.
+ * Body class.
   */
-class RigidBody : public CollisionBody {
+class RigidBody : public Body {
 
     protected :
 
         // -------------------- Methods -------------------- //
 
-        /// Update whether the current overlapping pairs where this body is involed are active or not
-        void resetOverlappingPairs();
+        /// Awake the disabled neighbor bodies
+        void awakeNeighborDisabledBodies();
+
+        /// Remove the disabled overlapping pairs
+        void enableOverlappingPairs();
+
+        /// Disable the overlapping pairs if both bodies of the pair are disabled (sleeping or static)
+        void checkForDisabledOverlappingPairs();
 
         /// Compute and return the local-space center of mass of the body using its colliders
         Vector3 computeCenterOfMass() const;
@@ -218,13 +224,6 @@ class RigidBody : public CollisionBody {
 
         /// Remove a collider from the body
         virtual void removeCollider(Collider* collider) override;
-
-#ifdef IS_RP3D_PROFILING_ENABLED
-
-		/// Set the profiler
-		void setProfiler(Profiler* profiler) override;
-
-#endif
 
         // -------------------- Friendship -------------------- //
 

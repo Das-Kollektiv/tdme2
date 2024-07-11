@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -34,7 +34,7 @@
 namespace reactphysics3d {
 
 // Declarations
-class CollisionBody;
+class Body;
 class PhysicsWorld;
 class Collider;
 struct Entity;
@@ -96,7 +96,7 @@ class OverlapCallback {
                 OverlapPair(const OverlapPair& contactPair) = default;
 
                 /// Assignment operator
-                OverlapPair& operator=(const OverlapPair& contactPair) = default;
+                OverlapPair& operator=(const OverlapPair& contactPair) = delete;
 
                 /// Destructor
                 ~OverlapPair() = default;
@@ -108,10 +108,10 @@ class OverlapCallback {
                 Collider* getCollider2() const;
 
                 /// Return a pointer to the first body in contact
-                CollisionBody* getBody1() const;
+                Body* getBody1() const;
 
                 /// Return a pointer to the second body in contact
-                CollisionBody* getBody2() const;
+                Body* getBody2() const;
 
                 /// Return the corresponding type of event for this overlapping pair
                 EventType getEventType() const;

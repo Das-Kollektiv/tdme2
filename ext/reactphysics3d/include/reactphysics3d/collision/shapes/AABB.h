@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,6 +28,7 @@
 
 // Libraries
 #include <reactphysics3d/mathematics/mathematics.h>
+#include <reactphysics3d/configuration.h>
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
@@ -82,6 +83,9 @@ class AABB {
         /// Inflate each side of the AABB by a given size
         void inflate(decimal dx, decimal dy, decimal dz);
 
+        /// Inflate (if necessary) to make sure that a given point fit inside it
+        void inflateWithPoint(const Vector3& point);
+
         /// Return true if the current AABB is overlapping with the AABB in argument
         bool testCollision(const AABB& aabb) const;
 
@@ -98,7 +102,7 @@ class AABB {
         bool contains(const AABB& aabb) const;
 
         /// Return true if a point is inside the AABB
-        bool contains(const Vector3& point) const;
+        bool contains(const Vector3& point, decimal epsilon = MACHINE_EPSILON) const;
 
         /// Return true if the AABB of a triangle intersects the AABB
         bool testCollisionTriangleAABB(const Vector3* trianglePoints) const;
@@ -156,6 +160,20 @@ RP3D_FORCE_INLINE void AABB::inflate(decimal dx, decimal dy, decimal dz) {
     mMinCoordinates -= Vector3(dx, dy, dz);
 }
 
+// Inflate (if necessary) to make sure that a given point fit inside it
+RP3D_FORCE_INLINE void AABB::inflateWithPoint(const Vector3& point) {
+
+    // Compute mesh bounds
+    if (point.x > mMaxCoordinates.x) mMaxCoordinates.x = point.x;
+    if (point.x < mMinCoordinates.x) mMinCoordinates.x = point.x;
+
+    if (point.y > mMaxCoordinates.y) mMaxCoordinates.y = point.y;
+    if (point.y < mMinCoordinates.y) mMinCoordinates.y = point.y;
+
+    if (point.z > mMaxCoordinates.z) mMaxCoordinates.z = point.z;
+    if (point.z < mMinCoordinates.z) mMinCoordinates.z = point.z;
+}
+
 // Return true if the current AABB is overlapping with the AABB in argument.
 /// Two AABBs overlap if they overlap in the three x, y and z axis at the same time
 RP3D_FORCE_INLINE bool AABB::testCollision(const AABB& aabb) const {
@@ -189,11 +207,11 @@ RP3D_FORCE_INLINE bool AABB::testCollisionTriangleAABB(const Vector3* trianglePo
 }
 
 // Return true if a point is inside the AABB
-RP3D_FORCE_INLINE bool AABB::contains(const Vector3& point) const {
+RP3D_FORCE_INLINE bool AABB::contains(const Vector3& point, decimal epsilon) const {
 
-    return (point.x >= mMinCoordinates.x - MACHINE_EPSILON && point.x <= mMaxCoordinates.x + MACHINE_EPSILON &&
-            point.y >= mMinCoordinates.y - MACHINE_EPSILON && point.y <= mMaxCoordinates.y + MACHINE_EPSILON &&
-            point.z >= mMinCoordinates.z - MACHINE_EPSILON && point.z <= mMaxCoordinates.z + MACHINE_EPSILON);
+    return (point.x >= mMinCoordinates.x - epsilon && point.x <= mMaxCoordinates.x + epsilon &&
+            point.y >= mMinCoordinates.y - epsilon && point.y <= mMaxCoordinates.y + epsilon &&
+            point.z >= mMinCoordinates.z - epsilon && point.z <= mMaxCoordinates.z + epsilon);
 }
 
 // Apply a scale factor to the AABB

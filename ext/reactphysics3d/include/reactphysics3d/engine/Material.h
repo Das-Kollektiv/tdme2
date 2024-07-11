@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -90,7 +90,7 @@ class Material {
         // ---------- Friendship ---------- //
 
         friend class Collider;
-        friend class CollisionBody;
+        friend class Body;
         friend class RigidBody;
 };
 

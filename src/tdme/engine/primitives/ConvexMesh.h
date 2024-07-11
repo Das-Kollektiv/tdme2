@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include <reactphysics3d/collision/ConvexMesh.h>
 #include <reactphysics3d/collision/PolygonVertexArray.h>
-#include <reactphysics3d/collision/PolyhedronMesh.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -42,7 +42,7 @@ private:
 	vector<int> facesVerticesCount;
 	vector<int> indices;
 
-	reactphysics3d::PolyhedronMesh* polyhedronMesh { nullptr };
+	reactphysics3d::ConvexMesh* convexMesh { nullptr };
 	unique_ptr<reactphysics3d::PolygonVertexArray> polygonVertexArray;
 	unique_ptr<ByteBuffer> verticesByteBuffer;
 	unique_ptr<ByteBuffer> indicesByteBuffer;

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -144,7 +144,7 @@ class BallAndSocketJointComponents : public Components {
         virtual ~BallAndSocketJointComponents() override = default;
 
         /// Add a component
-        void addComponent(Entity jointEntity, bool isSleeping, const BallAndSocketJointComponent& component);
+        void addComponent(Entity jointEntity, bool isDisabled, const BallAndSocketJointComponent& component);
 
         /// Return a pointer to a given joint
         BallAndSocketJoint* getJoint(Entity jointEntity) const;

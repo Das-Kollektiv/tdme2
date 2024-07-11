@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -125,9 +125,9 @@ RP3D_FORCE_INLINE bool Entity::operator!=(const Entity& entity) const {
 
 }
 
-// Hash function for a reactphysics3d Entity
 namespace std {
 
+  // Hash function for a reactphysics3d Entity
   template <> struct hash<reactphysics3d::Entity> {
 
     size_t operator()(const reactphysics3d::Entity& entity) const {

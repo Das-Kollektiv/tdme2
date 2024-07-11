@@ -200,6 +200,7 @@ void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<B
 		collider->getMaterial().setBounciness(restitution);
 		collider->getMaterial().setFrictionCoefficient(friction);
 		if (type == BODYTYPE_COLLISION_STATIC || type == BODYTYPE_COLLISION_DYNAMIC) collider->setIsTrigger(true);
+
 		// collider->getMaterial().setMassDensity(volumeBoundingVolume / volumeTotal);
 
 		//

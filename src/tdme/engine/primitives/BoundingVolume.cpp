@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <reactphysics3d/body/CollisionBody.h>
+#include <reactphysics3d/body/RigidBody.h>
 #include <reactphysics3d/collision/narrowphase/CollisionDispatch.h>
 #include <reactphysics3d/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>

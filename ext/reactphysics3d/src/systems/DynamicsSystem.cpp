@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,9 +31,9 @@
 using namespace reactphysics3d;
 
 // Constructor
-DynamicsSystem::DynamicsSystem(PhysicsWorld& world, CollisionBodyComponents& collisionBodyComponents, RigidBodyComponents& rigidBodyComponents,
+DynamicsSystem::DynamicsSystem(PhysicsWorld& world, BodyComponents& bodyComponents, RigidBodyComponents& rigidBodyComponents,
                                TransformComponents& transformComponents, ColliderComponents& colliderComponents, bool& isGravityEnabled, Vector3& gravity)
-              :mWorld(world), mCollisionBodyComponents(collisionBodyComponents), mRigidBodyComponents(rigidBodyComponents), mTransformComponents(transformComponents), mColliderComponents(colliderComponents),
+              :mWorld(world), mBodyComponents(bodyComponents), mRigidBodyComponents(rigidBodyComponents), mTransformComponents(transformComponents), mColliderComponents(colliderComponents),
                mIsGravityEnabled(isGravityEnabled), mGravity(gravity) {
 
 }

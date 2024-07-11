@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,13 +31,21 @@ using namespace reactphysics3d;
 // Constructor
 CollisionDispatch::CollisionDispatch(MemoryAllocator& allocator) : mAllocator(allocator) {
 
+    // Make sure to allocate memory with size that is multiple integral of alignment
+    mSphereVsSphereAllocatedSize = std::ceil(sizeof(SphereVsSphereAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+    mSphereVsCapsuleAllocatedSize = std::ceil(sizeof(SphereVsCapsuleAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+    mCapsuleVsCapsuleAllocatedSize = std::ceil(sizeof(CapsuleVsCapsuleAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+    mSphereVsConvexPolyAllocatedSize = std::ceil(sizeof(SphereVsConvexPolyhedronAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+    mCapsuleVsConvexPolyAllocatedSize = std::ceil(sizeof(CapsuleVsConvexPolyhedronAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+    mConvexPolyVsConvexPolyAllocatedSize = std::ceil(sizeof(ConvexPolyhedronVsConvexPolyhedronAlgorithm) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+
     // Create the default narrow-phase algorithms
-    mSphereVsSphereAlgorithm = new (allocator.allocate(sizeof(SphereVsSphereAlgorithm))) SphereVsSphereAlgorithm();
-    mSphereVsCapsuleAlgorithm = new (allocator.allocate(sizeof(SphereVsCapsuleAlgorithm))) SphereVsCapsuleAlgorithm();
-    mCapsuleVsCapsuleAlgorithm = new (allocator.allocate(sizeof(CapsuleVsCapsuleAlgorithm))) CapsuleVsCapsuleAlgorithm();
-    mSphereVsConvexPolyhedronAlgorithm = new (allocator.allocate(sizeof(SphereVsConvexPolyhedronAlgorithm))) SphereVsConvexPolyhedronAlgorithm();
-    mCapsuleVsConvexPolyhedronAlgorithm = new (allocator.allocate(sizeof(CapsuleVsConvexPolyhedronAlgorithm))) CapsuleVsConvexPolyhedronAlgorithm();
-    mConvexPolyhedronVsConvexPolyhedronAlgorithm = new (allocator.allocate(sizeof(ConvexPolyhedronVsConvexPolyhedronAlgorithm))) ConvexPolyhedronVsConvexPolyhedronAlgorithm();
+    mSphereVsSphereAlgorithm = new (allocator.allocate(mSphereVsSphereAllocatedSize)) SphereVsSphereAlgorithm();
+    mSphereVsCapsuleAlgorithm = new (allocator.allocate(mSphereVsCapsuleAllocatedSize)) SphereVsCapsuleAlgorithm();
+    mCapsuleVsCapsuleAlgorithm = new (allocator.allocate(mCapsuleVsCapsuleAllocatedSize)) CapsuleVsCapsuleAlgorithm();
+    mSphereVsConvexPolyhedronAlgorithm = new (allocator.allocate(mSphereVsConvexPolyAllocatedSize)) SphereVsConvexPolyhedronAlgorithm();
+    mCapsuleVsConvexPolyhedronAlgorithm = new (allocator.allocate(mCapsuleVsConvexPolyAllocatedSize)) CapsuleVsConvexPolyhedronAlgorithm();
+    mConvexPolyhedronVsConvexPolyhedronAlgorithm = new (allocator.allocate(mConvexPolyVsConvexPolyAllocatedSize)) ConvexPolyhedronVsConvexPolyhedronAlgorithm();
 
     // Fill in the collision matrix
     fillInCollisionMatrix();
@@ -48,22 +56,22 @@ CollisionDispatch::~CollisionDispatch() {
 
     // Release allocated memory
     if (mIsSphereVsSphereDefault) {
-        mAllocator.release(mSphereVsSphereAlgorithm, sizeof(SphereVsSphereAlgorithm));
+        mAllocator.release(mSphereVsSphereAlgorithm, mSphereVsSphereAllocatedSize);
     }
     if (mIsSphereVsCapsuleDefault) {
-        mAllocator.release(mSphereVsCapsuleAlgorithm, sizeof(SphereVsCapsuleAlgorithm));
+        mAllocator.release(mSphereVsCapsuleAlgorithm, mSphereVsCapsuleAllocatedSize);
     }
     if (mIsCapsuleVsCapsuleDefault) {
-        mAllocator.release(mCapsuleVsCapsuleAlgorithm, sizeof(CapsuleVsCapsuleAlgorithm));
+        mAllocator.release(mCapsuleVsCapsuleAlgorithm, mCapsuleVsCapsuleAllocatedSize);
     }
     if (mIsSphereVsConvexPolyhedronDefault) {
-        mAllocator.release(mSphereVsConvexPolyhedronAlgorithm, sizeof(SphereVsConvexPolyhedronAlgorithm));
+        mAllocator.release(mSphereVsConvexPolyhedronAlgorithm, mSphereVsConvexPolyAllocatedSize);
     }
     if (mIsCapsuleVsConvexPolyhedronDefault) {
-        mAllocator.release(mCapsuleVsConvexPolyhedronAlgorithm, sizeof(CapsuleVsConvexPolyhedronAlgorithm));
+        mAllocator.release(mCapsuleVsConvexPolyhedronAlgorithm, mCapsuleVsConvexPolyAllocatedSize);
     }
     if (mIsConvexPolyhedronVsConvexPolyhedronDefault) {
-        mAllocator.release(mConvexPolyhedronVsConvexPolyhedronAlgorithm, sizeof(ConvexPolyhedronVsConvexPolyhedronAlgorithm));
+        mAllocator.release(mConvexPolyhedronVsConvexPolyhedronAlgorithm, mConvexPolyVsConvexPolyAllocatedSize);
     }
 }
 
@@ -75,7 +83,7 @@ NarrowPhaseAlgorithmType CollisionDispatch::selectAlgorithm(int type1, int type2
     CollisionShapeType shape2Type = static_cast<CollisionShapeType>(type2);
 
     if (type1 > type2) {
-        return NarrowPhaseAlgorithmType::None;
+        return NarrowPhaseAlgorithmType::NoCollisionTest;
     }
     // Sphere vs Sphere algorithm
     if (shape1Type == CollisionShapeType::SPHERE && shape2Type == CollisionShapeType::SPHERE) {
@@ -103,7 +111,7 @@ NarrowPhaseAlgorithmType CollisionDispatch::selectAlgorithm(int type1, int type2
         return NarrowPhaseAlgorithmType::ConvexPolyhedronVsConvexPolyhedron;
     }
 
-    return NarrowPhaseAlgorithmType::None;
+    return NarrowPhaseAlgorithmType::NoCollisionTest;
 }
 
 // Set the Sphere vs Sphere narrow-phase collision detection algorithm

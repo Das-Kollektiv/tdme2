@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -64,8 +64,7 @@ void SolveBallAndSocketJointSystem::initBeforeSolve() {
         const uint32 componentIndexBody1 = mRigidBodyComponents.getEntityIndex(body1Entity);
         const uint32 componentIndexBody2 = mRigidBodyComponents.getEntityIndex(body2Entity);
 
-        assert(!mRigidBodyComponents.getIsEntityDisabled(body1Entity));
-        assert(!mRigidBodyComponents.getIsEntityDisabled(body2Entity));
+        assert(!mRigidBodyComponents.getIsEntityDisabled(body1Entity) || !mRigidBodyComponents.getIsEntityDisabled(body2Entity));
 
         // Get the inertia tensor of bodies
         mBallAndSocketJointComponents.mI1[i] = mRigidBodyComponents.mInverseInertiaTensorsWorld[componentIndexBody1];

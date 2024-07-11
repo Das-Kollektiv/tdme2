@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -193,6 +193,7 @@ void GJKAlgorithm::testCollision(NarrowPhaseInfoBatch& narrowPhaseInfoBatch, uin
             // object with the margins
             decimal dist = std::sqrt(distSquare);
             assert(dist > decimal(0.0));
+
             pA = (pA - (shape1->getMargin() / dist) * v);
             pB = body2Tobody1.getInverse() * (pB + (shape2->getMargin() / dist) * v);
 

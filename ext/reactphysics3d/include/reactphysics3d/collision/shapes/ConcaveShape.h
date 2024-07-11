@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -99,7 +99,7 @@ class ConcaveShape : public CollisionShape {
         const Vector3& getScale() const;
 
         /// Set the scale of the shape
-        void setScale(const Vector3& scale);
+        virtual void setScale(const Vector3& scale);
 
         /// Return the local inertia tensor of the collision shape
         virtual Vector3 getLocalInertiaTensor(decimal mass) const override;

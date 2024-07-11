@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,8 +25,14 @@
 
 // Libraries
 #include <reactphysics3d/collision/PolygonVertexArray.h>
+#include <reactphysics3d/mathematics/Vector3.h>
 
 using namespace reactphysics3d;
+
+// Constructor
+PolygonVertexArray::PolygonVertexArray() {
+
+}
 
 // Constructor
 /// Note that your data will not be copied into the PolygonVertexArray and
@@ -39,7 +45,7 @@ using namespace reactphysics3d;
  * @param indexesStart Pointer to the start of the face indices data
  * @param indexesStride The number of bytes between two consecutive face indices in the array
  * @param nbFaces The number of faces in the array
- * @param nbFaces Pointer to the start of the faces data
+ * @param facesStart Pointer to the start of the faces data
  * @param vertexDataType Data type of the vertices data
  * @param indexDataType Data type of the face indices data
  */
@@ -47,6 +53,18 @@ PolygonVertexArray::PolygonVertexArray(uint32 nbVertices, const void* verticesSt
                                        const void* indexesStart, uint32 indexesStride,
                                        uint32 nbFaces, PolygonFace* facesStart,
                                        VertexDataType vertexDataType, IndexDataType indexDataType) {
+
+    init(nbVertices, verticesStart, verticesStride, indexesStart, indexesStride, nbFaces,
+         facesStart, vertexDataType, indexDataType);
+
+}
+
+// Initialize the PolygonVertexArray
+void PolygonVertexArray::init(uint32 nbVertices, const void* verticesStart, uint32 verticesStride,
+                         const void* indexesStart, uint32 indexesStride,
+                         uint32 nbFaces, PolygonFace* facesStart,
+                         VertexDataType vertexDataType, IndexDataType indexDataType) {
+
     mNbVertices = nbVertices;
     mVerticesStart = reinterpret_cast<const unsigned char*>(verticesStart);
     mVerticesStride = verticesStride;
@@ -84,4 +102,28 @@ uint32 PolygonVertexArray::getVertexIndexInFace(uint32 faceIndex32, uint32 noVer
     }
 
     return 0;
+}
+
+// Return the coordinates of a given vertex
+Vector3 PolygonVertexArray::getVertex(uint32 vertexIndex) const {
+
+    Vector3 vertex;
+
+    if (mVertexDataType == PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE) {
+        const float* vertices = (float*)(mVerticesStart + vertexIndex * mVerticesStride);
+        vertex.x = decimal(vertices[0]);
+        vertex.y = decimal(vertices[1]);
+        vertex.z = decimal(vertices[2]);
+    }
+    else if (mVertexDataType == PolygonVertexArray::VertexDataType::VERTEX_DOUBLE_TYPE) {
+        const double* vertices = (double*)(mVerticesStart + vertexIndex * mVerticesStride);
+        vertex.x = decimal(vertices[0]);
+        vertex.y = decimal(vertices[1]);
+        vertex.z = decimal(vertices[2]);
+    }
+    else {
+        assert(false);
+    }
+
+    return vertex;
 }

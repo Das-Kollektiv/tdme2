@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -35,12 +35,11 @@ using namespace reactphysics3d;
 
 // Constructor
 /**
- * @param body Pointer to the parent body
- * @param shape Pointer to the collision shape
- * @param transform Transformation from collision shape local-space to body local-space
- * @param mass Mass of the collision shape (in kilograms)
+ * @param entity Entity of the collider
+ * @param body Pointer to the body
+ * @param memoryManager Reference to the memory manager
  */
-Collider::Collider(Entity entity, CollisionBody* body, MemoryManager& memoryManager)
+Collider::Collider(Entity entity, Body* body, MemoryManager& memoryManager)
            :mMemoryManager(memoryManager), mEntity(entity), mBody(body),
             mUserData(nullptr) {
 
@@ -112,7 +111,7 @@ void Collider::setLocalToBodyTransform(const Transform& transform) {
     const Transform& bodyTransform = mBody->mWorld.mTransformComponents.getTransform(mBody->getEntity());
     mBody->mWorld.mCollidersComponents.setLocalToWorldTransform(mEntity, bodyTransform * transform);
 
-    RigidBody* rigidBody = static_cast<RigidBody*>(mBody);
+    RigidBody* rigidBody = dynamic_cast<RigidBody*>(mBody);
     if (rigidBody != nullptr) {
         rigidBody->setIsSleeping(false);
     }
@@ -129,9 +128,8 @@ void Collider::setLocalToBodyTransform(const Transform& transform) {
  * @return The AABB of the collider in world-space
  */
 const AABB Collider::getWorldAABB() const {
-    AABB aabb;
     CollisionShape* collisionShape = mBody->mWorld.mCollidersComponents.getCollisionShape(mEntity);
-    collisionShape->computeAABB(aabb, getLocalToWorldTransform());
+    const AABB aabb = collisionShape->computeTransformedAABB(getLocalToWorldTransform());
     return aabb;
 }
 
@@ -178,7 +176,7 @@ bool Collider::raycast(const Ray& ray, RaycastInfo& raycastInfo) {
     if (!mBody->isActive()) return false;
 
     // Convert the ray into the local-space of the collision shape
-    const Transform localToWorldTransform = mBody->mWorld.mCollidersComponents.getLocalToWorldTransform(mEntity);
+    const Transform& localToWorldTransform = mBody->mWorld.mCollidersComponents.getLocalToWorldTransform(mEntity);
     const Transform worldToLocalTransform = localToWorldTransform.getInverse();
     Ray rayLocal(worldToLocalTransform * ray.point1, worldToLocalTransform * ray.point2, ray.maxFraction);
 
@@ -244,11 +242,61 @@ bool Collider::getIsTrigger() const {
 }
 
 // Set whether the collider is a trigger
+/// Note that a collider cannot be a simulation collider and a trigger at the same time. If you set
+/// this to true, this collider will stop being a simulation collider.
 /**
  * @param isTrigger True if you want to set this collider as a trigger and false otherwise
  */
 void Collider::setIsTrigger(bool isTrigger) const {
    mBody->mWorld.mCollidersComponents.setIsTrigger(mEntity, isTrigger);
+
+   // The collider cannot be a simulation collider anymore
+   if (isTrigger && getIsSimulationCollider()) {
+       setIsSimulationCollider(false);
+   }
+}
+
+// Return true if the collider can generate contacts for the simulation of the associated body
+bool Collider::getIsSimulationCollider() const {
+   return mBody->mWorld.mCollidersComponents.getIsSimulationCollider(mEntity);
+}
+
+// Set whether the collider can generate contacts for the simulation of the associated body
+/// Note that a collider cannot be a simulation collider and a trigger at the same time. If you set
+/// this to true, this collider will stop being a trigger.
+/**
+ * @param isSimulationCollider True if this collider can generate contacts for the simulation of the
+ *                             associated body.
+ */
+void Collider::setIsSimulationCollider(bool isSimulationCollider) const {
+
+    mBody->mWorld.mCollidersComponents.setIsSimulationCollider(mEntity, isSimulationCollider);
+
+    if (isSimulationCollider) {
+
+        mBody->mWorld.mBodyComponents.setHasSimulationCollider(mBody->getEntity(), true);
+    }
+    else {
+        mBody->updateHasSimulationCollider();
+    }
+
+   // The collider cannot be a trigger anymore
+   if (isSimulationCollider && getIsTrigger()) {
+       setIsTrigger(false);
+   }
+}
+
+// Return true if the collider will be part of results of queries on the PhysicsWorld
+bool Collider::getIsWorldQueryCollider() const {
+   return mBody->mWorld.mCollidersComponents.getIsWorldQueryCollider(mEntity);
+}
+
+// Set whether the collider will be part of results of queries on the PhysicsWorld
+/**
+ * @param isWorldQueryCollider True if this collider will be part of results of queries on the PhysicsWorld
+ */
+void Collider::setIsWorldQueryCollider(bool isWorldQueryCollider) const {
+   mBody->mWorld.mCollidersComponents.setIsWorldQueryCollider(mEntity, isWorldQueryCollider);
 }
 
 // Return a reference to the material properties of the collider

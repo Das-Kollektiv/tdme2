@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -152,7 +152,7 @@ RP3D_FORCE_INLINE void NarrowPhaseInput::addNarrowPhaseTest(uint64 pairId, Entit
         case NarrowPhaseAlgorithmType::ConvexPolyhedronVsConvexPolyhedron:
             mConvexPolyhedronVsConvexPolyhedronBatch.addNarrowPhaseInfo(pairId, collider1, collider2, shape1, shape2, shape1Transform, shape2Transform, reportContacts, lastFrameInfo, shapeAllocator);
             break;
-        case NarrowPhaseAlgorithmType::None:
+        case NarrowPhaseAlgorithmType::NoCollisionTest:
             // Must never happen
             assert(false);
             break;

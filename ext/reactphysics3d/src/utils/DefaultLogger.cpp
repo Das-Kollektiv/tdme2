@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -64,14 +64,20 @@ DefaultLogger::Formatter* DefaultLogger::getFormatter(Format format) const {
 // Add a log file destination to the logger
 void DefaultLogger::addFileDestination(const std::string& filePath, uint logLevelFlag, Format format) {
 
-    FileDestination* destination = new (mAllocator.allocate(sizeof(FileDestination))) FileDestination(filePath, logLevelFlag, getFormatter(format));
+    // Make sure capacity is an integral multiple of alignment
+    const size_t allocatedSize = std::ceil(sizeof(FileDestination) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+
+    FileDestination* destination = new (mAllocator.allocate(allocatedSize)) FileDestination(filePath, logLevelFlag, getFormatter(format));
     mDestinations.add(destination);
 }
 
 /// Add a stream destination to the logger
 void DefaultLogger::addStreamDestination(std::ostream& outputStream, uint logLevelFlag, Format format) {
 
-    StreamDestination* destination = new (mAllocator.allocate(sizeof(StreamDestination))) StreamDestination(outputStream, logLevelFlag, getFormatter(format));
+    // Make sure capacity is an integral multiple of alignment
+    const size_t allocatedSize = std::ceil(sizeof(StreamDestination) / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+
+    StreamDestination* destination = new (mAllocator.allocate(allocatedSize)) StreamDestination(outputStream, logLevelFlag, getFormatter(format));
     mDestinations.add(destination);
 }
 
@@ -84,6 +90,9 @@ void DefaultLogger::removeAllDestinations() {
         size_t size = mDestinations[i]->getSizeBytes();
 
         mDestinations[i]->~Destination();
+
+        // Make sure capacity is an integral multiple of alignment
+        size = std::ceil(size / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
 
         mAllocator.release(mDestinations[i], size);
     }

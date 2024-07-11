@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -33,8 +33,22 @@
 #include <utility>
 #include <sstream>
 #include <string>
+#include <cmath>
 #include <reactphysics3d/decimal.h>
 #include <reactphysics3d/containers/Pair.h>
+
+// OS
+#if defined(_WIN32) || defined(_WIN64)
+    #define RP3D_PLATFORM_WINDOWS
+#elif defined(__APPLE__)
+    #define RP3D_PLATFORM_APPLE
+#elif defined(__ANDROID__)
+    #define RP3D_PLATFORM_ANDROID
+#elif defined(__linux__)
+    #define RP3D_PLATFORM_LINUX
+#else
+    #define RP3D_PLATFORM_UNKNOWN
+#endif
 
 // Compilers
 #if defined(_MSC_VER)
@@ -76,6 +90,7 @@ using int64 = std::int64_t;
 using uint64 = std::uint64_t;
 
 struct Entity;
+
 using bodypair = Pair<Entity, Entity>;
 
 // ------------------- Enumerations ------------------- //
@@ -119,19 +134,22 @@ constexpr decimal DYNAMIC_TREE_FAT_AABB_INFLATE_PERCENTAGE = decimal(0.08);
 constexpr uint8 NB_MAX_CONTACT_POINTS_IN_NARROWPHASE_INFO = 16;
 
 /// Maximum number of contact manifolds in an overlapping pair
-constexpr uint8 NB_MAX_CONTACT_MANIFOLDS = 3;
+constexpr uint8 NB_MAX_CONTACT_MANIFOLDS = 4;
 
 /// Maximum number of potential contact manifolds in an overlapping pair
-constexpr uint8 NB_MAX_POTENTIAL_CONTACT_MANIFOLDS = 4 * NB_MAX_CONTACT_MANIFOLDS;
+constexpr uint8 NB_MAX_POTENTIAL_CONTACT_MANIFOLDS = 64;
 
 /// Maximum number of contact points in potential contact manifold
-constexpr uint16 NB_MAX_CONTACT_POINTS_IN_POTENTIAL_MANIFOLD = 256;
+constexpr uint8 NB_MAX_CONTACT_POINTS_IN_POTENTIAL_MANIFOLD = 255;
 
 /// Distance threshold to consider that two contact points in a manifold are the same
 constexpr decimal SAME_CONTACT_POINT_DISTANCE_THRESHOLD = decimal(0.01);
 
+/// Global alignment (in bytes) that all allocators must enforce
+constexpr uint8 GLOBAL_ALIGNMENT = 16;
+
 /// Current version of ReactPhysics3D
-const std::string RP3D_VERSION = std::string("0.9.0");
+const std::string RP3D_VERSION = std::string("0.10.1");
 
 }
 

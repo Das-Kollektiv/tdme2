@@ -1011,8 +1011,6 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				auto heightMap = make_unique<HeightMap>(
 					terrainHeightVectorVerticesPerX,
 					terreinHeightVectorVerticesPerZ,
-					minHeight,
-					maxHeight,
 					terrain->getHeightVector().data()
 				);
 				//

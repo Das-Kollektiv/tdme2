@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -47,7 +47,7 @@ struct Islands;
 class RigidBody;
 class Collider;
 class PhysicsWorld;
-class CollisionBodyComponents;
+class BodyComponents;
 class DynamicsComponents;
 class RigidBodyComponents;
 class ColliderComponents;
@@ -322,7 +322,7 @@ class ContactSolverSystem {
         Array<ContactPoint>* mAllContactPoints;
 
         /// Reference to the body components
-        CollisionBodyComponents& mBodyComponents;
+        BodyComponents& mBodyComponents;
 
         /// Reference to the dynamics components
         RigidBodyComponents& mRigidBodyComponents;
@@ -362,7 +362,7 @@ class ContactSolverSystem {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        ContactSolverSystem(MemoryManager& memoryManager, PhysicsWorld& world, Islands& islands, CollisionBodyComponents& bodyComponents,
+        ContactSolverSystem(MemoryManager& memoryManager, PhysicsWorld& world, Islands& islands, BodyComponents& bodyComponents,
                       RigidBodyComponents& rigidBodyComponents, ColliderComponents& colliderComponents, decimal& restitutionVelocityThreshold);
 
         /// Destructor

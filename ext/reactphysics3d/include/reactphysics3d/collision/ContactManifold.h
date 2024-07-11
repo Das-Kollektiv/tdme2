@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -36,7 +36,7 @@ namespace reactphysics3d {
 class ContactManifold;
 struct ContactManifoldInfo;
 struct ContactPointInfo;
-class CollisionBody;
+class Body;
 class ContactPoint;
 class DefaultPoolAllocator;
 
@@ -110,7 +110,7 @@ class ContactManifold {
 
         friend class PhysicsWorld;
         friend class Island;
-        friend class CollisionBody;
+        friend class Body;
         friend class ContactManifoldSet;
         friend class ContactSolverSystem;
         friend class CollisionDetectionSystem;

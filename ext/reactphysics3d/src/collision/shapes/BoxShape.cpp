@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -139,4 +139,13 @@ const HalfEdgeStructure::Vertex& BoxShape::getVertex(uint32 vertexIndex) const {
 const HalfEdgeStructure::Edge& BoxShape::getHalfEdge(uint32 edgeIndex) const {
     assert(edgeIndex < getNbHalfEdges());
     return mPhysicsCommon.mBoxShapeHalfEdgeStructure.getHalfEdge(edgeIndex);
+}
+
+// Return the local bounds of the shape in x, y and z directions
+/// This method is used to compute the AABB of the box
+/**
+ * @return The AABB of the shape
+ */
+AABB BoxShape::getLocalBounds() const {
+    return AABB(-mHalfExtents, mHalfExtents);
 }

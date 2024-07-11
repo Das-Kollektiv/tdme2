@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -36,6 +36,7 @@
 #include <sstream>
 #include <iomanip>
 #include <mutex>
+#include <ctime>
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
@@ -80,8 +81,33 @@ class DefaultLogger : public Logger {
                 /// Format a log message
                 virtual std::string format(const time_t& time, const std::string& physicsWorldName, const std::string& message, Level level, Category category,
                                            const char* filename, int lineNumber) = 0;
+
+                /// Return the current date and time
+                std::tm getLocalTime(const std::time_t& time) const {
+
+                    std::tm bt = std::tm();
+
+                    // This is because std::localtime is not thread-safe
+
+#if defined(__unix__)
+                    localtime_r(&time, &bt);
+#elif defined(_MSC_VER)
+                    localtime_s(&bt, &time);
+#else
+                    static std::mutex mtx;
+                    std::lock_guard<std::mutex> lock(mtx);
+                    bt = *std::localtime(&time);
+#endif
+
+                    return bt;
+                }
+
         };
 
+        // Class TextFormatter
+        /**
+         * Format the logs with simple text
+         */
         class TextFormatter : public Formatter {
 
             public:
@@ -101,12 +127,14 @@ class DefaultLogger : public Logger {
 
                     // Get current date
                     auto now = std::chrono::system_clock::now();
-                    auto time = std::chrono::system_clock::to_time_t(now);
+                    std::time_t time = std::chrono::system_clock::to_time_t(now);
+
+                    auto localTime = getLocalTime(time);
 
                     std::stringstream ss;
                     ss << "ReactPhysics3D Logs" << std::endl;
                     ss << "ReactPhysics3D Version: " << RP3D_VERSION << std::endl;
-                    ss << "Date: " << std::put_time(std::localtime(&time), "%Y-%m-%d") << std::endl;
+                    ss << "Date: " << std::put_time(&localTime, "%Y-%m-%d") << std::endl;
                     ss << "---------------------------------------------------------" << std::endl;
 
                     return ss.str();
@@ -117,8 +145,10 @@ class DefaultLogger : public Logger {
                                            Level level, Category category, const char* filename, int lineNumber) override {
                     std::stringstream ss;
 
+                    auto localTime = getLocalTime(time);
+
                     // Time
-                    ss << std::put_time(std::localtime(&time), "%X") << " ";
+                    ss << std::put_time(&localTime, "%X") << " ";
 
                     // World
                     ss << "World:" << physicsWorldName << std::endl;
@@ -142,6 +172,10 @@ class DefaultLogger : public Logger {
                 }
         };
 
+        // Class HtmlFormatter
+        /**
+         * Format the logs with HTML
+         */
         class HtmlFormatter : public Formatter {
 
             private:
@@ -152,6 +186,7 @@ class DefaultLogger : public Logger {
                     // Get current date
                     auto now = std::chrono::system_clock::now();
                     auto time = std::chrono::system_clock::to_time_t(now);
+                    auto localTime = getLocalTime(time);
 
                     std::stringstream ss;
                     ss << "<!DOCTYPE HTML>" << std::endl;
@@ -164,7 +199,7 @@ class DefaultLogger : public Logger {
                     ss << "<h1>ReactPhysics3D Logs</h1>" << std::endl;
                     ss << "<div class='general_info'>" << std::endl;
                     ss << "<p>ReactPhysics3D version: " << RP3D_VERSION << "</p>" << std::endl;
-                    ss << "<p>Date: " << std::put_time(std::localtime(&time), "%Y-%m-%d") << "</p>" << std::endl;
+                    ss << "<p>Date: " << std::put_time(&localTime, "%Y-%m-%d") << "</p>" << std::endl;
                     ss << "</div>" << std::endl;
                     ss << "<hr>";
 
@@ -275,11 +310,13 @@ class DefaultLogger : public Logger {
 
                     std::stringstream ss;
 
+                    auto localTime = getLocalTime(time);
+
                     ss << "<div class='line " + toLowerCase(getCategoryName(category)) + " " + toLowerCase(getLevelName(level)) + "'>";
 
                     // Time
                     ss << "<div class='time'>";
-                    ss << std::put_time(std::localtime(&time), "%X");
+                    ss << std::put_time(&localTime, "%X");
                     ss << "</div>";
 
                     // Message
@@ -315,7 +352,10 @@ class DefaultLogger : public Logger {
         };
 
 
-        /// Log destination
+        // Class Destination
+        /**
+         * destination for the logs
+         */
         class Destination {
 
             public:
@@ -344,6 +384,10 @@ class DefaultLogger : public Logger {
                 virtual size_t getSizeBytes() const=0;
         };
 
+        // Class FileDestination
+        /**
+         * File destination for the logs
+         */
         class FileDestination : public Destination {
 
             private:
@@ -360,9 +404,7 @@ class DefaultLogger : public Logger {
                    :Destination(maxLevelFlag, formatter), mFilePath(filePath),
                     mFileStream(filePath, std::ios::binary) {
 
-                    if(!mFileStream.is_open()) {
-                        throw(std::runtime_error("ReactPhysics3D Logger: Unable to open an output stream to file " + mFilePath));
-                    }
+                    assert(mFileStream.is_open());
 
                     // Write the header
                     mFileStream << formatter->getHeader() << std::endl;
@@ -396,7 +438,10 @@ class DefaultLogger : public Logger {
                 }
         };
 
-        /// Stream destination to output the logs into a stream
+        // Class TextFormatter
+        /**
+         * Stream destination for the logs
+         */
         class StreamDestination : public Destination {
 
             private:
@@ -487,9 +532,9 @@ class DefaultLogger : public Logger {
 
 }
 
-// Hash function for struct VerticesPair
 namespace std {
 
+  // Hash function for struct VerticesPair
   template<> struct hash<reactphysics3d::DefaultLogger::Format> {
 
     size_t operator()(const reactphysics3d::DefaultLogger::Format format) const {

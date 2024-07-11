@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -63,6 +63,9 @@ class Components {
         /// Size (in bytes) of a single component
         size_t mComponentDataSize;
 
+        /// Size (in bytes) to allocate to make sure we can offset the components array to keep alignment
+        size_t mAlignmentMarginSize;
+
         /// Number of allocated components
         uint32 mNbAllocatedComponents;
 
@@ -77,7 +80,7 @@ class Components {
         uint32 mDisabledStartIndex;
 
         /// Compute the index where we need to insert the new component
-        uint32 prepareAddComponent(bool isSleeping);
+        uint32 prepareAddComponent(bool isDisabled);
 
         /// Allocate memory for a given number of components
         virtual void allocate(uint32 nbComponentsToAllocate)=0;
@@ -96,10 +99,13 @@ class Components {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        Components(MemoryAllocator& allocator, size_t componentDataSize);
+        Components(MemoryAllocator& allocator, size_t componentDataSize, size_t alignmentMarginSize);
 
         /// Destructor
         virtual ~Components();
+
+        /// Initialize the components:
+        void init();
 
         /// Remove a component
         void removeComponent(Entity entity);
@@ -137,7 +143,7 @@ RP3D_FORCE_INLINE bool Components::hasComponent(Entity entity) const {
     return mMapEntityToComponentIndex.containsKey(entity);
 }
 
-// Return true if there is a component for a given entiy and if so set the entity index
+// Return true if there is a component for a given entity and if so set the entity index
 RP3D_FORCE_INLINE bool Components::hasComponentGetIndex(Entity entity, uint32& entityIndex) const {
 
     auto it = mMapEntityToComponentIndex.find(entity);

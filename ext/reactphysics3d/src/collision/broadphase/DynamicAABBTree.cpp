@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -53,7 +53,7 @@ void DynamicAABBTree::init() {
 
     mRootNodeID = TreeNode::NULL_TREE_NODE;
     mNbNodes = 0;
-    mNbAllocatedNodes = 8;
+    mNbAllocatedNodes = GLOBAL_ALIGNMENT;
 
     // Allocate memory for the nodes of the tree
     mNodes = static_cast<TreeNode*>(mAllocator.allocate(static_cast<size_t>(mNbAllocatedNodes) * sizeof(TreeNode)));
@@ -147,6 +147,7 @@ int32 DynamicAABBTree::addObjectInternal(const AABB& aabb) {
 
     // Get the next available node (or allocate new ones if necessary)
     int32 nodeID = allocateNode();
+    assert(nodeID >= 0);
 
     // Create the fat aabb to use in the tree (inflate the aabb by a constant percentage of its size)
     const Vector3 gap(aabb.getExtent() * mFatAABBInflatePercentage * decimal(0.5f));
@@ -159,8 +160,6 @@ int32 DynamicAABBTree::addObjectInternal(const AABB& aabb) {
     // Insert the new leaf node in the tree
     insertLeafNode(nodeID);
     assert(mNodes[nodeID].isLeaf());
-
-    assert(nodeID >= 0);
 
     // Return the Id of the node
     return nodeID;
@@ -590,7 +589,7 @@ int32 DynamicAABBTree::balanceSubTreeAtNode(int32 nodeID) {
 void DynamicAABBTree::reportAllShapesOverlappingWithShapes(const Array<int32>& nodesToTest, uint32 startIndex,
                                                            size_t endIndex, Array<Pair<int32, int32>>& outOverlappingNodes) const {
 
-    RP3D_PROFILE("DynamicAABBTree::reportAllShapesOverlappingWithAABB()", mProfiler);
+    RP3D_PROFILE("DynamicAABBTree::reportAllShapesOverlappingWithShapes()", mProfiler);
 
     // Create a stack with the nodes to visit
     Stack<int32> stack(mAllocator, 64);

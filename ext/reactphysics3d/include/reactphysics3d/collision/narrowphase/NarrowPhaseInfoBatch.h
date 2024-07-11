@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -47,6 +47,11 @@ struct ContactPointInfo;
  */
 struct NarrowPhaseInfoBatch {
 
+    // Struct NarrowPhaseInfo
+    /**
+     * A potential collision between two colliders from the middle-phase algorithm
+     * that have to be tested during narrow-phase collision detection.
+     */
     struct NarrowPhaseInfo {
 
         /// Broadphase overlapping pairs ids
@@ -110,6 +115,9 @@ struct NarrowPhaseInfoBatch {
 
         /// Cached capacity
         uint32 mCachedCapacity = 0;
+
+        /// TriangleShape allocated size
+        static const size_t mTriangleShapeAllocatedSize;
 
     public:
 

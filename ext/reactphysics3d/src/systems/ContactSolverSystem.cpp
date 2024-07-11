@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,7 +31,7 @@
 #include <reactphysics3d/utils/Profiler.h>
 #include <reactphysics3d/engine/Island.h>
 #include <reactphysics3d/collision/Collider.h>
-#include <reactphysics3d/components/CollisionBodyComponents.h>
+#include <reactphysics3d/components/BodyComponents.h>
 #include <reactphysics3d/components/ColliderComponents.h>
 #include <reactphysics3d/collision/ContactManifold.h>
 #include <algorithm>
@@ -46,10 +46,11 @@ const decimal ContactSolverSystem::SLOP = decimal(0.01);
 
 // Constructor
 ContactSolverSystem::ContactSolverSystem(MemoryManager& memoryManager, PhysicsWorld& world, Islands& islands,
-                                         CollisionBodyComponents& bodyComponents, RigidBodyComponents& rigidBodyComponents,
+                                         BodyComponents& bodyComponents, RigidBodyComponents& rigidBodyComponents,
                                          ColliderComponents& colliderComponents, decimal& restitutionVelocityThreshold)
-              :mMemoryManager(memoryManager), mWorld(world), mRestitutionVelocityThreshold(restitutionVelocityThreshold),
+              :mMemoryManager(memoryManager), mWorld(world), mTimeStep(-1), mRestitutionVelocityThreshold(restitutionVelocityThreshold),
                mContactConstraints(nullptr), mContactPoints(nullptr),
+               mNbContactPoints(0), mNbContactManifolds(0),
                mIslands(islands), mAllContactManifolds(nullptr), mAllContactPoints(nullptr),
                mBodyComponents(bodyComponents), mRigidBodyComponents(rigidBodyComponents),
                mColliderComponents(colliderComponents), mIsSplitImpulseActive(true) {
@@ -129,10 +130,6 @@ void ContactSolverSystem::initializeForIsland(uint32 islandIndex) {
 
         const uint32 rigidBodyIndex1 = mRigidBodyComponents.getEntityIndex(externalManifold.bodyEntity1);
         const uint32 rigidBodyIndex2 = mRigidBodyComponents.getEntityIndex(externalManifold.bodyEntity2);
-
-        // Get the two bodies of the contact
-        assert(!mBodyComponents.getIsEntityDisabled(externalManifold.bodyEntity1));
-        assert(!mBodyComponents.getIsEntityDisabled(externalManifold.bodyEntity2));
 
         const uint32 collider1Index = mColliderComponents.getEntityIndex(externalManifold.colliderEntity1);
         const uint32 collider2Index = mColliderComponents.getEntityIndex(externalManifold.colliderEntity2);

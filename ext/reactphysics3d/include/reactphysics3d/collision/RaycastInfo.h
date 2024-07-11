@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -33,7 +33,7 @@
 namespace reactphysics3d {
 
 // Declarations
-class CollisionBody;
+class Body;
 class Collider;
 class CollisionShape;
 struct Ray;
@@ -60,14 +60,11 @@ struct RaycastInfo {
         /// The hit point "p" is such that p = point1 + hitFraction * (point2 - point1)
         decimal hitFraction;
 
-        /// Mesh subpart index that has been hit (only used for triangles mesh and -1 otherwise)
-        int meshSubpart;
-
         /// Hit triangle index (only used for triangles mesh and -1 otherwise)
         int triangleIndex;
 
         /// Pointer to the hit collision body
-        CollisionBody* body;
+        Body* body;
 
         /// Pointer to the hit collider
         Collider* collider;
@@ -75,7 +72,7 @@ struct RaycastInfo {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        RaycastInfo() : meshSubpart(-1), triangleIndex(-1), body(nullptr), collider(nullptr) {
+        RaycastInfo() : hitFraction(-1), triangleIndex(-1), body(nullptr), collider(nullptr) {
 
         }
 

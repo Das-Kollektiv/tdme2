@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -80,6 +80,17 @@ bool CapsuleShape::testPointInside(const Vector3& localPoint, Collider* /*collid
             localPoint.y < mHalfHeight && localPoint.y > -mHalfHeight) ||
             (xSquare + zSquare + diffYCenterSphere1 * diffYCenterSphere1) < squareRadius ||
             (xSquare + zSquare + diffYCenterSphere2 * diffYCenterSphere2) < squareRadius;
+}
+
+// Return the local bounds of the shape in x, y and z directions
+// This method is used to compute the AABB of the box
+/**
+ * @return The AABB of the shape
+ */
+AABB CapsuleShape::getLocalBounds() const {
+
+    return AABB(Vector3(-mMargin, -mHalfHeight - mMargin, -mMargin),
+                Vector3(mMargin, mHalfHeight + mMargin, mMargin));
 }
 
 // Raycast method with feedback information

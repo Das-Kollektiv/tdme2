@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -41,12 +41,15 @@ namespace reactphysics3d {
 // Declarations
 class CollisionDetectionSystem;
 class BroadPhaseSystem;
-class CollisionBody;
+class Body;
 class Collider;
 class MemoryManager;
 class Profiler;
 
 // class AABBOverlapCallback
+/**
+ * This class represents a callback when two AABB overlap
+ */
 class AABBOverlapCallback : public DynamicAABBTreeOverlapCallback {
 
     public:

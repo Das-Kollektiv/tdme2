@@ -1,5 +1,7 @@
 #pragma once
 
+#include <reactphysics3d/collision/HeightField.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -20,9 +22,8 @@ class tdme::engine::primitives::HeightMap final
 private:
 	int columns;
 	int rows;
-	float minHeight;
-	float maxHeight;
 	float* heightValues;
+	reactphysics3d::HeightField* heightField { nullptr };
 
 	// overridden methods
 	void destroyCollisionShape() override;
@@ -36,16 +37,12 @@ public:
 	 * Public constructor
 	 * @param colums columns
 	 * @param rows rows
-	 * @param minHeight min height
-	 * @param maxHeight max height
 	 * @param heightValues height values which will not be copied
 	 * @param scale scale
 	 */
 	HeightMap(
 		int columns,
 		int rows,
-		float minHeight,
-		float maxHeight,
 		float* heightValues,
 		const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f)
 	);

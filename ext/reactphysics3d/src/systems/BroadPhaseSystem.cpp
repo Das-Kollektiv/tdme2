@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -73,10 +73,6 @@ void BroadPhaseSystem::raycast(const Ray& ray, RaycastTest& raycastTest, unsigne
 
     BroadPhaseRaycastCallback broadPhaseRaycastCallback(mDynamicAABBTree, raycastWithCategoryMaskBits, raycastTest);
 
-    // Compute the inverse ray direction
-    const Vector3 rayDirection = ray.point2 - ray.point1;
-    const Vector3 rayDirectionInverse(decimal(1.0) / rayDirection.x, decimal(1.0) / rayDirection.y, decimal(1.0) / rayDirection.z);
-
     mDynamicAABBTree.raycast(ray, broadPhaseRaycastCallback);
 }
 
@@ -119,7 +115,7 @@ void BroadPhaseSystem::updateCollider(Entity colliderEntity) {
     assert(mCollidersComponents.mMapEntityToComponentIndex.containsKey(colliderEntity));
 
     // Get the index of the collider component in the array
-    uint32 index = mCollidersComponents.mMapEntityToComponentIndex[colliderEntity];
+    const uint32 index = mCollidersComponents.mMapEntityToComponentIndex[colliderEntity];
 
     // Update the collider component
     updateCollidersComponents(index, 1);
@@ -164,11 +160,6 @@ void BroadPhaseSystem::updateCollidersComponents(uint32 startIndex, uint32 nbIte
     assert(startIndex < mCollidersComponents.getNbComponents());
     assert(startIndex + nbItems <= mCollidersComponents.getNbComponents());
 
-    // Make sure we do not update disabled components
-    startIndex = std::min(startIndex, mCollidersComponents.getNbEnabledComponents());
-    uint32 endIndex = std::min(startIndex + nbItems, mCollidersComponents.getNbEnabledComponents());
-    nbItems = endIndex - startIndex;
-
     // For each collider component to update
     for (uint32 i = startIndex; i < startIndex + nbItems; i++) {
 
@@ -179,8 +170,7 @@ void BroadPhaseSystem::updateCollidersComponents(uint32 startIndex, uint32 nbIte
             const Transform& transform = mTransformsComponents.getTransform(bodyEntity);
 
             // Recompute the world-space AABB of the collision shape
-            AABB aabb;
-            mCollidersComponents.mCollisionShapes[i]->computeAABB(aabb, transform * mCollidersComponents.mLocalToBodyTransforms[i]);
+            const AABB aabb = mCollidersComponents.mCollisionShapes[i]->computeTransformedAABB(transform * mCollidersComponents.mLocalToBodyTransforms[i]);
 
             // If the size of the collision shape has been changed by the user,
             // we need to reset the broad-phase AABB to its new size
@@ -238,8 +228,8 @@ decimal BroadPhaseRaycastCallback::raycastBroadPhaseShape(int32 nodeId, const Ra
     // Get the collider from the node
     Collider* collider = static_cast<Collider*>(mDynamicAABBTree.getNodeDataPointer(nodeId));
 
-    // Check if the raycast filtering mask allows raycast against this shape
-    if ((mRaycastWithCategoryMaskBits & collider->getCollisionCategoryBits()) != 0) {
+    // Check if the raycast filtering mask allows raycast against this shape and if world query is enabled for this collider
+    if ((mRaycastWithCategoryMaskBits & collider->getCollisionCategoryBits()) != 0 && collider->getIsWorldQueryCollider()) {
 
         // Ask the collision detection to perform a ray cast test against
         // the collider of this node because the ray is overlapping

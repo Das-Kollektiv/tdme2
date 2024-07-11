@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,6 +25,9 @@
 
 // Libraries
 #include <reactphysics3d/engine/PhysicsCommon.h>
+#include <reactphysics3d/collision/PolygonVertexArray.h>
+#include <reactphysics3d/collision/VertexArray.h>
+#include <reactphysics3d/utils/quickhull/QuickHull.h>
 
 using namespace reactphysics3d;
 
@@ -40,8 +43,8 @@ PhysicsCommon::PhysicsCommon(MemoryAllocator* baseMemoryAllocator)
                 mPhysicsWorlds(mMemoryManager.getHeapAllocator()), mSphereShapes(mMemoryManager.getHeapAllocator()),
                 mBoxShapes(mMemoryManager.getHeapAllocator()), mCapsuleShapes(mMemoryManager.getHeapAllocator()),
                 mConvexMeshShapes(mMemoryManager.getHeapAllocator()), mConcaveMeshShapes(mMemoryManager.getHeapAllocator()),
-                mHeightFieldShapes(mMemoryManager.getHeapAllocator()), mPolyhedronMeshes(mMemoryManager.getHeapAllocator()),
-                mTriangleMeshes(mMemoryManager.getHeapAllocator()),
+                mHeightFieldShapes(mMemoryManager.getHeapAllocator()), mConvexMeshes(mMemoryManager.getHeapAllocator()),
+                mTriangleMeshes(mMemoryManager.getHeapAllocator()), mHeightFields(mMemoryManager.getHeapAllocator()),
                 mProfilers(mMemoryManager.getHeapAllocator()), mDefaultLoggers(mMemoryManager.getHeapAllocator()),
                 mBoxShapeHalfEdgeStructure(mMemoryManager.getHeapAllocator(), 6, 8, 24),
                 mTriangleShapeHalfEdgeStructure(mMemoryManager.getHeapAllocator(), 2, 3, 6) {
@@ -102,7 +105,7 @@ void PhysicsCommon::initBoxShapeHalfEdgeStructure() {
     mBoxShapeHalfEdgeStructure.addFace(face4);
     mBoxShapeHalfEdgeStructure.addFace(face5);
 
-    mBoxShapeHalfEdgeStructure.init();
+    mBoxShapeHalfEdgeStructure.computeHalfEdges();
 }
 
 // Initialize the static half-edge structure of a TriangleShape
@@ -124,7 +127,7 @@ void PhysicsCommon::initTriangleShapeHalfEdgeStructure() {
     mTriangleShapeHalfEdgeStructure.addFace(face0);
     mTriangleShapeHalfEdgeStructure.addFace(face1);
 
-    mTriangleShapeHalfEdgeStructure.init();
+    mTriangleShapeHalfEdgeStructure.computeHalfEdges();
 }
 
 // Destroy and release everything that has been allocated
@@ -172,17 +175,23 @@ void PhysicsCommon::release() {
     }
     mConcaveMeshShapes.clear();
 
-    // Destroy the polyhedron mesh
-    for (auto it = mPolyhedronMeshes.begin(); it != mPolyhedronMeshes.end(); ++it) {
-        deletePolyhedronMesh(*it);
+    // Destroy the convex mesh
+    for (auto it = mConvexMeshes.begin(); it != mConvexMeshes.end(); ++it) {
+        deleteConvexMesh(*it);
     }
-    mPolyhedronMeshes.clear();
+    mConvexMeshes.clear();
 
     // Destroy the triangle mesh
     for (auto it = mTriangleMeshes.begin(); it != mTriangleMeshes.end(); ++it) {
         deleteTriangleMesh(*it);
     }
     mTriangleMeshes.clear();
+
+    // Destroy the height-field mesh
+    for (auto it = mHeightFields.begin(); it != mHeightFields.end(); ++it) {
+        deleteHeightField(*it);
+    }
+    mHeightFields.clear();
 
     // Destroy the default loggers
     for (auto it = mDefaultLoggers.begin(); it != mDefaultLoggers.end(); ++it) {
@@ -414,13 +423,13 @@ void PhysicsCommon::deleteCapsuleShape(CapsuleShape* capsuleShape) {
 
 // Create and return a convex mesh shape
 /**
- * @param polyhedronMesh A pointer to the polyhedron mesh used to create the convex shape
- * @param scaling Scaling factor to scale the polyhedron mesh if necessary
+ * @param convexMesh A pointer to the convex mesh for this shape
+ * @param scaling Scaling factor to scale the convex mesh if necessary
  * @return A pointer to the created convex mesh shape
  */
-ConvexMeshShape* PhysicsCommon::createConvexMeshShape(PolyhedronMesh* polyhedronMesh, const Vector3& scaling) {
+ConvexMeshShape* PhysicsCommon::createConvexMeshShape(ConvexMesh* convexMesh, const Vector3& scaling) {
 
-    ConvexMeshShape* shape = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(ConvexMeshShape))) ConvexMeshShape(polyhedronMesh, mMemoryManager.getHeapAllocator(), scaling);
+    ConvexMeshShape* shape = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(ConvexMeshShape))) ConvexMeshShape(convexMesh, mMemoryManager.getHeapAllocator(), scaling);
 
     mConvexMeshShapes.add(shape);
 
@@ -458,24 +467,51 @@ void PhysicsCommon::deleteConvexMeshShape(ConvexMeshShape* convexMeshShape) {
    mMemoryManager.release(MemoryManager::AllocationType::Pool, convexMeshShape, sizeof(ConvexMeshShape));
 }
 
-// Create and return a height-field shape
+// Create and return a height-field
 /**
- * @param nbGridColumns Number of columns in the grid of the height field
- * @param nbGridRows Number of rows in the grid of the height field
- * @param minHeight Minimum height value of the height field
- * @param maxHeight Maximum height value of the height field
- * @param heightFieldData Pointer to the first height value data (note that values are shared and not copied)
+ * @param nbGridColumns Number of columns in the grid of the height field (along the local x axis)
+ * @param nbGridRows Number of rows in the grid of the height field (along the local z axis)
+ * @param heightFieldData Pointer to the first height value data (note that values are copied into the heigh-field)
  * @param dataType Data type for the height values (int, float, double)
- * @param upAxis Integer representing the up axis direction (0 for x, 1 for y and 2 for z)
- * @param integerHeightScale Scaling factor used to scale the height values (only when height values type is integer)
+ * @param[out] messages A reference to the array where the messages (warnings, errors, ...) will be stored
+ * @param integerHeightScale Scaling factor for the height values of the height field
+ * @return A pointer to the created height-field
+ */
+HeightField* PhysicsCommon::createHeightField(int nbGridColumns, int nbGridRows,
+                                              const void* heightFieldData,
+                                              HeightField::HeightDataType dataType,
+                                              std::vector<Message>& messages,
+                                              decimal integerHeightScale) {
+
+    // Create the height-field
+    HeightField* heightField = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(TriangleMesh))) HeightField(mMemoryManager.getHeapAllocator(), mTriangleShapeHalfEdgeStructure);
+
+    // Initialize the height-field
+    bool isValid = heightField->init(nbGridColumns, nbGridRows, heightFieldData, dataType, messages,
+                                     integerHeightScale);
+
+    if (!isValid) {
+
+        heightField->~HeightField();
+        mMemoryManager.release(MemoryManager::AllocationType::Pool, heightField, sizeof(HeightField));
+
+        return nullptr;
+    }
+
+    mHeightFields.add(heightField);
+
+    return heightField;
+}
+
+// Create and return a height-field collision shape
+/**
+ * @param heightField A pointer to a HeightField object
+ * @param scaling Scaling vector for the height field
  * @return A pointer to the created height field shape
  */
-HeightFieldShape* PhysicsCommon::createHeightFieldShape(int nbGridColumns, int nbGridRows, decimal minHeight, decimal maxHeight,
-                                         const void* heightFieldData, HeightFieldShape::HeightDataType dataType,
-                                         int upAxis, decimal integerHeightScale, const Vector3& scaling) {
+HeightFieldShape* PhysicsCommon::createHeightFieldShape(HeightField* heightField, const Vector3& scaling) {
 
-    HeightFieldShape* shape = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(HeightFieldShape))) HeightFieldShape(nbGridColumns, nbGridRows, minHeight, maxHeight,
-                                         heightFieldData, dataType, mMemoryManager.getHeapAllocator(), mTriangleShapeHalfEdgeStructure, upAxis, integerHeightScale, scaling);
+    HeightFieldShape* shape = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(HeightFieldShape))) HeightFieldShape(heightField, mMemoryManager.getHeapAllocator(), scaling);
 
     mHeightFieldShapes.add(shape);
 
@@ -560,56 +596,125 @@ void PhysicsCommon::deleteConcaveMeshShape(ConcaveMeshShape* concaveMeshShape) {
    mMemoryManager.release(MemoryManager::AllocationType::Pool, concaveMeshShape, sizeof(ConcaveMeshShape));
 }
 
-// Create a polyhedron mesh
+// Create a convex mesh from a PolygonVertexArray describing vertices and faces
+/// The data (vertices, faces indices, ...) are copied from the PolygonVertexArray into the
+/// created ConvexMesh.
 /**
- * @param polygonVertexArray A pointer to the polygon vertex array to use to create the polyhedron mesh
- * @return A pointer to the created polyhedron mesh or nullptr if the mesh is not valid
+ * @param polygonVertexArray A pointer to the polygon vertex array to use to create the convex mesh
+ * @param messages A reference to a vector of messages. This vector might contains errors that occured during the creation
+ * @return A pointer to the created ConvexMesh instance or nullptr if errors occured during the creation
  */
-PolyhedronMesh* PhysicsCommon::createPolyhedronMesh(PolygonVertexArray* polygonVertexArray) {
+ConvexMesh* PhysicsCommon::createConvexMesh(const PolygonVertexArray& polygonVertexArray, std::vector<Message>& messages) {
 
-    // Create the polyhedron mesh
-    PolyhedronMesh* mesh = PolyhedronMesh::create(polygonVertexArray, mMemoryManager.getPoolAllocator(), mMemoryManager.getHeapAllocator());
+    MemoryAllocator& allocator = mMemoryManager.getHeapAllocator();
+
+    // Create the convex mesh
+    ConvexMesh* mesh = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(ConvexMesh))) ConvexMesh(allocator);
+
+    // Create the half-edge structure of the mesh
+    bool isValid = mesh->init(polygonVertexArray, messages);
+
+    // If the mesh is not valid
+    if (!isValid) {
+        mesh->~ConvexMesh();
+        mMemoryManager.release(MemoryManager::AllocationType::Pool, mesh, sizeof(ConvexMesh));
+        return nullptr;
+    }
 
     // If the mesh is valid
-    if (mesh != nullptr) {
 
-        mPolyhedronMeshes.add(mesh);
-    }
+    mConvexMeshes.add(mesh);
 
     return mesh;
 }
 
-// Destroy a polyhedron mesh
+// Create a convex mesh from an array of vertices (automatically computing the convex hull using QuickHull)
+/// The data (vertices) are copied from the VertexArray into the created ConvexMesh.
 /**
- * @param polyhedronMesh A pointer to the polyhedron mesh to destroy
+ * @param vertexArray A reference to the vertex object describing the vertices used to compute the convex hull
+ * @param messages A reference to the array of messages with errors that might have happened during convex mesh creation
+ * @return A pointer to the created ConvexMesh instance or nullptr if errors occured during the creation
  */
-void PhysicsCommon::destroyPolyhedronMesh(PolyhedronMesh* polyhedronMesh) {
+ConvexMesh* PhysicsCommon::createConvexMesh(const VertexArray& vertexArray, std::vector<Message>& messages) {
 
-    deletePolyhedronMesh(polyhedronMesh);
+    MemoryAllocator& allocator = mMemoryManager.getHeapAllocator();
 
-    mPolyhedronMeshes.remove(polyhedronMesh);
+    PolygonVertexArray outPolygonVertexArray;
+    Array<float> vertices(allocator);
+    Array<unsigned int> indices(allocator);
+    Array<PolygonVertexArray::PolygonFace> faces(allocator);
+
+    // Use the Quick-Hull algorithm to compute the convex hull and return a PolygonVertexArray
+    bool isValid = QuickHull::computeConvexHull(vertexArray, outPolygonVertexArray, vertices, indices, faces, allocator, messages);
+    if (!isValid) {
+        return nullptr;
+    }
+
+    // Create the convex mesh
+
+    ConvexMesh* mesh = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(ConvexMesh))) ConvexMesh(allocator);
+    assert(mesh != nullptr);
+
+    // Create the half-edge structure of the mesh
+    isValid &= mesh->init(outPolygonVertexArray, messages);
+
+    // If the mesh is not valid
+    if (!isValid) {
+        mesh->~ConvexMesh();
+        mMemoryManager.release(MemoryManager::AllocationType::Pool, mesh, sizeof(ConvexMesh));
+        return nullptr;
+    }
+
+    // If the mesh is valid
+
+    mConvexMeshes.add(mesh);
+
+    return mesh;
 }
 
-// Delete a polyhedron mesh
+// Destroy a convex mesh
 /**
- * @param polyhedronMesh A pointer to the polyhedron mesh to destroy
+ * @param convexMesh A pointer to the convex mesh to destroy
  */
-void PhysicsCommon::deletePolyhedronMesh(PolyhedronMesh* polyhedronMesh) {
+void PhysicsCommon::destroyConvexMesh(ConvexMesh* convexMesh) {
+
+    deleteConvexMesh(convexMesh);
+    mConvexMeshes.remove(convexMesh);
+}
+
+// Delete a convex mesh
+/**
+ * @param convexMesh A pointer to the convex mesh to destroy
+ */
+void PhysicsCommon::deleteConvexMesh(ConvexMesh* convexMesh) {
 
    // Call the destructor of the shape
-   polyhedronMesh->~PolyhedronMesh();
+   convexMesh->~ConvexMesh();
 
    // Release allocated memory
-   mMemoryManager.release(MemoryManager::AllocationType::Pool, polyhedronMesh, sizeof(PolyhedronMesh));
+   mMemoryManager.release(MemoryManager::AllocationType::Pool, convexMesh, sizeof(ConvexMesh));
 }
 
-// Create a triangle mesh
+// Create a triangle mesh from a TriangleVertexArray
+/// The data (vertices, faces indices) are copied from the TriangleVertexArray into the created ConvexMesh.
 /**
+ * @param triangleVertexArray A reference to the input TriangleVertexArray
+ * @param messages A reference to the array to stored the messages (warnings, erros, ...)
  * @return A pointer to the created triangle mesh
  */
-TriangleMesh* PhysicsCommon::createTriangleMesh() {
+TriangleMesh* PhysicsCommon::createTriangleMesh(const TriangleVertexArray& triangleVertexArray, std::vector<Message>& messages) {
 
     TriangleMesh* mesh = new (mMemoryManager.allocate(MemoryManager::AllocationType::Pool, sizeof(TriangleMesh))) TriangleMesh(mMemoryManager.getHeapAllocator());
+
+    bool isValid = mesh->init(triangleVertexArray, messages);
+
+    if (!isValid) {
+
+        mesh->~TriangleMesh();
+        mMemoryManager.release(MemoryManager::AllocationType::Pool, mesh, sizeof(TriangleMesh));
+
+        return nullptr;
+    }
 
     mTriangleMeshes.add(mesh);
 
@@ -618,7 +723,7 @@ TriangleMesh* PhysicsCommon::createTriangleMesh() {
 
 // Destroy a triangle mesh
 /**
- * @param A pointer to the triangle mesh to destroy
+ * @param triangleMesh A pointer to the triangle mesh to destroy
  */
 void PhysicsCommon::destroyTriangleMesh(TriangleMesh* triangleMesh) {
 
@@ -627,9 +732,20 @@ void PhysicsCommon::destroyTriangleMesh(TriangleMesh* triangleMesh) {
     mTriangleMeshes.remove(triangleMesh);
 }
 
+// Destroy a height-field
+/**
+ * @param heightField A pointer to the height field to destroy
+ */
+void PhysicsCommon::destroyHeightField(HeightField* heightField) {
+
+    deleteHeightField(heightField);
+
+    mHeightFields.remove(heightField);
+}
+
 // Delete a triangle mesh
 /**
- * @param A pointer to the triangle mesh to destroy
+ * @param triangleMesh A pointer to the triangle mesh to destroy
  */
 void PhysicsCommon::deleteTriangleMesh(TriangleMesh* triangleMesh) {
 
@@ -638,6 +754,19 @@ void PhysicsCommon::deleteTriangleMesh(TriangleMesh* triangleMesh) {
 
    // Release allocated memory
    mMemoryManager.release(MemoryManager::AllocationType::Pool, triangleMesh, sizeof(TriangleMesh));
+}
+
+// Delete a height-field
+/**
+ * @param heightField A pointer to the height-field to destroy
+ */
+void PhysicsCommon::deleteHeightField(HeightField* heightField) {
+
+   // Call the destructor of the shape
+   heightField->~HeightField();
+
+   // Release allocated memory
+   mMemoryManager.release(MemoryManager::AllocationType::Pool, heightField, sizeof(HeightField));
 }
 
 // Create and return a new logger
@@ -655,7 +784,7 @@ DefaultLogger* PhysicsCommon::createDefaultLogger() {
 
 // Destroy a logger
 /**
- * @param A pointer to the default logger to destroy
+ * @param logger A pointer to the default logger to destroy
  */
 void PhysicsCommon::destroyDefaultLogger(DefaultLogger* logger) {
 
@@ -666,7 +795,7 @@ void PhysicsCommon::destroyDefaultLogger(DefaultLogger* logger) {
 
 // Delete a logger
 /**
- * @param A pointer to the default logger to destroy
+ * @param logger A pointer to the default logger to destroy
  */
 void PhysicsCommon::deleteDefaultLogger(DefaultLogger* logger) {
 

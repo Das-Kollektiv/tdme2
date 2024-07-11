@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -60,6 +60,9 @@ class Stack {
 
         /// Allocate more memory
         void allocate(uint64 capacity) {
+
+            // Make sure capacity is an integral multiple of alignment
+            capacity = std::ceil(capacity / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
 
             T* newArray = static_cast<T*>(mAllocator.allocate(capacity * sizeof(T)));
             assert(newArray != nullptr);
@@ -166,6 +169,14 @@ class Stack {
             mArray[mNbElements].~T();
 
             return item;
+        }
+
+        /// Return the top element of the stack
+        T& top() {
+
+            assert(mNbElements > 0);
+
+            return mArray[mNbElements-1];
         }
 
         /// Return the number of items in the stack

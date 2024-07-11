@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -177,7 +177,7 @@ void SliderJoint::setMinTranslationLimit(decimal lowerLimit) {
 
 // Set the maximum translation limit
 /**
- * @param lowerLimit The maximum translation limit of the joint (in meters)
+ * @param upperLimit The maximum translation limit of the joint (in meters)
  */
 void SliderJoint::setMaxTranslationLimit(decimal upperLimit) {
 

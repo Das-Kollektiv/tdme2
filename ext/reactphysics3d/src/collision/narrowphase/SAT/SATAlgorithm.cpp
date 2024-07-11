@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -26,7 +26,7 @@
 // Libraries
 #include <reactphysics3d/collision/narrowphase/SAT/SATAlgorithm.h>
 #include <reactphysics3d/constraint/ContactPoint.h>
-#include <reactphysics3d/collision/PolyhedronMesh.h>
+#include <reactphysics3d/collision/ConvexMesh.h>
 #include <reactphysics3d/collision/shapes/CapsuleShape.h>
 #include <reactphysics3d/collision/shapes/SphereShape.h>
 #include <reactphysics3d/engine/OverlappingPairs.h>
@@ -438,6 +438,10 @@ bool SATAlgorithm::computeCapsulePolyhedronFaceContactPoints(uint32 referenceFac
 		// If the clipped point is one that produce this penetration depth, we keep it
 		if (clipPointPenDepth > penetrationDepth - capsuleRadius - decimal(0.001)) {
 
+            if (!contactFound) {
+                narrowPhaseInfoBatch.resetContactPoints(batchIndex);
+            }
+
             contactFound = true;
 
             Vector3 contactPointPolyhedron = clipSegment[i] + delta;
@@ -720,7 +724,7 @@ bool SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron(NarrowPhaseIn
         // stability. To do this, we use a relative and absolute bias to move penetrationDepth2 a little bit to the right.
         // Now if:
         //  penetrationDepth1 < penetrationDepth2: Nothing happens and we use axis of polygon 1
-        //  penetrationDepth1 ~ penetrationDepth2: Until penetrationDepth1 becomes significantly less than penetrationDepth2 we still use axis of polygon 1
+        //  penetrationDepth1 ~ penetrationDepth2: Until penetrationDepth2 becomes significantly less than penetrationDepth1 we still use axis of polygon 1
         //  penetrationDepth1 >> penetrationDepth2: penetrationDepth2 is now significantly less than penetrationDepth1 and we use polygon 2 axis
         if (penetrationDepth1 < penetrationDepth2 * SEPARATING_AXIS_RELATIVE_TOLERANCE + SEPARATING_AXIS_ABSOLUTE_TOLERANCE) {
 
@@ -760,8 +764,7 @@ bool SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron(NarrowPhaseIn
                 const Vector3 edge2B = polyhedron2->getVertexPosition(polyhedron2->getHalfEdge(edge2.nextEdgeIndex).vertexIndex);
                 const Vector3 edge2Direction = edge2B - edge2A;
 
-                // If the two edges build a minkowski face (and the cross product is
-                // therefore a candidate for separating axis
+                // If the two edges build a minkowski face (and the cross product is therefore a candidate for separating axis
                 if (testEdgesBuildMinkowskiFace(polyhedron1, edge1, polyhedron2, edge2, polyhedron1ToPolyhedron2)) {
 
                     Vector3 separatingAxisPolyhedron2Space;
@@ -784,13 +787,13 @@ bool SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron(NarrowPhaseIn
                     }
 
                     // If the current minimum penetration depth is along a face normal axis (isMinPenetrationFaceNormal=true) and we have found a new
-                    // smaller pentration depth along an edge-edge cross-product axis we want to favor the face normal axis because contact manifolds between
+                    // smaller penetration depth along an edge-edge cross-product axis we want to favor the face normal axis because contact manifolds between
                     // faces have more contact points and therefore more stable than the single contact point of an edge-edge collision. It means that if the new minimum
                     // penetration depth from the edge-edge contact is only a little bit smaller than the current minPenetrationDepth (from a face contact), we favor
                     // the face contact and do not generate an edge-edge contact. However, if the new penetration depth from the edge-edge contact is really smaller than
                     // the current one, we generate an edge-edge contact.
                     // To do this, we use a relative and absolute bias to increase a little bit the new penetration depth from the edge-edge contact during the comparison test
-                    if ((isMinPenetrationFaceNormal && penetrationDepth1 * SEPARATING_AXIS_RELATIVE_TOLERANCE + SEPARATING_AXIS_ABSOLUTE_TOLERANCE < minPenetrationDepth) ||
+                    if ((isMinPenetrationFaceNormal && penetrationDepth * SEPARATING_AXIS_RELATIVE_TOLERANCE + SEPARATING_AXIS_ABSOLUTE_TOLERANCE < minPenetrationDepth) ||
                         (!isMinPenetrationFaceNormal && penetrationDepth < minPenetrationDepth)) {
 
                         minPenetrationDepth = penetrationDepth;

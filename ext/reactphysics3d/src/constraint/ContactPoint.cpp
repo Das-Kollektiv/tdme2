@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -36,7 +36,8 @@ ContactPoint::ContactPoint(const ContactPointInfo* contactInfo, decimal persiste
                mPenetrationDepth(contactInfo->penetrationDepth),
                mLocalPointOnShape1(contactInfo->localPoint1),
                mLocalPointOnShape2(contactInfo->localPoint2),
-               mIsRestingContact(false), mIsObsolete(false),
+               mIsRestingContact(false), mPenetrationImpulse(0), mIsObsolete(false),
+               mNext(nullptr), mPrevious(nullptr),
                mPersistentContactDistanceThreshold(persistentContactDistanceThreshold) {
 
     assert(mPenetrationDepth > decimal(0.0));
@@ -52,6 +53,7 @@ ContactPoint::ContactPoint(const ContactPointInfo& contactInfo, decimal persiste
                mLocalPointOnShape1(contactInfo.localPoint1),
                mLocalPointOnShape2(contactInfo.localPoint2),
                mIsRestingContact(false), mPenetrationImpulse(0), mIsObsolete(false),
+               mNext(nullptr), mPrevious(nullptr),
                mPersistentContactDistanceThreshold(persistentContactDistanceThreshold) {
 
     assert(mPenetrationDepth > decimal(0.0));

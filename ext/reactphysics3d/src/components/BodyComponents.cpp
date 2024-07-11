@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2022 Daniel Chappuis                                       *
+* Copyright (c) 2010-2024 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -24,7 +24,7 @@
 ********************************************************************************/
 
 // Libraries
-#include <reactphysics3d/components/CollisionBodyComponents.h>
+#include <reactphysics3d/components/BodyComponents.h>
 #include <reactphysics3d/engine/EntityManager.h>
 #include <cassert>
 #include <random>
@@ -33,42 +33,53 @@
 using namespace reactphysics3d;
 
 // Constructor
-CollisionBodyComponents::CollisionBodyComponents(MemoryAllocator& allocator)
-                    :Components(allocator, sizeof(Entity) + sizeof(CollisionBody*) + sizeof(Array<Entity>) +
-                                sizeof(bool) + sizeof(void*)) {
+BodyComponents::BodyComponents(MemoryAllocator& allocator)
+                    :Components(allocator, sizeof(Entity) + sizeof(Body*) + sizeof(Array<Entity>) +
+                                sizeof(bool) + sizeof(void*) + sizeof(bool), 6 * GLOBAL_ALIGNMENT) {
 
-    // Allocate memory for the components data
-    allocate(INIT_NB_ALLOCATED_COMPONENTS);
 }
 
 // Allocate memory for a given number of components
-void CollisionBodyComponents::allocate(uint32 nbComponentsToAllocate) {
+void BodyComponents::allocate(uint32 nbComponentsToAllocate) {
 
     assert(nbComponentsToAllocate > mNbAllocatedComponents);
 
+    // Make sure capacity is an integral multiple of alignment
+    nbComponentsToAllocate = std::ceil(nbComponentsToAllocate / float(GLOBAL_ALIGNMENT)) * GLOBAL_ALIGNMENT;
+
     // Size for the data of a single component (in bytes)
-    const size_t totalSizeBytes = nbComponentsToAllocate * mComponentDataSize;
+    const size_t totalSizeBytes = nbComponentsToAllocate * mComponentDataSize + mAlignmentMarginSize;
 
     // Allocate memory
     void* newBuffer = mMemoryAllocator.allocate(totalSizeBytes);
     assert(newBuffer != nullptr);
+    assert(reinterpret_cast<uintptr_t>(newBuffer) % GLOBAL_ALIGNMENT == 0);
 
     // New pointers to components data
     Entity* newBodiesEntities = static_cast<Entity*>(newBuffer);
-    CollisionBody** newBodies = reinterpret_cast<CollisionBody**>(newBodiesEntities + nbComponentsToAllocate);
-    Array<Entity>* newColliders = reinterpret_cast<Array<Entity>*>(newBodies + nbComponentsToAllocate);
-    bool* newIsActive = reinterpret_cast<bool*>(newColliders + nbComponentsToAllocate);
-    void** newUserData = reinterpret_cast<void**>(newIsActive + nbComponentsToAllocate);
+    assert(reinterpret_cast<uintptr_t>(newBodiesEntities) % GLOBAL_ALIGNMENT == 0);
+    Body** newBodies = reinterpret_cast<Body**>(MemoryAllocator::alignAddress(newBodiesEntities + nbComponentsToAllocate, GLOBAL_ALIGNMENT));
+    assert(reinterpret_cast<uintptr_t>(newBodies) % GLOBAL_ALIGNMENT == 0);
+    Array<Entity>* newColliders = reinterpret_cast<Array<Entity>*>(MemoryAllocator::alignAddress(newBodies + nbComponentsToAllocate, GLOBAL_ALIGNMENT));
+    assert(reinterpret_cast<uintptr_t>(newColliders) % GLOBAL_ALIGNMENT == 0);
+    bool* newIsActive = reinterpret_cast<bool*>(MemoryAllocator::alignAddress(newColliders + nbComponentsToAllocate, GLOBAL_ALIGNMENT));
+    assert(reinterpret_cast<uintptr_t>(newIsActive) % GLOBAL_ALIGNMENT == 0);
+    void** newUserData = reinterpret_cast<void**>(MemoryAllocator::alignAddress(newIsActive + nbComponentsToAllocate, GLOBAL_ALIGNMENT));
+    assert(reinterpret_cast<uintptr_t>(newUserData) % GLOBAL_ALIGNMENT == 0);
+    bool* newHasSimulationCollider = reinterpret_cast<bool*>(MemoryAllocator::alignAddress(newUserData + nbComponentsToAllocate, GLOBAL_ALIGNMENT));
+    assert(reinterpret_cast<uintptr_t>(newHasSimulationCollider) % GLOBAL_ALIGNMENT == 0);
+    assert(reinterpret_cast<uintptr_t>(newHasSimulationCollider + nbComponentsToAllocate) <= reinterpret_cast<uintptr_t>(newBuffer) + totalSizeBytes);
 
     // If there was already components before
     if (mNbComponents > 0) {
 
         // Copy component data from the previous buffer to the new one
         memcpy(newBodiesEntities, mBodiesEntities, mNbComponents * sizeof(Entity));
-        memcpy(newBodies, mBodies, mNbComponents * sizeof(CollisionBody*));
+        memcpy(newBodies, mBodies, mNbComponents * sizeof(Body*));
         memcpy(newColliders, mColliders, mNbComponents * sizeof(Array<Entity>));
         memcpy(newIsActive, mIsActive, mNbComponents * sizeof(bool));
         memcpy(newUserData, mUserData, mNbComponents * sizeof(void*));
+        memcpy(newHasSimulationCollider, mHasSimulationCollider, mNbComponents * sizeof(bool));
 
         // Deallocate previous memory
         mMemoryAllocator.release(mBuffer, mNbAllocatedComponents * mComponentDataSize);
@@ -80,14 +91,15 @@ void CollisionBodyComponents::allocate(uint32 nbComponentsToAllocate) {
     mColliders = newColliders;
     mIsActive = newIsActive;
     mUserData = newUserData;
+    mHasSimulationCollider = newHasSimulationCollider;
     mNbAllocatedComponents = nbComponentsToAllocate;
 }
 
 // Add a component
-void CollisionBodyComponents::addComponent(Entity bodyEntity, bool isSleeping, const CollisionBodyComponent& component) {
+void BodyComponents::addComponent(Entity bodyEntity, bool isDisabled, const BodyComponent& component) {
 
     // Prepare to add new component (allocate memory if necessary and compute insertion index)
-    uint32 index = prepareAddComponent(isSleeping);
+    uint32 index = prepareAddComponent(isDisabled);
 
     // Insert the new component data
     new (mBodiesEntities + index) Entity(bodyEntity);
@@ -95,6 +107,7 @@ void CollisionBodyComponents::addComponent(Entity bodyEntity, bool isSleeping, c
     new (mColliders + index) Array<Entity>(mMemoryAllocator);
     mIsActive[index] = true;
     mUserData[index] = nullptr;
+    mHasSimulationCollider[index] = false;
 
     // Map the entity with the new component lookup index
     mMapEntityToComponentIndex.add(Pair<Entity, uint32>(bodyEntity, index));
@@ -107,7 +120,7 @@ void CollisionBodyComponents::addComponent(Entity bodyEntity, bool isSleeping, c
 
 // Move a component from a source to a destination index in the components array
 // The destination location must contain a constructed object
-void CollisionBodyComponents::moveComponentToIndex(uint32 srcIndex, uint32 destIndex) {
+void BodyComponents::moveComponentToIndex(uint32 srcIndex, uint32 destIndex) {
 
     const Entity entity = mBodiesEntities[srcIndex];
 
@@ -117,6 +130,7 @@ void CollisionBodyComponents::moveComponentToIndex(uint32 srcIndex, uint32 destI
     new (mColliders + destIndex) Array<Entity>(mColliders[srcIndex]);
     mIsActive[destIndex] = mIsActive[srcIndex];
     mUserData[destIndex] = mUserData[srcIndex];
+    mHasSimulationCollider[destIndex] = mHasSimulationCollider[srcIndex];
 
     // Destroy the source component
     destroyComponent(srcIndex);
@@ -130,14 +144,15 @@ void CollisionBodyComponents::moveComponentToIndex(uint32 srcIndex, uint32 destI
 }
 
 // Swap two components in the array
-void CollisionBodyComponents::swapComponents(uint32 index1, uint32 index2) {
+void BodyComponents::swapComponents(uint32 index1, uint32 index2) {
 
     // Copy component 1 data
     Entity entity1(mBodiesEntities[index1]);
-    CollisionBody* body1 = mBodies[index1];
+    Body* body1 = mBodies[index1];
     Array<Entity> colliders1(mColliders[index1]);
     bool isActive1 = mIsActive[index1];
     void* userData1 = mUserData[index1];
+    bool hasSimulationCollider = mHasSimulationCollider[index1];
 
     // Destroy component 1
     destroyComponent(index1);
@@ -150,6 +165,7 @@ void CollisionBodyComponents::swapComponents(uint32 index1, uint32 index2) {
     mBodies[index2] = body1;
     mIsActive[index2] = isActive1;
     mUserData[index2] = userData1;
+    mHasSimulationCollider[index2] = hasSimulationCollider;
 
     // Update the entity to component index mapping
     mMapEntityToComponentIndex.add(Pair<Entity, uint32>(entity1, index2));
@@ -160,7 +176,7 @@ void CollisionBodyComponents::swapComponents(uint32 index1, uint32 index2) {
 }
 
 // Destroy a component at a given index
-void CollisionBodyComponents::destroyComponent(uint32 index) {
+void BodyComponents::destroyComponent(uint32 index) {
 
     Components::destroyComponent(index);
 
