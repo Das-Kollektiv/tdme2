@@ -93,6 +93,12 @@ void SkyRenderShader::initialize()
 	if (uniformLIGHT1_DIRECTION == -1) return;
 	uniformStarsTexture = renderer->getProgramUniformLocation(programId, "stars_texture");
 	if (uniformStarsTexture == -1) return;
+	uniformCloudsTopTexture = renderer->getProgramUniformLocation(programId, "clouds_top_texture");
+	if (uniformCloudsTopTexture == -1) return;
+	uniformCloudsMiddleTexture = renderer->getProgramUniformLocation(programId, "clouds_middle_texture");
+	if (uniformCloudsMiddleTexture == -1) return;
+	uniformCloudsBottomTexture = renderer->getProgramUniformLocation(programId, "clouds_bottom_texture");
+	if (uniformCloudsBottomTexture == -1) return;
 	uniformLightScatteringPass = renderer->getProgramUniformLocation(programId, "lightScatteringPass");
 	if (uniformLightScatteringPass == -1) return;
 	uniformTime = renderer->getProgramUniformLocation(programId, "time");
@@ -233,11 +239,32 @@ void SkyRenderShader::unloadTextures() {
 		starsTexture = nullptr;
 		starsTextureId = renderer->ID_NONE;
 	}
+	if (cloudsTopTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(cloudsTopTexture);
+		cloudsTopTexture->releaseReference();
+		cloudsTopTexture = nullptr;
+		cloudsTopTextureId = renderer->ID_NONE;
+	}
+	if (cloudsMiddleTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(cloudsMiddleTexture);
+		cloudsMiddleTexture->releaseReference();
+		cloudsMiddleTexture = nullptr;
+		cloudsMiddleTextureId = renderer->ID_NONE;
+	}
+	if (cloudsBottomTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(cloudsBottomTexture);
+		cloudsBottomTexture->releaseReference();
+		cloudsBottomTexture = nullptr;
+		cloudsBottomTextureId = renderer->ID_NONE;
+	}
 }
 
 void SkyRenderShader::loadTextures(const string& pathName) {
 	unloadTextures();
 	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), renderer->CONTEXTINDEX_DEFAULT);
+	cloudsTopTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsTopTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_top.png"), renderer->CONTEXTINDEX_DEFAULT);
+	cloudsMiddleTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsMiddleTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_middle.png"), renderer->CONTEXTINDEX_DEFAULT);
+	cloudsBottomTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsBottomTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_bottom.png"), renderer->CONTEXTINDEX_DEFAULT);
 }
 
 void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* camera) {
@@ -282,8 +309,10 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, camera->getSideVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, camera->getUpVector().getArray());
 	//
-	renderer->setTextureUnit(contextIdx, 0);
-	renderer->bindTexture(contextIdx, starsTextureId);
+	renderer->setProgramUniformInteger(contextIdx, uniformStarsTexture, 0);
+	renderer->setProgramUniformInteger(contextIdx, uniformCloudsTopTexture, 1);
+	renderer->setProgramUniformInteger(contextIdx, uniformCloudsMiddleTexture, 2);
+	renderer->setProgramUniformInteger(contextIdx, uniformCloudsBottomTexture, 3);
 	// sky
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getColor3ValueArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getColor3ValueArray());
@@ -321,7 +350,20 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	//
 	renderer->disableDepthBufferWriting();
 	renderer->disableDepthBufferTest();
+	//
 	renderer->disableCulling(contextIdx);
+	//
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, starsTextureId);
+	//
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, cloudsTopTextureId);
+	//
+	renderer->setTextureUnit(contextIdx, 2);
+	renderer->bindTexture(contextIdx, cloudsMiddleTextureId);
+	//
+	renderer->setTextureUnit(contextIdx, 3);
+	renderer->bindTexture(contextIdx, cloudsBottomTextureId);
 
 	// use frame buffer render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
@@ -337,7 +379,14 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	renderer->unbindBufferObjects(contextIdx);
 
 	//
+	//
 	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 2);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 3);
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// unset

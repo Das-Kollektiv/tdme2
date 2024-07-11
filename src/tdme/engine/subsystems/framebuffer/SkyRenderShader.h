@@ -38,6 +38,9 @@ private:
 	int32_t uniformLIGHT1_DIRECTION { -1 };
 	int32_t uniformLIGHT1_ENABLED { -1 };
 	int32_t uniformStarsTexture { -1 };
+	int32_t uniformCloudsTopTexture { -1 };
+	int32_t uniformCloudsMiddleTexture { -1 };
+	int32_t uniformCloudsBottomTexture { -1 };
 
 	// sky
 	int32_t uniformDayTopColor { -1 };
@@ -76,6 +79,12 @@ private:
 
 	Texture* starsTexture { nullptr };
 	int32_t starsTextureId { 0 };
+	Texture* cloudsTopTexture { nullptr };
+	int32_t cloudsTopTextureId { 0 };
+	Texture* cloudsMiddleTexture { nullptr };
+	int32_t cloudsMiddleTextureId { 0 };
+	Texture* cloudsBottomTexture { nullptr };
+	int32_t cloudsBottomTextureId { 0 };
 
 	bool initialized { false };
 
