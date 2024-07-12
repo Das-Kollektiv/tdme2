@@ -39,12 +39,23 @@ public:
 	/**
 	 * Returns sign of value
 	 * @param value value
+	 * @return -1.0 if value is negative or +1.0 if positive
+	 */
+	inline static float sign(float value) {
+		if (std::abs(value) < EPSILON) return 1.0f;
+		return value / std::abs(value);
+	}
+
+	/**
+	 * Returns sign of value
+	 * @param value value
 	 * @return -1 if value is negative or +1 if positive
 	 */
 	inline static auto sign(auto value) {
-		if (abs(value) < EPSILON) return static_cast<decltype(value)>(1);
-		return value / Math::abs(value);
+		if (value == 0) return static_cast<decltype(value)>(1);
+		return value / std::abs(value);
 	}
+
 
 	/**
 	 * Do the square product
@@ -100,6 +111,7 @@ public:
 	inline static float atan2(float y, float x) {
 		return std::atan2(y, x);
 	}
+
 
 	/**
 	 * Returns the higher integer value of given value

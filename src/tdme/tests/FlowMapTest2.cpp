@@ -260,7 +260,7 @@ void FlowMapTest2::display()
 			} else
 			// ok, try to do flow map
 			if ((cell = flowMap != nullptr?flowMap->getCell(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ()):nullptr) != nullptr) {
-				auto pathFindingNodeIdx = Math::min(cell->getPathNodeIdx() + 1, flowMap->getPath().size() - 1);
+				auto pathFindingNodeIdx = Math::min(cell->getPathNodeIdx() + 1, static_cast<int>(flowMap->getPath().size()) - 1);
 				if (pathFindingNodeIdx > combatUnit.pathFindingNodeIdx) {
 					combatUnit.pathFindingNodeIdx = pathFindingNodeIdx;
 				}
@@ -375,7 +375,7 @@ void FlowMapTest2::display()
 				// movement direction
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
 				combatUnit.movementDirectionRing[combatUnit.movementDirectionRingIdx] = combatUnit.movementDirection;
-				combatUnit.movementDirectionRingLength = Math::min(combatUnit.movementDirectionRingLength + 1, combatUnit.movementDirectionRing.size());
+				combatUnit.movementDirectionRingLength = Math::min(combatUnit.movementDirectionRingLength + 1, static_cast<int>(combatUnit.movementDirectionRing.size()));
 				Vector3 movementDirection;
 				for (auto i = 0; i < combatUnit.movementDirectionRingLength; i++) {
 					movementDirection.add(combatUnit.movementDirectionRing[(combatUnit.movementDirectionRingIdx - i) % combatUnit.movementDirectionRing.size()]);
@@ -416,7 +416,7 @@ void FlowMapTest2::display()
 				continue;
 			}
 			if (combatUnit.idx == 0) continue;
-			auto villagerPathNodeIdx = Math::min(combatUnit.pathFindingNodeIdx + 1, flowMap->getPath().size() - 1);
+			auto villagerPathNodeIdx = Math::min(combatUnit.pathFindingNodeIdx + 1, static_cast<int>(flowMap->getPath().size()) - 1);
 			auto formationPositionMovement = combatUnit.pathFindingNode - combatUnit.object->getTranslation();
 			auto formationPositionDistance = formationPositionMovement.computeLength();
 			formationPositionMovement.normalize();
