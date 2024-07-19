@@ -183,6 +183,8 @@ void EngineTest::display()
 		entityClicked = _objectClicked;
 		mouseClicked = false;
 	}
+	//
+	engine->renderToScreen();
 }
 
 void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp)
@@ -402,6 +404,7 @@ void EngineTest::onKeyUp(int key, int keyCode, int x, int y) {
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;
 	if (keyChar == 'd') keyD = false;
+	if (keyChar == 't') engine->toggleRenderToScreen();
 	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
 	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
 	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;

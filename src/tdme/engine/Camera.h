@@ -294,6 +294,19 @@ public:
 	 */
 	void update(int contextIdx, int32_t width, int32_t height);
 
+	/**
+	 * Sets up camera by custom matrices while resizing the view port
+	 * @param contextIdx context index
+	 * @param width width
+	 * @param height height
+	 * @param lookFrom look from
+	 * @param lookFrom look at
+	 * @param lookFrom up
+	 * @param projectionMatrix projection matrix
+	 * @param cameraMatrix camera matrix
+	 */
+	void updateCustom(int contextIdx, int32_t width, int32_t height, const Vector3& lookFrom, const Vector3& lookAt, const Vector3& up, const Matrix4x4& projectionMatrix, const Matrix4x4& cameraMatrix);
+
 private:
 
 	/**

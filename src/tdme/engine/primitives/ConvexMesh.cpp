@@ -425,6 +425,8 @@ void ConvexMesh::createCollisionShape(World* world) {
 						return "WARNING";
 					case reactphysics3d::Message::Type::Information:
 						return "INFORMATION";
+					default:
+						return "INVALID";
 				}
 			};
 			Console::printLine("ConvexMesh::createCollisionShape(): " + getMessageTypeText(message) + ": " + message.text);

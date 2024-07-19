@@ -197,8 +197,64 @@ void Camera::update(int contextIdx, int32_t width, int32_t height)
 	renderer->onUpdateCameraMatrix(contextIdx);
 
 	//
-	mvpInvertedMatrix.set(cameraMatrix).multiply(projectionMatrix).invert();
 	mvpMatrix.set(cameraMatrix).multiply(projectionMatrix);
+	mvpInvertedMatrix.set(mvpMatrix).invert();
+
+	// viewport
+	renderer->setViewPort(width, height);
+	renderer->updateViewPort();
+}
+
+void Camera::updateCustom(int contextIdx, int32_t width, int32_t height, const Vector3& lookFrom, const Vector3& lookAt, const Vector3& up, const Matrix4x4& projectionMatrix, const Matrix4x4& cameraMatrix) {
+	auto reshaped = false;
+	auto _width = width;
+	auto _height = height;
+	if (this->width != _width || this->height != _height) {
+		reshaped = true;
+		if (_height <= 0)
+			_height = 1;
+
+		this->width = _width;
+		this->height = _height;
+		renderer->getViewportMatrix().set(
+			_width / 2.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			_height / 2.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			0.0f,
+			0 + (_width / 2.0f),
+			0 + (_height / 2.0f),
+			0.0f,
+			1.0f
+		);
+	}
+
+	this->lookFrom = lookFrom;
+	this->lookAt = lookAt;
+	this->upVector = upVector;
+	this->projectionMatrix.set(projectionMatrix);
+	this->cameraMatrix.set(cameraMatrix);
+
+	// setup projection and model view matrices and such
+	renderer->getCameraPosition().set(lookFrom);
+	renderer->getProjectionMatrix().set(projectionMatrix);
+	renderer->onUpdateProjectionMatrix(contextIdx);
+	renderer->getModelViewMatrix().set(cameraMatrix);
+	renderer->onUpdateModelViewMatrix(contextIdx);
+	renderer->getCameraMatrix().set(cameraMatrix);
+	renderer->onUpdateCameraMatrix(contextIdx);
+
+	//
+	mvpMatrix.set(cameraMatrix).multiply(projectionMatrix);
+	mvpInvertedMatrix.set(mvpMatrix).invert();
+
 
 	// viewport
 	renderer->setViewPort(width, height);

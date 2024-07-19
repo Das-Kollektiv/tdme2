@@ -136,5 +136,22 @@ void Frustum::update()
 	//	setup plane
 	planes[5].setNormal(Vector3(x, y, z));
 	planes[5].setDistance(d);
+
+	//
+	auto i = 0;
+	for (const auto& plane: planes) {
+		auto vertex = plane.getNormal() * plane.getDistance();
+		Console::printLine(
+			"frustum plane@" + to_string(i) + ": " +
+			to_string(plane.getNormal().getX()) + ", " +
+			to_string(plane.getNormal().getY()) + ", " +
+			to_string(plane.getNormal().getZ()) + ": " +
+			to_string(plane.getDistance()) + ": " +
+			to_string(vertex.getX()) + ", " +
+			to_string(vertex.getY()) + ", " +
+			to_string(vertex.getZ())
+		);
+		i++;
+	}
 }
 

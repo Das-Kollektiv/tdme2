@@ -20,6 +20,7 @@ namespace tests {
 	class PhysicsTest4;
 	class PhysicsTest5;
 	class RayTracingTest;
+	class ShadowMapTest;
 	class SkinningTest;
 	class TreeTest;
 	class VideoTest;

@@ -12,6 +12,10 @@ out vec4 outColor;
 
 // main
 void main(void) {
-	outColor = texture(colorBufferTextureUnit, vsFragTextureUV);
+	vec4 c = texture(colorBufferTextureUnit, vsFragTextureUV);
+	outColor.r = c.r;
+	outColor.g = c.g;
+	outColor.b = c.b;
+	outColor.a = 1.0;
 	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 }

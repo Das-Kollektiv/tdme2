@@ -558,12 +558,13 @@ SRCS = \
 	src/tdme/tests/PhysicsTest4.cpp \
 	src/tdme/tests/PhysicsTest5.cpp \
 	src/tdme/tests/RayTracingTest.cpp \
+	src/tdme/tests/ShadowMapTest.cpp \
+	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
-	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/VideoTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
@@ -988,6 +989,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest4-main.cpp \
 	src/tdme/tests/PhysicsTest5-main.cpp \
 	src/tdme/tests/RayTracingTest-main.cpp \
+	src/tdme/tests/ShadowMapTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/SplineTest-main.cpp \
 	src/tdme/tests/TextureAtlasTest-main.cpp \

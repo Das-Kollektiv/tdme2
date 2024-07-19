@@ -428,6 +428,8 @@ private:
 	STATIC_DLL_IMPEXT static unique_ptr<Queue<EngineThreadQueueElement>> engineThreadsQueue;
 	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
+	bool doRenderToScreen { false };
+
 	/**
 	 * @return engine
 	 */
@@ -604,6 +606,11 @@ public:
 	 * Destructor
 	 */
 	~Engine();
+
+	//
+	void toggleRenderToScreen() {
+		doRenderToScreen = !doRenderToScreen;
+	}
 
 	/**
 	 * Returns engine instance

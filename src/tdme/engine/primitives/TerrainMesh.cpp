@@ -118,6 +118,8 @@ void TerrainMesh::createCollisionShape(World* world) {
 					return "WARNING";
 				case reactphysics3d::Message::Type::Information:
 					return "INFORMATION";
+				default:
+					return "INVALID";
 			}
 		};
 		Console::printLine("TerrainMesh::createCollisionShape(): " + getMessageTypeText(message) + ": " + message.text);

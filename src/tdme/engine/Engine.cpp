@@ -1391,6 +1391,7 @@ void Engine::display()
 	// camera
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 	// frustum
+	Console::printLine("Engine::display()@0");
 	camera->getFrustum()->update();
 
 	// do pre rendering steps
@@ -1559,6 +1560,8 @@ void Engine::display()
 
 	// camera
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	//
+	if (doRenderToScreen == true) getShadowMapping()->getShadowMap(0)->getFrameBuffer()->renderDepthBufferToScreen(this);
 }
 
 Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera)

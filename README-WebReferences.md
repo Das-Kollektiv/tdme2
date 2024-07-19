@@ -24,6 +24,7 @@
   - http://www.songho.ca/opengl/gl_transform.html
   - http://www.wazim.com/Collada_Tutorial_1.htm
   - http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
+  - https://ahbejarano.gitbook.io/lwjglgamedev/chapter-17
   - https://aras-p.info/blog/2020/12/08/Texture-Compression-in-2020/
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
   - https://en.cppreference.com/w/cpp/language/operator_precedence

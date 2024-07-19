@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -12,11 +13,13 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::array;
 using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Camera;
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object;
@@ -32,12 +35,25 @@ class tdme::engine::subsystems::shadowmapping::ShadowMap final
 	friend class ShadowMapping;
 
 private:
+	static constexpr int CASCADE_COUNT { 3 };
+
+	/**
+	 * Shadow map cascade
+	 */
+	struct CascadeShadow {
+		Matrix4x4 projViewMatrix;
+		float splitDistance;
+		unique_ptr<FrameBuffer> frameBuffer;
+	};
+
+	//
 	vector<Object*> visibleObjects;
 	ShadowMapping* shadowMapping { nullptr };
 	unique_ptr<Camera> lightCamera;
 	unique_ptr<FrameBuffer> frameBuffer;
 	Matrix4x4 biasMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
+	array<CascadeShadow, CASCADE_COUNT> cascadeShadows;
 
 	/**
 	 * Initialize shadow map
@@ -66,6 +82,12 @@ private:
 	 * @return light camera
 	 */
 	Camera* getCamera();
+
+	/**
+	 * Create cascades
+	 * @param light light
+	 */
+	void createCascades(Light* light);
 
 	/**
 	 * Create shadow map

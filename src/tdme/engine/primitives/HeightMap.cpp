@@ -71,6 +71,8 @@ void HeightMap::createCollisionShape(World* world) {
 					return "WARNING";
 				case reactphysics3d::Message::Type::Information:
 					return "INFORMATION";
+				default:
+					return "INVALID";
 			}
 		};
 		Console::printLine("HeightMap::createCollisionShape(): " + getMessageTypeText(message) + ": " + message.text);
