@@ -1561,7 +1561,58 @@ void Engine::display()
 	// camera
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 	//
-	if (doRenderToScreen == true) getShadowMapping()->getShadowMap(0)->getFrameBuffer()->renderDepthBufferToScreen(this);
+	if (doRenderToScreen == true) {
+		getShadowMapping()->getShadowMap(0)->getFrameBuffer()->renderDepthBufferToScreen(this);
+	}
+	{
+		Console::printLine(
+			"look from: " +
+			to_string(camera->getLookFrom().getX()) + ", " +
+			to_string(camera->getLookFrom().getY()) + ", " +
+			to_string(camera->getLookFrom().getZ()) + "; " +
+			"look at: " +
+			to_string(camera->getLookAt().getX()) + ", " +
+			to_string(camera->getLookAt().getY()) + ", " +
+			to_string(camera->getLookAt().getZ())
+		);
+		for (auto i = 0; i < getShadowMapping()->getShadowMap(0)->pubFrustumCorners.size(); i++) {
+			auto pubFrustumCornersLines = new Lines(
+				"pubFrustumCornersLines@" + to_string(i),
+				10.0f,
+				{
+					// near
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][0],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][3],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][3],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][0],
+					// far
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 0],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 3],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 3],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 0],
+					// near .... far
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][0],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 0],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 1],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 2],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][3],
+					getShadowMapping()->getShadowMap(0)->pubFrustumCorners[i][4 + 3],
+				},
+				Color4(1.0f, 0.0f, 0.0f, 1.0f)
+			);
+			addEntity(pubFrustumCornersLines);
+		}
+	}
 }
 
 Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera)

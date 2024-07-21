@@ -116,8 +116,10 @@ void LinesInternal::initialize() {
 		// upload colors
 		auto fbColors = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 4 * sizeof(float))->asFloatBuffer();
 		if (colors.size() == points.size()) {
+			Console::printLine("a");
 			for (const auto& color: colors) fbColors.put(color.getArray());
 		} else {
+			Console::printLine("b");
 			for (const auto& point: points) fbColors.put(color.getArray());
 		}
 		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);

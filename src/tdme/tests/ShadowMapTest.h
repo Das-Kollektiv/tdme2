@@ -48,8 +48,11 @@ private:
 	bool keyD { false };
 	bool keyMinus { false };
 	bool keyPlus { false };
+	bool keyDot { false };
+	bool keyComma { false };
 	float camRotationY { 0.0f };
 	float camRotationX { 0.0f };
+	float t { 0.15f };
 
 public:
 	// forbid class copy

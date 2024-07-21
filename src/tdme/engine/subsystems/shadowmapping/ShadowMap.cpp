@@ -527,9 +527,452 @@ void ShadowMap::createCascades(Light* light) {
 	}
 }
 
+void ShadowMap::createCascades2(Light* light) {
+	// use default context
+	auto contextIdx = shadowMapping->renderer->CONTEXTINDEX_DEFAULT;
+	auto engine = shadowMapping->getEngine();
+
+	// see: https://ogldev.org/www/tutorial49/tutorial49.html
+	auto camera = engine->getCamera();
+	auto cameraMatrix = camera->getCameraMatrix();
+	auto cameraMatrixInv = camera->getCameraMatrix().clone().invert();
+	auto lightDirection = light->getSpotDirection().clone().normalize();
+
+	//	center
+	auto center4 = camera->getModelViewProjectionInvertedMatrix().multiply(
+		Vector4(
+			(2.0f * 0.5f) - 1.0f,
+			1.0f - (2.0f * 1.0f),
+			2.0f * 0.5f - 1.0f,
+			1.0f
+		)
+	);
+	center4.scale(1.0f / center4.getW());
+	auto center = Vector3(center4.getX(), center4.getY(), center4.getZ());
+
+	Console::printLine("Arr");
+
+	Console::printLine("Center");
+	for (auto v: center.getArray()) Console::print(to_string(v) + " ");
+	Console::printLine();
+
+	Console::printLine("Camera Matrix");
+	for (auto v: cameraMatrix.getArray()) Console::print(to_string(v) + " ");
+	Console::printLine();
+
+	Console::printLine("Camera Matrix Inv");
+	for (auto v: cameraMatrixInv.getArray()) Console::print(to_string(v) + " ");
+	Console::printLine();
+
+	// light camera to generate shadow map
+	auto lightPosition = light->getPosition();
+	if (Math::abs(lightPosition.getW()) > Math::EPSILON) lightPosition.scale(1.0f / lightPosition.getW());
+	auto lightPosition3 = Vector3(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ());
+	lightCamera->setFrustumMode(Camera::FRUSTUMMODE_PERSPECTIVE);
+	lightCamera->setZNear(camera->getZNear());
+	lightCamera->setZFar(camera->getZFar());
+	lightCamera->setLookFrom(/*center.clone().add(*/lightDirection.clone().scale(-camera->getZFar())/*)*/);
+	lightCamera->setLookAt(/*center*/Vector3());
+	lightCamera->setUpVector(Camera::computeUpVector(camera->getLookFrom(), camera->getLookAt()));
+	lightCamera->update(shadowMapping->renderer->ID_NONE, frameBuffer->getWidth(), frameBuffer->getHeight());
+	auto shadowMapCameraMatrix = lightCamera->getCameraMatrix();
+
+	Console::printLine("Shadow Map Camera Matrix");
+	for (auto v: shadowMapCameraMatrix.getArray()) Console::print(to_string(v) + " ");
+	Console::printLine();
+
+	//
+	auto shadowMapLookFrom = lightDirection.clone().scale(-camera->getZFar());
+	auto shadowMapLookAt = Vector3();
+	auto lightUp = lightCamera->getUpVector();
+
+	//
+	Console::printLine("LIGHTCAMERA@" + to_string(light->getId()));
+	Console::printLine(
+		"\tFROM" +
+		to_string(lightCamera->getLookFrom().getX()) + ", " +
+		to_string(lightCamera->getLookFrom().getY()) + ", " +
+		to_string(lightCamera->getLookFrom().getZ()) + ";"
+	);
+	Console::printLine(
+		"\tAT" +
+		to_string(lightCamera->getLookAt().getX()) + ", " +
+		to_string(lightCamera->getLookAt().getY()) + ", " +
+		to_string(lightCamera->getLookAt().getZ()) + ";"
+	);
+	Console::printLine(
+		"\tUP" +
+		to_string(lightCamera->getUpVector().getX()) + ", " +
+		to_string(lightCamera->getUpVector().getY()) + ", " +
+		to_string(lightCamera->getUpVector().getZ()) + ";"
+	);
+	Console::printLine(
+		"\tLIGHT POS" +
+		to_string(lightPosition.getX()) + ", " +
+		to_string(lightPosition.getY()) + ", " +
+		to_string(lightPosition.getZ()) + ";"
+	);
+	Console::printLine(
+		"\tLIGHT DIR" +
+		to_string(lightDirection.getX()) + ", " +
+		to_string(lightDirection.getY()) + ", " +
+		to_string(lightDirection.getZ()) + ";"
+	);
+
+	//
+	array<float, 4> cascadeEnd;
+	cascadeEnd[0] = camera->getZNear();
+	cascadeEnd[1] = 25.0f;
+	cascadeEnd[2] = 90.0f;
+	cascadeEnd[3] = camera->getZFar();
+
+	//
+	auto width = static_cast<float>(camera->getWidth());
+	auto height = static_cast<float>(camera->getHeight());
+	auto fov = camera->getFovX();
+	auto ar = height / width;
+	auto tanHalfHFOV = Math::tan((fov / 2.0f) * Math::DEG2RAD);
+	auto tanHalfVFOV = Math::tan(((fov * ar) / 2.0f) * Math::DEG2RAD);
+
+	//
+	for (auto i = 0; i < CASCADE_COUNT; i++) {
+		Console::printLine("Cascade@" + to_string(i));
+
+		float xn = cascadeEnd[i] * tanHalfHFOV;
+		float xf = cascadeEnd[i + 1] * tanHalfHFOV;
+		float yn = cascadeEnd[i] * tanHalfVFOV;
+		float yf = cascadeEnd[i + 1] * tanHalfVFOV;
+
+		array<Vector3, 8> frustumCorners = {
+			// near face
+			Vector3(xn, yn, cascadeEnd[i]),
+			Vector3(-xn, yn, cascadeEnd[i]),
+			Vector3(xn, -yn, cascadeEnd[i]),
+			Vector3(-xn, -yn, cascadeEnd[i]),
+			// far face
+			Vector3(xf, yf, cascadeEnd[i + 1]),
+			Vector3(-xf, yf, cascadeEnd[i + 1]),
+			Vector3(xf, -yf, cascadeEnd[i + 1]),
+			Vector3(-xf, -yf, cascadeEnd[i + 1])
+		};
+
+		//
+		Console::printLine("FC@" + to_string(i));
+		for (const auto& frustomCorner: frustumCorners) {
+			Console::printLine(
+				"\t" +
+				to_string(frustomCorner.getX()) + ", " +
+				to_string(frustomCorner.getY()) + ", " +
+				to_string(frustomCorner.getZ())
+			);
+		}
+		Console::printLine();
+
+		//
+		auto minX = Float::MAX_VALUE;
+		auto maxX = Float::MIN_VALUE;
+		auto minY = Float::MAX_VALUE;
+		auto maxY = Float::MIN_VALUE;
+		auto minZ = Float::MAX_VALUE;
+		auto maxZ = Float::MIN_VALUE;
+		//
+		array<Vector3, 8> frustumCornersShadowMap;
+		for (auto j = 0; j < frustumCornersShadowMap.size(); j++) {
+			// Transform the frustum coordinate from view to world space and to to shadow map space (for orientation)
+			frustumCornersShadowMap[j] = shadowMapCameraMatrix * (cameraMatrixInv * frustumCorners[j]);
+
+			//
+			Console::printLine(
+				"frustumCornersShadowMap@" + to_string(j) + ": " +
+				to_string(frustumCornersShadowMap[j].getX()) + ", " +
+				to_string(frustumCornersShadowMap[j].getY()) + ", " +
+				to_string(frustumCornersShadowMap[j].getZ())
+			);
+
+			//
+			pubFrustumCorners[i][j].set(
+				frustumCornersShadowMap[j].getX(),
+				frustumCornersShadowMap[j].getY(),
+				frustumCornersShadowMap[j].getZ()
+			);
+
+			//
+			minX = Math::min(minX, frustumCornersShadowMap[j].getX());
+			maxX = Math::max(maxX, frustumCornersShadowMap[j].getX());
+			minY = Math::min(minY, frustumCornersShadowMap[j].getY());
+			maxY = Math::max(maxY, frustumCornersShadowMap[j].getY());
+			minZ = Math::min(minZ, frustumCornersShadowMap[j].getZ());
+			maxZ = Math::max(maxZ, frustumCornersShadowMap[j].getZ());
+		}
+
+		//
+		Console::printLine("MinMax@" + to_string(i));
+		Console::printLine(
+			"\t" +
+			to_string(minX) + ", " +
+			to_string(maxX) + ", " +
+			to_string(minY) + ", " +
+			to_string(maxY) + ", " +
+			to_string(minZ) + ", " +
+			to_string(maxZ)
+		);
+		Console::printLine();
+
+		//
+		Console::printLine("FCSM@" + to_string(i));
+		for (const auto& frustomCorner: frustumCornersShadowMap) {
+			Console::printLine(
+				"\t" +
+				to_string(frustomCorner.getX()) + ", " +
+				to_string(frustomCorner.getY()) + ", " +
+				to_string(frustomCorner.getZ())
+			);
+		}
+		Console::printLine();
+
+		//
+		Matrix4x4 lightOrthoMatrix;
+		{
+			auto leftPlane = minX;
+			auto rightPlane = maxX;
+			auto topPlane = minY;
+			auto bottomPlane = maxY;
+			auto nearPlane = minZ;
+			auto farPlane = maxZ;
+			lightOrthoMatrix.set(
+				2.0f / (rightPlane - leftPlane),
+				0.0f,
+				0.0f,
+				0.0f,
+				0.0f,
+				2.0f / (topPlane - bottomPlane),
+				0.0f,
+				0.0f,
+				0.0f,
+				0.0f,
+				-2.0f / (farPlane - nearPlane),
+				0.0f,
+				-(rightPlane + leftPlane) / (rightPlane - leftPlane),
+				-(topPlane + bottomPlane) / (topPlane - bottomPlane),
+				-(farPlane + nearPlane) / (farPlane - nearPlane),
+				1.0f
+			);
+		}
+
+		//
+		Matrix4x4 lightViewMatrix;
+		{
+			//
+			auto eye = center;
+			auto forwardVector = (shadowMapLookAt - shadowMapLookFrom).normalize();
+			auto sideVector = Vector3::computeCrossProduct(forwardVector, lightUp).normalize();
+			auto upVector = lightUp;
+
+			Console::printLine("eye@" + to_string(i));
+			Console::print(
+				to_string(eye.getX()) + ", " +
+				to_string(eye.getY()) + ", " +
+				to_string(eye.getZ()) + "; "
+			);
+			Console::printLine();
+
+			Console::printLine("forward@" + to_string(i));
+			Console::print(
+				to_string(forwardVector.getX()) + ", " +
+				to_string(forwardVector.getY()) + ", " +
+				to_string(forwardVector.getZ()) + "; "
+			);
+			Console::printLine();
+
+			Console::printLine("side@" + to_string(i));
+			Console::print(
+				to_string(sideVector.getX()) + ", " +
+				to_string(sideVector.getY()) + ", " +
+				to_string(sideVector.getZ()) + "; "
+			);
+			Console::printLine();
+
+			Console::printLine("up@" + to_string(i));
+			Console::print(
+				to_string(upVector.getX()) + ", " +
+				to_string(upVector.getY()) + ", " +
+				to_string(upVector.getZ()) + "; "
+			);
+			Console::printLine();
+
+			//
+			lightViewMatrix.
+				identity().
+				setTranslation(
+					eye.clone().scale(-1.0f)
+				).
+				multiply(
+					Matrix4x4(
+						sideVector[0],
+						upVector[0],
+						-forwardVector[0],
+						0.0f,
+						sideVector[1],
+						upVector[1],
+						-forwardVector[1],
+						0.0f,
+						sideVector[2],
+						upVector[2],
+						-forwardVector[2],
+						0.0f,
+						0.0f,
+						0.0f,
+						0.0f,
+						1.0f
+					)
+				);
+		}
+
+		Console::printLine("Light Ortho Matrix@" + to_string(i));
+		for (auto v: lightOrthoMatrix.getArray()) Console::print(to_string(v) + " ");
+		Console::printLine();
+		Console::printLine("Light View Matrix@" + to_string(i));
+		for (auto v: lightViewMatrix.getArray()) Console::print(to_string(v) + " ");
+		Console::printLine();
+
+		//
+		if (i == 4) {
+			lightCamera->updateCustom(
+				contextIdx,
+				frameBuffer->getWidth(),
+				frameBuffer->getHeight(),
+				lightCamera->getLookFrom(),
+				lightCamera->getLookAt(),
+				lightCamera->getUpVector(),
+				lightOrthoMatrix,
+				lightViewMatrix
+			);
+			lightCamera->getFrustum()->update();
+
+			// clear visible objects
+			visibleObjects.clear();
+
+			// determine visible objects and objects that should generate a shadow
+			for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
+				switch (entity->getEntityType()) {
+					case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
+						{
+							auto org = static_cast<ObjectRenderGroup*>(entity);
+							auto orgEntity = org->getEntity();
+							if (orgEntity != nullptr) {
+								if (orgEntity->isContributesShadows() == false) continue;
+								switch(orgEntity->getEntityType()) {
+									case Entity::ENTITYTYPE_OBJECT:
+										{
+											auto object = static_cast<Object*>(orgEntity);
+											visibleObjects.push_back(object);
+										}
+										break;
+									case Entity::ENTITYTYPE_LODOBJECT:
+										{
+											auto lodObject = static_cast<LODObject*>(orgEntity);
+											if (lodObject->isContributesShadows() == false) continue;
+											auto object = lodObject->getLODObject();
+											if (object != nullptr) {
+												visibleObjects.push_back(object);
+											}
+										}
+										break;
+									default:
+										break;
+								}
+							}
+						}
+						break;
+					case Entity::ENTITYTYPE_OBJECT:
+						{
+							auto object = static_cast<Object*>(entity);
+							if (object->isContributesShadows() == false) continue;
+							visibleObjects.push_back(object);
+						}
+						break;
+					case Entity::ENTITYTYPE_LODOBJECT:
+						{
+							auto lodObject = static_cast<LODObject*>(entity);
+							if (lodObject->isContributesShadows() == false) continue;
+							auto object = lodObject->getLODObject();
+							if (object != nullptr) visibleObjects.push_back(object);
+						}
+						break;
+					case Entity::ENTITYTYPE_IMPOSTEROBJECT:
+						{
+							auto object = static_cast<ImposterObject*>(entity);
+							if (object->isContributesShadows() == false) continue;
+							visibleObjects.push_back(object->getBillboardObject());
+						}
+						break;
+					case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
+						{
+							auto lodObjectImposter = static_cast<LODObjectImposter*>(entity);
+							if (lodObjectImposter->isContributesShadows() == false) continue;
+							auto object = lodObjectImposter->getLODObject();
+							if (object != nullptr) visibleObjects.push_back(object);
+						}
+						break;
+					case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
+						{
+							auto opse = static_cast<ObjectParticleSystem*>(entity);
+							if (opse->isContributesShadows() == false) continue;
+							for (auto object: opse->getEnabledObjects()) visibleObjects.push_back(object);
+						}
+						break;
+					case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+						{
+							auto psg = static_cast<ParticleSystemGroup*>(entity);
+							for (auto ps: psg->getParticleSystems()) {
+								if (ps->getEntityType() != Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) continue;
+								auto opse = static_cast<ObjectParticleSystem*>(ps);
+								if (opse->isContributesShadows() == false) continue;
+								for (auto object: opse->getEnabledObjects()) visibleObjects.push_back(object);
+							}
+						}
+						break;
+					case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+						{
+							auto eh = static_cast<EntityHierarchy*>(entity);
+							if (eh->isContributesShadows() == false) continue;
+							for (auto entity: eh->getEntities()) {
+								if (entity->getEntityType() != Entity::ENTITYTYPE_OBJECT) continue;
+								auto object = static_cast<Object*>(entity);
+								if (object->isEnabled() == false) continue;
+								visibleObjects.push_back(object);
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+
+			// bind frame buffer
+			frameBuffer->enableFrameBuffer();
+			// clear depth buffer
+			shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
+			// generate shadow map texture matrix
+			computeDepthBiasMVPMatrix();
+			// only draw opaque face entities as shadows will not be produced from transparent objects
+			for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
+				auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
+				shadowMapping->entityRenderer->render(
+					renderPass,
+					visibleObjects,
+					false,
+					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+				);
+			}
+		}
+	}
+}
+
 void ShadowMap::createShadowMap(Light* light)
 {
-	createCascades(light);
+	createCascades2(light);
 	return;
 	//
 
@@ -600,7 +1043,6 @@ void ShadowMap::createShadowMap(Light* light)
 		auto lightPosition3 = Vector3(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ());
 		lightCamera->setFrustumMode(Camera::FRUSTUMMODE_PERSPECTIVE);
 		lightCamera->setZNear(camera->getZNear());
-		lightCamera->setZFar(150.0f);
 		lightCamera->setLookFrom(lightPosition3);
 	}
 

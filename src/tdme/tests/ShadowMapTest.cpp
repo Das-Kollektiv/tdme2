@@ -59,6 +59,14 @@ int ShadowMapTest::main(int argc, char** argv)
 
 void ShadowMapTest::display()
 {
+	// light
+	if (keyComma == true) t-= 0.001f;
+	if (keyDot == true) t+= 0.001f;
+
+	//
+	engine->getLightAt(Engine::LIGHTIDX_SUN)->setupSun(t);
+	engine->getLightAt(Engine::LIGHTIDX_MOON)->setupMoon(t);
+
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
@@ -144,6 +152,22 @@ void ShadowMapTest::initialize()
 	cam->setLookFrom(scene->getCenter() + Vector3(0.0f, 20.0f, 0.0f));
 	cam->setLookAt(scene->getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
+	//
+	engine->getLightAt(1)->setEnabled(false);
+	engine->getLightAt(2)->setEnabled(false);
+	//
+	engine->getLightAt(Engine::LIGHTIDX_SUN)->setupSun(0.15f);
+	engine->getLightAt(Engine::LIGHTIDX_MOON)->setupMoon(0.15f);
+	//
+	engine->setSkyShaderEnabled(true);
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	sunLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	sunLight->setRenderSource(false);
+	sunLight->setEnabled(true);
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+	moonLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	moonLight->setRenderSource(false);
+	moonLight->setEnabled(true);
 }
 
 void ShadowMapTest::reshape(int32_t width, int32_t height)
@@ -164,6 +188,8 @@ void ShadowMapTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat, i
 	if (keyChar == 'd') keyD = true;
 	if (keyChar == '-') keyMinus = true;
 	if (keyChar == '+') keyPlus = true;
+	if (keyChar == ',') keyComma = true;
+	if (keyChar == '.') keyDot = true;
 	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
 	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
 	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
@@ -178,6 +204,8 @@ void ShadowMapTest::onKeyUp(int key, int keyCode, int x, int y) {
 	if (keyChar == 'd') keyD = false;
 	if (keyChar == '-') keyMinus = false;
 	if (keyChar == '+') keyPlus = false;
+	if (keyChar == ',') keyComma = false;
+	if (keyChar == '.') keyDot = false;
 	if (keyChar == 't') engine->toggleRenderToScreen();
 	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
 	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;

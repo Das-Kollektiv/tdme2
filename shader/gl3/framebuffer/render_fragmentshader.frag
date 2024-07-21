@@ -13,7 +13,7 @@ out vec4 outColor;
 // main
 void main(void) {
 	vec4 c = texture(colorBufferTextureUnit, vsFragTextureUV);
-	outColor.r = c.r;
+	outColor.r = (c.r - 0.9) * 10.0;
 	outColor.g = c.g;
 	outColor.b = c.b;
 	outColor.a = 1.0;

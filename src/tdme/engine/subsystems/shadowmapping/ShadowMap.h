@@ -34,6 +34,10 @@ class tdme::engine::subsystems::shadowmapping::ShadowMap final
 {
 	friend class ShadowMapping;
 
+public:
+	//
+	array<array<Vector3, 8>, 3> pubFrustumCorners;
+
 private:
 	static constexpr int CASCADE_COUNT { 3 };
 
@@ -88,6 +92,12 @@ private:
 	 * @param light light
 	 */
 	void createCascades(Light* light);
+
+	/**
+	 * Create cascades 2
+	 * @param light light
+	 */
+	void createCascades2(Light* light);
 
 	/**
 	 * Create shadow map
