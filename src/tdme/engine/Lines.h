@@ -57,9 +57,9 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param lineWidth line width
-	 * @param points points
+	 * @param points point 0 and point 1 are considered a line, point 2 and 3 are considered a line, ...
 	 * @param color color
-	 * @param colors optional colors
+	 * @param colors colors
 	 * @param texture optional texture
 	 */
 	Lines(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
