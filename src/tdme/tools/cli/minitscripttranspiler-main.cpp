@@ -1,29 +1,26 @@
-#include <cstdlib>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <minitscript/minitscript.h>
+#include <minitscript/minitscript/Context.h>
+#include <minitscript/minitscript/MinitScript.h>
 #include <minitscript/minitscript/Transpiler.h>
-
-#include <tdme/engine/Version.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/minitscript/EngineMinitScript.h>
+#include <minitscript/minitscript/Version.h>
+#include <minitscript/os/filesystem/FileSystem.h>
+#include <minitscript/utilities/Console.h>
 
 using std::exit;
+using std::make_unique;
 using std::string;
-using std::unique_ptr;
 using std::vector;
 
+using minitscript::minitscript::Context;
+using minitscript::minitscript::MinitScript;
 using minitscript::minitscript::Transpiler;
-
-using tdme::engine::Version;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Console;
-using tdme::minitscript::EngineMinitScript;
+using minitscript::minitscript::Version;
+using minitscript::os::filesystem::FileSystem;
+using minitscript::utilities::Console;
 
 int main(int argc, char** argv)
 {
@@ -37,25 +34,26 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	vector<string> miniScriptExtensionFileNames;
-	for (auto i = 3; i < argc; i++) miniScriptExtensionFileNames.push_back(argv[i]);
+	vector<string> minitScriptExtensionFileNames;
+	for (auto i = 3; i < argc; i++) minitScriptExtensionFileNames.push_back(argv[i]);
 
 	//
-	EngineMinitScript::initialize();
+	MinitScript::initialize();
 
 	//
 	auto scriptFileName = string(argv[1]);
-	auto miniScript = unique_ptr<EngineMinitScript>(
-		EngineMinitScript::loadScript(
-			FileSystem::getInstance()->getPathName(scriptFileName),
-			FileSystem::getInstance()->getFileName(scriptFileName)
-		)
+	auto context = make_unique<Context>();
+	auto minitScript = make_unique<MinitScript>();
+	minitScript->setContext(context.get());
+	minitScript->parseScript(
+		FileSystem::getPathName(scriptFileName),
+		FileSystem::getFileName(scriptFileName)
 	);
-	if (miniScript->isValid() == false) {
+	if (minitScript->isValid() == false) {
 		Console::printLine(scriptFileName + ": Script not valid. Exiting!");
 	} else {
 		//
-		Transpiler::transpile(miniScript.get(), argv[2], miniScriptExtensionFileNames);
+		Transpiler::transpile(minitScript.get(), argv[2], minitScriptExtensionFileNames);
 	}
 
 	//

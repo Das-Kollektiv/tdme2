@@ -12,7 +12,12 @@ using std::string;
 using std::set;
 using std::unordered_set;
 
-using minitscript::utilities::Properties;
+// namespaces
+namespace minitscript {
+namespace minitscript {
+	using ::minitscript::utilities::Properties;
+}
+}
 
 /**
  * MinitScript documentation

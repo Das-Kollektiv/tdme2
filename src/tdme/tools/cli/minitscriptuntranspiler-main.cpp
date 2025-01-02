@@ -3,16 +3,16 @@
 
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/Transpiler.h>
-
-#include <tdme/engine/Version.h>
-#include <tdme/utilities/Console.h>
+#include <minitscript/minitscript/Version.h>
+#include <minitscript/utilities/Console.h>
 
 using std::exit;
 using std::string;
 
 using minitscript::minitscript::Transpiler;
-using tdme::engine::Version;
-using tdme::utilities::Console;
+using minitscript::minitscript::Version;
+using minitscript::utilities::Console;
+
 
 int main(int argc, char** argv)
 {

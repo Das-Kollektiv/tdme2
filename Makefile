@@ -178,7 +178,7 @@ ifeq ($(GLES2), YES)
 endif 
 
 # subdirs
-LIBS:= $(LIBS)
+LIBS:= $(LIBS) subdirs
 
 SRC = src
 TINYXML = tinyxml
