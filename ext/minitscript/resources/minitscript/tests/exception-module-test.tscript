@@ -1,0 +1,43 @@
+module
+
+function: module_exceptionATest1()
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionATest1(): init")
+	console.printLine("--------------------------------")
+	console.printLine()
+	try
+		throw ("This is a exception from module_exceptionATest1()")
+	catch ($exception)
+		console.printLine("Cought exception in module_exceptionATest1(): " + $exception)
+	end
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionATest1(): done")
+	console.printLine("--------------------------------")
+end
+
+function: module_exceptionBTest1()
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionBTest1(): init")
+	console.printLine("--------------------------------")
+	console.printLine()
+	try
+		module_exceptionBTest2()
+	catch ($exception)
+		console.printLine("Cought exception in module_exceptionBTest1(): " + $exception)
+	end
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionBTest1(): done")
+	console.printLine("--------------------------------")
+end
+
+function: module_exceptionBTest2()
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionBTest2(): init")
+	console.printLine("--------------------------------")
+	console.printLine()
+	throw ("This is a exception from module_exceptionBTest2()")
+	console.printLine("--------------------------------")
+	console.printLine("module_exceptionBTest2(): done")
+	console.printLine("--------------------------------")
+	console.printLine()
+end

@@ -1,0 +1,22 @@
+# main
+function: main()
+	console.printLine("-------------")
+	console.printLine("string-test")
+	console.printLine("-------------")
+	console.printLine()
+	console.printLine("Hi, lets produce\na newline, and\nanother one: \"yarrrrr\"")
+	console.printLine("Some Umlauts love: äöü >>> ÄÖÜ")
+	console.printLine("Some more Umlauts love: \U000000fc")
+	console.printLine("Some even more Umlauts love: " + String::fromCodePoint(252))
+	console.printLine("Some code point Umlauts love: äöü = " + String("äöü")->codePointAt(0) + " / " + String("äöü")->codePointAt(1) + " / " + String("äöü")->codePointAt(2))
+	console.printLine("Beep\a")
+	#
+	$matches = null
+	if (String::regexMatch("Andreas0815", "([A-Za-z]*)([0-9]*)", $matches) == true)
+		console.printLine('String::regexMatch("Andreas0815", "([A-Za-z]*)([0-9]*)", $matches): ' + $matches)
+	end
+	$matches = null
+	if (String::regexSearch("Who is this Andreas0815?", "Andreas([0-9]*)", $matches) == true)
+		console.printLine('String::regexSearch("Who is this Andreas0815?", "Andreas([0-9]*)", $matches): ' + $matches)
+	end
+end

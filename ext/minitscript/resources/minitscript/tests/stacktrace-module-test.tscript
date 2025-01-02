@@ -1,0 +1,31 @@
+module
+
+function: module_function1()
+	console.printLine("--------------------------")
+	console.printLine("module_function1(): init")
+	console.printLine("--------------------------")
+	module_function2()
+	console.printLine("--------------------------")
+	console.printLine("module_function1(): done")
+	console.printLine("--------------------------")
+end
+
+function: module_function2()
+	console.printLine("--------------------------")
+	console.printLine("module_function2(): init")
+	console.printLine("--------------------------")
+	module_function3()
+	console.printLine("--------------------------")
+	console.printLine("module_function2(): done")
+	console.printLine("--------------------------")
+end
+
+function: module_function3()
+	console.printLine("--------------------------")
+	console.printLine("module_function3(): init")
+	console.printLine("--------------------------")
+	console.printLine(stackTrace())
+	console.printLine("--------------------------")
+	console.printLine("module_function3(): done")
+	console.printLine("--------------------------")
+end

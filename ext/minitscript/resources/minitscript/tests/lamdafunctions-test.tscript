@@ -1,0 +1,62 @@
+# main
+function: main()
+	console.printLine("---------------------")
+	console.printLine("lamdafunctions-test")
+	console.printLine("---------------------")
+	console.printLine()
+	# log array values to console using array.forEach
+	console.printLine("array.forEach() log test: [1, 2, 3, 4, 5, 6]")
+	$array = [1, 2, 3, 4, 5, 6]
+	$array->forEach(($element) -> { console.printLine($element) })
+	# log array values to console using array.forRange
+	console.printLine("array.forRange(1,3,2) log test: [1, 2, 3, 4, 5, 6]")
+	$array->forRange(($element) -> { console.printLine($element) }, 1, 3, 2)
+	# sum array values using array.forEach
+	$sum = 0
+	$array->forEach(($element, &$sum) -> { $sum = $sum + $element }, $sum)
+	console.printLine("array.forEach() sum test: [1, 2, 3, 4, 5, 6]: " + $sum)
+	# sort array values descending
+	console.printLine("array.sort() desc test")
+	$array->sort(($a, $b) -> { return($a > $b) })
+	# log array values to console using array.forEach
+	console.printLine("array.forEach() log test: [6, 5, 4, 3, 2, 1]")
+	$array->forEach(($element) -> { console.printLine($element) })
+	# log set keys to console using set.forEach
+	console.printLine("set.forEach() log test: {aaa, bbb, ccc}")
+	$set = {aaa, bbb, ccc}
+	$set->forEach(($key) -> { console.printLine($key) })
+	console.printLine("set.forEach() log test: {aaa, bbb, ccc}")
+	# concatenate set values using set.forEach
+	$setConcat = ""
+	$set->forEach(($key, &$setConcat) -> 
+		{ 
+			if ($setConcat->isEmpty() == false) 
+				$setConcat = $setConcat + ","
+			end
+			$setConcat = $setConcat + $key 
+		}, 
+		$setConcat
+	)
+	console.printLine("set.forEach() concatenate test: {aaa, bbb, ccc}: " + $setConcat)
+	# log map key, value pairs to console using set.forEach
+	$map = {a: 1, b: 2, c: 3}
+	$map->forEach(($key, $value) -> { console.printLine($key + " = " + $value) })
+	# sum map values using map.forEach
+	$sum = 0
+	$map->forEach(($key, $value, &$sum) -> { $sum = $sum + $value }, $sum)
+	console.printLine("map.forEach() sum test: {a: 1, b: 2, c: 3}: " + $sum)
+	# inline functions in arrays
+	console.printLine("testing inline functions in arrays")
+	$functions = [
+		# testing a comment here
+		($v) -> { console.printLine("a: " + $v) },
+		($v) -> { console.printLine("b: " + $v) },
+		# testing a comment here
+		($v) -> { console.printLine("c: " + $v) }
+	]
+	$v = 1
+	forEach($f in $functions)
+		script.callFunction($f, $v)
+		$v++
+	end 
+end

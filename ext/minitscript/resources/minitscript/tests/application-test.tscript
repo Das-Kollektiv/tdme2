@@ -1,0 +1,16 @@
+# main
+function: main()
+	console.printLine("------------------")
+	console.printLine("application-test  ")
+	console.printLine("------------------")
+	console.printLine()
+	console.printLine("$$.application::OS = " , $$.application::OS)
+	console.printLine("$$.application::CPU = " , $$.application::CPU)
+	console.printLine("application.getArguments(): " + application.getArguments())
+	if ($$.application::OS == "Windows-MSC" || $$.application::OS == "Windows-MINGW")
+		console.printLine("application.execute('ver'): " + application.execute('ver'))
+	else
+		console.printLine("application.execute('uname -a'): " + application.execute('uname -a'))
+	end
+	application.exit($$.application::EXITCODE_SUCCESS)
+end

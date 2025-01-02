@@ -1,0 +1,25 @@
+# main
+function: main()
+	console.printLine("-------")
+	console.printLine("ASCII")
+	console.printLine("-------")
+	if (application.getArguments()->getSize() != 2)
+		console.printLine("No file given: Please pass a file")
+		script.stop()
+	end
+	$file = application.getArguments()->get(1)
+	$content = filesystem.getContentAsString(filesystem.getPathName($file), filesystem.getFileName($file))
+	$asciiContent = ByteArray()
+	for($i = 0, $i < $content->getSize(), $i++)
+		if (($i % (1024 * 1024)) == 0)
+			console.print("-")
+		end
+		$codePoint = $content->codePointAt($i)
+		if ($codePoint > 127) 
+			continue
+		end
+		$asciiContent->writeInt8($codePoint)
+	end
+	console.printLine()
+	console.printLine(String::fromByteArray($asciiContent))
+end

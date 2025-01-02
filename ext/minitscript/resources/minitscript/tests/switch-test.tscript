@@ -1,0 +1,35 @@
+# main
+function: main()
+	console.printLine("-------------")
+	console.printLine("switch-test")
+	console.printLine("-------------")
+	console.printLine()
+	#
+	$i = 1
+	$j = b
+	switch($i)
+		case(0)
+			console.printLine("$i = 0")
+		end
+		case(1)
+			console.printLine("$i = 1")
+			switch($j)
+				case("a")
+					console.printLine("$j = a")
+				end
+				case("b")
+					console.printLine("$j = b")
+				end
+				case("c")
+					console.printLine("$j = c")
+				end
+			end
+		end
+		case(2)
+			console.printLine("$i = 2")
+		end
+		default
+			console.printLine("default: $i = " + $i)
+		end
+	end
+end

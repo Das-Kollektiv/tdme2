@@ -1,0 +1,55 @@
+# main
+function: main()
+	console.printLine("--------------")
+	console.printLine("network-test")
+	console.printLine("--------------")
+	console.printLine()
+	#
+	console.printLine("Fetch drewke.net/tdme2/ via HTTP")
+	$result = network.httpclient.get("http://drewke.net/tdme2/")
+	if ($result == null)
+		console.printLine("Failed to do HTTP GET request: http://drewke.net/tdme2/")
+	else
+		console.printLine("Success: " + ($result.status == $http::HTTP_STATUS_OK))
+		console.printLine("HTTP response status: " + $result.status)
+		console.printLine("HTTP headers: " + $result.headers)
+		console.printLine("HTTP response: " + $result.response)
+	end
+	#
+	console.printLine("Fetch drewke.net/tdme2/ via HTTPS")
+	$result = network.httpclient.get("https://drewke.net/tdme2/")
+	if ($result == null)
+		console.printLine("Failed to do HTTP GET request: https://drewke.net/tdme2/")
+	else
+		console.printLine("Success: " + ($result.status == $http::HTTP_STATUS_OK))
+		console.printLine("HTTP response status: " + $result.status)
+		console.printLine("HTTP headers: " + $result.headers)
+		console.printLine("HTTP response: " + $result.response)
+	end
+	#
+	$httpDownloadClient = HTTPDownloadClient()
+	$httpDownloadClient->setURL("https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso")
+	$httpDownloadClient->setFile("FreeBSD-14.0-RELEASE-amd64-bootonly.iso")
+	$httpDownloadClient->setHeaders({a: 1})
+	console.printLine("HTTP download client: " + $httpDownloadClient)
+	$httpDownloadClient->start()
+	forCondition($httpDownloadClient->isFinished() == false)
+		console.print("\r")
+		console.print("[")
+		for ($i = 0, $i < integer($httpDownloadClient->getProgress() * 68), $i++)
+			console.print("-")
+		end
+		for($i = $i, $i < 68, $i++)
+			console.print(" ")
+		end
+		console.print("] " + integer($httpDownloadClient->getProgress() * 100) + "%")
+		script.wait(1000)
+	end
+	console.printLine("\rDownloaded complete: " + $httpDownloadClient->getURL() + " --> " + $httpDownloadClient->getFile())
+	$httpDownloadClient->join()
+	console.printLine("HTTP Download status code: " + $httpDownloadClient->getStatusCode())
+	console.printLine("HTTP Download response headers: " + $httpDownloadClient->getResponseHeaders())
+	if (filesystem.removeFile(".", "FreeBSD-14.0-RELEASE-amd64-bootonly.iso") == false)
+		console.printLine("Could not remove file FreeBSD-14.0-RELEASE-amd64-bootonly.iso.")
+	end
+end

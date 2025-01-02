@@ -1,0 +1,169 @@
+MSCOBJ = mscobj
+MSCOBJMAIN = mscobjmain
+MSCBIN = mscbin
+
+NAME = yannet
+LIBNAME = lib$(NAME)
+
+INCLUDES = \
+	/I "src" \
+	/I "ext\windows-msc\openssl\include"
+
+# For some reason this works only once LOL
+# WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
+
+MAIN_LDFLAGS = /LIBPATH $(MSCBIN)\$(LIBNAME).lib
+LIBS_LDFLAGS = \
+	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
+	/LIBPATH "ext\windows-msc\openssl\lib\libcrypto.lib" \
+	/LIBPATH "ext\windows-msc\openssl\lib\libssl.lib"
+
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760
+# /NODEFAULTLIB:msvcrt
+
+LD_FLAGS =
+
+SRCS_PLATFORM = \
+	src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp
+
+SRC = src
+
+SRCS = \
+	src/yannet/network/httpclient/HTTPClient.cpp \
+	src/yannet/network/httpclient/HTTPClientException.cpp \
+	src/yannet/network/httpclient/HTTPDownloadClient.cpp \
+	src/yannet/network/udpclient/NetworkClientException.cpp \
+	src/yannet/network/udpclient/UDPClient.cpp \
+	src/yannet/network/udpclient/UDPClientMessage.cpp \
+	src/yannet/network/udpserver/NetworkServerException.cpp \
+	src/yannet/network/udpserver/ServerClient.cpp \
+	src/yannet/network/udpserver/ServerClientRequestHandlerHubException.cpp \
+	src/yannet/network/udpserver/ServerRequest.cpp \
+	src/yannet/network/udpserver/ServerWorkerThread.cpp \
+	src/yannet/network/udpserver/ServerWorkerThreadPool.cpp \
+	src/yannet/network/udpserver/UDPServer.cpp \
+	src/yannet/network/udpserver/UDPServerClient.cpp \
+	src/yannet/network/udpserver/UDPServerIOThread.cpp \
+	src/yannet/os/filesystem/FileSystem.cpp \
+	src/yannet/os/network/Network.cpp \
+	src/yannet/os/network/NetworkException.cpp \
+	src/yannet/os/network/NetworkIOException.cpp \
+	src/yannet/os/network/NetworkSocketClosedException.cpp \
+	src/yannet/os/network/NetworkKEMException.cpp \
+	src/yannet/os/network/NetworkSocket.cpp \
+	src/yannet/os/network/NetworkSocketException.cpp \
+	src/yannet/os/network/UDPSocket.cpp \
+	src/yannet/os/network/SecureTCPSocket.cpp \
+	src/yannet/os/network/TCPSocket.cpp \
+	src/yannet/os/threading/Barrier.cpp \
+	src/yannet/tests/ThreadingTest_ConsumerThread.cpp \
+	src/yannet/tests/ThreadingTest_ProducerThread.cpp \
+	src/yannet/tests/ThreadingTest_TestThread.cpp \
+	src/yannet/tests/UDPServerTest_UDPServer.cpp \
+	src/yannet/tests/UDPServerTest_UDPServerClient.cpp \
+	src/yannet/utilities/Base64.cpp \
+	src/yannet/utilities/Console.cpp \
+	src/yannet/utilities/ExceptionBase.cpp \
+	src/yannet/utilities/Integer.cpp \
+	src/yannet/utilities/RTTI.cpp \
+	src/yannet/utilities/StringTools.cpp \
+	src/yannet/utilities/StringTokenizer.cpp \
+	$(SRCS_PLATFORM)
+
+all: \
+	init \
+	compile \
+	link1 \
+	link2 \
+	HTTPClientTest \
+	HTTPDownloadClientTest \
+	ThreadingTest \
+	UDPClientTest \
+	UDPServerTest \
+	copy-executables \
+	clean
+
+init:
+	mkdir $(MSCBIN)
+	mkdir $(MSCOBJ) 
+	mkdir $(MSCOBJMAIN)
+
+compile: $(SRCS)
+	cl /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\$(LIBNAME).lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\$(LIBNAME).lib > $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember
+	del $(MSCBIN)\$(LIBNAME).lib
+
+link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(LIBNAME).dll $(MSCBIN)\$(LIBNAME).dll.rc
+	rc $(MSCBIN)\$(LIBNAME).dll.rc
+	echo LIBRARY $(MSCBIN)\$(LIBNAME).dll > $(MSCBIN)\$(LIBNAME).def
+	type $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember.def >> $(MSCBIN)\$(LIBNAME).def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\$(LIBNAME).def /IGNORE:4102 $** $(MSCBIN)\$(LIBNAME).dll.res $(LIBS_LDFLAGS) /OUT:$(MSCBIN)\$(LIBNAME).dll
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
+
+clean: 
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
+	del /S /Q $(MSCOBJMAIN) >nul 2>&1
+	if exist $(MSCOBJMAIN) rmdir $(MSCOBJMAIN)
+	del /S /Q $(MSCBIN) >nul 2>&1
+	if exist $(MSCBIN) rmdir $(MSCBIN)
+
+HTTPClientTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPClientTest.exe $(MSCBIN)\HTTPClientTest.exe.rc
+	rc $(MSCBIN)\HTTPClientTest.exe.rc
+	cl /D YANNET_DLL_IMPORT /Fe$(MSCBIN)\HTTPClientTest /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/yannet/tests/HTTPClientTest-main.cpp $(MSCBIN)\HTTPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+HTTPDownloadClientTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPDownloadClientTest.exe $(MSCBIN)\HTTPDownloadClientTest.exe.rc
+	rc $(MSCBIN)\HTTPDownloadClientTest.exe.rc
+	cl /D YANNET_DLL_IMPORT /Fe$(MSCBIN)\HTTPDownloadClientTest /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/yannet/tests/HTTPDownloadClientTest-main.cpp $(MSCBIN)\HTTPDownloadClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+ThreadingTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc ThreadingTest.exe $(MSCBIN)\ThreadingTest.exe.rc
+	rc $(MSCBIN)\ThreadingTest.exe.rc
+	cl /D YANNET_DLL_IMPORT /Fe$(MSCBIN)\ThreadingTest /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/yannet/tests/ThreadingTest-main.cpp $(MSCBIN)\ThreadingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+UDPClientTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPClientTest.exe $(MSCBIN)\UDPClientTest.exe.rc
+	rc $(MSCBIN)\UDPClientTest.exe.rc
+	cl /D YANNET_DLL_IMPORT /Fe$(MSCBIN)\UDPClientTest /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/yannet/tests/UDPClientTest-main.cpp $(MSCBIN)\UDPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+UDPServerTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPServerTest.exe $(MSCBIN)\UDPServerTest.exe.rc
+	rc $(MSCBIN)\UDPServerTest.exe.rc
+	cl /D YANNET_DLL_IMPORT /Fe$(MSCBIN)\UDPServerTest /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/yannet/tests/UDPServerTest-main.cpp $(MSCBIN)\UDPServerTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+copy-executables:
+	if exist bin\yannet\tests del /S /Q bin\yannet\tests >nul 2>&1
+	if exist bin\yannet\tests rmdir bin\yannet\tests
+	if exist bin\yannet del /S /Q bin\yannet >nul 2>&1
+	if exist bin\yannet rmdir bin\yannet
+	if exist bin del /S /Q bin >nul 2>&1
+	if exist bin rmdir bin
+
+	if exist lib del /S /Q lib >nul 2>&1
+	if exist lib rmdir lib
+
+	mkdir lib
+	if exist vc140.pdb move vc140.pdb $(MSCBIN)\. 
+	copy $(MSCBIN)\*.dll lib\.
+	copy $(MSCBIN)\*.lib lib\.
+	copy $(MSCBIN)\*.pdb lib\.
+
+	mkdir bin
+	mkdir bin\yannet
+
+	mkdir bin\yannet\tests
+	
+	copy $(MSCBIN)\HTTPClientTest.exe bin\yannet\tests\.
+	copy $(MSCBIN)\HTTPDownloadClientTest.exe bin\yannet\tests\.
+	copy $(MSCBIN)\ThreadingTest.exe bin\yannet\tests\.
+	copy $(MSCBIN)\UDPClientTest.exe bin\yannet\tests\.
+	copy $(MSCBIN)\UDPServerTest.exe bin\yannet\tests\.

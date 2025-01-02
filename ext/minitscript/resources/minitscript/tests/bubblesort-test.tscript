@@ -1,0 +1,68 @@
+function: bubbleSortA(&$array)
+	$startTime = time.getCurrentMillis()
+	# best code quality, but less performance
+	for ($i = 1, $i < $array->getSize(), ++$i)
+		for ($j = 0, $j < $array->getSize() - $i, ++$j)
+			if ($array[$j] > $array[$j + 1])
+				swap($array[$j], $array[$j + 1])
+			end
+		end
+	end
+end
+
+function: bubbleSortB(&$array)
+	# this is faster,
+	# without stacklets, which are generated if using "for" instead of "forCondition",
+	# and function style programming
+	$i = 1
+	forCondition ($i < Array::getSize($array))
+		$j = 0
+		forCondition ($j < Array::getSize($array) - $i)
+			if (
+				Array::get($array, $j) >
+				Array::get($array, $j + 1)
+			)
+				swap($array[$j], $array[$j + 1])
+			end
+			$j++
+		end
+		$i++
+	end
+end
+
+# main
+function: main()
+	console.printLine("-----------------")
+	console.printLine("bubblesort-test")
+	console.printLine("-----------------")
+	console.printLine()
+	#
+	$count = 1000
+	console.print("Creating array of integers with " + $count + " entries") 
+	$startTime = time.getCurrentMillis()
+	#
+	$array = [];
+	for ($i = 0, $i < $count, ++$i)
+		$array[] = $count - $i
+	end
+
+	$arrayA = $array
+	$arrayB = $array
+	# test bubble sort A
+	$startTime = time.getCurrentMillis()
+	bubbleSortA($arrayA)
+	$endTime = time.getCurrentMillis()
+	console.printLine($arrayA)
+	console.printLine()
+	console.printLine("bubbleSortA: Time: " + ($endTime - $startTime) + ": " + $array)
+	console.printLine()
+
+	# test bubble sort B
+	$startTime = time.getCurrentMillis()
+	bubbleSortB($arrayB)
+	$endTime = time.getCurrentMillis()
+	console.printLine($arrayB)
+	console.printLine()
+	console.printLine("bubbleSortB: Time: " + ($endTime - $startTime) + ": " + $array)
+	console.printLine()
+end

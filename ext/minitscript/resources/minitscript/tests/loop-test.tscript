@@ -1,0 +1,194 @@
+# inline function test in function
+function: inlineFunctionTestInFunction()
+	$j = 0
+	forCondition($j < 5, -> { $j++ })
+		if ($j == 3)
+			continue
+		end
+		console.printLine("$j = " + $j)
+		if ($j == 4)
+			break
+		end
+	end
+end
+
+stacklet: incrementStacklet2(inlineFunctionTestInFunction3)
+	$k++
+end
+
+stacklet: incrementStacklet(inlineFunctionTestInFunction3)
+	$k = 0
+	forCondition($k < 5, -> incrementStacklet2)
+		console.printLine("$k = " + $k)
+	end
+	console.printLine("stacklet, yaaaay")
+	$j++
+end
+
+# inline function test in function
+function: inlineFunctionTestInFunction3()
+	console.printLine("inlineFunctionTestInFunction3()")
+	$j = 0
+	forCondition($j < 5, -> incrementStacklet)
+		if ($j == 3)
+			continue
+		end
+		console.printLine("$j = " + $j)
+		if ($j == 4)
+			break
+		end
+	end
+end
+
+# main
+function: main()
+	console.printLine("-----------")
+	console.printLine("loop-test")
+	console.printLine("-----------")
+	console.printLine()
+	# tests for continue, break
+	#	if successfull we should see 1, 2, 4
+	console.printLine("tests continue, break")
+	$i = 0
+	forCondition($i < 5)
+		$i++
+		if ($i == 3)
+			continue
+		end
+		if ($i == 5)
+			break
+		end
+		console.printLine($i)
+	end
+	# test for continue 2, break 2 
+	console.printLine("test continue 2, break 2 ")
+	$i = 0
+	forCondition($i < 5)
+		console.printLine("$i = " + $i)
+		$j = 0
+		forCondition($j < 5)
+			if ($i == 0 && $j == 1)
+				$i++
+				continue(2)
+			elseif($i == 4 && $j == 2)
+				$i++
+				break(2)
+			end
+			console.printLine("    $j = " + $j)
+			$j++
+		end
+		$i++
+	end
+	# test for forCondition with a inline iteration function, 
+	#	which gets no own script state stack entry
+	#	means it keeps variables and such 
+	console.printLine("test forCondition with a iteration function")
+	$i = 0
+	forCondition($i < 5, -> 
+		{ 
+			$i++ 
+		}
+	)
+		if ($i == 3)
+			continue
+		end
+		console.printLine("$i = " + $i)
+		if ($i == 4)
+			break
+		end
+	end
+	# test for forCondition with a iteration function in a function
+	console.printLine("test forCondition with a iteration function in a function")
+	inlineFunctionTestInFunction()
+	inlineFunctionTestInFunction3()
+	# console.printLine("test for")
+	console.printLine("test for")
+	for ($i = 0, $i < 5, $i++)
+		if ($i == 3)
+			continue
+		end
+		console.printLine("$i = " + $i)
+		if ($i == 4)
+			break
+		end
+	end
+	# test forEach with array
+	console.printLine("test forEach with array")
+	$array1 = [1,2,3,4,5,6,7,8,9,10]
+	$array2 = [a,b,c]
+	forEach($var1 in $array1)
+		console.printLine("$var1 = " + $var1)
+		forEach($var2 in $array2)
+			console.printLine("	$var2 = " + $var2)
+		end
+	end
+	console.printLine("test forEach with array") 
+	$array3 = [1,2,3]
+	console.printLine("$array = " + $array3)
+	forEach($var3 in $array3)
+		console.printLine("$var3 = " + $var3)
+	end
+	console.printLine("test forEach with array and references to its entries")
+	$i = 3
+	forEach(&$var3 in $array3)
+		$var3 = $i--
+	end
+	console.printLine("$array = " + $array3)
+	console.printLine("test forEach with set")
+	$set = {a,b,c}
+	console.printLine("$set = " + $set)
+	forEach($key in $set)
+		console.printLine("$key = " + $key)
+	end
+	console.printLine("test forEach with set and references to its entries, which is not intended to work as one would expect as map keys are basic strings")
+	forEach(&$key in $set)
+		$key = "abc"
+	end
+	console.printLine("$set = " + $set)
+	console.printLine("test forEach with array initializer") 
+	forEach($var3 in [5,6,7])
+		console.printLine("$var3 = " + $var3)
+	end
+	console.printLine("test forEach with set initializer") 
+	forEach($var3 in {a,b,c})
+		console.printLine("$var3 = " + $var3)
+	end
+	console.printLine("test forEach with map")
+	$map = {a: 1, b: 2, c: 3}
+	forEach($key, $value in $map)
+		console.printLine("$key = " + $key + ", $value = " + $value)
+	end
+	console.printLine("test forEach with map with references to the values")
+	$i = 100
+	forEach($key, &$value in $map)
+		$value = $i++
+	end
+	console.printLine("$map = " + $map)
+	console.printLine("test forEach with map initializer") 
+	forEach($key, $value in {x: 24, y: 25, z: 26})
+		console.printLine("$key = " + $key + ", $value = " + $value)
+	end
+	console.printLine("test 2 forEach with map initializer") 
+	forEach($key, $value in {x: 24, y: 25, z: 26})
+		console.printLine("$key = " + $key + ", $value = " + $value)
+		forEach($key, $value in {a: 1, b: 2, c: 3})
+			console.printLine("\t$key = " + $key + ", $value = " + $value)
+		end
+	end
+	console.printLine("test forEach with empty array")
+	$array = []
+	forEach($entry in $array)
+		console.printLine($entry)
+	end
+	console.printLine("test forEach with empty set")
+	$set = Set()
+	forEach($entry in $set)
+		console.printLine($entry)
+	end
+	console.printLine("test forEach with empty map")
+	$map = Map()
+	forEach($key,$value in $map)
+		console.printLine($key + " -> " + $value)
+	end
+	console.printLine("done")
+end

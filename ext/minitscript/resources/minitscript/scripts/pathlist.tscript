@@ -1,0 +1,55 @@
+# scan path
+function: scanPath($basePath, $path, &$totalSize, &$errors)
+	$files = filesystem.list($path)
+	if ($files == null)
+		console.printLine("scanPath(): could not list path: " + $path)
+		$errors++
+		return
+	end
+	forEach($file in $files)
+		if ($file == "." || $file == "..")
+			continue
+		end
+		if (filesystem.isPath(filesystem.composeURI($path, $file)) == false)
+			continue
+		end
+		console.printLine(filesystem.composeURI($path, $file)->substring($basePath->getSize() + 1))
+		scanPath($basePath, filesystem.composeURI($path, $file), $totalSize, $errors)
+	end
+	forEach($file in $files)
+		if ($file == "." || $file == "..")
+			continue
+		end
+		if (filesystem.isPath(filesystem.composeURI($path, $file)) == true) 
+			continue
+		end
+		$fileSize = filesystem.getFileSize($path, $file)
+		if ($fileSize == null)
+			$fileSize = "ERROR"
+			$errors++
+		else
+			$totalSize = $totalSize + $fileSize
+		end
+		console.printLine(filesystem.composeURI($path, $file)->substring($basePath->getSize() + 1) + " - " + $fileSize)
+	end
+end
+
+# main
+function: main()
+	console.printLine("------------------")
+	console.printLine("Path list script")
+	console.printLine("------------------")
+	if (application.getArguments()->getSize() != 2)
+		console.printLine("No path given: Please pass a path to scan to pathdiff script")
+		script.stop()
+	end
+	$path = application.getArguments()[1]
+	$totalSize = 0
+	$errors = 0
+	console.printLine("Scanning: " + $path)
+	console.printLine()
+	scanPath($path, $path, $totalSize, $errors)
+	console.printLine()
+	console.printLine("Errors: " + $errors)
+	console.printLine("Total size: " + $totalSize)
+end

@@ -1,0 +1,11 @@
+# main
+function: main()
+	console.printLine("-----------")
+	console.printLine("pipe-test")
+	console.printLine("-----------")
+	console.printLine()
+	console.printLine("Reading from pipe or console input stream: ")
+	$input = console.readAllAsArray()
+	console.printLine("Input was: ")
+	console.printLine($input)
+end

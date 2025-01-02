@@ -1,0 +1,10 @@
+module
+
+function: module1Function()
+	console.printLine("-----------------")
+	console.printLine("module1Function")
+	console.printLine("-----------------")
+	console.printLine("global variable: " + $$.globalVariable)
+	$localVariable = "local variable@module1"
+	console.printLine("local variable: " + $localVariable)
+end

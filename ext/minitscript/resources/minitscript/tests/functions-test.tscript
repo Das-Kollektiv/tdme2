@@ -1,0 +1,50 @@
+# user script function of recursive factorial computation 
+function: factorial($value)
+	if ($value == 0)
+		return(1)
+	end
+	return($value * factorial($value - 1))
+end 
+
+# user script function to just display some hello world
+function: helloWorldFunction()
+	console.printLine("helloWorldFunction(): Hello world")
+end
+
+# user script function to test assign back in user functions
+function: assignTest($a, &$b, &$c)
+	$a = "a"
+	$b = "b"
+	$c = "c"
+end
+
+# user script function to test assign back in user functions
+function: globalVariableTest()
+	console.printLine("globalVariableTest(): $$.globalTest = " + $$.globalTest)
+	$$.globalTest = "Been there, done that, got the t-shirt"
+end
+
+# user script stacklet
+stacklet: stackletTest(main)
+	console.printLine("stackletTest(): $a = " + $a + ", $b = " + $b + ", $c = " + $c + ", $$.globalTest = " + $$.globalTest)
+end
+
+# main
+function: main()
+	console.printLine("----------------")
+	console.printLine("functions-test")
+	console.printLine("----------------")
+	helloWorldFunction()
+	console.printLine("factorial(5) = " + factorial(5))
+	$a = "0"
+	$b = "1"
+	$c = "2"
+	console.printLine("assignTest(): pre: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	assignTest($a, $b, $c)
+	console.printLine("assignTest(): post: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	$$.globalTest = "Global Test Variable"
+	console.printLine("globalVariableTest(): pre: $$.globalTest = " + $$.globalTest)
+	globalVariableTest()
+	console.printLine("globalVariableTest(): post: $$.globalTest = " + $$.globalTest)
+	stackletTest()
+end

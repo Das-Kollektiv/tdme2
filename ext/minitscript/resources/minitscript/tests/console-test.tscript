@@ -1,0 +1,12 @@
+# main
+function: main()
+	console.printLine("--------------")
+	console.printLine("console-test")
+	console.printLine("--------------")
+	console.printLine()
+	console.print("Whats your name: ")
+	$name = console.readLine()
+	console.printLine("You have the mighty name: " + $name)
+	console.error.print("Now printing your name to error console: ")
+	console.error.printLine($name)
+end

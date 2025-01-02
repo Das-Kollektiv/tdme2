@@ -1,0 +1,235 @@
+function: createNativePath($path)
+	if ($$.application::OS == "Windows-MSC")
+		$path = $path->replace("/", "\\")
+	end
+	return($path)
+end
+
+# test script
+function: testScript($scriptURIs, $input)
+	$scripts = []
+	console.printLine("TESTING: " + $scriptURIs[0])
+	console.printLine()
+	forEach ($scriptURI in $scriptURIs)
+		$scripts[] = {
+			uri: $scriptURI,
+			className: "_" + $scriptURI->regexReplace("[^0-9a-zA-Z]", "_")
+		}
+	end
+	$commands = []
+	if ($$.application::OS == "Windows-MSC")
+		$commands[] = "if exist Tsrc del /S /Q Tsrc\\*"
+		$commands[] = "if exist Tsrc rmdir /S /Q Tsrc"
+	else
+		$commands[] = "rm -rf Tsrc"
+	end
+	$commands[] = "mkdir Tsrc"
+	forEach($script in $scripts)
+		$commands[] =
+			createNativePath("./bin/minitscript/tools/minitscripttranspiler") + 
+			" " + 
+			$script.uri + 
+			" " + 
+			"Tsrc/" + $script.className
+	end
+	if ($scripts->getSize() > 1)
+		$command = createNativePath("./bin/minitscript/tools/minitscriptlibrary")
+		forEach($script in $scripts)
+			$command = 
+				$command + 
+				" " + 
+				$script.uri + 
+				" " + 
+				$script.className
+		end
+		$command = 
+			$command + 
+			" " + 
+			"Tsrc/Library.cpp"
+		$commands[] = $command
+		$commands[] =
+			createNativePath("./bin/minitscript/tools/minitscriptmain") + 
+			" " + 
+			"--use-library" +
+			" " +
+			$scripts[0].uri + 
+			" " + 
+			$scripts[0].className + 
+			" " + 
+			"Tsrc/Main-main.cpp"
+	else
+		$commands[] = 
+			createNativePath("./bin/minitscript/tools/minitscriptmain") + 
+			" " + 
+			$scripts[0].uri + 
+			" " + 
+			$scripts[0].className + 
+			" " + 
+			"Tsrc/Main-main.cpp"
+	end
+	if ($$.application::OS == "Windows-MSC")
+		$commands[] = 
+			createNativePath("./bin/minitscript/tools/minitscriptnmakefile") +
+			" " +
+			"Tsrc" +
+			" " +
+			"TMakefile.nmake"
+		$commands[] = "nmake -f TMakefile.nmake"
+	else
+		$commands[] = 
+			createNativePath("./bin/minitscript/tools/minitscriptmakefile") +
+			" " +
+			"Tsrc" + 
+			" " + 
+			"TMakefile"
+		if (Array::contains(["FreeBSD", "NetBSD", "OpenBSD"], $$.application::OS) == true)
+			$commands[] = 
+				"gmake" +
+				" " +
+				"-j " + integer(concurrency.getHardwareThreadCount() / 1.5) +
+				" " + 
+				"-f TMakefile mains"
+		else
+			$commands[] = 
+				"make" +
+				" " +
+				"-j " + integer(concurrency.getHardwareThreadCount() / 1.5) +
+				" " + 
+				"-f TMakefile mains"
+		end
+	end
+	forEach($command in $commands)
+		console.print("Executing: " + $command)
+		$exitCode = null
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode == $$.application::EXITCODE_SUCCESS)
+			console.printLine(", SUCCESS")
+		else
+			console.printLine(", FAILURE, exiting, with exit code: " + $exitCode)
+			console.printLine("**********************************************************************")
+			console.printLine($error)
+			application.exit($$.application::EXITCODE_FAILURE)
+		end
+	end
+	# execute binary
+	if ($$.application::OS == "Windows-MSC")
+		# TODO: check make system, that mscbin and bin are somehow unified using nmake and make make system
+		$command = createNativePath("./mscbin/Main")
+	else
+		$command = createNativePath("./bin/Main")
+	end
+	if ($input != null)
+		$command = $command + " < " + createNativePath($input)
+	end 
+	console.print("Executing: " + $command)
+	$exitCode = null
+	$error = null
+	$nativeResult = application.execute($command, $exitCode, $error)
+	if ($exitCode != $$.application::EXITCODE_SUCCESS)
+		console.printLine(", FAILURE, exiting, with exit code: " + $exitCode)
+		console.printLine("**********************************************************************")
+		console.printLine($error)
+		application.exit($$.application::EXITCODE_FAILURE)
+	end
+	console.printLine(", SUCCESS")
+	# execute minscript interpreteer
+	$command = 
+		createNativePath("./bin/minitscript/tools/minitscript") + 
+		" " + 
+		$scripts[0].uri
+	if ($input != null)
+		$command = $command + " < " + createNativePath($input)
+	end 
+	console.print("Executing: " + $command)
+	$exitCode = null
+	$error = null
+	$interpreterResult = application.execute($command, $exitCode, $error)
+	if ($exitCode != $$.application::EXITCODE_SUCCESS)
+		console.printLine(", FAILURE, exiting")
+		console.printLine("**********************************************************************")
+		console.printLine($error)
+		application.exit($$.application::EXITCODE_FAILURE)
+	end
+	if ($nativeResult != $interpreterResult)
+		filesystem.setContentFromString(".", "native-test-output-native.log", $nativeResult)
+		filesystem.setContentFromString(".", "native-test-output-interpreter.log", $interpreterResult)
+		console.printLine(", native result != interpreter result")
+		console.printLine("**********************************************************************")
+		if ($$.application::OS == "Windows-MSC")
+			$command = "fc native-test-output-interpreter.log native-test-output-native.log"
+		else
+			$command = "diff native-test-output-interpreter.log native-test-output-native.log"
+		end
+		$exitCode = null
+		$error = null
+		$diffResult = application.execute($command, $exitCode, $error)
+		filesystem.removeFile(".", "native-test-output-native.log")
+		filesystem.removeFile(".", "native-test-output-interpreter.log")
+		if (($$.application::OS != "Windows-MSC" && $exitCode != 256) || 
+			($$.application::OS == "Windows-MSC" && $exitCode != 1))
+			console.printLine(", FAILURE, exiting, with exit code: " + $exitCode)
+			console.printLine("**********************************************************************")
+			console.printLine($diffResult)
+			console.printLine($error)
+			application.exit($$.application::EXITCODE_FAILURE)
+		end
+		console.printLine($diffResult->replace("\n","\n\t"))
+		console.printLine("**********************************************************************")
+	else
+		console.printLine(", native result == interpreter result")
+	end
+	console.printLine()	
+end
+
+# main
+function: main()
+	console.printLine("---------------------")
+	console.printLine("native-test: Nothing")
+	console.printLine("---------------------")
+	console.printLine()
+	testScript(["resources/minitscript/tests/advanced-test.tscript"], null)
+	testScript(["resources/minitscript/tests/application-test.tscript"], null)
+	testScript(["resources/minitscript/tests/base-test.tscript"], null)
+	testScript(["resources/minitscript/tests/benchmark-test.tscript"], null)
+	testScript(["resources/minitscript/tests/class-test.tscript"], null)
+	testScript(["resources/minitscript/tests/console-test.tscript"], "./tests/console-test.input")
+	testScript(["resources/minitscript/tests/constants-test.tscript"], null)
+	testScript(["resources/minitscript/tests/context-test.tscript", "resources/minitscript/tests/context-test-2.tscript"], null)
+	testScript(["resources/minitscript/tests/cryptography-test.tscript"], null)
+	#testScript(["resources/minitscript/tests/emit-test.tscript"], null)
+	testScript(
+		[
+			"resources/minitscript/tests/exception-test.tscript",
+			"resources/minitscript/tests/exception-module-test.tscript"
+		],
+		null
+	)
+	testScript(["resources/minitscript/tests/filesystem-test.tscript"], null)
+	testScript(["resources/minitscript/tests/functions-test.tscript"], null)
+	testScript(["resources/minitscript/tests/initializeroperator-test.tscript"], null)
+	testScript(["resources/minitscript/tests/lamdafunctions-test.tscript"], null)
+	testScript(["resources/minitscript/tests/loop-test.tscript"], null)
+	testScript(
+		[
+			"resources/minitscript/tests/module-test.tscript",
+			"resources/minitscript/tests/module_1.tscript",
+			"resources/minitscript/tests/module_2.tscript",
+			"resources/minitscript/tests/module_3.tscript"
+		],
+		null
+	)
+	#testScript(["resources/minitscript/tests/network-test.tscript"], null)
+	testScript(["resources/minitscript/tests/pipe-test.tscript"], "./tests/pipe-test.input")
+	testScript(["resources/minitscript/tests/preprocessor-test.tscript"], null)
+	testScript(
+		[
+			"resources/minitscript/tests/stacktrace-test.tscript",
+			"resources/minitscript/tests/stacktrace-module-test.tscript"
+		],
+		null
+	)
+	testScript(["resources/minitscript/tests/string-test.tscript"], null)
+	testScript(["resources/minitscript/tests/switch-test.tscript"], null)
+	testScript(["resources/minitscript/tests/utf8-test.tscript"], null)
+end

@@ -1,0 +1,111 @@
+# main
+function: main()
+	console.printLine("-----------------")
+	console.printLine("filesystem-test")
+	console.printLine("-----------------")
+	console.printLine()
+	# compose URI
+	console.printLine("filesystem.composeURI('filesystem-test', 'test.txt'): " + filesystem.composeURI('filesystem-test', 'test.txt'))
+	# canonical URI
+	console.printLine("filesystem.getCanonicalURI('filesystem-test/abc/123/../..', 'test.txt'): " + filesystem.getCanonicalURI('filesystem-test/abc/123/../..', 'test.txt'))
+	# get filename
+	console.printLine("filesystem.getFileName('filesystem-test/abc/123/test.txt'): " + filesystem.getFileName('filesystem-test/abc/123/test.txt'))
+	# get pathname
+	console.printLine("filesystem.getPathName('filesystem-test/abc/123/test.txt'): " + filesystem.getPathName('filesystem-test/abc/123/test.txt'))
+	# remove file extension
+	console.printLine("filesystem.removeFileExtension('filesystem-test/abc/123/test.txt'): " + filesystem.removeFileExtension('filesystem-test/abc/123/test.txt'))
+	# is path
+	console.printLine("filesystem.isPath('.'): " + filesystem.isPath('.'))
+	console.printLine("filesystem.isPath('filesystem-test'): " + filesystem.isPath('filesystem-test'))
+	# is drive
+	console.printLine("filesystem.isDrive('filesystem-test'): " + filesystem.isPath('filesystem-test'))
+	console.printLine("filesystem.isDrive('C:'): " + filesystem.isDrive('C:'))
+	console.printLine("filesystem.isDrive('C:/'): " + filesystem.isDrive('C:/'))
+	# TODO: backslash
+	# create folder
+	console.printLine("Creating path: filesystem-test")
+	filesystem.createPath("filesystem-test")
+	# get current working dir
+	$cwd = filesystem.getCurrentWorkingPathName()
+	console.printLine("filesystem.getCurrentWorkingPathName(): " + filesystem.getCurrentWorkingPathName())
+	# change path
+	console.printLine("Changing path: filesystem-test")
+	filesystem.changePath("filesystem-test")
+	console.printLine("filesystem.getCurrentWorkingPathName(): " + filesystem.getCurrentWorkingPathName())
+	# change path
+	filesystem.changePath($cwd + "/filesystem-test")
+	# change path back
+	console.printLine("Changing path: " + $cwd)
+	filesystem.changePath($cwd)
+	# exists
+	console.printLine("filesystem.exists('filesystem-test'): " + filesystem.exists('filesystem-test'))
+	console.printLine("filesystem.exists('filesystem-test-123'): " + filesystem.exists('filesystem-test-123')) 
+	# list folder
+	console.printLine("Listing path: filesystem-test")
+	$files = filesystem.list("filesystem-test")
+	$i = 0
+	forCondition ($i < $files->getSize())
+		console.printLine("File@" + $i + ": " + $files[$i])
+		++$i
+	end
+	# create binary file
+	console.printLine("Creating file: filesystem-test/test.bin")
+	$binaryContent = ByteArray()
+	$binaryContent->writeInt8(1)
+	$binaryContent->writeInt8(2)
+	$binaryContent->writeInt8(3)
+	$binaryContent->writeInt8(4)
+	$binaryContent->writeInt8(5)
+	$binaryContent->writeInt8(6)
+	filesystem.setContent("filesystem-test", "test.bin", $binaryContent)
+	# binary file size
+	console.printLine("Reading file size of filesystem-test/test.bin: " + filesystem.getFileSize("filesystem-test", "test.bin"))
+	# reading file
+	console.printLine("Reading file: filesystem-test/test.bin")
+	$fileContent = filesystem.getContent("filesystem-test", "test.bin");
+	console.printLine("filesystem-test/test.bin: " + $fileContent)
+	# remove binary file
+	console.printLine("Removing file: filesystem-test/test.bin")
+	filesystem.removeFile("filesystem-test", "test.bin")
+	# create text file
+	console.printLine("Creating file: filesystem-test/test.txt")
+	filesystem.setContentFromString("filesystem-test", "test.txt", "Arrr. I am a mighty pirate.")
+	# text file size
+	console.printLine("Reading file size of filesystem-test/test.txt: " + filesystem.getFileSize("filesystem-test", "test.txt"))
+	# reading file
+	console.printLine("Reading file: filesystem-test/test.txt")
+	$fileContent = filesystem.getContentAsString("filesystem-test", "test.txt");
+	# remove text file
+	console.printLine("Removing file: filesystem-test/test.txt")
+	filesystem.removeFile("filesystem-test", "test.txt")
+	# create lines based text file
+	console.printLine("Creating file: filesystem-test/test.txt")
+	filesystem.setContentFromStringArray("filesystem-test", "test.txt", ["Line 1", "Line 2", "Line 3"])
+	# lines based file text size
+	console.printLine("Reading file size of filesystem-test/test.txt: " + filesystem.getFileSize("filesystem-test", "test.txt"))
+	# reading file
+	console.printLine("Reading file: filesystem-test/test.txt")
+	$fileContent = filesystem.getContentAsStringArray("filesystem-test", "test.txt");
+	# rename file and move: they work internally the same
+	filesystem.rename("filesystem-test/test.txt", "filesystem-test/test-renamed.txt")
+	# list folder
+	console.printLine("Listing path: filesystem-test")
+	$files = filesystem.list("filesystem-test")
+	$i = 0
+	forCondition ($i < $files->getSize())
+		console.printLine("File@" + $i + ": " + $files[$i])
+		++$i
+	end
+	# remove file
+	console.printLine("Removing file: filesystem-test/test-renamed.txt")
+	filesystem.removeFile("filesystem-test", "test-renamed.txt")
+	# remove folder
+	console.printLine("Removing path: filesystem-test")
+	filesystem.removePath("filesystem-test", false)
+	# test exceptions, could be extended
+	try
+		filesystem.changePath("filesystem-test")
+	catch ($exception)
+		console.printLine("An exception occurred: " + $exception)
+	end
+end

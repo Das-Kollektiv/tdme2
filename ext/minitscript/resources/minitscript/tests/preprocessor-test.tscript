@@ -1,0 +1,15 @@
+# main
+function: main()
+	console.printLine("-------------------")
+	console.printLine("preprocessor-test")
+	console.printLine("-------------------")
+	console.printLine()
+	$i = 0
+	# postfix, prefix operator
+	console.printLine("$i: " + $i)
+	console.printLine("++$i: " + (++$i))
+	console.printLine("$i++: " + ($i++))
+	console.printLine("$i: " + $i)
+	# 2 argument operator with left and right arguments
+	console.printLine("10 * 10: " + 10 * 10)
+end

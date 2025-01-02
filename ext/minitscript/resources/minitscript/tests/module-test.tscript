@@ -1,0 +1,19 @@
+use: module_1.tscript
+use: module_2.tscript
+
+# main
+function: main()
+	console.printLine("-------------")
+	console.printLine("module-test")
+	console.printLine("-------------")
+	console.printLine()
+	$$.globalVariable = "global variable"
+	console.printLine("global variable: " + $$.globalVariable)
+	$localVariable = "local variable@main"
+	console.printLine("local variable: " + $localVariable)
+	# call module functions
+	console.printLine("main: Calling module1Function() from module_1.tscript")
+	module1Function()
+	console.printLine("main: Calling module2Function() from module_2.tscript")
+	module2Function()
+end

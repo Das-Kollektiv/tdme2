@@ -1,0 +1,24 @@
+IDI_ICON ICON "{__ICON__}"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "drewke.net, mindty.com"
+      VALUE "FileDescription", "MinitScript {__EXECUTABLE__}"
+      VALUE "FileVersion", "1.0.0"
+      VALUE "InternalName", "{__EXECUTABLE__}.exe"
+      VALUE "LegalCopyright", "Copyright (c) 2021-2024 Andreas Drewke"
+      VALUE "OriginalFilename", "{__EXECUTABLE__}.exe"
+      VALUE "ProductName", "MinitScript"
+      VALUE "ProductVersion", "1.0.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

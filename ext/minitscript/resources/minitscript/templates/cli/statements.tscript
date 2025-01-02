@@ -1,0 +1,9 @@
+on: error
+	console.printLine("An error has occurred. Exiting")
+	script.stop()
+end
+
+on: nothing
+	{$statements}
+	script.stop()
+end

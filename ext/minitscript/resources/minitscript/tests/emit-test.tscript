@@ -1,0 +1,56 @@
+# initialize
+on: initialize
+	console.printLine("-----------------------")
+	console.printLine("emit-test: Initialize")
+	console.printLine("-----------------------")
+	console.printLine()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.printLine("--------------------")
+	console.printLine("emit-test: Nothing")
+	console.printLine("--------------------")
+	console.printLine()
+	console.printLine("--------------------------------------------------")
+	console.printLine("Test if enabled naming condition will be emitted")
+	console.printLine("--------------------------------------------------")
+	script.enableNamedCondition("named_condition_1")
+	script.wait(2000)
+	script.disableNamedCondition("named_condition_1")
+	console.printLine("---------------------------------------")
+	console.printLine("Naming condition has not been emitted")
+	console.printLine("---------------------------------------")
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.printLine("------------------")
+	console.printLine("emit-test: Error")
+	console.printLine("------------------")
+	console.printLine("An error occurred")
+	script.stop()
+end
+
+# emit test
+on: emittest
+	console.printLine("---------------------------------")
+	console.printLine("SCRIPT JUST EMITTED A CONDITION")
+	console.printLine("---------------------------------")
+	script.stop()
+end
+
+# on-enabled with named conditions
+on-enabled: true == true := named_condition_1
+	script.disableNamedCondition("named_condition_1")
+	console.printLine("------------------------------------")
+	console.printLine("named_condition_1 has been emitted")
+	console.printLine("------------------------------------")
+	console.printLine()
+	console.printLine("-----------")
+	console.printLine("Test emit")
+	console.printLine("-----------")
+	console.printLine()
+	script.emit(emittest)
+end

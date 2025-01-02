@@ -1,0 +1,207 @@
+MSCOBJ = mscobj
+MSCOBJMAIN = mscobjmain
+MSCBIN = mscbin
+
+NAME = minitscript
+LIBNAME = lib$(NAME)
+
+INCLUDES = \
+	/I "." \
+	/I "src" \
+	/I "ext" \
+	/I "ext\windows-msc\openssl\include"
+
+# For some reason this works only once LOL
+# WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
+
+MAIN_LDFLAGS = /LIBPATH $(MSCBIN)\$(LIBNAME).lib
+LIBS_LDFLAGS = \
+	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
+	/LIBPATH "ext\windows-msc\openssl\lib\libcrypto.lib" \
+	/LIBPATH "ext\windows-msc\openssl\lib\libssl.lib"
+
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760
+# /NODEFAULTLIB:msvcrt
+
+LD_FLAGS =
+
+SRC = src
+
+SRCS = \
+	src/minitscript/minitscript/ApplicationMethods.cpp \
+	src/minitscript/minitscript/ArrayMethods.cpp \
+	src/minitscript/minitscript/BaseMethods.cpp \
+	src/minitscript/minitscript/ByteArrayMethods.cpp \
+	src/minitscript/minitscript/CryptographyMethods.cpp \
+	src/minitscript/minitscript/ConsoleMethods.cpp \
+	src/minitscript/minitscript/ContextMethods.cpp \
+	src/minitscript/minitscript/Context.cpp \
+	src/minitscript/minitscript/Documentation.cpp \
+	src/minitscript/minitscript/FileSystemMethods.cpp \
+	src/minitscript/minitscript/Generator.cpp \
+	src/minitscript/minitscript/HTTPDownloadClientClass.cpp \
+	src/minitscript/minitscript/JSONMethods.cpp \
+	src/minitscript/minitscript/Library.cpp \
+	src/minitscript/minitscript/MapMethods.cpp \
+	src/minitscript/minitscript/MathMethods.cpp \
+	src/minitscript/minitscript/MinitScript.cpp \
+	src/minitscript/minitscript/NetworkMethods.cpp \
+	src/minitscript/minitscript/ScriptMethods.cpp \
+	src/minitscript/minitscript/SetMethods.cpp \
+	src/minitscript/minitscript/Setup.cpp \
+	src/minitscript/minitscript/StringMethods.cpp \
+	src/minitscript/minitscript/TimeMethods.cpp \
+	src/minitscript/minitscript/Transpiler.cpp \
+	src/minitscript/minitscript/Validations.cpp \
+	src/minitscript/minitscript/Version.cpp \
+	src/minitscript/minitscript/XMLMethods.cpp \
+	src/minitscript/network/httpclient/HTTPClient.cpp \
+	src/minitscript/network/httpclient/HTTPClientException.cpp \
+	src/minitscript/network/httpclient/HTTPDownloadClient.cpp \
+	src/minitscript/os/filesystem/FileSystem.cpp \
+	src/minitscript/os/network/Network.cpp \
+	src/minitscript/os/network/NetworkException.cpp \
+	src/minitscript/os/network/NetworkIOException.cpp \
+	src/minitscript/os/network/NetworkSocket.cpp \
+	src/minitscript/os/network/NetworkSocketClosedException.cpp \
+	src/minitscript/os/network/NetworkSocketException.cpp \
+	src/minitscript/os/network/SecureTCPSocket.cpp \
+	src/minitscript/os/network/TCPSocket.cpp \
+	src/minitscript/utilities/Base64.cpp \
+	src/minitscript/utilities/Console.cpp \
+	src/minitscript/utilities/ErrorConsole.cpp \
+	src/minitscript/utilities/ExceptionBase.cpp \
+	src/minitscript/utilities/Float.cpp \
+	src/minitscript/utilities/Hex.cpp \
+	src/minitscript/utilities/Integer.cpp \
+	src/minitscript/utilities/Properties.cpp \
+	src/minitscript/utilities/RTTI.cpp \
+	src/minitscript/utilities/SHA256.cpp \
+	src/minitscript/utilities/StringTools.cpp \
+	src/minitscript/utilities/StringTokenizer.cpp \
+	src/minitscript/utilities/UTF8StringTools.cpp \
+	src/minitscript/utilities/UTF8StringTokenizer.cpp
+
+all: \
+	init \
+	compile \
+	link1 \
+	link2 \
+	minitscript \
+	minitscriptlibrary \
+	minitscriptmain \
+	minitscriptbuild \
+	minitscriptdocumentation \
+	minitscriptmakefile \
+	minitscriptnmakefile \
+	minitscripttranspiler \
+	minitscriptuntranspiler \
+	copy-executables \
+	clean
+
+init:
+	mkdir $(MSCBIN)
+	mkdir $(MSCOBJ) 
+	mkdir $(MSCOBJMAIN)
+
+compile: $(SRCS)
+	cl /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\$(LIBNAME).lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\$(LIBNAME).lib > $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember
+	del $(MSCBIN)\$(LIBNAME).lib
+
+link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(LIBNAME).dll $(MSCBIN)\$(LIBNAME).dll.rc
+	rc $(MSCBIN)\$(LIBNAME).dll.rc
+	echo LIBRARY $(MSCBIN)\$(LIBNAME).dll > $(MSCBIN)\$(LIBNAME).def
+	type $(MSCBIN)\$(LIBNAME).def.dumpbin.linkermember.def >> $(MSCBIN)\$(LIBNAME).def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\$(LIBNAME).def /IGNORE:4102 $** $(MSCBIN)\$(LIBNAME).dll.res $(LIBS_LDFLAGS) /OUT:$(MSCBIN)\$(LIBNAME).dll
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
+
+clean: 
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
+	del /S /Q $(MSCOBJMAIN) >nul 2>&1
+	if exist $(MSCOBJMAIN) rmdir $(MSCOBJMAIN)
+	del /S /Q $(MSCBIN) >nul 2>&1
+	if exist $(MSCBIN) rmdir $(MSCBIN)
+
+minitscript:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscript.exe $(MSCBIN)\minitscript.exe.rc
+	rc $(MSCBIN)\minitscript.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscript /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscript-main.cpp $(MSCBIN)\minitscript.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptlibrary:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptlibrary.exe $(MSCBIN)\minitscriptlibrary.exe.rc
+	rc $(MSCBIN)\minitscriptlibrary.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptlibrary /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptlibrary-main.cpp $(MSCBIN)\minitscriptlibrary.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptmain:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptmain.exe $(MSCBIN)\minitscriptmain.exe.rc
+	rc $(MSCBIN)\minitscriptmain.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptmain /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptmain-main.cpp $(MSCBIN)\minitscriptmain.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptbuild:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptbuild.exe $(MSCBIN)\minitscriptbuild.exe.rc
+	rc $(MSCBIN)\minitscriptbuild.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptbuild /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptbuild-main.cpp $(MSCBIN)\minitscriptbuild.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptdocumentation:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptdocumentation.exe $(MSCBIN)\minitscriptdocumentation.exe.rc
+	rc $(MSCBIN)\minitscriptdocumentation.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptdocumentation /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptdocumentation-main.cpp $(MSCBIN)\minitscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptmakefile:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptmakefile.exe $(MSCBIN)\minitscriptmakefile.exe.rc
+	rc $(MSCBIN)\minitscriptmakefile.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptmakefile /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptmakefile-main.cpp $(MSCBIN)\minitscriptmakefile.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptnmakefile:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptnmakefile.exe $(MSCBIN)\minitscriptnmakefile.exe.rc
+	rc $(MSCBIN)\minitscriptnmakefile.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptnmakefile /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptnmakefile-main.cpp $(MSCBIN)\minitscriptnmakefile.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscripttranspiler:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscripttranspiler.exe $(MSCBIN)\minitscripttranspiler.exe.rc
+	rc $(MSCBIN)\minitscripttranspiler.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscripttranspiler /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscripttranspiler-main.cpp $(MSCBIN)\minitscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+minitscriptuntranspiler:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc minitscriptuntranspiler.exe $(MSCBIN)\minitscriptuntranspiler.exe.rc
+	rc $(MSCBIN)\minitscriptuntranspiler.exe.rc
+	cl /D MINITSCRIPT_DLL_IMPORT /Fe$(MSCBIN)\minitscriptuntranspiler /Fo$(MSCOBJMAIN)/ $(FLAGS) $(INCLUDES) src/minitscript/tools/minitscriptuntranspiler-main.cpp $(MSCBIN)\minitscriptuntranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+copy-executables:
+	if exist bin\minitscript\tools del /S /Q bin\minitscript\tools >nul 2>&1
+	if exist bin\minitscript\tools rmdir bin\minitscript\tools 
+	if exist bin\minitscript del /S /Q bin\minitscript >nul 2>&1
+	if exist bin\minitscript rmdir bin\minitscript 
+	if exist bin del /S /Q bin >nul 2>&1
+	if exist bin rmdir bin 
+
+	if exist lib del /S /Q lib >nul 2>&1
+	if exist lib rmdir lib
+
+	mkdir lib
+	if exist vc140.pdb move vc140.pdb $(MSCBIN)\. 
+	copy $(MSCBIN)\libminitscript.dll lib\.
+	copy $(MSCBIN)\libminitscript.lib lib\.
+
+	mkdir bin
+	mkdir bin\minitscript
+	mkdir bin\minitscript\tools
+
+	copy $(MSCBIN)\minitscript.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptbuild.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptdocumentation.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptlibrary.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptmain.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptmakefile.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptnmakefile.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscripttranspiler.exe bin\minitscript\tools\.
+	copy $(MSCBIN)\minitscriptuntranspiler.exe bin\minitscript\tools\.

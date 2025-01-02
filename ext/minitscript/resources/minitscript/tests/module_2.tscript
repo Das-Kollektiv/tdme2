@@ -1,0 +1,15 @@
+module
+
+use: module_3.tscript
+
+function: module2Function()
+	console.printLine("-----------------")
+	console.printLine("module2Function")
+	console.printLine("-----------------")
+	console.printLine("global variable: " + $$.globalVariable)
+	$localVariable = "local variable@module2"
+	console.printLine("local variable: " + $localVariable)
+	# call module functions
+	console.printLine("module2Function: Calling module3Function() from module_3.tscript")
+	module3Function()
+end

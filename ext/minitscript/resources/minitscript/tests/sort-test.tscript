@@ -1,0 +1,43 @@
+# main
+function: main()
+	console.printLine("-----------")
+	console.printLine("sort-test")
+	console.printLine("-----------")
+	console.printLine()
+	# boolean array
+	$array = [true, false]
+	console.printLine("boolean $array unsorted: " + $array)
+	$array->sortAscending()
+	console.printLine("boolean $array asc sorted: " + $array)
+	$array->sortDescending()
+	console.printLine("boolean $array desc sorted: " + $array)
+	# integer array
+	$array = [6, 5, 4, 3, 2, 1]
+	console.printLine("integer $array unsorted: " + $array)
+	$array->sortAscending()
+	console.printLine("integer $array asc sorted: " + $array)
+	$array->sortDescending()
+	console.printLine("integer $array desc sorted: " + $array)
+	# float array
+	$array = [6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+	console.printLine("float $array unsorted: " + $array)
+	$array->sortAscending()
+	console.printLine("float $array asc sorted: " + $array)
+	$array->sortDescending()
+	console.printLine("float $array desc sorted: " + $array)
+	# mixed array
+	$array = [6.0, 5, "d", 3, 2, 1.0]
+	console.printLine("mixed $array unsorted: " + $array)
+	$array->sortAscending()
+	console.printLine("mixed $array asc sorted: " + $array)
+	$array->sortDescending()
+	console.printLine("mixed $array desc sorted: " + $array)
+	# delete "d", we have a float array now
+	$array = [6.0, 5, "d", 3, 2, 1.0]
+	$array->remove(2)
+	console.printLine("float $array unsorted: " + $array)
+	$array->sortAscending()
+	console.printLine("float $array asc sorted: " + $array)
+	$array->sortDescending()
+	console.printLine("float $array desc sorted: " + $array)
+end

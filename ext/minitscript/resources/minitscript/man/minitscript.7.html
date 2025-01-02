@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' content='text/html;charset=utf8'>
+  <meta name='generator' content='Ronn-NG/v0.9.1 (http://github.com/apjanke/ronn-ng/tree/0.9.1)'>
+  <title>MinitScript(7) - the mini (C++) transpileable scripting language.&lt;/p&gt;</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#1-1-OPEN-SOURCE">1.1. Open source</a>
+    <a href="#1-2-LANGUAGE-FEATURES">1.2. Language features</a>
+    <a href="#1-3-1-0-BETA-RELEASE-TODO-LIST">1.3. 1.0 BETA release TODO list</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>MinitScript(7)</li>
+    <li class='tc'></li>
+    <li class='tr'>MinitScript(7)</li>
+  </ol>
+
+  
+
+<h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>MinitScript</code> - <span class="man-whatis">the mini (C++) transpileable scripting language.</span></p>
+
+<p>MinitScript was developed as part of our <a href="https://github.com/andreasdr/tdme2">TDME2 3D Engine</a> to match
+the requirements for high performance script execution, as well as straight forward game logic scripting.</p>
+
+<p>MinitScript might borrow some ideas from JavaScript, Kotlin, PHP and even C# and C++, which you might like and find familier.
+Also note the focus on easy integration into other products and easy customizability and extendability.</p>
+
+<h2 id="1-1-Open-source">1.1. Open source</h2>
+
+<ul>
+  <li>MinitScript is open source
+    <ul>
+      <li>please check the <a href="https://github.com/andreasdr/minitscript/blob/main/LICENSE">license</a>
+</li>
+      <li>you find the source code at <a href="https://github.com/andreasdr/minitscript" data-bare-link="true">https://github.com/andreasdr/minitscript</a>
+</li>
+      <li>here you find developer <a href="https://www.mindty.com/products/minitscript/documentation/">documentation including collaboration graphs and API</a>
+</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="1-2-Language-features">1.2. Language features</h2>
+
+<ul>
+  <li>Introduction to MinitScript language features:
+    <ul>
+      <li>very small implementation of a scripting language</li>
+      <li>runs on every CPU, OS, ... due to its simplicity, so its highly portable</li>
+      <li>can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types</li>
+      <li>built-in data types: null, boolean, integer, float, string, byte array, array, map and set, ...</li>
+      <li>when calling script C++ methods or script functions with arguments it does optionally use references or value by copy</li>
+      <li>supports functions/stacklets and recursion</li>
+      <li>supports lamda functions and inline stacklets</li>
+      <li>supports operators by operator to method mapping by a preprocessor run</li>
+      <li>supports loops, conditions and switch/case/default blocks</li>
+      <li>supports programming with classes style programming
+        <ul>
+          <li>for built-in datatypes: string, byte array, array, map and set, ...</li>
+          <li>for script classes/objects</li>
+          <li>for custom data types</li>
+        </ul>
+      </li>
+      <li>supports event like programming</li>
+      <li>unicode support via UTF8</li>
+      <li>can be transpiled to C++</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="1-3-1-0-BETA-release-TODO-list">1.3. 1.0 BETA release TODO list</h2>
+
+<ul>
+  <li>Whats left to do for 1.0 BETA release
+    <ul>
+      <li>some adjustments
+        <ul>
+          <li>private members: transpilated/native: check output, it differs from interpreter mode</li>
+          <li>multi line statement error messages are ugly as fuck???</li>
+          <li>make event system optional???</li>
+          <li>preprocessor definition for data files</li>
+          <li>native scripts should also be executable without original scripts(optional) and with changed scripts(interpreted mode)</li>
+        </ul>
+      </li>
+      <li>tests
+        <ul>
+          <li>native tests for MSC/MINGW</li>
+          <li>bubblesort benchmark vs java script or other script engines, just to get the idea of current state of performance</li>
+        </ul>
+      </li>
+      <li>documentation
+        <ul>
+          <li>detailed docu for methods and section</li>
+          <li>...</li>
+        </ul>
+      </li>
+      <li>installer for Windows</li>
+      <li>installer for MacOSX</li>
+    </ul>
+  </li>
+</ul>
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>February 2024</li>
+    <li class='tr'>MinitScript(7)</li>
+  </ol>
+
+  </div>
+</body>
+</html>

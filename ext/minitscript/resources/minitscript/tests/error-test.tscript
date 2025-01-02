@@ -1,0 +1,9 @@
+# main
+function: main()
+	console.printLine("------------")
+	console.printLine("error-test")
+	console.printLine("------------")
+	console.printLine()
+	console.printLine("Calling a method with wrong arguments, to emit an error")
+	default("abc", 123)
+end

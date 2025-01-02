@@ -1,0 +1,202 @@
+function: createNativePath($path)
+	if ($$.application::OS == "Windows-MSC")
+		$path = $path->replace("/", "\\")
+	end
+	return($path)
+end
+
+# build script
+function: build($scriptURIs, $application, $library, $nativeOnly)
+	console.print("Building: " + $scriptURIs[0])
+	# print what we will do
+	if ($application == true)
+		console.print(" as application")
+	elseif ($library == true)
+		console.print(" as library")
+	end
+	if ($nativeOnly == true)
+		console.print(" in native-only mode")
+	end
+	console.printLine()
+	console.printLine()
+	# gather script URIs plus corresponding class names
+	$scripts = []
+	forEach ($scriptURI in $scriptURIs)
+		$scripts[] = {
+			uri: $scriptURI,
+			className: "_" + $scriptURI->regexReplace("[^0-9a-zA-Z]", "_")
+		}
+	end
+	# remove old Tsrc folder
+	if (filesystem.exists("./Tsrc") == true)
+		filesystem.removePath("./Tsrc", true)
+	end
+	# create Tsrc folder
+	filesystem.createPath("./Tsrc")
+	#
+	# generate required commands
+	$commands = []
+	# transpile all scripts
+	forEach($script in $scripts)
+		$commands[] =
+			createNativePath("./bin/minitscript/tools/minitscripttranspiler") + 
+			" " + 
+			$script.uri + 
+			" " + 
+			"Tsrc/" + $script.className
+	end
+	# build libraries
+	if ($library == true || $scripts->getSize() > 1)
+		# library
+		$command = createNativePath("./bin/minitscript/tools/minitscriptlibrary")
+		#	native only
+		if ($nativeOnly == true)
+			$command = 
+				$command +
+				" " +
+				"--native-only" 
+		end
+		#	add each script to library
+		forEach($script in $scripts)
+			$command = 
+				$command + 
+				" " + 
+				$script.uri + 
+				" " + 
+				$script.className
+		end
+		#	finally generate library C++ file
+		$command = 
+			$command + 
+			" " + 
+			"Tsrc/Library.cpp"
+		$commands[] = $command
+		# main
+		if ($library == false)
+			$command = createNativePath("./bin/minitscript/tools/minitscriptmain") + " " + "--use-library"
+			#	native only
+			if ($nativeOnly == true)
+				$command = 
+					$command +
+					" " +
+					"--native-only" 
+			end
+			# more main command love
+			$command =
+				$command + 
+				" " +
+				$scripts[0].uri + 
+				" " + 
+				$scripts[0].className + 
+				" " + 
+				"Tsrc/Main-main.cpp"
+			$commands[] = $command
+		end
+	else
+		# main
+		$command = createNativePath("./bin/minitscript/tools/minitscriptmain")
+		#	native only
+		if ($nativeOnly == true)
+			$command = 
+				$command +
+				" " +
+				"--native-only" 
+		end
+		# more main command love
+		$command =
+			$command + 
+			" " + 
+			$scripts[0].uri + 
+			" " + 
+			$scripts[0].className + 
+			" " + 
+			"Tsrc/Main-main.cpp"
+		$commands[] = $command
+	end
+	# generate nmake file
+	if ($$.application::OS == "Windows-MSC")
+		$commands[] = 
+			createNativePath("./bin/minitscript/tools/minitscriptnmakefile") +
+			" " +
+			"Tsrc" +
+			" " +
+			"TMakefile.nmake"
+		$commands[] = "nmake -f TMakefile.nmake"
+	else
+		# generate make file
+		$commands[] = 
+			createNativePath("./bin/minitscript/tools/minitscriptmakefile") +
+			" " +
+			"Tsrc" + 
+			" " + 
+			"TMakefile"
+		if (Array::contains(["FreeBSD", "NetBSD", "OpenBSD"], $$.application::OS) == true)
+			$commands[] = 
+				"gmake" +
+				" " +
+				"-j " + integer(concurrency.getHardwareThreadCount() / 1.5) +
+				" " + 
+				"-f TMakefile mains"
+		else
+			$commands[] = 
+				"make" +
+				" " +
+				"-j " + integer(concurrency.getHardwareThreadCount() / 1.5) +
+				" " + 
+				"-f TMakefile mains"
+		end
+	end
+	# execute commands
+	forEach($command in $commands)
+		console.print("Executing: " + $command)
+		$exitCode = null
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode == $$.application::EXITCODE_SUCCESS)
+			console.printLine(", SUCCESS")
+		else
+			console.printLine(", FAILURE, exiting, with exit code: " + $exitCode)
+			console.printLine("**********************************************************************")
+			console.printLine($error)
+			application.exit($$.application::EXITCODE_FAILURE)
+		end
+	end
+	# yarrrr
+	console.printLine()	
+end
+
+# main
+function: main()
+	# TODO: test build system more and improve
+	# TODO: script URIs need / instead of \ as path separator
+	console.printLine("--------------------------")
+	console.printLine("MinitScript build script")
+	console.printLine("--------------------------")
+	console.printLine()
+	if (application.getArguments()->getSize() <= 1)
+		console.printLine("Usage: minitscriptbuild [--application|--library] [--native-only] main-script.tscript [additional-script1.tscript] [additional-script2.tscript] [additional-scriptN.tscript]")
+	else
+		$scriptURIs = application.getArguments()
+		# remove the executable CLI argument at index 0
+		$scriptURIs->remove(0)
+		# remove --application, --library, --native-only command line arguments
+		$scriptURIs->removeOf("--application")
+		$scriptURIs->removeOf("--library")
+		$scriptURIs->removeOf("--native-only")
+		#
+		$application = application.getArguments()->contains("--application")
+		$library = application.getArguments()->contains("--library")
+		$nativeOnly = application.getArguments()->contains("--native-only")
+		#
+		if ($application == true && $library == true)
+			console.printLine("Invalid command line arguments!")
+			console.printLine()
+			console.printLine("Usage: minitscriptbuild [--application|--library] [--native-only] main-script.tscript [additional-script1.tscript] [additional-script2.tscript] [additional-scriptN.tscript]")
+			script.stop()
+		elseif ($application == false && $library == false)
+			$application = true
+		end
+		#
+		build($scriptURIs, $application, $library, $nativeOnly)
+	end
+end

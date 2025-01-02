@@ -1,0 +1,20 @@
+# main
+function: main()
+	console.printLine("----------------")
+	console.printLine("constants-test")
+	console.printLine("----------------")
+	console.printLine()
+	# setting some constants
+	setConstant("$ARRAY", [1,2,3,4])
+	setConstant("$MAP", {a: 1, b: 2, c: 3, d: 4})
+	setConstant("$PRIMITIVE", 1234)
+	# trying to overwrite constants
+	# which should have no effect, but a warning
+	$PRIMITIVE = 2345
+	$ARRAY = [1,2,3,4]
+	$ARRAY[0] = 5
+	$MAP = {a: 1, b: 2, c: 3, d: 4}
+	$MAP.a = 5
+	# printing original constants
+	console.printLine(script.getVariables())
+end

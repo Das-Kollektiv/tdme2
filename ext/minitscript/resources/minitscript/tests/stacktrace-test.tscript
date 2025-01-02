@@ -1,0 +1,43 @@
+use: stacktrace-module-test.tscript
+
+function: function1()
+	console.printLine("-------------------")
+	console.printLine("function1(): init")
+	console.printLine("-------------------")
+	function2()
+	console.printLine("-------------------")
+	console.printLine("function1(): done")
+	console.printLine("-------------------")
+end
+
+function: function2()
+	console.printLine("-------------------")
+	console.printLine("function2(): init")
+	console.printLine("-------------------")
+	function3()
+	console.printLine("-------------------")
+	console.printLine("function2(): done")
+	console.printLine("-------------------")
+	console.printLine()
+end
+
+function: function3()
+	console.printLine("-------------------")
+	console.printLine("function3(): init")
+	console.printLine("-------------------")
+	console.printLine(stackTrace())
+	console.printLine("-------------------")
+	console.printLine("function3(): done")
+	console.printLine("-------------------")
+	console.printLine()
+end
+
+# main
+function: main()
+	console.printLine("-----------------")
+	console.printLine("stacktrace-test")
+	console.printLine("-----------------")
+	console.printLine()
+	function1()
+	module_function1()
+end

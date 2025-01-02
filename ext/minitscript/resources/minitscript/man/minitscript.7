@@ -1,0 +1,231 @@
+.TH "minitscript" 7
+.PP
+This is the home of MinitScript \- The mini C++ transpileable scripting language\.
+.PP
+This document and repository is WIP\. Expect a BETA release around 2025\-03\-01\.
+.nf
+.fi
+See section 1\.3\. for 1\.0 BETA release TODO list\.
+
+.SH "1. Introduction"
+.PP
+MinitScript is developed as part of our TDME2 3D Engine[1] to match
+the requirements for high performance script execution, as well as straight forward game logic scripting\.
+.sp
+[1] https://github\.com/andreasdr/tdme2 
+.nf
+.fi
+
+.PP
+MinitScript might borrow some ideas from JavaScript, Kotlin, PHP and even Pascal, C# and C++, which you might like and find familier\.
+Also note the focus on easy integration into other products and easy customizability and extendability\.
+
+.SS "1.1. Open source"
+.RS
+.Bl
+.IP \(bu 4
+MinitScript is open source
+.RS
+.Bl
+.IP \(bu 4
+please check the license[2]
+.El
+.sp
+[2] https://github\.com/andreasdr/minitscript/blob/main/LICENSE 
+.nf
+.fi
+.Bl
+.IP \(bu 4
+you find the source code at https://github\.com/andreasdr/minitscript[3] 
+.El
+.sp
+[3] https://github\.com/andreasdr/minitscript 
+.nf
+.fi
+.Bl
+.IP \(bu 4
+here you find developer documentation including collaboration graphs and API[4]
+.El
+.sp
+[4] https://www\.mindty\.com/products/minitscript/documentation/ 
+.nf
+.fi
+.RE
+.El
+.RE
+
+.SS "1.2. Language features"
+.RS
+.Bl
+.IP \(bu 4
+Introduction to MinitScript language features:
+.RS
+.Bl
+.IP \(bu 4
+very small implementation of a scripting language
+.El
+.Bl
+.IP \(bu 4
+runs on every CPU, OS, \.\.\. due to its simplicity, so its highly portable
+.El
+.Bl
+.IP \(bu 4
+can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
+.El
+.Bl
+.IP \(bu 4
+built\-in data types: null, boolean, integer, float, string, byte array, array, map and set, \.\.\.
+.El
+.Bl
+.IP \(bu 4
+when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
+.El
+.Bl
+.IP \(bu 4
+supports functions/stacklets and recursion
+.El
+.Bl
+.IP \(bu 4
+supports lamda functions and inline stacklets
+.El
+.Bl
+.IP \(bu 4
+supports operators by operator to method mapping by a preprocessor run
+.El
+.Bl
+.IP \(bu 4
+supports loops, conditions and switch/case/default blocks
+.El
+.Bl
+.IP \(bu 4
+supports programming with classes style programming
+.RS
+.Bl
+.IP \(bu 4
+for built\-in datatypes: string, byte array, array, map and set, \.\.\.
+.El
+.Bl
+.IP \(bu 4
+for script classes/objects
+.El
+.Bl
+.IP \(bu 4
+for custom data types
+.El
+.RE
+.El
+.Bl
+.IP \(bu 4
+supports event like programming
+.El
+.Bl
+.IP \(bu 4
+unicode support via UTF8
+.El
+.Bl
+.IP \(bu 4
+can be transpiled to C++
+.El
+.RE
+.El
+.RE
+
+.SS "1.3. 1.0 BETA release TODO list"
+.RS
+.Bl
+.IP \(bu 4
+Whats left to do for 1\.0 BETA release
+.RS
+.Bl
+.IP \(bu 4
+some adjustments
+.RS
+.Bl
+.IP \(bu 4
+modules
+.El
+.Bl
+.IP \(bu 4
+exceptions
+.El
+.Bl
+.IP \(bu 4
+array sub type optimization
+.El
+.Bl
+.IP \(bu 4
+passing method arguments with vector of pointer of MinitScript variables
+.El
+.Bl
+.IP \(bu 4
+have a more sophisticated parser
+.El
+.Bl
+.IP \(bu 4
+have interfaces
+.El
+.Bl
+.IP \(bu 4
+optional: make event system optional??? what about error emits/errors in functions/stacklets??? 
+.El
+.Bl
+.IP \(bu 4
+build system: check executable output directories
+.El
+.RE
+.El
+.Bl
+.IP \(bu 4
+parser
+.RS
+.Bl
+.IP \(bu 4
+improve error messages even more
+.El
+.RE
+.El
+.Bl
+.IP \(bu 4
+documentation
+.RS
+.Bl
+.IP \(bu 4
+detailed documentation for specific sections and maybe methods
+.El
+.Bl
+.IP \(bu 4
+README\.md: resolve TODOs
+.El
+.Bl
+.IP \(bu 4
+README\-BuildingHowTo\.md: resolve TODOs
+.El
+.Bl
+.IP \(bu 4
+README\-Syntax\.md: TODO
+.El
+.Bl
+.IP \(bu 4
+README\-Extension\.md: TODO
+.El
+.Bl
+.IP \(bu 4
+README\-Integration\.md: TODO
+.El
+.Bl
+.IP \(bu 4
+\.\.\.
+.El
+.RE
+.El
+.Bl
+.IP \(bu 4
+installer for Windows
+.El
+.Bl
+.IP \(bu 4
+installer for MacOSX
+.El
+.RE
+.El
+.RE

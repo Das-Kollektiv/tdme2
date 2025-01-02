@@ -1,0 +1,77 @@
+use: exception-module-test.tscript
+
+function: exceptionATest1()
+	console.printLine("-------------------------")
+	console.printLine("exceptionATest1(): init")
+	console.printLine("-------------------------")
+	console.printLine()
+	try
+		throw ("This is a exception from exceptionATest1()")
+	catch ($exception)
+		console.printLine("Cought exception in exceptionATest1(): " + $exception)
+	end
+	console.printLine("-------------------------")
+	console.printLine("exceptionATest1(): done")
+	console.printLine("-------------------------")
+end
+
+function: exceptionBTest1()
+	console.printLine("-------------------------")
+	console.printLine("exceptionBTest1(): init")
+	console.printLine("-------------------------")
+	console.printLine()
+	try
+		exceptionBTest2()
+	catch ($exception)
+		console.printLine("Cought exception in exceptionBTest1(): " + $exception)
+	end
+	console.printLine("-------------------------")
+	console.printLine("exceptionBTest1(): done")
+	console.printLine("-------------------------")
+end
+
+function: exceptionBTest2()
+	console.printLine("-------------------------")
+	console.printLine("exceptionBTest2(): init")
+	console.printLine("-------------------------")
+	console.printLine()
+	throw ("This is a exception from exceptionBTest2()")
+	console.printLine("-------------------------")
+	console.printLine("exceptionBTest2(): done")
+	console.printLine("-------------------------")
+	console.printLine()
+end
+
+# main
+function: main()
+	console.printLine("-------------------------")
+	console.printLine("exception-test: Nothing")
+	console.printLine("-------------------------")
+	console.printLine()
+	# get rid of required variable creation here
+	try
+		console.printLine("Inside exception, line 1")
+		console.printLine("Inside exception, line 2")
+		console.printLine("Inside exception, line 3")
+		throw ("Hi, say hello to an exception")
+		console.printLine("Inside exception, line 4")
+		console.printLine("Inside exception, line 5")
+		console.printLine("Inside exception, line 6")
+	catch ($exception)
+		console.printLine("An exception was thrown: " + $exception)
+	end
+	#
+	console.printLine("This is the end. Or not?")
+	#
+	exceptionATest1()
+	exceptionBTest1()
+	module_exceptionATest1()
+	module_exceptionBTest1()
+	# unhandled throw
+	console.printLine("----------------------")
+	console.printLine("exception-test: Back")
+	console.printLine("----------------------")
+	#
+	throw ("Hi, say hello to an uncought exception")
+	#
+end

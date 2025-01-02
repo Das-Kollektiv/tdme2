@@ -1,0 +1,28 @@
+<html>
+	<head>
+	</head>
+	<body>
+	<script type="text/javascript">
+		const count = 1000000
+		start = Date.now()
+		const array = []
+		for (let i = 0; i < count; i++) {
+			array.push(count - i)
+		}
+		end = Date.now()
+		alert("Created array, time = " + (end - start) + ": " + array)
+		start = Date.now()
+		for (let i = 1; i < array.length; i++) {
+        	for (let j = 0; j < array.length - i; j++) {
+        		if (array[j] > array[j + 1]) {
+        			let tmp = array[j + 1]
+        			array[j + 1] = array[j]
+        			array[j] = tmp
+        		}
+        	}
+		}
+		end = Date.now()
+		alert("Sorted array, time = " + (end - start) + ": " + array)
+	</script>
+	</body>
+</html>
