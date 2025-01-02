@@ -9,13 +9,13 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 MACHINE := $(shell sh -c 'uname -m 2>/dev/null')
 
 #
-MAIN_LDFLAGS = -L lib -l miniscript
+MAIN_LDFLAGS = -L{$MINITSCRIPT_DATA}/lib -lminitscript
 
 #
 CPPVERSION = -std=c++2a
 OFLAGS = -O3
 EXTRAFLAGS =
-INCLUDES = -Isrc -Iext -I.
+INCLUDES = -I{$MINITSCRIPT_DATA}/src -I{$MINITSCRIPT_DATA}/ext -I.
 
 #
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)

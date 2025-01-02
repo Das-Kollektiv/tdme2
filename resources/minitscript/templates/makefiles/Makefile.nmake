@@ -3,8 +3,9 @@ BIN = mscbin
 
 INCLUDES = \
 	/I "." \
-	/I "src" \
-	/I "ext"
+	/I "{$MINITSCRIPT_DATA}\src" \
+	/I "{$MINITSCRIPT_DATA}\ext" \
+	/I "{$MINITSCRIPT_DATA}\ext\windows-msc\openssl\include"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
@@ -12,7 +13,7 @@ WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
 
 LD_FLAGS =
 MAIN_LDFLAGS = \
-	/LIBPATH libminiscript.lib
+	/LIBPATH {$MINITSCRIPT_DATA}\lib\libminitscript.lib
 
 FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi
 # /NODEFAULTLIB:msvcrt
@@ -32,7 +33,7 @@ init-mains:
 	mkdir $(BIN)
 
 compile: $(SRCS)
-	cl /D MINISCRIPT_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D MINITSCRIPT_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 clean: 
 	del /S /Q $(OBJ) >nul 2>&1

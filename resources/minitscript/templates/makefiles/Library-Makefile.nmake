@@ -6,29 +6,16 @@ LIBNAME = lib$(NAME)
 
 INCLUDES = \
 	/I "." \
-	/I "src" \
-	/I "ext" \
-	/I "ext\vhacd\include" \
-	/I "ext\reactphysics3d\include" \
-	/I "ext\fbx\win64\include" \
-	/I "ext\glfw3\include" \
-	/I "ext\windows-msc\openal-soft\includes" \
-	/I "ext\windows-msc\glew\include" \
-	/I "ext\windows-msc\vulkan-sdk\include" \
-	/I "ext\freetype\include" \
-	/I "ext\rapidjson\include" \
-	/I "ext\cpp-spline\src" \
-	/I "ext\zlib" \
-	/I "ext\miniscript\src" \
-	/I "ext\windows-msc\openssl\include"
+	/I "{$MINITSCRIPT_DATA}\src" \
+	/I "{$MINITSCRIPT_DATA}\ext" \
+	/I "{$MINITSCRIPT_DATA}\ext\windows-msc\openssl\include"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
 WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
 
 LIBS_LDFLAGS = \
-	/LIBPATH "libtdme.lib" \
-	/LIBPATH "libtdme-ext.lib" \
+	/LIBPATH "{$MINITSCRIPT_DATA}\lib\libminitscript.lib"
 
 FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760
 # /NODEFAULTLIB:msvcrt
@@ -51,7 +38,7 @@ init:
 	mkdir $(MSCBIN)
 
 compile: $(SRCS)
-	cl /D TDME2_DLL_IMPORT /D MINISCRIPT_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D MINITSCRIPT_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 link1: $(MSCOBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:$(MSCBIN)\$(LIBNAME).lib $**
