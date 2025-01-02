@@ -1,8 +1,9 @@
 #include <tdme/tdme.h>
-#include <tdme/network/httpclient/HTTPClient.h>
-#include <tdme/os/network/Network.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+
+#include <yannet/network/httpclient/HTTPClient.h>
+#include <yannet/os/network/Network.h>
 
 using std::string;
 using std::stringstream;
@@ -10,10 +11,11 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::network::httpclient::HTTPClient;
-using tdme::os::network::Network;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+
+using yannet::network::httpclient::HTTPClient;
+using yannet::os::network::Network;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();

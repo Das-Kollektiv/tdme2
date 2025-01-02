@@ -4,13 +4,13 @@
 #include <memory>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpclient/UDPClient.h>
-#include <tdme/network/udpclient/UDPClientMessage.h>
-#include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
-
 #include <tdme/utilities/Console.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpclient/UDPClient.h>
+#include <yannet/network/udpclient/UDPClientMessage.h>
+#include <yannet/os/network/Network.h>
 
 using std::make_unique;
 using std::unique_ptr;
@@ -21,12 +21,13 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpclient::UDPClient;
-using tdme::network::udpclient::UDPClientMessage;
-using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
+
+using yannet::network::udp::UDPPacket;
+using yannet::network::udpclient::UDPClient;
+using yannet::network::udpclient::UDPClientMessage;
+using yannet::os::network::Network;
 
 unique_ptr<UDPClient> client;
 

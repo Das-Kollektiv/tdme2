@@ -184,12 +184,12 @@ const string GUIParser::getRootNode(const string& xml) {
 	return rootNode;
 }
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables, Library* scriptLibrary, const MiniScript::Variable& scriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables, Library* scriptLibrary, const MinitScript::Variable& scriptArguments, Context* context)
 {
 	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), variables, pathName, fileName, scriptLibrary, scriptArguments, context);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& variables, const string& pathName, const string& fileName, Library* scriptLibrary, const MiniScript::Variable& scriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& variables, const string& pathName, const string& fileName, Library* scriptLibrary, const MinitScript::Variable& scriptArguments, Context* context)
 {
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);

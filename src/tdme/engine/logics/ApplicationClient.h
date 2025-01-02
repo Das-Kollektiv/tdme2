@@ -9,9 +9,10 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
+
+#include <yannet/network/udpclient/UDPClient.h>
 
 using std::vector;
 using std::unique_ptr;
@@ -21,9 +22,10 @@ using tdme::engine::logics::Logic;
 using tdme::engine::physics::World;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::network::udpclient::UDPClient;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
+
+using yannet::network::udpclient::UDPClient;
 
 /**
  * Application client

@@ -122,10 +122,10 @@ void ContextMenuScreenController::onAction(GUIActionListenerType type, GUIElemen
 			close();
 			if (actionIt->second != nullptr) actionIt->second->performAction();
 		} else
-		if (StringTools::startsWith(node->getValue(), "miniscript.method.") == true) {
+		if (StringTools::startsWith(node->getValue(), "minitscript.method.") == true) {
 			close();
-			if (miniScriptMethodSelectionListener != nullptr) {
-				miniScriptMethodSelectionListener->onMethodSelection(StringTools::substring(node->getValue(), string("miniscript.method.").size()));
+			if (minitScriptMethodSelectionListener != nullptr) {
+				minitScriptMethodSelectionListener->onMethodSelection(StringTools::substring(node->getValue(), string("minitscript.method.").size()));
 			}
 		}
 	}
@@ -151,7 +151,7 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 			}
 			if (StringTools::toLowerCase(methodName).find(searchValue) != string::npos) {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-					"<context-menu-item value=\"miniscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
+					"<context-menu-item value=\"minitscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
 					true
 				);
 			}
@@ -167,7 +167,7 @@ void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void ContextMenuScreenController::clear() {
-	miniScriptMethodSelectionListener = nullptr;
+	minitScriptMethodSelectionListener = nullptr;
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->clearSubNodes();
 	for (const auto& [actionId, action]: actions) delete action;
 	actions.clear();
@@ -194,7 +194,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 			methodName = StringTools::substring(methodNameCandidate, string("miniscript.").size());
 		}
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-			"<context-menu-item value=\"miniscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
+			"<context-menu-item value=\"minitscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
 			true
 		);
 	}

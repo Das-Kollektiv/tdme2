@@ -16,7 +16,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/miniscript/EngineMiniScript.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
-using tdme::miniscript::EngineMiniScript;
+using tdme::minitscript::EngineMinitScript;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -52,12 +52,12 @@ class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 	: public TabController
 {
 public:
-	struct MiniScriptScriptSyntaxTree {
-		EngineMiniScript::Script::ScriptType type;
+	struct MinitScriptScriptSyntaxTree {
+		EngineMinitScript::Script::Type type;
 		string condition;
 		string name;
-		EngineMiniScript::SyntaxTreeNode conditionSyntaxTree;
-		vector<EngineMiniScript::SyntaxTreeNode> syntaxTree;
+		EngineMinitScript::SyntaxTreeNode conditionSyntaxTree;
+		vector<EngineMinitScript::SyntaxTreeNode> syntaxTree;
 	};
 
 	enum ContextMenuType { CONTEXTMENUTYPE_NONE, CONTEXTMENUTYPE_NODE, CONTEXTMENUTYPE_CANVAS };
@@ -65,7 +65,7 @@ private:
 	TextEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
+	vector<MinitScriptScriptSyntaxTree> minitScriptSyntaxTrees;
 	bool firstSearch { true };
 	int searchIndex { -1 };
 	ContextMenuType contextMenuType { CONTEXTMENUTYPE_NONE };
@@ -76,7 +76,7 @@ private:
 	int addNodeX { -1 };
 	int addNodeY { -1 };
 
-	unique_ptr<EngineMiniScript> scriptInstance;
+	unique_ptr<EngineMinitScript> scriptInstance;
 
 public:
 	// forbid class copy
@@ -107,9 +107,9 @@ public:
 	}
 
 	/**
-	 * @return EngineMiniScript
+	 * @return EngineMinitScript
 	 */
-	inline EngineMiniScript* getMiniScript() {
+	inline EngineMinitScript* getMinitScript() {
 		return scriptInstance.get();
 	}
 
@@ -189,17 +189,17 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
-	 * @return miniscript syntax trees
+	 * @return minitscript syntax trees
 	 */
-	inline const vector<MiniScriptScriptSyntaxTree>& getMiniScriptSyntaxTrees() {
-		return miniScriptSyntaxTrees;
+	inline const vector<MinitScriptScriptSyntaxTree>& getMinitScriptSyntaxTrees() {
+		return minitScriptSyntaxTrees;
 	}
 
 	/**
-	 * Update EngineMiniScript syntax tree
-	 * @param miniScriptScriptIdx MiniScript script index
+	 * Update EngineMinitScript syntax tree
+	 * @param minitScriptScriptIdx MinitScript script index
 	 */
-	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
+	void updateMinitScriptSyntaxTree(int minitScriptScriptIdx);
 
 	/**
 	 * Close find/replace window

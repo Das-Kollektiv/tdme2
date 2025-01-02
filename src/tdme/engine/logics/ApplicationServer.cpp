@@ -8,9 +8,10 @@
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/ServerThread.h>
 #include <tdme/engine/physics/World.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
+
+#include <yannet/network/udpserver/UDPServer.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 using std::make_unique;
 using std::string;
@@ -22,9 +23,10 @@ using tdme::engine::logics::ApplicationServer;
 using tdme::engine::logics::ApplicationServerClient;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::ServerThread;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
+
+using yannet::network::udpserver::UDPServer;
+using yannet::network::udpserver::UDPServerClient;
 
 ApplicationServer::ApplicationServer(const string& name, const string& host, const uint16_t port, const unsigned int maxCCU, int pathFindingThreadCount) : UDPServer(name, host, port, maxCCU), pathFindingThreadCount(pathFindingThreadCount) {
 	setIOThreadCount(2);

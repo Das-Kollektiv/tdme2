@@ -9,9 +9,10 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
+
+#include <yannet/network/udp/UDPPacket.h>
 
 using std::memcpy;
 using std::set;
@@ -20,9 +21,10 @@ using std::stringstream;
 
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::network::udp::UDPPacket;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
+
+using yannet::network::udp::UDPPacket;
 
 class tdme::engine::logics::LogicNetworkPacket final {
 private:

@@ -17,12 +17,14 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpclient/UDPClient.h>
+#include <yannet/network/udpclient/UDPClientMessage.h>
 
 using std::make_unique;
 using std::sort;
@@ -43,12 +45,14 @@ using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpclient::UDPClient;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
+
+using yannet::network::udp::UDPPacket;
+using yannet::network::udpclient::UDPClient;
+using yannet::network::udpclient::UDPClientMessage;
 
 ApplicationClient::ApplicationClient(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread"), mutex("applicationserverclientthread-mutex") {
 	this->context = unique_ptr<Context>(context);

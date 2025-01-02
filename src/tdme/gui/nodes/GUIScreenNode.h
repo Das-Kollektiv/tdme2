@@ -6,8 +6,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include <miniscript/miniscript.h>
-#include <miniscript/miniscript/Library.h>
+#include <minitscript/minitscript.h>
+#include <minitscript/minitscript/Library.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -21,7 +21,7 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/miniscript/EngineMiniScript.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -31,7 +31,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using miniscript::miniscript::Library;
+using minitscript::minitscript::Library;
 
 using tdme::engine::Texture;
 using tdme::engine::logics::Context;
@@ -63,9 +63,9 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::scripting::GUIMiniScript;
+using tdme::gui::scripting::GUIMinitScript;
 using tdme::gui::GUI;
-using tdme::miniscript::EngineMiniScript;
+using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::MutableString;
 
 /**
@@ -81,7 +81,7 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class GUINode;
 	friend class GUINodeConditions;
 	friend class GUIParentNode;
-	friend class tdme::gui::scripting::GUIMiniScript;
+	friend class tdme::gui::scripting::GUIMinitScript;
 
 private:
 	string applicationRootPathName;
@@ -170,7 +170,7 @@ private:
 
 	GUIColor foccussedBorderColor;
 
-	unique_ptr<GUIMiniScript> script;
+	unique_ptr<GUIMinitScript> script;
 	bool scriptOnActionAvailable { false };
 	bool scriptOnChangeAvailable { false };
 	bool scriptOnMouseOverAvailable { false };
@@ -184,7 +184,7 @@ private:
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
 
-	EngineMiniScript::Variable scriptArguments;
+	EngineMinitScript::Variable scriptArguments;
 
 	Context* context { nullptr };
 
@@ -301,7 +301,7 @@ private:
 	/**
 	 * Initialize mini script
 	 */
-	void initializeMiniScript();
+	void initializeMinitScript();
 
 	/**
 	 * Add node
@@ -392,7 +392,7 @@ public:
 		bool popUp,
 		Library* scriptLibrary,
 		const string& scriptFileName,
-		const EngineMiniScript::Variable& scriptArguments,
+		const EngineMinitScript::Variable& scriptArguments,
 		Context* context
 	);
 
@@ -799,7 +799,7 @@ public:
 	/**
 	 * @return mini script script attached to this screen
 	 */
-	inline GUIMiniScript* getMiniScript() {
+	inline GUIMinitScript* getMinitScript() {
 		return script.get();
 	}
 

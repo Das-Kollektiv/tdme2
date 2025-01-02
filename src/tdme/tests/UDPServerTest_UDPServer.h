@@ -3,23 +3,25 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/ServerClientRequestHandler.h>
-#include <tdme/network/udpserver/ServerClientRequestHandlerHub.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Exception.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpserver/ServerClientRequestHandler.h>
+#include <yannet/network/udpserver/ServerClientRequestHandlerHub.h>
+#include <yannet/network/udpserver/UDPServer.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 #include "UDPServerTest_UDPServerClient.h"
 
 using std::string;
 
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpserver::ServerClientRequestHandler;
-using tdme::network::udpserver::ServerClientRequestHandlerHub;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Exception;
+
+using yannet::network::udp::UDPPacket;
+using yannet::network::udpserver::ServerClientRequestHandler;
+using yannet::network::udpserver::ServerClientRequestHandlerHub;
+using yannet::network::udpserver::UDPServer;
+using yannet::network::udpserver::UDPServerClient;
 
 class CRHShutdown final: public ServerClientRequestHandler<UDPServerClient,string> {
 public:

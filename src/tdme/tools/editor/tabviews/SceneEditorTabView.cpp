@@ -10,14 +10,14 @@
 #include <string>
 #include <unordered_set>
 
-#include <miniscript/miniscript/Library.h>
+#include <minitscript/minitscript/Library.h>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/logics/ApplicationClient.h>
 #include <tdme/engine/logics/Context.h>
-#include <tdme/engine/logics/LogicMiniScript.h>
-#include <tdme/engine/logics/MiniScriptLogic.h>
+#include <tdme/engine/logics/LogicMinitScript.h>
+#include <tdme/engine/logics/MinitScriptLogic.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/prototype/BaseProperty.h>
@@ -62,13 +62,13 @@ using std::unordered_set;
 
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 
-using miniscript::miniscript::Library;
+using minitscript::minitscript::Library;
 
 using tdme::audio::Audio;
 using tdme::engine::logics::ApplicationClient;
 using tdme::engine::logics::Context;
-using tdme::engine::logics::LogicMiniScript;
-using tdme::engine::logics::MiniScriptLogic;
+using tdme::engine::logics::LogicMinitScript;
+using tdme::engine::logics::MinitScriptLogic;
 using tdme::engine::Color4;
 using tdme::engine::physics::World;
 using tdme::engine::prototype::BaseProperty;
@@ -1524,7 +1524,7 @@ void SceneEditorTabView::runScene() {
 				Tools::getFileName(scene->getGUIFileName()),
 				{},
 				scriptLibrary,
-				MiniScript::Variable(),
+				MinitScript::Variable(),
 				applicationClient->getContext()
 			);
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -1541,13 +1541,13 @@ void SceneEditorTabView::runScene() {
 	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
 			//
-			unique_ptr<LogicMiniScript> logicMiniScript;
+			unique_ptr<LogicMinitScript> logicMinitScript;
 			// try to load from native library
 			if (scriptLibrary != nullptr) {
 				//
 				auto scriptURI = applicationClient->getContext()->getRelativeURI(entity->getPrototype()->getScript());
-				// load from library as generic MiniScript
-				auto libraryMiniScript = unique_ptr<MiniScript>(
+				// load from library as generic MinitScript
+				auto libraryMinitScript = unique_ptr<MinitScript>(
 					scriptLibrary->loadScript(
 						Tools::getPathName(scriptURI),
 						Tools::getFileName(scriptURI),
@@ -1555,40 +1555,40 @@ void SceneEditorTabView::runScene() {
 					)
 				);
 				// no native script found?
-				if (libraryMiniScript == nullptr) {
+				if (libraryMinitScript == nullptr) {
 					// no op
 				} else
-				// no LogicMiniScript
-				if (dynamic_cast<LogicMiniScript*>(libraryMiniScript.get()) == nullptr) {
-					Console::printLine("SceneEditorTabView::runScene(): Native library: Native script not of type LogicMiniScript: " + entity->getPrototype()->getScript());
+				// no LogicMinitScript
+				if (dynamic_cast<LogicMinitScript*>(libraryMinitScript.get()) == nullptr) {
+					Console::printLine("SceneEditorTabView::runScene(): Native library: Native script not of type LogicMinitScript: " + entity->getPrototype()->getScript());
 				} else {
-					// cast to LogicMiniScript
-					logicMiniScript = unique_ptr<LogicMiniScript>(dynamic_cast<LogicMiniScript*>(libraryMiniScript.release()));
+					// cast to LogicMinitScript
+					logicMinitScript = unique_ptr<LogicMinitScript>(dynamic_cast<LogicMinitScript*>(libraryMinitScript.release()));
 				}
 			}
-			if (logicMiniScript == nullptr) {
-				// nope, just parse script into LogicMiniScript
-				logicMiniScript = make_unique<LogicMiniScript>();
-				logicMiniScript->parseScript(
+			if (logicMinitScript == nullptr) {
+				// nope, just parse script into LogicMinitScript
+				logicMinitScript = make_unique<LogicMinitScript>();
+				logicMinitScript->parseScript(
 					Tools::getPathName(entity->getPrototype()->getScript()),
 					Tools::getFileName(entity->getPrototype()->getScript())
 				);
 			}
 			//
-			if (logicMiniScript->isValid() == false) {
+			if (logicMinitScript->isValid() == false) {
 				//
 				invalidScripts+=
 					Tools::getRelativeResourcesFileName(
 						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
 					);
 				//
-				if (logicMiniScript->getParseErrors().empty() == true) {
+				if (logicMinitScript->getParseErrors().empty() == true) {
 					invalidScripts+= "\n";
 				} else {
 					//
 					invalidScripts+= ":\n";
 					//
-					for (const auto& parseError: logicMiniScript->getParseErrors())
+					for (const auto& parseError: logicMinitScript->getParseErrors())
 						invalidScripts+= "\t" + parseError + "\n";
 					//
 					invalidScripts+= "\n";
@@ -1600,11 +1600,11 @@ void SceneEditorTabView::runScene() {
 			}
 			//
 			applicationClient->getContext()->addLogic(
-				make_unique<MiniScriptLogic>(
+				make_unique<MinitScriptLogic>(
 					applicationClient->getContext(),
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
-					logicMiniScript.release(),
+					logicMinitScript.release(),
 					entity->getPrototype(),
 					true
 				).release()

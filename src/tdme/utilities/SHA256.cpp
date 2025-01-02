@@ -28,7 +28,7 @@ inline void SHA256::hash(const uint8_t* data, size_t size, string& encodedString
 	SHA256_Init(&sha256);
 	SHA256_Update(&sha256, data, size);
 	SHA256_Final(hash, &sha256);
-	char outputBuffer[SHA256_DIGEST_LENGTH * 2];
+	char outputBuffer[SHA256_DIGEST_LENGTH * 2 + 1];
 	for (int64_t i = 0; i < SHA256_DIGEST_LENGTH; i++) {
 		sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
 	}

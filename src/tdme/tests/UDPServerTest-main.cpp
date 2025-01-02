@@ -7,19 +7,21 @@
 #include "UDPServerTest_UDPServerClient.h"
 
 #include <tdme/tdme.h>
-#include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
+
+#include <yannet/os/network/Network.h>
 
 using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
-using tdme::os::network::Network;
 using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
+
+using yannet::os::network::Network;
 
 class ServerBroadcaster : public Thread {
 public:

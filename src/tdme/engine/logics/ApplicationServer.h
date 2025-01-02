@@ -6,9 +6,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Exception.h>
+
+#include <yannet/network/udpserver/UDPServer.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 using std::string;
 using std::unique_ptr;
@@ -16,9 +17,10 @@ using std::vector;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::ServerThread;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Exception;
+
+using yannet::network::udpserver::UDPServer;
+using yannet::network::udpserver::UDPServerClient;
 
 /**
  * Application server

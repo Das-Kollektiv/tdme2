@@ -1,9 +1,10 @@
 #include <tdme/tools/installer/Installer.h>
 
 #include <tdme/tdme.h>
-#include <tdme/os/network/Network.h>
 
-using tdme::os::network::Network;
+#include <yannet/os/network/Network.h>
+
+using yannet::os::network::Network;
 
 int main(int argc, char** argv)
 {

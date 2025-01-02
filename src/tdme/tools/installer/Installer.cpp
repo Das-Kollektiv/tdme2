@@ -28,8 +28,6 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
-#include <tdme/network/httpclient/HTTPClient.h>
-#include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -48,6 +46,9 @@
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
+
+#include <yannet/network/httpclient/HTTPClient.h>
+#include <yannet/network/httpclient/HTTPDownloadClient.h>
 
 using tdme::tools::installer::Installer;
 
@@ -81,8 +82,6 @@ using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
-using tdme::network::httpclient::HTTPClient;
-using tdme::network::httpclient::HTTPDownloadClient;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -101,6 +100,9 @@ using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
+
+using yannet::network::httpclient::HTTPClient;
+using yannet::network::httpclient::HTTPDownloadClient;
 
 Installer::Installer(): installThreadMutex("install-thread-mutex")
 {

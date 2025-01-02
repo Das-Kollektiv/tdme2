@@ -12,6 +12,8 @@ MACHINE := $(shell sh -c 'uname -m 2>/dev/null')
 #
 NAME = tdme2
 EXT_NAME = tdme2-ext
+YANNET_NAME = yannet
+MINITSCRIPT_NAME = minitscript
 ifeq ($(OS), Darwin)
 	LIB_EXT = .dylib
 else ifeq ($(OSSHORT), Msys)
@@ -21,6 +23,8 @@ else
 endif
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
+YANNET_LIB  := libyannet$(LIB_EXT)
+MINITSCRIPT_LIB  := libminitscript$(LIB_EXT)
 OPENGL2_RENDERER_LIB := libopengl2renderer$(LIB_EXT)
 OPENGL3CORE_RENDERER_LIB := libopengl3corerenderer$(LIB_EXT)
 VULKAN_RENDERER_LIB := libvulkanrenderer$(LIB_EXT)
@@ -30,6 +34,10 @@ LIBS_LDFLAGS =
 MAIN_LDFLAGS =
 LDFLAG_LIB := $(NAME)
 LDFLAG_EXT_LIB := $(EXT_NAME)
+LDFLAG_YANNET_LIB := $(YANNET_NAME)
+LDFLAG_MINITSCRIPT_LIB := $(MINITSCRIPT_NAME)
+
+SUBDIRS := $(MINITSCRIPT_NAME) $(YANNET_NAME)
 
 #
 SRCS_PLATFORM =
@@ -38,7 +46,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/miniscript/src
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src
 
 #
 CXX := $(CXX) -fPIC
@@ -47,8 +55,6 @@ CXX := $(CXX) -fPIC
 ifeq ($(OS), Darwin)
 	# MacOSX
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
-	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp
 	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL
 	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1
 	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL
@@ -74,7 +80,6 @@ ifeq ($(OS), Darwin)
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
@@ -85,7 +90,6 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include -I/usr/pkg/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
@@ -96,7 +100,6 @@ else ifeq ($(OS), NetBSD)
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLEW -lGL -lglfw
@@ -107,7 +110,6 @@ else ifeq ($(OS), OpenBSD)
 else ifeq ($(OS), Haiku)
 	# Haiku
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers -I/boot/system/develop/headers/freetype2
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
@@ -125,20 +127,17 @@ else ifeq ($(OS), Linux)
 	OFLAGS := -O3
 	ifeq ($(MACHINE), x86_64)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		INCLUDES := $(INCLUDES) -Iext/fbx/linux/include
 		LIBS_LDFLAGS := $(LIBS_LDFLAGS) -Lext/fbx/linux/lib -lfbxsdk -lxml2
 	else
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	endif
 else
 	# Windows
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	# TODO: No console flags: -Wl,-subsystem,windows
 	EXTRAFLAGS := $(EXTRAFLAGS)
@@ -149,6 +148,8 @@ else
 	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp -lssl -lcrypto
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
+	LDFLAG_YANNET_LIB := $(YANNET_NAME)$(LIB_EXT)
+	LDFLAG_MINITSCRIPT_LIB := $(MINITSCRIPT_NAME)$(LIB_EXT)
 	OFLAGS := -O3
 endif
 
@@ -176,6 +177,8 @@ ifeq ($(GLES2), YES)
 	LIBS:= $(LIBS) $(LIB_DIR)/$(OPENGLES2_RENDERER_LIB)
 endif 
 
+# subdirs
+LIBS:= $(LIBS)
 
 SRC = src
 TINYXML = tinyxml
@@ -190,7 +193,6 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 CPPSPLINE = cpp-spline
 BC7 = bc7enc_rdo
-MINISCRIPT = miniscript
 
 SRCS_DEBUG =
 
@@ -255,7 +257,7 @@ SRCS = \
 	src/tdme/engine/logics/ApplicationServerClient.cpp \
 	src/tdme/engine/logics/Context.cpp \
 	src/tdme/engine/logics/Logic.cpp \
-	src/tdme/engine/logics/LogicMiniScript.cpp \
+	src/tdme/engine/logics/LogicMinitScript.cpp \
 	src/tdme/engine/logics/NetworkLogic.cpp \
 	src/tdme/engine/logics/ServerThread.cpp \
 	src/tdme/engine/model/Animation.cpp \
@@ -505,44 +507,19 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
-	src/tdme/gui/scripting/GUIMiniScript.cpp \
-	src/tdme/miniscript/EngineMiniScript.cpp \
-	src/tdme/miniscript/MiniScriptMatrix3x3.cpp \
-	src/tdme/miniscript/MiniScriptMatrix4x4.cpp \
-	src/tdme/miniscript/MiniScriptQuaternion.cpp \
-	src/tdme/miniscript/MiniScriptTransform.cpp \
-	src/tdme/miniscript/MiniScriptVector2.cpp \
-	src/tdme/miniscript/MiniScriptVector3.cpp \
-	src/tdme/miniscript/MiniScriptVector4.cpp \
-	src/tdme/network/httpclient/HTTPClient.cpp \
-	src/tdme/network/httpclient/HTTPClientException.cpp \
-	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
-	src/tdme/network/udpclient/NetworkClientException.cpp \
-	src/tdme/network/udpclient/UDPClient.cpp \
-	src/tdme/network/udpclient/UDPClientMessage.cpp \
-	src/tdme/network/udpserver/NetworkServerException.cpp \
-	src/tdme/network/udpserver/ServerClient.cpp \
-	src/tdme/network/udpserver/ServerClientRequestHandlerHubException.cpp \
-	src/tdme/network/udpserver/ServerRequest.cpp \
-	src/tdme/network/udpserver/ServerWorkerThread.cpp \
-	src/tdme/network/udpserver/ServerWorkerThreadPool.cpp \
-	src/tdme/network/udpserver/UDPServer.cpp \
-	src/tdme/network/udpserver/UDPServerClient.cpp \
-	src/tdme/network/udpserver/UDPServerIOThread.cpp \
+	src/tdme/gui/scripting/GUIMinitScript.cpp \
+	src/tdme/minitscript/EngineMinitScript.cpp \
+	src/tdme/minitscript/MinitScriptMatrix3x3.cpp \
+	src/tdme/minitscript/MinitScriptMatrix4x4.cpp \
+	src/tdme/minitscript/MinitScriptQuaternion.cpp \
+	src/tdme/minitscript/MinitScriptTransform.cpp \
+	src/tdme/minitscript/MinitScriptVector2.cpp \
+	src/tdme/minitscript/MinitScriptVector3.cpp \
+	src/tdme/minitscript/MinitScriptVector4.cpp \
 	src/tdme/os/filesystem/ArchiveFileSystem.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
-	src/tdme/os/network/Network.cpp \
-	src/tdme/os/network/NetworkException.cpp \
-	src/tdme/os/network/NetworkIOException.cpp \
-	src/tdme/os/network/NetworkSocketClosedException.cpp \
-	src/tdme/os/network/NetworkKEMException.cpp \
-	src/tdme/os/network/NetworkSocket.cpp \
-	src/tdme/os/network/NetworkSocketException.cpp \
-	src/tdme/os/network/UDPSocket.cpp \
-	src/tdme/os/network/SecureTCPSocket.cpp \
-	src/tdme/os/network/TCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
@@ -827,58 +804,6 @@ EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7decomp.cpp \
 	ext/bc7enc_rdo/bc7enc.cpp
 
-EXT_MINISCRIPT_SRCS = \
-	ext/miniscript/src/miniscript/miniscript/ApplicationMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/ArrayMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/BaseMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/ByteArrayMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/CryptographyMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/ContextMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/Context.cpp \
-	ext/miniscript/src/miniscript/miniscript/Documentation.cpp \
-	ext/miniscript/src/miniscript/miniscript/FileSystemMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/Generator.cpp \
-	ext/miniscript/src/miniscript/miniscript/HTTPDownloadClientClass.cpp \
-	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/Library.cpp \
-	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/MathMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/MiniScript.cpp \
-	ext/miniscript/src/miniscript/miniscript/NetworkMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/ScriptMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/SetMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/StringMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/TimeMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/Transpiler.cpp \
-	ext/miniscript/src/miniscript/miniscript/XMLMethods.cpp \
-	ext/miniscript/src/miniscript/miniscript/Version.cpp \
-	ext/miniscript/src/miniscript/network/httpclient/HTTPClient.cpp \
-	ext/miniscript/src/miniscript/network/httpclient/HTTPClientException.cpp \
-	ext/miniscript/src/miniscript/network/httpclient/HTTPDownloadClient.cpp \
-	ext/miniscript/src/miniscript/os/filesystem/FileSystem.cpp \
-	ext/miniscript/src/miniscript/os/network/Network.cpp \
-	ext/miniscript/src/miniscript/os/network/NetworkException.cpp \
-	ext/miniscript/src/miniscript/os/network/NetworkIOException.cpp \
-	ext/miniscript/src/miniscript/os/network/NetworkSocket.cpp \
-	ext/miniscript/src/miniscript/os/network/NetworkSocketClosedException.cpp \
-	ext/miniscript/src/miniscript/os/network/NetworkSocketException.cpp \
-	ext/miniscript/src/miniscript/os/network/SecureTCPSocket.cpp \
-	ext/miniscript/src/miniscript/os/network/TCPSocket.cpp \
-	ext/miniscript/src/miniscript/utilities/Base64.cpp \
-	ext/miniscript/src/miniscript/utilities/Console.cpp \
-	ext/miniscript/src/miniscript/utilities/ErrorConsole.cpp \
-	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
-	ext/miniscript/src/miniscript/utilities/Float.cpp \
-	ext/miniscript/src/miniscript/utilities/Hex.cpp \
-	ext/miniscript/src/miniscript/utilities/Integer.cpp \
-	ext/miniscript/src/miniscript/utilities/Properties.cpp \
-	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
-	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
-	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp \
-	ext/miniscript/src/miniscript/utilities/UTF8StringTools.cpp \
-	ext/miniscript/src/miniscript/utilities/UTF8StringTokenizer.cpp
-
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
@@ -980,7 +905,7 @@ MAIN_SRCS = \
 	src/tdme/tests/FlowMapTest2-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/MathOperatorTest-main.cpp \
-	src/tdme/tests/MiniScriptTest-main.cpp \
+	src/tdme/tests/MinitScriptTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
@@ -1004,13 +929,13 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
-	src/tdme/tools/cli/miniscriptcodecompletion-main.cpp \
-	src/tdme/tools/cli/miniscriptdocumentation-main.cpp \
-	src/tdme/tools/cli/miniscriptlibrary-main.cpp \
-	src/tdme/tools/cli/miniscriptmakefile-main.cpp \
-	src/tdme/tools/cli/miniscriptnmakefile-main.cpp \
-	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
-	src/tdme/tools/cli/miniscriptuntranspiler-main.cpp \
+	src/tdme/tools/cli/minitscriptcodecompletion-main.cpp \
+	src/tdme/tools/cli/minitscriptdocumentation-main.cpp \
+	src/tdme/tools/cli/minitscriptlibrary-main.cpp \
+	src/tdme/tools/cli/minitscriptmakefile-main.cpp \
+	src/tdme/tools/cli/minitscriptnmakefile-main.cpp \
+	src/tdme/tools/cli/minitscripttranspiler-main.cpp \
+	src/tdme/tools/cli/minitscriptuntranspiler-main.cpp \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
@@ -1038,7 +963,6 @@ EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
-EXT_MINISCRIPT_OBJS = $(EXT_MINISCRIPT_SRCS:ext/$(MINISCRIPT)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1066,7 +990,7 @@ endef
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 
@@ -1106,9 +1030,6 @@ $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 $(EXT_BC7_OBJS):$(OBJ)/%.o: ext/$(BC7)/%.cpp | print-opts
 	$(cpp-command)
 
-$(EXT_MINISCRIPT_OBJS):$(OBJ)/%.o: ext/$(MINISCRIPT)/%.cpp | print-opts
-	$(cpp-command)
-
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
 	$(cpp-command)
 
@@ -1133,6 +1054,16 @@ $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 $(OPENGLES2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
 
+subdirs:
+	@mkdir -p lib
+	for dir in $(SUBDIRS); do \
+		cd ext/$$dir; \
+		$(MAKE) clean; \
+		$(MAKE); \
+		cd ../..; \
+		cp ext/$$dir/lib/lib$$dir$(LIB_EXT) lib/; \
+    done
+
 $(LIB_DIR)/$(EXT_LIB):
 	@echo Creating shared library $@
 	@mkdir -p $(dir $@)
@@ -1155,11 +1086,11 @@ $(LIB_DIR)/$(LIB): $(LIB_DIR)/$(EXT_LIB)
 ifeq ($(OSSHORT), Msys)
 	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
 	@rm $@.rc
 	@rm $@.rc.o
 else
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB)
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB)
 endif
 	@echo Done $@
 
@@ -1228,13 +1159,13 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 	@rm $@.rc
 	@rm $@.rc.o
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 endif
 
 mains: $(MAINS)

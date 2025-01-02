@@ -24,7 +24,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/scripting/GUIMiniScript.h>
+#include <tdme/gui/scripting/GUIMinitScript.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/Console.h>
@@ -54,7 +54,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::scripting::GUIMiniScript;
+using tdme::gui::scripting::GUIMinitScript;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
@@ -176,7 +176,7 @@ void GUI::addRenderScreen(const string& screenId, int screenIdx)
 	determineFocussedNodes();
 
 	//
-	screen->initializeMiniScript();
+	screen->initializeMinitScript();
 }
 
 void GUI::removeRenderScreen(const string& screenId)
@@ -728,8 +728,8 @@ void GUI::handleEvents(bool clearEvents)
 			screen->getInputEventHandler()->handleInputEvents();
 		}
 		screen->forwardEvents();
-		if (screen->getMiniScript() != nullptr) {
-			screen->getMiniScript()->collectHIDEvents(mouseEvents, keyboardEvents);
+		if (screen->getMinitScript() != nullptr) {
+			screen->getMinitScript()->collectHIDEvents(mouseEvents, keyboardEvents);
 		}
 		if (screen->isPopUp() == true) break;
 	}
@@ -749,15 +749,15 @@ void GUI::handleEvents(bool clearEvents)
 	for (int i = 0; i < renderScreensCopy.size(); i++) {
 		auto screen = renderScreensCopy[i];
 		// miniscript?
-		auto screenMiniScript = screen->getMiniScript();
-		if (screenMiniScript == nullptr) continue;
+		auto screenMinitScript = screen->getMinitScript();
+		if (screenMinitScript == nullptr) continue;
 		// pop screen if requested
-		if (screenMiniScript->isPopped() == true) {
+		if (screenMinitScript->isPopped() == true) {
 			removeScreen(screen->getId());
 			continue;
 		}
 		// try to goTo next screen
-		auto nextScreen = screenMiniScript->releaseNextScreenNode();
+		auto nextScreen = screenMinitScript->releaseNextScreenNode();
 		if (nextScreen == nullptr) continue;
 		auto screenIt = find(renderScreens.begin(), renderScreens.end(), screen);
 		if (screenIt != renderScreens.end()) {

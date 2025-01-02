@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -16,7 +16,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/scripting/GUIMiniScript.h>
+#include <tdme/gui/scripting/GUIMinitScript.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -37,7 +37,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/miniscript/EngineMiniScript.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -51,7 +51,7 @@ using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::Texture;
-using tdme::engine::logics::LogicMiniScript;
+using tdme::engine::logics::LogicMinitScript;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -59,7 +59,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::scripting::GUIMiniScript;
+using tdme::gui::scripting::GUIMinitScript;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
@@ -80,7 +80,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using tdme::miniscript::EngineMiniScript;
+using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
@@ -336,10 +336,10 @@ void TextEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		if (StringTools::startsWith(outlinerNode, "miniscript.script.") == true) {
-			auto scriptIdx = Integer::parse(StringTools::substring(outlinerNode, string("miniscript.script.").size()));
+		if (StringTools::startsWith(outlinerNode, "minitscript.script.") == true) {
+			auto scriptIdx = Integer::parse(StringTools::substring(outlinerNode, string("minitscript.script.").size()));
 			if (view->isVisualEditor() == true) {
-				updateMiniScriptSyntaxTree(scriptIdx);
+				updateMinitScriptSyntaxTree(scriptIdx);
 			} else {
 				// TODO: jump to line
 			}
@@ -349,7 +349,7 @@ void TextEditorTabController::onChange(GUIElementNode* node)
 		auto visual = node->getController()->getValue().equals("1");
 		if (visual == true) {
 			view->setVisualEditor();
-			updateMiniScriptSyntaxTree(view->getMiniScriptScriptIdx());
+			updateMinitScriptSyntaxTree(view->getMinitScriptScriptIdx());
 		} else {
 			view->setCodeEditor();
 		}
@@ -409,10 +409,10 @@ void TextEditorTabController::onTooltipCloseRequest() {
 
 void TextEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"EngineMiniScript\" value=\"miniscript.script." + to_string(-1) + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"EngineMinitScript\" value=\"minitscript.script." + to_string(-1) + "\">\n";
 	auto scriptIdx = 0;
-	for (const auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
-		xml+= "<selectbox-option text=\"" + GUIParser::escape(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
+	for (const auto& minitScriptSyntaxTree: minitScriptSyntaxTrees) {
+		xml+= "<selectbox-option text=\"" + GUIParser::escape(minitScriptSyntaxTree.name) + "\" value=\"minitscript.script." + to_string(scriptIdx) + "\" />\n";
 		scriptIdx++;
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -423,32 +423,32 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
+void TextEditorTabController::updateMinitScriptSyntaxTree(int minitScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 
-	// we need to detect EngineMiniScript variant
+	// we need to detect EngineMinitScript variant
 	vector<string> scriptAsStringArray;
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName), scriptAsStringArray);
 	} catch (Exception& exception) {
-		miniScriptSyntaxTrees.clear();
-		view->setMiniScriptMethodOperatorMap({});
-		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
+		minitScriptSyntaxTrees.clear();
+		view->setMinitScriptMethodOperatorMap({});
+		view->updateMinitScriptSyntaxTree(minitScriptScriptIdx);
 		//
 		showInfoPopUp("Warning", "Could not load script");
 		//
 		return;
 	}
 
-	// load specific EngineMiniScript
-	scriptInstance = unique_ptr<EngineMiniScript>(EngineMiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	// load specific EngineMinitScript
+	scriptInstance = unique_ptr<EngineMinitScript>(EngineMinitScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {
 		scriptInstance = nullptr;
-		miniScriptSyntaxTrees.clear();
-		view->setMiniScriptMethodOperatorMap({});
-		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
+		minitScriptSyntaxTrees.clear();
+		view->setMinitScriptMethodOperatorMap({});
+		view->updateMinitScriptSyntaxTree(minitScriptScriptIdx);
 		//
 		showInfoPopUp("Warning", "Could not load script. Script not valid!");
 		//
@@ -458,19 +458,19 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	//
 	unordered_map<string, string> methodOperatorMap;
 	for (auto operatorMethod: scriptInstance->getOperatorMethods()) {
-		methodOperatorMap[operatorMethod->getMethodName()] = EngineMiniScript::getOperatorAsString(operatorMethod->getOperator());
+		methodOperatorMap[operatorMethod->getMethodName()] = EngineMinitScript::getOperatorAsString(operatorMethod->getOperator());
 	}
 
 	//
 	auto scriptIdx = 0;
-	miniScriptSyntaxTrees.clear();
+	minitScriptSyntaxTrees.clear();
 	for (auto script: scriptInstance->getScripts()) {
 		// determine name
 		string name;
 		string argumentsString;
-		switch(script.scriptType) {
-			case EngineMiniScript::Script::SCRIPTTYPE_FUNCTION: {
-				for (const auto& argument: script.functionArguments) {
+		switch(script.type) {
+			case EngineMinitScript::Script::TYPE_FUNCTION: {
+				for (const auto& argument: script.arguments) {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
 					if (argument.reference == true) argumentsString+= "=";
 					argumentsString+= argument.name;
@@ -478,8 +478,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 				argumentsString = "(" + argumentsString + ")";
 				name+= "function: "; break;
 			}
-			case EngineMiniScript::Script::SCRIPTTYPE_ON: name+= "on: "; break;
-			case EngineMiniScript::Script::SCRIPTTYPE_ONENABLED: name+= "on-enabled: "; break;
+			case EngineMinitScript::Script::TYPE_ON: name+= "on: "; break;
+			case EngineMinitScript::Script::TYPE_ONENABLED: name+= "on-enabled: "; break;
 		}
 		if (script.name.empty() == false) {
 			name+= script.name;
@@ -487,9 +487,9 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		if (script.condition.empty() == false)
 			name+= script.condition + (argumentsString.empty() == false?": " + argumentsString:"");
 		//
-		miniScriptSyntaxTrees.push_back(
+		minitScriptSyntaxTrees.push_back(
 			{
-				.type = script.scriptType,
+				.type = script.type,
 				.condition = script.condition,
 				.name = name,
 				.conditionSyntaxTree = script.conditionSyntaxTree,
@@ -502,8 +502,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	}
 
 	// pass it to view
-	view->setMiniScriptMethodOperatorMap(methodOperatorMap);
-	view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
+	view->setMinitScriptMethodOperatorMap(methodOperatorMap);
+	view->updateMinitScriptSyntaxTree(minitScriptScriptIdx);
 
 	//
 	setOutlinerContent();

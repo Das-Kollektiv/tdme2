@@ -5,11 +5,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpserver/UDPServer.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 using std::endl;
 using std::string;
@@ -17,11 +18,12 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::logics::LogicNetworkPacket;
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+
+using yannet::network::udp::UDPPacket;
+using yannet::network::udpserver::UDPServer;
+using yannet::network::udpserver::UDPServerClient;
 
 using tdme::engine::logics::ApplicationServerClient;
 

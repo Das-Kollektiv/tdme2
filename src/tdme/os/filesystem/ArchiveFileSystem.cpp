@@ -460,7 +460,7 @@ const string ArchiveFileSystem::computeSHA256Hash() {
 	}
 	SHA256_Final(hash, &sha256);
 	//
-	char outputBuffer[SHA256_DIGEST_LENGTH * 2];
+	char outputBuffer[SHA256_DIGEST_LENGTH * 2 + 1];
 	for (int64_t i = 0; i < SHA256_DIGEST_LENGTH; i++) {
 		sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
 	}

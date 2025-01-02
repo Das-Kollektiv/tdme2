@@ -5,18 +5,20 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
-#include <tdme/network/udp/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
+
+#include <yannet/network/udp/fwd-yannet.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::logics::ApplicationServer;
 using tdme::engine::logics::Context;
-using tdme::network::udp::UDPPacket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
+
+using yannet::network::udp::UDPPacket;
 
 /**
  * Application server thread

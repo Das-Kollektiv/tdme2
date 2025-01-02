@@ -1,18 +1,15 @@
 #include "UDPServerTest_UDPServer.h"
-
 #include "UDPServerTest_UDPServerClient.h"
 
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/Exception.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::utilities::Console;
-using tdme::utilities::Exception;
 
 CRHShutdown::CRHShutdown() : ServerClientRequestHandler<UDPServerClient,string>("/shutdown") {}
 

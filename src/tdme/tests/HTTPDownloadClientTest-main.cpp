@@ -1,17 +1,19 @@
 #include <tdme/tdme.h>
-#include <tdme/network/httpclient/HTTPDownloadClient.h>
-#include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+#include <yannet/network/httpclient/HTTPDownloadClient.h>
+#include <yannet/os/network/Network.h>
+
 using std::to_string;
 
-using tdme::network::httpclient::HTTPDownloadClient;
-using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+
+using yannet::network::httpclient::HTTPDownloadClient;
+using yannet::os::network::Network;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();

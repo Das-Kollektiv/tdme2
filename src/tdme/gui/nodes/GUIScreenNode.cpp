@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <miniscript/miniscript.h>
-#include <miniscript/miniscript/Library.h>
-#include <miniscript/miniscript/MiniScript.h>
+#include <minitscript/minitscript.h>
+#include <minitscript/minitscript/Library.h>
+#include <minitscript/minitscript/MinitScript.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
@@ -38,14 +38,14 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/scripting/GUIMiniScript.h>
+#include <tdme/gui/scripting/GUIMinitScript.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/miniscript/EngineMiniScript.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 
@@ -60,8 +60,8 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 
-using miniscript::miniscript::Library;
-using miniscript::miniscript::MiniScript;
+using minitscript::minitscript::Library;
+using minitscript::minitscript::MinitScript;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -89,14 +89,14 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::scripting::GUIMiniScript;
+using tdme::gui::scripting::GUIMinitScript;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;
-using tdme::miniscript::EngineMiniScript;
+using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::MutableString;
 using tdme::utilities::Properties;
 
@@ -125,7 +125,7 @@ GUIScreenNode::GUIScreenNode(
 	bool popUp,
 	Library* scriptLibrary,
 	const string& scriptFileName,
-	const EngineMiniScript::Variable& scriptArguments,
+	const EngineMinitScript::Variable& scriptArguments,
 	Context* context
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
@@ -155,8 +155,8 @@ GUIScreenNode::GUIScreenNode(
 			//
 			auto scriptURI = projectScriptPathName + "/" + projectScriptFileName;
 			if (context != nullptr) scriptURI = context->getRelativeURI(scriptURI);
-			// load from library as generic MiniScript
-			auto libraryMiniScript = unique_ptr<MiniScript>(
+			// load from library as generic MinitScript
+			auto libraryMinitScript = unique_ptr<MinitScript>(
 				scriptLibrary->loadScript(
 					FileSystem::getInstance()->getPathName(scriptURI),
 					FileSystem::getInstance()->getFileName(scriptURI),
@@ -164,21 +164,21 @@ GUIScreenNode::GUIScreenNode(
 				)
 			);
 			// no native script found?
-			if (libraryMiniScript == nullptr) {
+			if (libraryMinitScript == nullptr) {
 				// no op
 			} else
-			// no GUIMiniScript
-			if (dynamic_cast<GUIMiniScript*>(libraryMiniScript.get()) == nullptr) {
-				Console::printLine("GUIScreenNode::GUIScreenNode(): Native library: Native script not of type GUIMiniScript: " + scriptFileName);
+			// no GUIMinitScript
+			if (dynamic_cast<GUIMinitScript*>(libraryMinitScript.get()) == nullptr) {
+				Console::printLine("GUIScreenNode::GUIScreenNode(): Native library: Native script not of type GUIMinitScript: " + scriptFileName);
 			} else {
-				// cast to GUIMiniScript
-				this->script = unique_ptr<GUIMiniScript>(dynamic_cast<GUIMiniScript*>(libraryMiniScript.release()));
+				// cast to GUIMinitScript
+				this->script = unique_ptr<GUIMinitScript>(dynamic_cast<GUIMinitScript*>(libraryMinitScript.release()));
 			}
 		}
 		// have script?
 		if (this->script == nullptr) {
-			// nope, just parse script into GUIMiniScript
-			this->script = make_unique<GUIMiniScript>(this);
+			// nope, just parse script into GUIMinitScript
+			this->script = make_unique<GUIMinitScript>(this);
 			this->script->parseScript(
 				projectScriptPathName,
 				projectScriptFileName
@@ -252,12 +252,12 @@ GUIScreenNode::~GUIScreenNode() {
 	imageCache.clear();
 }
 
-void GUIScreenNode::initializeMiniScript() {
+void GUIScreenNode::initializeMinitScript() {
 	//
 	if (script != nullptr && script->hasFunction("initialize") == true) {
-		vector<EngineMiniScript::Variable> arguments { scriptArguments };
+		vector<EngineMinitScript::Variable> arguments { scriptArguments };
 		span argumentsSpan(arguments);
-		EngineMiniScript::Variable returnValue;
+		EngineMinitScript::Variable returnValue;
 		script->call("initialize", argumentsSpan, returnValue);
 	}
 }
@@ -825,9 +825,9 @@ void GUIScreenNode::tick() {
 	}
 	//
 	if (scriptOnTickAvailable == true) {
-		vector<EngineMiniScript::Variable> arguments(0);
+		vector<EngineMinitScript::Variable> arguments(0);
 		span argumentsSpan(arguments);
-		EngineMiniScript::Variable returnValue;
+		EngineMinitScript::Variable returnValue;
 		script->call("onTick", argumentsSpan, returnValue);
 	}
 }
@@ -954,12 +954,12 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnActionAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							static_cast<int64_t>(event.type),
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onAction", argumentsSpan, returnValue);
 					}
 					//
@@ -974,11 +974,11 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnChangeAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onChange", argumentsSpan, returnValue);
 					}
 					//
@@ -993,11 +993,11 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnMouseOverAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onMouseOver", argumentsSpan, returnValue);
 					}
 					//
@@ -1012,13 +1012,13 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnContextMenuRequestAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId,
 							static_cast<int64_t>(event.mouseX),
 							static_cast<int64_t>(event.mouseY)
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onContextMenuRequest", argumentsSpan, returnValue);
 					}
 					//
@@ -1033,11 +1033,11 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnFocusAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onFocus", argumentsSpan, returnValue);
 					}
 					//
@@ -1052,11 +1052,11 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnUnfocusAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onUnfocus", argumentsSpan, returnValue);
 					}
 					//
@@ -1071,11 +1071,11 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnMoveAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onMove", argumentsSpan, returnValue);
 					}
 					//
@@ -1090,13 +1090,13 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnMoveReleaseAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId,
 							static_cast<int64_t>(event.mouseX),
 							static_cast<int64_t>(event.mouseY)
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onMoveRelease", argumentsSpan, returnValue);
 					}
 					//
@@ -1111,13 +1111,13 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnTooltipShowRequestAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId,
 							static_cast<int64_t>(event.mouseX),
 							static_cast<int64_t>(event.mouseY)
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onTooltipShowRequest", argumentsSpan, returnValue);
 					}
 					//
@@ -1130,9 +1130,9 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnTooltipCloseRequestAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments(0);
+						vector<EngineMinitScript::Variable> arguments(0);
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onTooltipCloseRequest", argumentsSpan, returnValue);
 					}
 					//
@@ -1148,13 +1148,13 @@ void GUIScreenNode::forwardEvents() {
 					}
 					//
 					if (scriptOnDragRequestAvailable == true) {
-						vector<EngineMiniScript::Variable> arguments {
+						vector<EngineMinitScript::Variable> arguments {
 							event.nodeId,
 							static_cast<int64_t>(event.mouseX),
 							static_cast<int64_t>(event.mouseY)
 						};
 						span argumentsSpan(arguments);
-						EngineMiniScript::Variable returnValue;
+						EngineMinitScript::Variable returnValue;
 						script->call("onDragRequest", argumentsSpan, returnValue);
 					}
 					//

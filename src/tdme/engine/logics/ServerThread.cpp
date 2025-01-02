@@ -13,12 +13,13 @@
 #include <tdme/engine/logics/NewClientLogic.h>
 #include <tdme/engine/logics/ServerThread.h>
 #include <tdme/engine/physics/World.h>
-#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
+
+#include <yannet/network/udp/UDPPacket.h>
 
 using std::make_unique;
 using std::remove;
@@ -36,12 +37,13 @@ using tdme::engine::logics::NetworkLogic;
 using tdme::engine::logics::NewClientLogic;
 using tdme::engine::logics::ServerThread;
 using tdme::engine::physics::World;
-using tdme::network::udp::UDPPacket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::ReadWriteLock;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
+
+using yannet::network::udp::UDPPacket;
 
 ServerThread::ServerThread(Context* context, ApplicationServer* server) : Thread("applicationserverthread"), mutex("applicationserverthread-mutex") {
 	this->context = context;

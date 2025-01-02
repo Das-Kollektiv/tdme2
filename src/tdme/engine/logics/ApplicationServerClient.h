@@ -6,22 +6,24 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/ApplicationServer.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Exception.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpserver/UDPServer.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::logics::ApplicationServer;
 using tdme::engine::logics::LogicNetworkPacket;
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
 using tdme::os::threading::Mutex;
 using tdme::utilities::Exception;
+
+using yannet::network::udp::UDPPacket;
+using yannet::network::udpserver::UDPServer;
+using yannet::network::udpserver::UDPServerClient;
 
 /**
  * Application server client

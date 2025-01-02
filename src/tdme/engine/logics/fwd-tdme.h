@@ -10,9 +10,9 @@ namespace logics {
 	class Context;
 	class Logic;
 	class LogicNetworkPacket;
-	class LogicMiniScript;
-	class MiniScriptLogic;
-	class MiniScriptNetworkLogic;
+	class LogicMinitScript;
+	class MinitScriptLogic;
+	class MinitScriptNetworkLogic;
 	struct NewClientLogic;
 	class NetworkLogic;
 	class ServerThread;

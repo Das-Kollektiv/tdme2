@@ -46,8 +46,8 @@ class tdme::tools::editor::controllers::ContextMenuScreenController final
 	, public virtual GUIInputEventHandler
 {
 public:
-	struct MiniScriptMethodSelectionListener {
-		virtual ~MiniScriptMethodSelectionListener() {}
+	struct MinitScriptMethodSelectionListener {
+		virtual ~MinitScriptMethodSelectionListener() {}
 		virtual void onMethodSelection(const string& methodName) = 0;
 	};
 
@@ -59,7 +59,7 @@ private:
 
 	Properties tscriptMethods;
 
-	MiniScriptMethodSelectionListener* miniScriptMethodSelectionListener { nullptr };
+	MinitScriptMethodSelectionListener* minitScriptMethodSelectionListener { nullptr };
 
 public:
 	// forbid class copy
@@ -77,11 +77,11 @@ public:
 	virtual ~ContextMenuScreenController();
 
 	/**
-	 * Set MiniScript method selection listener
-	 * @param miniScriptMethodSelectionListener MiniScript method selection listener
+	 * Set MinitScript method selection listener
+	 * @param minitScriptMethodSelectionListener MinitScript method selection listener
 	 */
-	inline void setMiniScriptMethodSelectionListener(MiniScriptMethodSelectionListener* miniScriptMethodSelectionListener) {
-		this->miniScriptMethodSelectionListener = miniScriptMethodSelectionListener;
+	inline void setMinitScriptMethodSelectionListener(MinitScriptMethodSelectionListener* minitScriptMethodSelectionListener) {
+		this->minitScriptMethodSelectionListener = minitScriptMethodSelectionListener;
 	}
 
 	/**

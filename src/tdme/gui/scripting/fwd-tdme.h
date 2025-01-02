@@ -4,7 +4,7 @@
 namespace tdme {
 namespace gui {
 namespace scripting {
-	class GUIMiniScript;
+	class GUIMinitScript;
 }  // namespace scripting
 }  // namespace gui
 }  // namespace tdme

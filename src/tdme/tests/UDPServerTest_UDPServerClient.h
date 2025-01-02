@@ -1,21 +1,18 @@
 #pragma once
 
-#include <sstream>
+#include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/UDPServer.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
-#include <tdme/utilities/Exception.h>
+
+#include <yannet/network/udp/UDPPacket.h>
+#include <yannet/network/udpserver/UDPServerClient.h>
 
 #include "UDPServerTest_UDPServer.h"
 
-using std::stringstream;
+using std::string;
 
-using tdme::network::udp::UDPPacket;
-using tdme::network::udpserver::UDPServer;
-using tdme::network::udpserver::UDPServerClient;
-using tdme::utilities::Exception;
+using yannet::network::udpserver::UDPPacket;
+using yannet::network::udpserver::UDPServerClient;
 
 class EchoUDPServerClient final: public UDPServerClient {
 	friend class EchoUDPServer;
@@ -25,7 +22,7 @@ public:
 	FORBID_CLASS_COPY(EchoUDPServerClient)
 
 	//
-	EchoUDPServerClient(const uint32_t clientId, const std::string& ip, const uint16_t port);
+	EchoUDPServerClient(const uint32_t clientId, const string& ip, const uint16_t port);
 
 protected:
 	virtual ~EchoUDPServerClient();
