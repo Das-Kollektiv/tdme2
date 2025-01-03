@@ -1,19 +1,19 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
-[![NIX Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/nix.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
-[![MacOSX Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/macosx.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
-[![Windows/MINGW Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/windows-mingw.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
-[![Windows/MSC Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/windows-msc.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
+[![NIX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/nix.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
+[![MacOSX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/macosx.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
+[![Windows/MINGW Build Status](https://github.com/andreasdr/tdme2/actions/workflows/windows-mingw.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
+[![Windows/MSC Build Status](https://github.com/andreasdr/tdme2/actions/workflows/windows-msc.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)  
   
-![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. What is TDME2?
 - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
   - Read about the [philosophy](./README-Philosophy.md) if interested
   - See [screenshots](./README-Screenshots.md), if you want to quickly know where we are and where we will go :) 
 - TDME2 is open source
-  - please check the [license](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
-  - you find the source code at [https://github.com/Mindty-Kollektiv/tdme2](https://github.com/Mindty-Kollektiv/tdme2) 
+  - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
+  - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
   - you find binary alpha builds at [https://www.mindty.com/products/tdme2/builds/](https://www.mindty.com/products/tdme2/builds/)
   - here you find developer documentation including collaboration graphs and [private API](https://www.mindty.com/products/tdme2/documentation/alpha/private/) as well as [public API](https://www.mindty.com/products/tdme2/documentation/alpha/public/) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
@@ -211,50 +211,6 @@
         - to implement GUI application flow(WIP)
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
-- MiniScript
-    - very small implementation of a scripting language
-    - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
-    - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
-    - built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set 
-    - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
-    - supports user script functions and recursion
-    - supports operators by operator to method mapping by a preprocessor run
-    - supports loops and conditions
-    - supports programming with classes style programming
-      - for built-in datatypes: string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set
-      - for script classes/objects
-      - for custom data types 
-    - supports event like programming
-    - can be transpiled to C++
-    - how to use:
-      - each script is attached to a game entity
-      - communication between script instances is possible by
-        - using callable functions
-        - sending signals with arguments
-      - complex logic should still be implemented by a game developer in C++ by extending MiniScript
-      - game designers can use MiniScript + those methods to implement high level game logic
-    - MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
-- Networking module, which consists of
-    - UDP server
-        - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
-        - supports safe messages with acknowledgment and automatic resending
-        - supports fast messages
-        - can be used in a heavy multithreaded environment (the networking module is thread safe)
-        - IPV6 ready
-    - UDP client
-        - has single thread with a simple threadsafe API
-        - supports all features required by UDP server
-        - IPV6 ready
-    - Simple HTTP client
-        - uses a blocking TCP socket, thus it has a simple blocking API
-        - Ready for REST providing all methods, setting content type and body
-        - be able to set GET and POST parameters via unordered map 
-        - supports basic authentification
-        - IPV6 ready
-    - HTTP download client
-        - supports basic authentification
-        - uses a separate thread to download to file
-        - IPV6 ready
 - Operating system abstraction layer
     - file system
         - standard file system
@@ -281,6 +237,8 @@
         - easy access to manage audio playback
         - handling HID input
         - doing network sync
+- our Mini transpilable C++ scripting language [MinitScript](https://github.com/andreasdr/minitscript)
+- our [Yannet](https://github.com/andreasdr/yannet) network library
 
 # 3. Tools
 - Editor
@@ -410,7 +368,7 @@
 - Dominik Hepp
 
 # 8. Collaboration
-- Interested in collaboration? Then drop me a line via mail or use the issues section on [tdme2@github](https://github.com/Mindty-Kollektiv/tdme2/issues) or on [tdme2@codecks](https://open.codecks.io/tdme2)
+- Interested in collaboration? Then drop me a line via mail or use the issues section on [tdme2@github](https://github.com/andreasdr/tdme2/issues) or on [tdme2@codecks](https://open.codecks.io/tdme2)
     - You can help with testing and reporting bugs 
     - I have easy to hard task regarding engine/tools development
     - I have tasks regarding documentation

@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. Web References
 - This is a detailed, but for sure still incomplete, list of web references that I used to implement certain engine features

@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. What is Editor?
 - Editor is our TDME2 project content editor, featuring tabs for the following type of content
