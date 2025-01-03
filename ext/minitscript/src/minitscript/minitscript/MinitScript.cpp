@@ -4798,7 +4798,7 @@ const MinitScript::Variable MinitScript::initializeMapSet(const string& scriptFi
 		lc = lc == '\\' && c == '\\'?'\0':c;
 	}
 	// convert to set if no values given
-	if (hasValues == false) {
+	if (hasValues == false && variable.getMapSize() > 0) {
 		Variable setVariable;
 		setVariable.setType(TYPE_SET);
 		const auto& mapValueReference = variable.getMapValueReference();
@@ -5086,8 +5086,8 @@ inline const MinitScript::Variable MinitScript::initializeVariable(const Variabl
 		case TYPE_ARRAY:
 			{
 				Variable arrayVariable;
-				//
 				arrayVariable.setType(TYPE_ARRAY);
+				//
 				auto arrayPointer = variable.getArrayPointer();
 				if (arrayPointer == nullptr) break;
 				for (const auto arrayEntry: *arrayPointer) {
@@ -5099,6 +5099,7 @@ inline const MinitScript::Variable MinitScript::initializeVariable(const Variabl
 		case TYPE_MAP:
 			{
 				Variable mapVariable;
+				mapVariable.setType(TYPE_MAP);
 				//
 				auto mapPointer = variable.getMapPointer();
 				if (mapPointer == nullptr) break;

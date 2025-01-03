@@ -93,7 +93,7 @@ function: updateLogic()
 		$$.velocity = getPathFindingMovementDirection() * $$.speed 
 		if ($$.velocity->computeLengthSquared() < math.square($$.math::EPSILON))
 			++$$.pathFinding.pathIdx
-			if ($$.pathFinding.pathIdx >= $$.pathFinding.path->length())
+			if ($$.pathFinding.pathIdx >= $$.pathFinding.path->getSize())
 				$$.pathFinding.pathIdx = -1
 			end
 			$$.velocity = getPathFindingMovementDirection() * $$.speed 
@@ -204,7 +204,7 @@ on: error
 end
 
 function: getPathFindingMovementDirection()
-	if ($$.pathFinding.pathIdx == -1 || $$.pathFinding.pathIdx >= $$.pathFinding.path->length())
+	if ($$.pathFinding.pathIdx == -1 || $$.pathFinding.pathIdx >= $$.pathFinding.path->getSize())
 		return(Vector3(0.0, 0.0, 0.0))
 	end
 	$xDirection = 0.0

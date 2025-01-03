@@ -5358,9 +5358,6 @@ void LogicMinitScript::registerMethods() {
 	}
 }
 
-void LogicMinitScript::registerVariables() {
-}
-
 void LogicMinitScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
 	// keyboard events
 	keyboardTypedChars.clear();

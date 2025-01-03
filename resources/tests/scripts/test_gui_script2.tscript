@@ -2,10 +2,11 @@ function: initialize($context)
 	console.printLine("----------------------------------------------------------")
 	console.printLine("initialize(): " + gui.screennode.getId())
 	console.printLine("----------------------------------------------------------")
-	console.printLine()
-	$GLOBAL.context = $context
-	$GLOBAL.context.screenIdx = 2
-	console.printLine($GLOBAL.context)
+	console.printLine($context)
+	console.printLine("----------------------------------------------------------")
+	$$.context = $context
+	$$.context.screenIdx = 2
+	console.printLine($$.context)
 end
 
 # on action
@@ -16,9 +17,9 @@ function: onAction($actionType, $elementNodeId)
 	#console.printLine()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
 		if ($elementNodeId == "btn_popup")
-			gui.screen.push("resources/tests/screens/test_gui_popup.xml", {}, $GLOBAL.context)
+			gui.screen.push("resources/tests/screens/test_gui_popup.xml", {}, $$.context)
 		elseif ($elementNodeId == "btn_backscreen")
-			gui.screen.goto("resources/tests/screens/test_gui_script.xml", {}, $GLOBAL.context)
+			gui.screen.goto("resources/tests/screens/test_gui_script.xml", {}, $$.context)
 		end
 	end
 end

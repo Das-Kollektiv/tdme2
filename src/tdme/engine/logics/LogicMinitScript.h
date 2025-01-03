@@ -152,7 +152,6 @@ public:
 	const vector<string> getTranspilationUnits();
 	void registerStateMachineStates() override;
 	void registerMethods() override;
-	void registerVariables() override;
 
 	/**
 	 * Collect HID events

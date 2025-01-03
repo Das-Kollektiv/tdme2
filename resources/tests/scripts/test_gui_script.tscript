@@ -1,11 +1,10 @@
-function: initialize($arguments)
+function: initialize($context)
 	console.printLine("----------------------------------------------------------")
 	console.printLine("initialize(): " + gui.screennode.getId())
 	console.printLine("----------------------------------------------------------")
-	console.printLine()
-	$GLOBAL.context = {}
-	$GLOBAL.context.screenIdx = 1
-	console.printLine($GLOBAL.context)
+	$$.context = {}
+	$$.context.screenIdx = 1
+	console.printLine($$.context)
 end
 
 # on action
@@ -28,7 +27,7 @@ function: onAction($actionType, $elementNodeId)
 		elseif ($elementNodeId == "btn_evualuate")
 			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
 		elseif ($elementNodeId == "btn_nextscreen")
-			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", {}, $GLOBAL.context)
+			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", {}, $$.context)
 		end
 	end
 end

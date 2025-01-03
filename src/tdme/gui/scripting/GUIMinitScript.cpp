@@ -1240,7 +1240,7 @@ void GUIMinitScript::registerMethods() {
 								screenFileName,
 								variables,
 								minitScript->getLibrary(),
-								arguments.size() == 3?arguments[2]:EngineMinitScript::Variable(),
+								arguments.size() == 3?MinitScript::Variable::createNonReferenceVariable(&arguments[2]):EngineMinitScript::Variable(),
 								minitScript->screenNode->getContext()
 							)
 						);
@@ -1303,7 +1303,7 @@ void GUIMinitScript::registerMethods() {
 							screenFileName,
 							variables,
 							minitScript->getLibrary(),
-							arguments.size() == 3?arguments[2]:EngineMinitScript::Variable(),
+							arguments.size() == 3?MinitScript::Variable::createNonReferenceVariable(&arguments[2]):EngineMinitScript::Variable(),
 							minitScript->screenNode->getContext()
 						);
 						minitScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -2393,9 +2393,6 @@ void GUIMinitScript::registerMethods() {
 		};
 		registerMethod(new MethodLogicCall(this));
 	}
-}
-
-void GUIMinitScript::registerVariables() {
 }
 
 void GUIMinitScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {

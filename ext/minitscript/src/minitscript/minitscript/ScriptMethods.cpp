@@ -489,6 +489,29 @@ void ScriptMethods::registerMethods(MinitScript* minitScript) {
 	}
 	{
 		//
+		class MethodScriptGetGlobalVariables: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			MethodScriptGetGlobalVariables(MinitScript* minitScript): MinitScript::Method({}, MinitScript::TYPE_MAP), minitScript(minitScript) {}
+			const string getMethodName() override {
+				return "script.getGlobalVariables";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				if (arguments.size() == 0) {
+					returnValue.setType(MinitScript::TYPE_MAP);
+					for (const auto& [variableName, variableValue]: minitScript->getRootScriptState().variables) {
+						returnValue.setMapEntry(variableName, *variableValue);
+					}
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new MethodScriptGetGlobalVariables(minitScript));
+	}
+	{
+		//
 		class MethodScriptGetVariables: public MinitScript::Method {
 		private:
 			MinitScript* minitScript { nullptr };

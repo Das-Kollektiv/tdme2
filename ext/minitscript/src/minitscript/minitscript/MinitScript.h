@@ -2425,11 +2425,11 @@ public:
 			} else
 			if (StringTools::viewStartsWith(value, "{") == true &&
 				StringTools::viewEndsWith(value, "}") == true) {
-				*this = initializeMapSet(scriptFileName, value, minitScript, scriptIdx, statement);
+				setValue(initializeMapSet(scriptFileName, value, minitScript, scriptIdx, statement));
 			} else
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
-				*this = initializeArray(scriptFileName, value, minitScript, scriptIdx, statement);
+				setValue(initializeArray(scriptFileName, value, minitScript, scriptIdx, statement));
 			} else
 			if (viewIsFunctionAssignment(value, functionOrStacklet) == true) {
 				setFunctionAssignment(string(functionOrStacklet));

@@ -50,7 +50,6 @@ public:
 	const vector<string> getTranspilationUnits();
 	void registerStateMachineStates() override;
 	void registerMethods() override;
-	void registerVariables() override;
 
 	/**
 	 * @return release next screen node
