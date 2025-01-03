@@ -211,6 +211,8 @@
         - to implement GUI application flow(WIP)
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
+- our Mini transpilable C++ scripting language [MinitScript](https://github.com/andreasdr/minitscript)    
+- our [Yannet](https://github.com/andreasdr/yannet) network library
 - Operating system abstraction layer
     - file system
         - standard file system
@@ -237,8 +239,6 @@
         - easy access to manage audio playback
         - handling HID input
         - doing network sync
-- our Mini transpilable C++ scripting language [MinitScript](https://github.com/andreasdr/minitscript)
-- our [Yannet](https://github.com/andreasdr/yannet) network library
 
 # 3. Tools
 - Editor
