@@ -178,7 +178,7 @@ ifeq ($(GLES2), YES)
 endif 
 
 # subdirs
-LIBS:= $(LIBS) make-subdirs
+LIBS:= make-subdirs $(LIBS)
 
 SRC = src
 TINYXML = tinyxml
@@ -1164,7 +1164,7 @@ endif
 	@echo Done $@
 
 ifeq ($(OSSHORT), Msys)
-$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS) make-subdirs
+$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
@@ -1172,7 +1172,7 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS) make-subdirs
 	@rm $@.rc
 	@rm $@.rc.o
 else
-$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS) make-subdirs
+$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 endif
@@ -1185,7 +1185,7 @@ clean: clean-subdirs
 print-opts:
 	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"
 	
-.PHONY: all $(LIBS) make-subdirs mains clean print-opts
+.PHONY: all $(LIBS) mains clean print-opts
 
 -include $(OBJS:%.o=%.d)
 -include $(OBJS_DEBUG:%.o=%.d)
