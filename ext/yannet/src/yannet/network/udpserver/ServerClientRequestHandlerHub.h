@@ -10,12 +10,12 @@
 using std::string;
 using std::unordered_map;
 
-using yannet::network::udpserver::ServerClientRequestHandler;
-using yannet::network::udpserver::ServerClientRequestHandlerHubException;
-
 namespace yannet {
 namespace network {
 namespace udpserver {
+
+using ::yannet::network::udpserver::ServerClientRequestHandler;
+using ::yannet::network::udpserver::ServerClientRequestHandlerHubException;
 
 /**
  * @brief Network server client request handler hub

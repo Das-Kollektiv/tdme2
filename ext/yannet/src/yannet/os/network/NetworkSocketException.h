@@ -9,7 +9,7 @@
  * Socket exception class
  * @author Andreas Drewke
  */
-class yannet::os::network::NetworkSocketException: public yannet::os::network::NetworkException {
+class yannet::os::network::NetworkSocketException: public ::yannet::os::network::NetworkException {
 public:
 	/**
 	 * Constructor

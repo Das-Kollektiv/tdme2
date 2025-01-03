@@ -8,7 +8,7 @@
  * Network socket closed exception
  * @author Andreas Drewke
  */
-class yannet::os::network::NetworkSocketClosedException: public yannet::os::network::NetworkIOException {
+class yannet::os::network::NetworkSocketClosedException: public ::yannet::os::network::NetworkIOException {
 	public:
 		/**
 		 * Constructor

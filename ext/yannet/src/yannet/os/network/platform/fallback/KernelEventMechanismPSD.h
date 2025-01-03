@@ -19,13 +19,13 @@
 using std::unordered_map;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace network {
 namespace platform {
 namespace fallback {
-	using yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Mutex;
 }
 }
 }

@@ -12,14 +12,14 @@ namespace yannet {
 namespace network {
 namespace udpserver {
 
-using yannet::utilities::Exception;
-using yannet::utilities::Reference;
+using ::yannet::utilities::Exception;
+using ::yannet::utilities::Reference;
 
 /**
  * Base class for network server group
  * @author Andreas Drewke
  */
-class ServerGroupBase : public yannet::utilities::Reference {
+class ServerGroupBase : public ::yannet::utilities::Reference {
 	friend class ServerWorkerThread;
 
 protected:

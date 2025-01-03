@@ -10,13 +10,13 @@
 
 using std::string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udpserver {
-	using yannet::network::udp::UDPPacket;
-	using yannet::utilities::Exception;
-	using yannet::utilities::Reference;
+	using ::yannet::network::udp::UDPPacket;
+	using ::yannet::utilities::Exception;
+	using ::yannet::utilities::Reference;
 
 	class ServerRequest;
 };
@@ -27,7 +27,7 @@ namespace udpserver {
  * Base class for network server clients
  * @author Andreas Drewke
  */
-class yannet::network::udpserver::ServerClient : public yannet::utilities::Reference {
+class yannet::network::udpserver::ServerClient : public ::yannet::utilities::Reference {
 	friend class ServerWorkerThread;
 
 public:

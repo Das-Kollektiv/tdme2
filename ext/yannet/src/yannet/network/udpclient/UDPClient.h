@@ -14,7 +14,6 @@
 #include <yannet/network/udpclient/fwd-yannet.h>
 #include <yannet/network/udpclient/NetworkClientException.h>
 #include <yannet/network/udpclient/UDPClientMessage.h>
-
 #include <yannet/os/network/KernelEventMechanism.h>
 #include <yannet/os/network/UDPSocket.h>
 #include <yannet/os/threading/Mutex.h>
@@ -25,18 +24,17 @@ using std::queue;
 using std::string;
 using std::unordered_map;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udpclient {
-	using yannet::os::network::KernelEventMechanism;
-	using yannet::os::network::UDPSocket;
-	using yannet::os::threading::Mutex;
-	using yannet::os::threading::Thread;
-
-	using yannet::network::udp::UDPPacket;
-	using yannet::network::udpclient::NetworkClientException;
-	using yannet::network::udpclient::UDPClientMessage;
+	using ::yannet::os::network::KernelEventMechanism;
+	using ::yannet::os::network::UDPSocket;
+	using ::yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Thread;
+	using ::yannet::network::udp::UDPPacket;
+	using ::yannet::network::udpclient::NetworkClientException;
+	using ::yannet::network::udpclient::UDPClientMessage;
 }
 }
 }

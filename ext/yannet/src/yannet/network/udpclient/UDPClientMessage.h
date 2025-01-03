@@ -11,12 +11,12 @@
 using std::string;
 using std::unique_ptr;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udpclient {
-	using yannet::network::udp::UDPPacket;
-	using yannet::utilities::Time;
+	using ::yannet::network::udp::UDPPacket;
+	using ::yannet::utilities::Time;
 }
 }
 }

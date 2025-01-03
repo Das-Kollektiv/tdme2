@@ -12,7 +12,7 @@ using std::string;
  * Class representing a TCP socket
  * @author Andreas Drewke
  */
-class yannet::os::network::TCPSocket: public yannet::os::network::NetworkSocket {
+class yannet::os::network::TCPSocket: public ::yannet::os::network::NetworkSocket {
 public:
 	/**
 	 * Creates a TCP server socket

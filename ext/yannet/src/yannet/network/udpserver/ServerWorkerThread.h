@@ -11,8 +11,8 @@ namespace yannet {
 namespace network {
 namespace udpserver {
 
-using yannet::os::threading::Barrier;
-using yannet::os::threading::Thread;
+using ::yannet::os::threading::Barrier;
+using ::yannet::os::threading::Thread;
 
 class ServerWorkerThreadPool;
 

@@ -11,7 +11,7 @@ using std::string;
  * Base exception class for network IO exceptions
  * @author Andreas Drewke
  */
-class minitscript::os::network::NetworkIOException: public minitscript::os::network::NetworkException {
+class minitscript::os::network::NetworkIOException: public ::minitscript::os::network::NetworkException {
 public:
 	/**
 	 * Public constructor

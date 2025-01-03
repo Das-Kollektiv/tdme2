@@ -4,7 +4,7 @@
 #include <yannet/os/threading/AtomicOperations.h>
 #include <yannet/utilities/fwd-yannet.h>
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace utilities {
 	using yannet::os::threading::AtomicOperations;

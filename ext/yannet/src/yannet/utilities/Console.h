@@ -16,11 +16,11 @@ using std::string_view;
 using std::unique_ptr;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace utilities {
-	using yannet::os::threading::Mutex;
-	using yannet::os::threading::Thread;
+	using ::yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Thread;
 }
 }
 

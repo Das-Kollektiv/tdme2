@@ -12,11 +12,11 @@ using std::array;
 using std::string;
 using std::to_string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udp {
-	using yannet::utilities::Console;
+	using ::yannet::utilities::Console;
 }
 }
 }

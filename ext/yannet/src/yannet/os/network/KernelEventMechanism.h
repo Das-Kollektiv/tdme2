@@ -6,13 +6,13 @@
 #include <yannet/os/network/NetworkSocket.h>
 #include <yannet/os/network/NIOInterest.h>
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace network {
-	using yannet::os::network::NetworkKEMException;
-	using yannet::os::network::NetworkSocket;
-	using yannet::os::network::NIOInterest;
+	using ::yannet::os::network::NetworkKEMException;
+	using ::yannet::os::network::NetworkSocket;
+	using ::yannet::os::network::NIOInterest;
 }
 }
 }

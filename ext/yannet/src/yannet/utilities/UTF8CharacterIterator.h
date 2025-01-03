@@ -12,11 +12,11 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace utilities {
-	using yannet::math::Math;
-	using yannet::utilities::Console;
+	using ::yannet::math::Math;
+	using ::yannet::utilities::Console;
 }
 }
 

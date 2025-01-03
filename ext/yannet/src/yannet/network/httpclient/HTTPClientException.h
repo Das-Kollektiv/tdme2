@@ -10,7 +10,7 @@
  * HTTP client exception
  * @author Andreas Drewke
  */
-class yannet::network::httpclient::HTTPClientException: public yannet::utilities::ExceptionBase {
+class yannet::network::httpclient::HTTPClientException: public ::yannet::utilities::ExceptionBase {
 public:
 	/**
 	 * @brief public constructor

@@ -14,15 +14,15 @@
 using std::string;
 using std::unordered_map;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udpserver {
-	using yannet::network::udp::UDPPacket;
-	using yannet::network::udpserver::UDPServer;
-	using yannet::network::udpserver::UDPServerIOThread;
-	using yannet::os::threading::Mutex;
-	using yannet::utilities::Exception;
+	using ::yannet::network::udp::UDPPacket;
+	using ::yannet::network::udpserver::UDPServer;
+	using ::yannet::network::udpserver::UDPServerIOThread;
+	using ::yannet::os::threading::Mutex;
+	using ::yannet::utilities::Exception;
 }
 }
 }

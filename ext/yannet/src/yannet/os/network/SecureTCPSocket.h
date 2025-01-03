@@ -16,8 +16,8 @@ using std::vector;
 namespace yannet {
 namespace os {
 namespace network {
-	using yannet::os::network::TCPSocket;
-	using yannet::os::threading::Mutex;
+	using ::yannet::os::network::TCPSocket;
+	using ::yannet::os::threading::Mutex;
 }
 }
 }

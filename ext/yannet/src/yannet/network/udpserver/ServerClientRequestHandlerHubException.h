@@ -15,7 +15,7 @@ namespace udpserver {
  * Network server client request handler hub exception
  * @author Andreas Drewke
  */
-class ServerClientRequestHandlerHubException: public yannet::utilities::ExceptionBase {
+class ServerClientRequestHandlerHubException: public ::yannet::utilities::ExceptionBase {
 public:
 	/**
 	 * @brief public constructor

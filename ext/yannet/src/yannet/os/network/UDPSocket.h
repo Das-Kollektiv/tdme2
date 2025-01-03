@@ -16,13 +16,13 @@
 
 using std::string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace network {
-	using yannet::os::network::NetworkIOException;
-	using yannet::os::network::NetworkSocket;
-	using yannet::os::network::NetworkSocketException;
+	using ::yannet::os::network::NetworkIOException;
+	using ::yannet::os::network::NetworkSocket;
+	using ::yannet::os::network::NetworkSocketException;
 }
 }
 }
@@ -31,7 +31,7 @@ namespace network {
  * Class representing a UDP socket
  * @author Andreas Drewke
  */
-class yannet::os::network::UDPSocket : public yannet::os::network::NetworkSocket {
+class yannet::os::network::UDPSocket : public ::yannet::os::network::NetworkSocket {
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(UDPSocket)

@@ -9,12 +9,12 @@
 
 using std::string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace threading {
-	using yannet::os::threading::Condition;
-	using yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Condition;
+	using ::yannet::os::threading::Mutex;
 }
 }
 }

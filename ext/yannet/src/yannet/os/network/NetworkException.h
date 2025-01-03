@@ -11,7 +11,7 @@
  * Base exception class for network exceptions
  * @author Andreas Drewke
  */
-class yannet::os::network::NetworkException: public yannet::utilities::ExceptionBase {
+class yannet::os::network::NetworkException: public ::yannet::utilities::ExceptionBase {
 public:
 	/**
 	 * Constructor

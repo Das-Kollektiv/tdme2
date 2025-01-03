@@ -13,7 +13,7 @@ namespace yannet {
 namespace network {
 namespace udpserver {
 
-using yannet::network::udp::UDPPacket;
+using ::yannet::network::udp::UDPPacket;
 
 class ServerClient;
 

@@ -18,14 +18,14 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace httpclient {
-	using yannet::network::httpclient::HTTPClientException;
-	using yannet::os::network::NetworkException;
-	using yannet::os::threading::Mutex;
-	using yannet::os::threading::Thread;
+	using ::yannet::network::httpclient::HTTPClientException;
+	using ::yannet::os::network::NetworkException;
+	using ::yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Thread;
 }
 }
 }

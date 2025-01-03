@@ -21,18 +21,18 @@ using std::queue;
 using std::unique_ptr;
 using std::unordered_map;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace udpserver {
-	using yannet::network::udp::UDPPacket;
-	using yannet::network::udpserver::UDPServer;
-	using yannet::network::udpserver::UDPServerClient;
-	using yannet::os::network::KernelEventMechanism;
-	using yannet::os::network::UDPSocket;
-	using yannet::os::threading::Barrier;
-	using yannet::os::threading::Mutex;
-	using yannet::os::threading::Thread;
+	using ::yannet::network::udp::UDPPacket;
+	using ::yannet::network::udpserver::UDPServer;
+	using ::yannet::network::udpserver::UDPServerClient;
+	using ::yannet::os::network::KernelEventMechanism;
+	using ::yannet::os::network::UDPSocket;
+	using ::yannet::os::threading::Barrier;
+	using ::yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Thread;
 }
 }
 }

@@ -11,7 +11,7 @@ using std::string;
  * Base exception class for network IO exceptions
  * @author Andreas Drewke
  */
-class yannet::os::network::NetworkIOException: public yannet::os::network::NetworkException {
+class yannet::os::network::NetworkIOException: public ::yannet::os::network::NetworkException {
 public:
 	/**
 	 * Constructor

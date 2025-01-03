@@ -19,13 +19,13 @@
 using std::array;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace network {
 namespace platform {
 namespace bsd {
-	using yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Mutex;
 }
 }
 }

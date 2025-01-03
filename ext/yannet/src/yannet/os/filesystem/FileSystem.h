@@ -22,7 +22,7 @@ public:
 	 * File system exception
 	 * @author Andreas Drewke
 	 */
-	class FileSystemException: public yannet::utilities::ExceptionBase
+	class FileSystemException: public ::yannet::utilities::ExceptionBase
 	{
 	public:
 		/**

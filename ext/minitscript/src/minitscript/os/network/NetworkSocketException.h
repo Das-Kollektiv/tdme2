@@ -9,7 +9,7 @@
  * Socket exception class
  * @author Andreas Drewke
  */
-class minitscript::os::network::NetworkSocketException: public minitscript::os::network::NetworkException {
+class minitscript::os::network::NetworkSocketException: public ::minitscript::os::network::NetworkException {
 public:
 	/**
 	 * Public constructor

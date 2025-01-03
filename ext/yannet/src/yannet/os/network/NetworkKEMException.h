@@ -12,7 +12,7 @@ using std::string;
  * Kernel event mechanism exception class
  * @author Andreas Drewke
  */
-class yannet::os::network::NetworkKEMException: public yannet::os::network::NetworkException {
+class yannet::os::network::NetworkKEMException: public ::yannet::os::network::NetworkException {
 public:
 	/**
 	 * Constructor

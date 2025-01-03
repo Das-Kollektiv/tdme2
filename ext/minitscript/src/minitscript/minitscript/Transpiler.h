@@ -18,9 +18,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-// namespaces
-using minitscript::utilities::Console;
-
 /**
  * MinitScript transpiler
  * @author Andreas Drewke

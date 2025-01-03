@@ -14,12 +14,12 @@ using std::stringstream;
 using std::unordered_map;
 using std::vector;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace network {
 namespace httpclient {
-	using yannet::network::httpclient::HTTPClientException;
-	using yannet::os::network::NetworkException;
+	using ::yannet::network::httpclient::HTTPClientException;
+	using ::yannet::os::network::NetworkException;
 }
 }
 }

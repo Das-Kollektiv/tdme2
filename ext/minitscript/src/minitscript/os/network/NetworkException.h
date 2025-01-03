@@ -11,7 +11,7 @@
  * Base exception class for network exceptions
  * @author Andreas Drewke
  */
-class minitscript::os::network::NetworkException: public minitscript::utilities::ExceptionBase {
+class minitscript::os::network::NetworkException: public ::minitscript::utilities::ExceptionBase {
 public:
 	/**
 	 * Constructor

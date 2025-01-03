@@ -12,7 +12,7 @@
  * Base exception class for network server exceptions
  * @author Andreas Drewke
  */
-class yannet::network::udpserver::NetworkServerException: public yannet::os::network::NetworkException {
+class yannet::network::udpserver::NetworkServerException: public ::yannet::os::network::NetworkException {
 public:
 	/**
 	 * @brief public constructor

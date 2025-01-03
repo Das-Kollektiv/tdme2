@@ -8,11 +8,11 @@
 
 using std::string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace network {
-	using yannet::os::network::NetworkSocketException;
+	using ::yannet::os::network::NetworkSocketException;
 }
 }
 }

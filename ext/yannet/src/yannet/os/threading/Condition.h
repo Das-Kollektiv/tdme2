@@ -13,11 +13,11 @@ using std::condition_variable_any;
 using std::mutex;
 using std::string;
 
-// name spaces
+// namespaces
 namespace yannet {
 namespace os {
 namespace threading {
-	using yannet::os::threading::Mutex;
+	using ::yannet::os::threading::Mutex;
 }
 }
 }

@@ -8,7 +8,7 @@
  * Network socket closed exception
  * @author Andreas Drewke
  */
-class minitscript::os::network::NetworkSocketClosedException: public minitscript::os::network::NetworkIOException {
+class minitscript::os::network::NetworkSocketClosedException: public ::minitscript::os::network::NetworkIOException {
 	public:
 		/**
 		 * Constructor
