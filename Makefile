@@ -988,6 +988,25 @@ define c-command
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 endef
 
+all: mains
+
+clean-subdirs:
+	@mkdir -p lib
+	for dir in $(SUBDIRS); do \
+		cd ext/$$dir; \
+		$(MAKE) clean; \
+		cd ../..; \
+    done
+
+make-subdirs:
+	@mkdir -p lib
+	for dir in $(SUBDIRS); do \
+		cd ext/$$dir; \
+		$(MAKE); \
+		cd ../..; \
+		cp ext/$$dir/lib/lib$$dir$(LIB_EXT) lib/; \
+    done
+
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
@@ -1053,23 +1072,6 @@ $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OPENGLES2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
-
-clean-subdirs:
-	@mkdir -p lib
-	for dir in $(SUBDIRS); do \
-		cd ext/$$dir; \
-		$(MAKE) clean; \
-		cd ../..; \
-    done
-
-make-subdirs:
-	@mkdir -p lib
-	for dir in $(SUBDIRS); do \
-		cd ext/$$dir; \
-		$(MAKE); \
-		cd ../..; \
-		cp ext/$$dir/lib/lib$$dir$(LIB_EXT) lib/; \
-    done
 
 $(LIB_DIR)/$(EXT_LIB):
 	@echo Creating shared library $@
@@ -1162,7 +1164,7 @@ endif
 	@echo Done $@
 
 ifeq ($(OSSHORT), Msys)
-$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp
+$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS) make-subdirs
 	@mkdir -p $(dir $@);
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
@@ -1170,14 +1172,12 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp
 	@rm $@.rc
 	@rm $@.rc.o
 else
-$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
+$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS) make-subdirs
 	@mkdir -p $(dir $@);
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_YANNET_LIB) -l$(LDFLAG_MINITSCRIPT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 endif
 
 mains: $(MAINS)
-
-all: mains
 
 clean: clean-subdirs
 	rm -rf obj obj-debug $(LIB_DIR) $(BIN)
@@ -1185,7 +1185,7 @@ clean: clean-subdirs
 print-opts:
 	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"
 	
-.PHONY: all $(LIBS) mains clean print-opts
+.PHONY: all $(LIBS) make-subdirs mains clean print-opts
 
 -include $(OBJS:%.o=%.d)
 -include $(OBJS_DEBUG:%.o=%.d)
