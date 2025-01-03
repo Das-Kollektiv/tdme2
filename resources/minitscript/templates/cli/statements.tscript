@@ -1,9 +1,4 @@
-on: error
-	console.printLine("An error has occurred. Exiting")
-	script.stop()
-end
-
-on: nothing
+function: main()
 	{$statements}
 	script.stop()
 end
