@@ -1,0 +1,829 @@
+function: createPathRecusively($path)
+	try
+		$pathComponents = $path->tokenize("/")
+		$createdPath = "."
+		forEach($pathComponent in $pathComponents)
+			$createdPath = $createdPath + "/" + $pathComponent
+			if (filesystem.exists($createdPath) == false)
+				filesystem.createPath($createdPath)
+			end
+		end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+end
+
+function: buildLibrary($name, $files)
+	console.printLine("Building library: " + $name)
+
+	try
+		#
+		$objectPath = "obj"	
+		$libraryPath = "lib"
+		$binPath = "bin"
+
+		# create paths
+		createPathRecusively($objectPath)
+		createPathRecusively($libraryPath)
+
+		# CXX arguments
+		$cxx = "g++"
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src"
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
+
+		# compile each compilation units
+		$compilationUnits = ""
+		forEach($file in $files)
+			$fileObjectPath = filesystem.getPathName($file)
+
+			# create file object path
+			createPathRecusively($objectPath + "/" + $fileObjectPath)
+
+			#
+			$compilationUnit = $objectPath + "/" + $file + ".o"
+			if ($compilationUnits->isEmpty() == false)
+				$compilationUnits = $compilationUnits + " "
+			end
+			$compilationUnits = $compilationUnits + $compilationUnit
+			
+			# command
+			$command = null
+			if ($file->endsWith(".c") == true)
+				$command =
+					$cxx +
+					" " +
+					"-x c" +
+					" " +
+					$cxxFlags +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
+			elseif ($file->endsWith(".cpp") == true)
+				$command =
+					$cxx +
+					" " +
+					$cxxFlags +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
+			else
+				console.printLine("Dont know how to build: " + $file)
+			end
+
+			#
+			if ($command == null)
+				continue
+			end
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			application.execute($command, $exitCode, $error)
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+			end
+		end
+
+		# link
+		$command =
+			$cxx +
+			" " +
+			"-shared" +
+			" " +
+			$compilationUnits +
+			" " +
+			" -o " +
+			$libraryPath + "/" + $name + ".so"
+		console.printLine($command)
+
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+		end
+
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+end
+
+function: buildExecutables($files)
+	console.printLine("Building executables: " + $files)
+	 
+end
+
+function: main()
+	console.printLine("-------------------")
+	console.printLine("TDME2 build script")
+	console.printLine("-------------------")
+	console.printLine()
+
+	buildLibrary(
+		"libtdme2-ext",
+		[
+			# tiny xml
+			"ext/tinyxml/tinystr.cpp",
+			"ext/tinyxml/tinyxml.cpp",
+			"ext/tinyxml/tinyxmlerror.cpp",
+			"ext/tinyxml/tinyxmlparser.cpp",
+			# zlib
+			"ext/zlib/adler32.c",
+			"ext/zlib/crc32.c",
+			"ext/zlib/deflate.c",
+			"ext/zlib/infback.c",
+			"ext/zlib/inffast.c",
+			"ext/zlib/inflate.c",
+			"ext/zlib/inftrees.c",
+			"ext/zlib/trees.c",
+			"ext/zlib/zutil.c",
+			"ext/zlib/compress.c",
+			"ext/zlib/uncompr.c",
+			"ext/zlib/gzclose.c",
+			"ext/zlib/gzlib.c",
+			"ext/zlib/gzread.c",
+			"ext/zlib/gzwrite.c",
+			# libpng
+			"ext/libpng/pngrio.c",
+			"ext/libpng/pngwio.c",
+			"ext/libpng/pngmem.c",
+			"ext/libpng/pngwtran.c",
+			"ext/libpng/pngtrans.c",
+			"ext/libpng/pngerror.c",
+			"ext/libpng/pngpread.c",
+			"ext/libpng/pngget.c",
+			"ext/libpng/pngset.c",
+			"ext/libpng/pngwrite.c",
+			"ext/libpng/pngwutil.c",
+			"ext/libpng/pngread.c",
+			"ext/libpng/pngrutil.c",
+			"ext/libpng/png.c",
+			"ext/libpng/pngrtran.c",
+			# vorbis
+			"ext/vorbis/analysis.c",
+			"ext/vorbis/bitrate.c",
+			"ext/vorbis/block.c",
+			"ext/vorbis/codebook.c",
+			"ext/vorbis/envelope.c",
+			"ext/vorbis/floor0.c",
+			"ext/vorbis/floor1.c",
+			"ext/vorbis/info.c",
+			"ext/vorbis/lookup.c",
+			"ext/vorbis/lpc.c",
+			"ext/vorbis/lsp.c",
+			"ext/vorbis/mapping0.c",
+			"ext/vorbis/mdct.c",
+			"ext/vorbis/psy.c",
+			"ext/vorbis/registry.c",
+			"ext/vorbis/res0.c",
+			"ext/vorbis/sharedbook.c",
+			"ext/vorbis/smallft.c",
+			"ext/vorbis/synthesis.c",
+			"ext/vorbis/vorbisenc.c",
+			"ext/vorbis/vorbisfile.c",
+			"ext/vorbis/window.c",
+			# ogg
+			"ext/ogg/bitwise.c",
+			"ext/ogg/framing.c",
+			# reactphysics3d
+			"ext/reactphysics3d/src/body/Body.cpp",
+			"ext/reactphysics3d/src/body/RigidBody.cpp",
+			"ext/reactphysics3d/src/collision/broadphase/DynamicAABBTree.cpp",
+			"ext/reactphysics3d/src/collision/Collider.cpp",
+			"ext/reactphysics3d/src/collision/CollisionCallback.cpp",
+			"ext/reactphysics3d/src/collision/ContactManifold.cpp",
+			"ext/reactphysics3d/src/collision/ConvexMesh.cpp",
+			"ext/reactphysics3d/src/collision/HalfEdgeStructure.cpp",
+			"ext/reactphysics3d/src/collision/HeightField.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/CapsuleVsCapsuleAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/CapsuleVsConvexPolyhedronAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/CollisionDispatch.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/ConvexPolyhedronVsConvexPolyhedronAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/GJK/GJKAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/GJK/VoronoiSimplex.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseInfoBatch.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseInput.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/SAT/SATAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/SphereVsCapsuleAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/SphereVsConvexPolyhedronAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/narrowphase/SphereVsSphereAlgorithm.cpp",
+			"ext/reactphysics3d/src/collision/OverlapCallback.cpp",
+			"ext/reactphysics3d/src/collision/PolygonVertexArray.cpp",
+			"ext/reactphysics3d/src/collision/RaycastInfo.cpp",
+			"ext/reactphysics3d/src/collision/shapes/AABB.cpp",
+			"ext/reactphysics3d/src/collision/shapes/BoxShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/CapsuleShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/CollisionShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/ConcaveMeshShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/ConcaveShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/ConvexPolyhedronShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/ConvexShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/HeightFieldShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/SphereShape.cpp",
+			"ext/reactphysics3d/src/collision/shapes/TriangleShape.cpp",
+			"ext/reactphysics3d/src/collision/TriangleMesh.cpp",
+			"ext/reactphysics3d/src/collision/TriangleVertexArray.cpp",
+			"ext/reactphysics3d/src/collision/VertexArray.cpp",
+			"ext/reactphysics3d/src/components/BallAndSocketJointComponents.cpp",
+			"ext/reactphysics3d/src/components/BodyComponents.cpp",
+			"ext/reactphysics3d/src/components/ColliderComponents.cpp",
+			"ext/reactphysics3d/src/components/Components.cpp",
+			"ext/reactphysics3d/src/components/FixedJointComponents.cpp",
+			"ext/reactphysics3d/src/components/HingeJointComponents.cpp",
+			"ext/reactphysics3d/src/components/JointComponents.cpp",
+			"ext/reactphysics3d/src/components/RigidBodyComponents.cpp",
+			"ext/reactphysics3d/src/components/SliderJointComponents.cpp",
+			"ext/reactphysics3d/src/components/TransformComponents.cpp",
+			"ext/reactphysics3d/src/constraint/BallAndSocketJoint.cpp",
+			"ext/reactphysics3d/src/constraint/ContactPoint.cpp",
+			"ext/reactphysics3d/src/constraint/FixedJoint.cpp",
+			"ext/reactphysics3d/src/constraint/HingeJoint.cpp",
+			"ext/reactphysics3d/src/constraint/Joint.cpp",
+			"ext/reactphysics3d/src/constraint/SliderJoint.cpp",
+			"ext/reactphysics3d/src/engine/Entity.cpp",
+			"ext/reactphysics3d/src/engine/EntityManager.cpp",
+			"ext/reactphysics3d/src/engine/Island.cpp",
+			"ext/reactphysics3d/src/engine/Material.cpp",
+			"ext/reactphysics3d/src/engine/OverlappingPairs.cpp",
+			"ext/reactphysics3d/src/engine/PhysicsCommon.cpp",
+			"ext/reactphysics3d/src/engine/PhysicsWorld.cpp",
+			"ext/reactphysics3d/src/mathematics/Matrix2x2.cpp",
+			"ext/reactphysics3d/src/mathematics/Matrix3x3.cpp",
+			"ext/reactphysics3d/src/mathematics/Quaternion.cpp",
+			"ext/reactphysics3d/src/mathematics/Transform.cpp",
+			"ext/reactphysics3d/src/mathematics/Vector2.cpp",
+			"ext/reactphysics3d/src/mathematics/Vector3.cpp",
+			"ext/reactphysics3d/src/memory/HeapAllocator.cpp",
+			"ext/reactphysics3d/src/memory/MemoryAllocator.cpp",
+			"ext/reactphysics3d/src/memory/MemoryManager.cpp",
+			"ext/reactphysics3d/src/memory/PoolAllocator.cpp",
+			"ext/reactphysics3d/src/memory/SingleFrameAllocator.cpp",
+			"ext/reactphysics3d/src/systems/BroadPhaseSystem.cpp",
+			"ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp",
+			"ext/reactphysics3d/src/systems/ConstraintSolverSystem.cpp",
+			"ext/reactphysics3d/src/systems/ContactSolverSystem.cpp",
+			"ext/reactphysics3d/src/systems/DynamicsSystem.cpp",
+			"ext/reactphysics3d/src/systems/SolveBallAndSocketJointSystem.cpp",
+			"ext/reactphysics3d/src/systems/SolveFixedJointSystem.cpp",
+			"ext/reactphysics3d/src/systems/SolveHingeJointSystem.cpp",
+			"ext/reactphysics3d/src/systems/SolveSliderJointSystem.cpp",
+			"ext/reactphysics3d/src/utils/DebugRenderer.cpp",
+			"ext/reactphysics3d/src/utils/DefaultLogger.cpp",
+			"ext/reactphysics3d/src/utils/Profiler.cpp",
+			"ext/reactphysics3d/src/utils/quickhull/QHHalfEdgeStructure.cpp",
+			"ext/reactphysics3d/src/utils/quickhull/QuickHull.cpp",
+			# cppspline
+			"ext/cpp-spline/src/Bezier.cpp",
+			"ext/cpp-spline/src/BSpline.cpp",
+			"ext/cpp-spline/src/CatmullRom.cpp",
+			"ext/cpp-spline/src/Curve.cpp",
+			"ext/cpp-spline/src/Vector.cpp",
+			# bc 7
+			"ext/bc7enc_rdo/bc7decomp.cpp",
+			"ext/bc7enc_rdo/bc7enc.cpp"
+		]
+	)
+
+	return(0)
+
+	buildLibrary(
+		"libopengl2renderer",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libopengl3corerenderer",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libopengles2renderer",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libtdme",
+		[
+			"src/tdme/audio/Audio.cpp",
+			"src/tdme/audio/AudioBufferManager.cpp",
+			"src/tdme/audio/AudioStream.cpp",
+			"src/tdme/audio/PacketAudioStream.cpp",
+			"src/tdme/audio/VorbisAudioStream.cpp",
+			"src/tdme/audio/Sound.cpp",
+			"src/tdme/audio/decoder/AudioDecoderException.cpp",
+			"src/tdme/audio/decoder/VorbisDecoder.cpp",
+			"src/tdme/application/Application.cpp",
+			"src/tdme/engine/Camera.cpp",
+			"src/tdme/engine/ColorTextureCanvas.cpp",
+			"src/tdme/engine/Decal.cpp",
+			"src/tdme/engine/DynamicColorTexture.cpp",
+			"src/tdme/engine/Engine.cpp",
+			"src/tdme/engine/EntityHierarchy.cpp",
+			"src/tdme/engine/EntityShaderParameters.cpp",
+			"src/tdme/engine/EnvironmentMapping.cpp",
+			"src/tdme/engine/FogParticleSystem.cpp",
+			"src/tdme/engine/FrameBuffer.cpp",
+			"src/tdme/engine/Frustum.cpp",
+			"src/tdme/engine/GeometryBuffer.cpp",
+			"src/tdme/engine/ImposterObject.cpp",
+			"src/tdme/engine/Light.cpp",
+			"src/tdme/engine/Lines.cpp",
+			"src/tdme/engine/LODObject.cpp",
+			"src/tdme/engine/LODObjectImposter.cpp",
+			"src/tdme/engine/Object.cpp",
+			"src/tdme/engine/ObjectModel.cpp",
+			"src/tdme/engine/ObjectRenderGroup.cpp",
+			"src/tdme/engine/ObjectParticleSystem.cpp",
+			"src/tdme/engine/OctTreePartition.cpp",
+			"src/tdme/engine/ParticleSystemGroup.cpp",
+			"src/tdme/engine/PointsParticleSystem.cpp",
+			"src/tdme/engine/Rotation.cpp",
+			"src/tdme/engine/SceneConnector.cpp",
+			"src/tdme/engine/SimplePartition.cpp",
+			"src/tdme/engine/Texture.cpp",
+			"src/tdme/engine/Timing.cpp",
+			"src/tdme/engine/Transform.cpp",
+			"src/tdme/engine/Version.cpp",
+			"src/tdme/engine/fileio/models/DAEReader.cpp",
+			"src/tdme/engine/fileio/models/GLTFReader.cpp",
+			"src/tdme/engine/fileio/models/ModelFileIOException.cpp",
+			"src/tdme/engine/fileio/models/TMReader.cpp",
+			"src/tdme/engine/fileio/models/TMWriter.cpp",
+			"src/tdme/engine/fileio/models/WFObjWriter.cpp",
+			"src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp",
+			"src/tdme/engine/fileio/prototypes/PrototypeReader.cpp",
+			"src/tdme/engine/fileio/scenes/SceneWriter.cpp",
+			"src/tdme/engine/fileio/scenes/SceneReader.cpp",
+			"src/tdme/engine/fileio/textures/BC7TextureReader.cpp",
+			"src/tdme/engine/fileio/textures/BC7TextureWriter.cpp",
+			"src/tdme/engine/fileio/textures/PNGTextureReader.cpp",
+			"src/tdme/engine/fileio/textures/PNGTextureWriter.cpp",
+			"src/tdme/engine/fileio/textures/TextureReader.cpp",
+			"src/tdme/engine/logics/ApplicationClient.cpp",
+			"src/tdme/engine/logics/ApplicationServer.cpp",
+			"src/tdme/engine/logics/ApplicationServerClient.cpp",
+			"src/tdme/engine/logics/Context.cpp",
+			"src/tdme/engine/logics/Logic.cpp",
+			"src/tdme/engine/logics/LogicMinitScript.cpp",
+			"src/tdme/engine/logics/NetworkLogic.cpp",
+			"src/tdme/engine/logics/ServerThread.cpp",
+			"src/tdme/engine/model/Animation.cpp",
+			"src/tdme/engine/model/AnimationSetup.cpp",
+			"src/tdme/engine/model/Face.cpp",
+			"src/tdme/engine/model/FacesEntity.cpp",
+			"src/tdme/engine/model/Node.cpp",
+			"src/tdme/engine/model/Joint.cpp",
+			"src/tdme/engine/model/JointWeight.cpp",
+			"src/tdme/engine/model/Material.cpp",
+			"src/tdme/engine/model/Model.cpp",
+			"src/tdme/engine/model/PBRMaterialProperties.cpp",
+			"src/tdme/engine/model/UpVector.cpp",
+			"src/tdme/engine/model/RotationOrder.cpp",
+			"src/tdme/engine/model/Skinning.cpp",
+			"src/tdme/engine/model/ShaderModel.cpp",
+			"src/tdme/engine/model/SpecularMaterialProperties.cpp",
+			"src/tdme/engine/physics/Body.cpp",
+			"src/tdme/engine/physics/BodyHierarchy.cpp",
+			"src/tdme/engine/physics/World.cpp",
+			"src/tdme/engine/primitives/BoundingBox.cpp",
+			"src/tdme/engine/primitives/BoundingVolume.cpp",
+			"src/tdme/engine/primitives/Capsule.cpp",
+			"src/tdme/engine/primitives/ConvexMesh.cpp",
+			"src/tdme/engine/primitives/HeightMap.cpp",
+			"src/tdme/engine/primitives/LineSegment.cpp",
+			"src/tdme/engine/primitives/OrientedBoundingBox.cpp",
+			"src/tdme/engine/primitives/Sphere.cpp",
+			"src/tdme/engine/primitives/TerrainMesh.cpp",
+			"src/tdme/engine/primitives/Triangle.cpp",
+			"src/tdme/engine/prototype/BaseProperties.cpp",
+			"src/tdme/engine/prototype/BaseProperty.cpp",
+			"src/tdme/engine/prototype/Prototype.cpp",
+			"src/tdme/engine/prototype/PrototypeAudio.cpp",
+			"src/tdme/engine/prototype/PrototypeBoundingVolume.cpp",
+			"src/tdme/engine/prototype/PrototypeDecal.cpp",
+			"src/tdme/engine/prototype/PrototypeImposterLOD.cpp",
+			"src/tdme/engine/prototype/PrototypeLODLevel.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.cpp",
+			"src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp",
+			"src/tdme/engine/prototype/PrototypePhysics.cpp",
+			"src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp",
+			"src/tdme/engine/prototype/Prototype_Type.cpp",
+			"src/tdme/engine/scene/Scene.cpp",
+			"src/tdme/engine/scene/SceneEntity.cpp",
+			"src/tdme/engine/scene/SceneLibrary.cpp",
+			"src/tdme/engine/scene/SceneLight.cpp",
+			"src/tdme/engine/scene/ScenePropertyPresets.cpp",
+			"src/tdme/engine/subsystems/decals/DecalInternal.cpp",
+			"src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.cpp",
+			"src/tdme/engine/subsystems/framebuffer/BRDFLUTShader.cpp",
+			"src/tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.cpp",
+			"src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp",
+			"src/tdme/engine/subsystems/framebuffer/SkyRenderShader.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderSolidImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShader.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp",
+			"src/tdme/engine/subsystems/lines/LinesShader.cpp",
+			"src/tdme/engine/subsystems/lines/LinesInternal.cpp",
+			"src/tdme/engine/subsystems/manager/MeshManager.cpp",
+			"src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp",
+			"src/tdme/engine/subsystems/manager/TextureManager.cpp",
+			"src/tdme/engine/subsystems/manager/TextureManager_TextureManaged.cpp",
+			"src/tdme/engine/subsystems/manager/VBOManager.cpp",
+			"src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp",
+			"src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp",
+			"src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp",
+			"src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectAnimation.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectBase.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectNode.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectNodeMesh.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectNodeRenderer.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectInternal.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectModelInternal.cpp",
+			"src/tdme/engine/subsystems/rendering/EntityRenderer.cpp",
+			"src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp",
+			"src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp",
+			"src/tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.cpp",
+			"src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp",
+			"src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp",
+			"src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp",
+			"src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp",
+			"src/tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.cpp",
+			"src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.cpp",
+			"src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp",
+			"src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp",
+			"src/tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.cpp",
+			"src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp",
+			"src/tdme/engine/subsystems/renderer/Renderer.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp",
+			"src/tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderBaseImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderBaseImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.cpp",
+			"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp",
+			"src/tdme/engine/subsystems/skinning/SkinningShader.cpp",
+			"src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp",
+			"src/tdme/gui/GUI.cpp",
+			"src/tdme/gui/GUIParser.cpp",
+			"src/tdme/gui/GUIParserException.cpp",
+			"src/tdme/gui/effects/GUIColorEffect.cpp",
+			"src/tdme/gui/effects/GUIEffect.cpp",
+			"src/tdme/gui/effects/GUIPositionEffect.cpp",
+			"src/tdme/gui/elements/GUIButton.cpp",
+			"src/tdme/gui/elements/GUIButtonController.cpp",
+			"src/tdme/gui/elements/GUICheckbox.cpp",
+			"src/tdme/gui/elements/GUICheckboxController.cpp",
+			"src/tdme/gui/elements/GUIContextMenu.cpp",
+			"src/tdme/gui/elements/GUIContextMenuController.cpp",
+			"src/tdme/gui/elements/GUIContextMenuItem.cpp",
+			"src/tdme/gui/elements/GUIContextMenuItemController.cpp",
+			"src/tdme/gui/elements/GUIDropDown.cpp",
+			"src/tdme/gui/elements/GUIDropDownController.cpp",
+			"src/tdme/gui/elements/GUIDropDownOption.cpp",
+			"src/tdme/gui/elements/GUIDropDownOptionController.cpp",
+			"src/tdme/gui/elements/GUIGrid.cpp",
+			"src/tdme/gui/elements/GUIGridController.cpp",
+			"src/tdme/gui/elements/GUIGridItem.cpp",
+			"src/tdme/gui/elements/GUIGridItemController.cpp",
+			"src/tdme/gui/elements/GUIImageButton.cpp",
+			"src/tdme/gui/elements/GUIInput.cpp",
+			"src/tdme/gui/elements/GUIInputController.cpp",
+			"src/tdme/gui/elements/GUIKnob.cpp",
+			"src/tdme/gui/elements/GUIKnobController.cpp",
+			"src/tdme/gui/elements/GUIMenuHeader.cpp",
+			"src/tdme/gui/elements/GUIMenuHeaderController.cpp",
+			"src/tdme/gui/elements/GUIMenuHeaderItem.cpp",
+			"src/tdme/gui/elements/GUIMenuHeaderItemController.cpp",
+			"src/tdme/gui/elements/GUIMenuItem.cpp",
+			"src/tdme/gui/elements/GUIMenuItemController.cpp",
+			"src/tdme/gui/elements/GUIMenuSeparator.cpp",
+			"src/tdme/gui/elements/GUIMoveable.cpp",
+			"src/tdme/gui/elements/GUIMoveableController.cpp",
+			"src/tdme/gui/elements/GUIProgressBar.cpp",
+			"src/tdme/gui/elements/GUIProgressBarController.cpp",
+			"src/tdme/gui/elements/GUIRadioButton.cpp",
+			"src/tdme/gui/elements/GUIRadioButtonController.cpp",
+			"src/tdme/gui/elements/GUISelectorH.cpp",
+			"src/tdme/gui/elements/GUISelectorHController.cpp",
+			"src/tdme/gui/elements/GUISelectorHOption.cpp",
+			"src/tdme/gui/elements/GUISelectorHOptionController.cpp",
+			"src/tdme/gui/elements/GUIScrollArea.cpp",
+			"src/tdme/gui/elements/GUIScrollAreaController.cpp",
+			"src/tdme/gui/elements/GUISelectBox.cpp",
+			"src/tdme/gui/elements/GUISelectBoxController.cpp",
+			"src/tdme/gui/elements/GUISelectBoxOption.cpp",
+			"src/tdme/gui/elements/GUISelectBoxOptionController.cpp",
+			"src/tdme/gui/elements/GUISelectBoxParentOption.cpp",
+			"src/tdme/gui/elements/GUISelectBoxParentOptionController.cpp",
+			"src/tdme/gui/elements/GUISliderH.cpp",
+			"src/tdme/gui/elements/GUISliderHController.cpp",
+			"src/tdme/gui/elements/GUISliderV.cpp",
+			"src/tdme/gui/elements/GUISliderVController.cpp",
+			"src/tdme/gui/elements/GUIStyledInput.cpp",
+			"src/tdme/gui/elements/GUIStyledInputController.cpp",
+			"src/tdme/gui/elements/GUITab.cpp",
+			"src/tdme/gui/elements/GUITabContent.cpp",
+			"src/tdme/gui/elements/GUITabContentController.cpp",
+			"src/tdme/gui/elements/GUITabController.cpp",
+			"src/tdme/gui/elements/GUITabs.cpp",
+			"src/tdme/gui/elements/GUITabsContent.cpp",
+			"src/tdme/gui/elements/GUITabsController.cpp",
+			"src/tdme/gui/elements/GUITabsHeader.cpp",
+			"src/tdme/gui/elements/GUITabsHeaderController.cpp",
+			"src/tdme/gui/nodes/GUIColor.cpp",
+			"src/tdme/gui/nodes/GUIElementController.cpp",
+			"src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp",
+			"src/tdme/gui/nodes/GUIElementNode.cpp",
+			"src/tdme/gui/nodes/GUIGradientNode.cpp",
+			"src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp",
+			"src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp",
+			"src/tdme/gui/nodes/GUIImageNode.cpp",
+			"src/tdme/gui/nodes/GUIInputInternalController.cpp",
+			"src/tdme/gui/nodes/GUIInputInternalNode.cpp",
+			"src/tdme/gui/nodes/GUILayerNode.cpp",
+			"src/tdme/gui/nodes/GUILayoutNode.cpp",
+			"src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp",
+			"src/tdme/gui/nodes/GUINode.cpp",
+			"src/tdme/gui/nodes/GUINodeConditions.cpp",
+			"src/tdme/gui/nodes/GUINode_AlignmentHorizontal.cpp",
+			"src/tdme/gui/nodes/GUINode_AlignmentVertical.cpp",
+			"src/tdme/gui/nodes/GUINode_Flow.cpp",
+			"src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp",
+			"src/tdme/gui/nodes/GUIPanelNode.cpp",
+			"src/tdme/gui/nodes/GUIParentNode.cpp",
+			"src/tdme/gui/nodes/GUIParentNode_Overflow.cpp",
+			"src/tdme/gui/nodes/GUIScreenNode.cpp",
+			"src/tdme/gui/nodes/GUISpaceNode.cpp",
+			"src/tdme/gui/nodes/GUIStyledTextNode.cpp",
+			"src/tdme/gui/nodes/GUIStyledTextNodeController.cpp",
+			"src/tdme/gui/nodes/GUITableNode.cpp",
+			"src/tdme/gui/nodes/GUITableCellNode.cpp",
+			"src/tdme/gui/nodes/GUITableRowNode.cpp",
+			"src/tdme/gui/nodes/GUITextNode.cpp",
+			"src/tdme/gui/nodes/GUITextureBaseNode.cpp",
+			"src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp",
+			"src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp",
+			"src/tdme/gui/nodes/GUIVideoNode.cpp",
+			"src/tdme/gui/renderer/GUIFont.cpp",
+			"src/tdme/gui/renderer/GUIRenderer.cpp",
+			"src/tdme/gui/renderer/GUIShader.cpp",
+			"src/tdme/gui/scripting/GUIMinitScript.cpp",
+			"src/tdme/minitscript/EngineMinitScript.cpp",
+			"src/tdme/minitscript/MinitScriptMatrix3x3.cpp",
+			"src/tdme/minitscript/MinitScriptMatrix4x4.cpp",
+			"src/tdme/minitscript/MinitScriptQuaternion.cpp",
+			"src/tdme/minitscript/MinitScriptTransform.cpp",
+			"src/tdme/minitscript/MinitScriptVector2.cpp",
+			"src/tdme/minitscript/MinitScriptVector3.cpp",
+			"src/tdme/minitscript/MinitScriptVector4.cpp",
+			"src/tdme/os/filesystem/ArchiveFileSystem.cpp",
+			"src/tdme/os/filesystem/FileSystem.cpp",
+			"src/tdme/os/filesystem/FileSystemException.cpp",
+			"src/tdme/os/filesystem/StandardFileSystem.cpp",
+			"src/tdme/os/threading/Barrier.cpp",
+			"src/tdme/tests/EngineTest.cpp",
+			"src/tdme/tests/EntityHierarchyTest.cpp",
+			"src/tdme/tests/LODTest.cpp",
+			"src/tdme/tests/FlowMapTest.cpp",
+			"src/tdme/tests/FlowMapTest2.cpp",
+			"src/tdme/tests/FoliageTest.cpp",
+			"src/tdme/tests/MathOperatorTest.cpp",
+			"src/tdme/tests/PathFindingTest.cpp",
+			"src/tdme/tests/PhysicsTest1.cpp",
+			"src/tdme/tests/PhysicsTest2.cpp",
+			"src/tdme/tests/PhysicsTest3.cpp",
+			"src/tdme/tests/PhysicsTest4.cpp",
+			"src/tdme/tests/PhysicsTest5.cpp",
+			"src/tdme/tests/RayTracingTest.cpp",
+			"src/tdme/tests/ThreadingTest_ConsumerThread.cpp",
+			"src/tdme/tests/ThreadingTest_ProducerThread.cpp",
+			"src/tdme/tests/ThreadingTest_TestThread.cpp",
+			"src/tdme/tests/UDPServerTest_UDPServer.cpp",
+			"src/tdme/tests/UDPServerTest_UDPServerClient.cpp",
+			"src/tdme/tests/SkinningTest.cpp",
+			"src/tdme/tests/TreeTest.cpp",
+			"src/tdme/tests/VideoTest.cpp",
+			"src/tdme/tests/WaterTest.cpp",
+			"src/tdme/tools/editor/Editor.cpp",
+			"src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/ColorPickerImageController.cpp",
+			"src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp",
+			"src/tdme/tools/editor/controllers/ContextMenuScreenController.cpp",
+			"src/tdme/tools/editor/controllers/DraggingScreenController.cpp",
+			"src/tdme/tools/editor/controllers/EditorScreenController.cpp",
+			"src/tdme/tools/editor/controllers/FileDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/FindReplaceDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/ImportDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/InputDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp",
+			"src/tdme/tools/editor/controllers/SelectorDialogScreenController.cpp",
+			"src/tdme/tools/editor/controllers/TooltipScreenController.cpp",
+			"src/tdme/tools/editor/misc/CameraInputHandler.cpp",
+			"src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp",
+			"src/tdme/tools/editor/misc/GenerateBillboardLOD.cpp",
+			"src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp",
+			"src/tdme/tools/editor/misc/GenerateImposterLOD.cpp",
+			"src/tdme/tools/editor/misc/Gizmo.cpp",
+			"src/tdme/tools/editor/misc/Markdown.cpp",
+			"src/tdme/tools/editor/misc/PopUps.cpp",
+			"src/tdme/tools/editor/misc/TextFormatter.cpp",
+			"src/tdme/tools/editor/misc/TextTools.cpp",
+			"src/tdme/tools/editor/misc/Tools.cpp",
+			"src/tdme/tools/editor/tabcontrollers/DecalEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/FontTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/MarkdownTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/SoundTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/TerrainEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/TextureTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/TextEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/TriggerEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/UIEditorTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/VideoTabController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.cpp",
+			"src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp",
+			"src/tdme/tools/editor/tabviews/DecalEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/EnvMapEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/FontTabView.cpp",
+			"src/tdme/tools/editor/tabviews/MarkdownTabView.cpp",
+			"src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/ParticleSystemEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/SoundTabView.cpp",
+			"src/tdme/tools/editor/tabviews/TerrainEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/TextureTabView.cpp",
+			"src/tdme/tools/editor/tabviews/TextEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/TriggerEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/UIEditorTabView.cpp",
+			"src/tdme/tools/editor/tabviews/VideoTabView.cpp",
+			"src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp",
+			"src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp",
+			"src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp",
+			"src/tdme/tools/editor/tabviews/subviews/PrototypeScriptSubView.cpp",
+			"src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp",
+			"src/tdme/tools/editor/views/EditorView.cpp",
+			"src/tdme/tools/installer/Installer.cpp",
+			"src/tdme/utilities/Base64.cpp",
+			"src/tdme/utilities/Console.cpp",
+			"src/tdme/utilities/ExceptionBase.cpp",
+			"src/tdme/utilities/Float.cpp",
+			"src/tdme/utilities/Hex.cpp",
+			"src/tdme/utilities/Integer.cpp",
+			"src/tdme/utilities/ModelTools.cpp",
+			"src/tdme/utilities/PathFinding.cpp",
+			"src/tdme/utilities/Primitives.cpp",
+			"src/tdme/utilities/Properties.cpp",
+			"src/tdme/utilities/RTTI.cpp",
+			"src/tdme/utilities/SimpleTextureAtlas.cpp",
+			"src/tdme/utilities/SHA256.cpp",
+			"src/tdme/utilities/StringTools.cpp",
+			"src/tdme/utilities/StringTokenizer.cpp",
+			"src/tdme/utilities/Terrain.cpp",
+			"src/tdme/utilities/TextureAtlas.cpp",
+			"src/tdme/utilities/UTF8StringTokenizer.cpp",
+			"src/tdme/utilities/UTF8StringTools.cpp",
+			"src/tdme/video/decoder/MPEG1Decoder.cpp",
+			"src/tdme/video/decoder/VideoDecoderException.cpp"
+		]
+	)
+	
+	buildExecutables(
+		[
+			"src/tdme/tests/AudioTest-main.cpp",
+			"src/tdme/tests/ContainerTest-main.cpp",
+			"src/tdme/tests/CrashTest-main.cpp",
+			"src/tdme/tests/EngineTest-main.cpp",
+			"src/tdme/tests/EntityHierarchyTest-main.cpp",
+			"src/tdme/tests/HTTPClientTest-main.cpp",
+			"src/tdme/tests/HTTPDownloadClientTest-main.cpp",
+			"src/tdme/tests/LODTest-main.cpp",
+			"src/tdme/tests/FlowMapTest-main.cpp",
+			"src/tdme/tests/FlowMapTest2-main.cpp",
+			"src/tdme/tests/FoliageTest-main.cpp",
+			"src/tdme/tests/MathOperatorTest-main.cpp",
+			"src/tdme/tests/MinitScriptTest-main.cpp",
+			"src/tdme/tests/PathFindingTest-main.cpp",
+			"src/tdme/tests/PhysicsTest1-main.cpp",
+			"src/tdme/tests/PhysicsTest2-main.cpp",
+			"src/tdme/tests/PhysicsTest3-main.cpp",
+			"src/tdme/tests/PhysicsTest4-main.cpp",
+			"src/tdme/tests/PhysicsTest5-main.cpp",
+			"src/tdme/tests/RayTracingTest-main.cpp",
+			"src/tdme/tests/SkinningTest-main.cpp",
+			"src/tdme/tests/SplineTest-main.cpp",
+			"src/tdme/tests/TextureAtlasTest-main.cpp",
+			"src/tdme/tests/ThreadingTest-main.cpp",
+			"src/tdme/tests/TreeTest-main.cpp",
+			"src/tdme/tests/UDPClientTest-main.cpp",
+			"src/tdme/tests/UDPServerTest-main.cpp",
+			"src/tdme/tests/VideoTest-main.cpp",
+			"src/tdme/tests/WaterTest-main.cpp",
+			"src/tdme/tools/editor/Editor-main.cpp",
+			"src/tdme/tools/installer/Installer-main.cpp",
+			"src/tdme/tools/cli/archive-main.cpp",
+			"src/tdme/tools/cli/collectguitags-main.cpp",
+			"src/tdme/tools/cli/converttotm-main.cpp",
+			"src/tdme/tools/cli/copyanimationsetups-main.cpp",
+			"src/tdme/tools/cli/createinstaller-main.cpp",
+			"src/tdme/tools/cli/minitscriptcodecompletion-main.cpp",
+			"src/tdme/tools/cli/minitscriptdocumentation-main.cpp",
+			"src/tdme/tools/cli/minitscriptlibrary-main.cpp",
+			"src/tdme/tools/cli/minitscriptmakefile-main.cpp",
+			"src/tdme/tools/cli/minitscriptnmakefile-main.cpp",
+			"src/tdme/tools/cli/minitscripttranspiler-main.cpp",
+			"src/tdme/tools/cli/minitscriptuntranspiler-main.cpp",
+			"src/tdme/tools/cli/createrc-main.cpp",
+			"src/tdme/tools/cli/dumpmodel-main.cpp",
+			"src/tdme/tools/cli/imageprocessor-main.cpp",
+			"src/tdme/tools/cli/msclib2dll-main.cpp",
+			"src/tdme/tools/cli/generatelicenses-main.cpp",
+			"src/tdme/tools/cli/importtmodel-main.cpp",
+			"src/tdme/tools/cli/importtscene-main.cpp",
+			"src/tdme/tools/cli/makefilegenerator-main.cpp",
+			"src/tdme/tools/cli/nmakefilegenerator-main.cpp",
+			"src/tdme/tools/cli/optimizemodel-main.cpp",
+			"src/tdme/tools/cli/parseh++-main.cpp",
+			"src/tdme/tools/cli/recreatevkcache-main.cpp",
+			"src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp",
+			"src/tdme/tools/cli/sortincludes-main.cpp"
+		]
+	)
+
+end
