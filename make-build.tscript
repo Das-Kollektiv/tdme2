@@ -32,6 +32,7 @@ function: buildLibrary($name, $files)
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 
 		# compile each compilation units
+		$commands = []
 		$compilationUnits = ""
 		forEach($file in $files)
 			$fileObjectPath = filesystem.getPathName($file)
@@ -82,8 +83,27 @@ function: buildLibrary($name, $files)
 			if ($command == null)
 				continue
 			end
-			console.printLine($command)
 
+			#
+			$commands[] = $command
+		end
+
+		# execute commands
+		if (application.executeMultiple($commands, integer(concurrency.getHardwareThreadCount() / 1.5)) == false)
+			console.printLine("Not all files have been compiled. Stopping")
+		else
+			# link
+			$command =
+				$cxx +
+				" " +
+				"-shared" +
+				" " +
+				$compilationUnits +
+				" " +
+				" -o " +
+				$libraryPath + "/" + $name + ".so"
+			console.printLine($command)
+	
 			# execute
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
@@ -91,26 +111,6 @@ function: buildLibrary($name, $files)
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
 			end
-		end
-
-		# link
-		$command =
-			$cxx +
-			" " +
-			"-shared" +
-			" " +
-			$compilationUnits +
-			" " +
-			" -o " +
-			$libraryPath + "/" + $name + ".so"
-		console.printLine($command)
-
-		# execute
-		$exitCode = $$.application::EXITCODE_SUCCESS
-		$error = null
-		application.execute($command, $exitCode, $error)
-		if ($exitCode != $$.application::EXITCODE_SUCCESS)
-			console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
 		end
 
 	catch ($exception)
@@ -294,8 +294,6 @@ function: main()
 			"ext/bc7enc_rdo/bc7enc.cpp"
 		]
 	)
-
-	return(0)
 
 	buildLibrary(
 		"libopengl2renderer",
