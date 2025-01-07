@@ -1047,7 +1047,7 @@ function: main()
 		
 		buildExecutables(
 			$includes,
-			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript",
+			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
 				"src/tdme/tests/ContainerTest-main.cpp",
