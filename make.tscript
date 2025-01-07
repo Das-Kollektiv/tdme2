@@ -23,21 +23,18 @@ function: clean()
 	try
 		filesystem.removePath($objectPath, true)
 	catch ($exception)
-		console.printLine("An error occurred: " + $exception)
 	end
 	try
 		filesystem.removePath($libraryPath, true)
 	catch ($exception)
-		console.printLine("An error occurred: " + $exception)
 	end
 	try
 		filesystem.removePath($binaryPath, true)
 	catch ($exception)
-		console.printLine("An error occurred: " + $exception)
 	end
 end
 
-function: buildLibrary($name, $ldFlags, $files)
+function: buildLibrary($name, $includes, $ldFlags, $files)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 
@@ -52,7 +49,7 @@ function: buildLibrary($name, $ldFlags, $files)
 
 		# CXX arguments
 		$cxx = "g++"
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src -I/usr/include/freetype2"
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 
 		# compile each compilation units
@@ -167,7 +164,7 @@ function: buildLibrary($name, $ldFlags, $files)
 	console.printLine()
 end
 
-function: buildExecutables($ldFlags, $files)
+function: buildExecutables($includes, $ldFlags, $files)
 	console.printLine("Building executables")
 	console.printLine()
 
@@ -180,7 +177,7 @@ function: buildExecutables($ldFlags, $files)
 	
 		# CXX arguments
 		$cxx = "g++"
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src -I/usr/include/freetype2"
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 	
 		# compile each executable
@@ -265,9 +262,35 @@ function: main()
 	if (application.getArguments()->contains("clean") == true)
 		clean()
 	else
+		$includes = ""
+		$ldFlags = ""
+		if ($$.application::OS == "FreeBSD")
+			$includes = "-I/usr/local/include -I/usr/local/include/freetype2"
+			$ldFlags = "-L/usr/local/lib"
+			$yannetKernelEventMechanism = "ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"  
+			$tdmeModelReader = "src/tdme/engine/fileio/models/ModelReader.cpp"
+		elseif ($$.application::OS == "Haiku")
+		elseif ($$.application::OS == "Linux")
+			$includes = "-I/usr/include/freetype2 -Iext/fbx/linux/include"
+			$ldFlags = "-L/usr/lib64 -Lext/fbx/linux/lib -lfbxsdk -lxml2"
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/platform/linux/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [  
+				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
+				"src/tdme/engine/fileio/models/FBXReader.cpp"
+			]
+		elseif ($$.application::OS == "MacOSX")
+		elseif ($$.application::OS == "NetBSD")
+		elseif ($$.application::OS =="OpenBSD")
+		elseif ($$.application::OS == "Windows-MSC")
+		elseif ($$.application::OS == "Windows-MINGW")
+		end
+
 		buildLibrary(
 			"libminitscript",
-			"-L/usr/lib64 -lssl -lcrypto",
+			$includes,
+			$ldFlags + " -lssl -lcrypto",
 			[
 				"ext/minitscript/src/minitscript/minitscript/BaseMethods.cpp",
 				"ext/minitscript/src/minitscript/minitscript/StringMethods.cpp",
@@ -325,10 +348,10 @@ function: main()
 			]
 		)
 	
-		# TODO: correct KernelEventMechanism 
 		buildLibrary(
 			"libyannet",
-			"-L/usr/lib64 -lssl -lcrypto",
+			$includes,
+			$ldFlags + " -lssl -lcrypto",
 			[
 				"ext/yannet/src/yannet/os/threading/Barrier.cpp",
 				"ext/yannet/src/yannet/os/filesystem/FileSystem.cpp",
@@ -341,7 +364,6 @@ function: main()
 				"ext/yannet/src/yannet/os/network/NetworkSocketException.cpp",
 				"ext/yannet/src/yannet/os/network/NetworkException.cpp",
 				"ext/yannet/src/yannet/os/network/Network.cpp",
-				"ext/yannet/src/yannet/os/network/platform/linux/KernelEventMechanism.cpp",
 				"ext/yannet/src/yannet/os/network/NetworkIOException.cpp",
 				"ext/yannet/src/yannet/utilities/Base64.cpp",
 				"ext/yannet/src/yannet/utilities/ExceptionBase.cpp",
@@ -365,12 +387,14 @@ function: main()
 				"ext/yannet/src/yannet/network/udpclient/UDPClientMessage.cpp",
 				"ext/yannet/src/yannet/network/udpclient/NetworkClientException.cpp",
 				"ext/yannet/src/yannet/network/udpclient/UDPClient.cpp"
-			]
+			] +
+			$yannetPlatformFiles
 		)
 	
 		buildLibrary(
 			"libtdme-ext",
-			"",
+			$includes,
+			$ldFlags,
 			[
 				# tiny xml
 				"ext/tinyxml/tinystr.cpp",
@@ -537,7 +561,8 @@ function: main()
 	
 		buildLibrary(
 			"libtdme",
-			"-L/usr/lib64 -ldl -lglfw -lopenal -lfreetype -lssl -lcrypto -Llib -ltdme-ext -lyannet -lminitscript",
+			$includes,
+			$ldFlags + " -ldl -lglfw -lopenal -lfreetype -lssl -lcrypto -Llib -ltdme-ext -lyannet -lminitscript",
 			[
 				"src/tdme/audio/Audio.cpp",
 				"src/tdme/audio/AudioBufferManager.cpp",
@@ -581,7 +606,6 @@ function: main()
 				"src/tdme/engine/Version.cpp",
 				"src/tdme/engine/fileio/models/DAEReader.cpp",
 				"src/tdme/engine/fileio/models/GLTFReader.cpp",
-				"src/tdme/engine/fileio/models/ModelReader.cpp",
 				"src/tdme/engine/fileio/models/ModelFileIOException.cpp",
 				"src/tdme/engine/fileio/models/TMReader.cpp",
 				"src/tdme/engine/fileio/models/TMWriter.cpp",
@@ -976,13 +1000,15 @@ function: main()
 				"src/tdme/utilities/UTF8StringTokenizer.cpp",
 				"src/tdme/utilities/UTF8StringTools.cpp",
 				"src/tdme/video/decoder/MPEG1Decoder.cpp",
-				"src/tdme/video/decoder/VideoDecoderException.cpp"
+				"src/tdme/video/decoder/VideoDecoderException.cpp",
+				$tdmeModelReader
 			]
 		)
 	
 		buildLibrary(
 			"libopengl2renderer",
-			"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+			$includes,
+			$ldFlags + " -lGLEW -lGL -lglfw -Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
@@ -991,7 +1017,8 @@ function: main()
 	
 		buildLibrary(
 			"libopengl3corerenderer",
-			"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+			$includes,
+			$ldFlags + " -lGLEW -lGL -lglfw -Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
@@ -1000,7 +1027,8 @@ function: main()
 	
 		buildLibrary(
 			"libopengles2renderer",
-			"-L/usr/lib64 -lGLESv2 -lEGL -lglfw -Llib -ltdme",
+			$includes,
+			$ldFlags + "-lGLESv2 -lEGL -lglfw -Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
@@ -1008,6 +1036,7 @@ function: main()
 		)
 		
 		buildExecutables(
+			$includes,
 			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript",
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
@@ -1067,7 +1096,8 @@ function: main()
 				"src/tdme/tools/cli/recreatevkcache-main.cpp",
 				"src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp",
 				"src/tdme/tools/cli/sortincludes-main.cpp"
-			]
+			] +
+			$tdmePlatformFiles
 		)
 	end
 end
