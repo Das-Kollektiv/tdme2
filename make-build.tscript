@@ -35,6 +35,7 @@ function: buildLibrary($name, $ldFlags, $files)
 		$commands = []
 		$compilationUnits = ""
 		forEach($file in $files)
+			#
 			$fileObjectPath = filesystem.getPathName($file)
 			
 			# create file object path
@@ -161,6 +162,15 @@ function: buildExecutables($ldFlags, $files)
 		# compile each executable
 		$commands = []
 		forEach($file in $files)
+			#
+			$sourceFile = $file
+
+			#
+			if ($file->startsWith("src/") == true)
+				# FIXME: $file->substring("src/"->getSize()) does not work here!
+				$file = $file->substring(String("src/")->getSize())
+			end
+			
 			$fileObjectPath = filesystem.getPathName($file)
 	
 			# create file object path
@@ -173,10 +183,10 @@ function: buildExecutables($ldFlags, $files)
 			#
 			$timeStampFile = 0
 			$timeStampCompilationUnit = 0;
-			if (filesystem.exists($file) == true)
+			if (filesystem.exists($sourceFile) == true)
 				$timeStampFile = filesystem.getFileTimeStamp(
-					filesystem.getPathName($file),
-					filesystem.getFileName($file)
+					filesystem.getPathName($sourceFile),
+					filesystem.getFileName($sourceFile)
 				)
 			end
 			if (filesystem.exists($executableFile) == true)
@@ -202,7 +212,7 @@ function: buildExecutables($ldFlags, $files)
 				"-o " +
 				$executableFile +
 				" " +
-				$file +
+				$sourceFile +
 				" " +
 				$ldFlags
 			console.printLine($command)
