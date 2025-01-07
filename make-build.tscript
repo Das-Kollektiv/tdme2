@@ -137,7 +137,8 @@ function: buildExecutables($ldFlags, $files)
 		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src -I/usr/include/freetype2"
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 	
-		# compile each compilation units
+		# compile each executable
+		$commands = []
 		forEach($file in $files)
 			$fileObjectPath = filesystem.getPathName($file)
 	
@@ -163,15 +164,15 @@ function: buildExecutables($ldFlags, $files)
 				" " +
 				$ldFlags
 			console.printLine($command)
-	
-			# execute
-			$exitCode = $$.application::EXITCODE_SUCCESS
-			$error = null
-			application.execute($command, $exitCode, $error)
-			if ($exitCode != $$.application::EXITCODE_SUCCESS)
-				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
-			end
+
+			#
+			$commands[] = $command
 	 	end
+	 	
+	 	# execute commands
+		if (application.executeMultiple($commands, integer(concurrency.getHardwareThreadCount() / 1.5)) == false)
+			console.printLine("Not all files have been compiled. Stopping")
+		end
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
 	end
@@ -920,7 +921,7 @@ function: main()
 
 	buildLibrary(
 		"libopengles2renderer",
-		"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+		"-L/usr/lib64 -lGLESv2 -lEGL -lglfw -Llib -ltdme",
 		[
 			"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 			"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
