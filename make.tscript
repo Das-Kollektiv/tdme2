@@ -294,7 +294,15 @@ function: main()
 			]
 		elseif ($$.application::OS == "MacOSX")
 		elseif ($$.application::OS == "NetBSD")
-		elseif ($$.application::OS =="OpenBSD")
+			$includes = "-I/usr/X11R7/include -I/usr/pkg/include -I/usr/pkg/include/freetype2"
+			$ldFlags = "-L/usr/X11R7/lib -L/usr/pkg/lib"
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
+		elseif ($$.application::OS == "OpenBSD")
 		elseif ($$.application::OS == "Windows-MSC")
 		elseif ($$.application::OS == "Windows-MINGW")
 		end
