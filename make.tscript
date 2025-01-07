@@ -267,8 +267,12 @@ function: main()
 		if ($$.application::OS == "FreeBSD")
 			$includes = "-I/usr/local/include -I/usr/local/include/freetype2"
 			$ldFlags = "-L/usr/local/lib"
-			$yannetKernelEventMechanism = "ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"  
-			$tdmeModelReader = "src/tdme/engine/fileio/models/ModelReader.cpp"
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [  
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
 		elseif ($$.application::OS == "Haiku")
 		elseif ($$.application::OS == "Linux")
 			$includes = "-I/usr/include/freetype2 -Iext/fbx/linux/include"
