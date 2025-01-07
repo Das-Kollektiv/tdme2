@@ -49,6 +49,10 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 
 		# CXX arguments
 		$cxx = "g++"
+		if ($$.application::OS == "FreeBSD" || $$.application::OS == "MacOSX")
+			$cxx = "clang++"
+		end
+ 
 		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 
@@ -177,6 +181,9 @@ function: buildExecutables($includes, $ldFlags, $files)
 	
 		# CXX arguments
 		$cxx = "g++"
+		if ($$.application::OS == "FreeBSD" || $$.application::OS == "MacOSX")
+			$cxx = "clang++"
+		end
 		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 	
