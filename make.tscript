@@ -387,8 +387,7 @@ function: main()
 				"ext/yannet/src/yannet/network/udpclient/UDPClientMessage.cpp",
 				"ext/yannet/src/yannet/network/udpclient/NetworkClientException.cpp",
 				"ext/yannet/src/yannet/network/udpclient/UDPClient.cpp"
-			] +
-			$yannetPlatformFiles
+			] + $yannetPlatformFiles
 		)
 	
 		buildLibrary(
@@ -1000,9 +999,8 @@ function: main()
 				"src/tdme/utilities/UTF8StringTokenizer.cpp",
 				"src/tdme/utilities/UTF8StringTools.cpp",
 				"src/tdme/video/decoder/MPEG1Decoder.cpp",
-				"src/tdme/video/decoder/VideoDecoderException.cpp",
-				$tdmeModelReader
-			]
+				"src/tdme/video/decoder/VideoDecoderException.cpp"
+			] + $tdmePlatformFiles
 		)
 	
 		buildLibrary(
@@ -1096,8 +1094,7 @@ function: main()
 				"src/tdme/tools/cli/recreatevkcache-main.cpp",
 				"src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp",
 				"src/tdme/tools/cli/sortincludes-main.cpp"
-			] +
-			$tdmePlatformFiles
+			]
 		)
 	end
 end
