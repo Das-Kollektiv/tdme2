@@ -13,14 +13,14 @@ function: createPathRecusively($path)
 	end
 end
 
-function: buildLibrary($name, $files)
+function: buildLibrary($name, $ldFlags, $files)
 	console.printLine("Building library: " + $name)
+	console.printLine()
 
 	try
 		#
 		$objectPath = "obj"	
 		$libraryPath = "lib"
-		$binPath = "bin"
 
 		# create paths
 		createPathRecusively($objectPath)
@@ -28,7 +28,7 @@ function: buildLibrary($name, $files)
 
 		# CXX arguments
 		$cxx = "g++"
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src"
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src -I/usr/include/freetype2"
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
 
 		# compile each compilation units
@@ -100,8 +100,10 @@ function: buildLibrary($name, $files)
 				" " +
 				$compilationUnits +
 				" " +
-				" -o " +
-				$libraryPath + "/" + $name + ".so"
+				"-o " +
+				$libraryPath + "/" + $name + ".so" +
+				" " +
+				$ldFlags
 			console.printLine($command)
 	
 			# execute
@@ -112,15 +114,69 @@ function: buildLibrary($name, $files)
 				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
 			end
 		end
-
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
 	end
+	
+	console.printLine()
 end
 
-function: buildExecutables($files)
+function: buildExecutables($ldFlags, $files)
 	console.printLine("Building executables: " + $files)
-	 
+	console.printLine()
+
+	try
+		#
+		$binPath = "bin"
+	
+		# create paths
+		createPathRecusively($bin)
+	
+		# CXX arguments
+		$cxx = "g++"
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src -I/usr/include/freetype2"
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING"
+	
+		# compile each compilation units
+		forEach($file in $files)
+			$fileObjectPath = filesystem.getPathName($file)
+	
+			# create file object path
+			createPathRecusively($binPath + "/" + $fileObjectPath)
+
+			#
+			$executableFile = $binPath + "/" + $file
+			$executableFile = $executableFile->replace("-main.cpp", "")
+
+			# link
+			$command =
+				$cxx +
+				" " +
+				$cxxFlags +
+				" " +
+				$includes +
+				" " +
+				"-o " +
+				$executableFile +
+				" " +
+				$file +
+				" " +
+				$ldFlags
+			console.printLine($command)
+	
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			application.execute($command, $exitCode, $error)
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+			end
+	 	end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+
+	console.printLine()
 end
 
 function: main()
@@ -130,7 +186,111 @@ function: main()
 	console.printLine()
 
 	buildLibrary(
-		"libtdme2-ext",
+		"libminitscript",
+		"-L/usr/lib64 -lssl -lcrypto",
+		[
+			"ext/minitscript/src/minitscript/minitscript/BaseMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/StringMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Documentation.cpp",
+			"ext/minitscript/src/minitscript/minitscript/TimeMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/NetworkMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ContextMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/MapMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/HTTPDownloadClientClass.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Generator.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Validations.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Transpiler.cpp",
+			"ext/minitscript/src/minitscript/minitscript/FileSystemMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ArrayMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/JSONMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/XMLMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Version.cpp",
+			"ext/minitscript/src/minitscript/minitscript/SetMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/MathMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ByteArrayMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/MinitScript.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ApplicationMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/CryptographyMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Setup.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Library.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ConsoleMethods.cpp",
+			"ext/minitscript/src/minitscript/minitscript/Context.cpp",
+			"ext/minitscript/src/minitscript/minitscript/ScriptMethods.cpp",
+			"ext/minitscript/src/minitscript/os/filesystem/FileSystem.cpp",
+			"ext/minitscript/src/minitscript/os/network/TCPSocket.cpp",
+			"ext/minitscript/src/minitscript/os/network/SecureTCPSocket.cpp",
+			"ext/minitscript/src/minitscript/os/network/NetworkSocketClosedException.cpp",
+			"ext/minitscript/src/minitscript/os/network/NetworkSocket.cpp",
+			"ext/minitscript/src/minitscript/os/network/NetworkSocketException.cpp",
+			"ext/minitscript/src/minitscript/os/network/NetworkException.cpp",
+			"ext/minitscript/src/minitscript/os/network/Network.cpp",
+			"ext/minitscript/src/minitscript/os/network/NetworkIOException.cpp",
+			"ext/minitscript/src/minitscript/utilities/Float.cpp",
+			"ext/minitscript/src/minitscript/utilities/Base64.cpp",
+			"ext/minitscript/src/minitscript/utilities/UTF8StringTools.cpp",
+			"ext/minitscript/src/minitscript/utilities/ExceptionBase.cpp",
+			"ext/minitscript/src/minitscript/utilities/ErrorConsole.cpp",
+			"ext/minitscript/src/minitscript/utilities/UTF8StringTokenizer.cpp",
+			"ext/minitscript/src/minitscript/utilities/Console.cpp",
+			"ext/minitscript/src/minitscript/utilities/Properties.cpp",
+			"ext/minitscript/src/minitscript/utilities/Integer.cpp",
+			"ext/minitscript/src/minitscript/utilities/SHA256.cpp",
+			"ext/minitscript/src/minitscript/utilities/Hex.cpp",
+			"ext/minitscript/src/minitscript/utilities/RTTI.cpp",
+			"ext/minitscript/src/minitscript/utilities/StringTools.cpp",
+			"ext/minitscript/src/minitscript/utilities/StringTokenizer.cpp",
+			"ext/minitscript/src/minitscript/network/httpclient/HTTPClient.cpp",
+			"ext/minitscript/src/minitscript/network/httpclient/HTTPClientException.cpp",
+			"ext/minitscript/src/minitscript/network/httpclient/HTTPDownloadClient.cpp"
+		]
+	)
+
+	# TODO: correct KernelEventMechanism 
+	buildLibrary(
+		"libyannet",
+		"-L/usr/lib64 -lssl -lcrypto",
+		[
+			"ext/yannet/src/yannet/os/threading/Barrier.cpp",
+			"ext/yannet/src/yannet/os/filesystem/FileSystem.cpp",
+			"ext/yannet/src/yannet/os/network/UDPSocket.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkKEMException.cpp",
+			"ext/yannet/src/yannet/os/network/TCPSocket.cpp",
+			"ext/yannet/src/yannet/os/network/SecureTCPSocket.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkSocketClosedException.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkSocket.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkSocketException.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkException.cpp",
+			"ext/yannet/src/yannet/os/network/Network.cpp",
+			"ext/yannet/src/yannet/os/network/platform/linux/KernelEventMechanism.cpp",
+			"ext/yannet/src/yannet/os/network/NetworkIOException.cpp",
+			"ext/yannet/src/yannet/utilities/Base64.cpp",
+			"ext/yannet/src/yannet/utilities/ExceptionBase.cpp",
+			"ext/yannet/src/yannet/utilities/Console.cpp",
+			"ext/yannet/src/yannet/utilities/Integer.cpp",
+			"ext/yannet/src/yannet/utilities/RTTI.cpp",
+			"ext/yannet/src/yannet/utilities/StringTools.cpp",
+			"ext/yannet/src/yannet/utilities/StringTokenizer.cpp",
+			"ext/yannet/src/yannet/network/httpclient/HTTPClient.cpp",
+			"ext/yannet/src/yannet/network/httpclient/HTTPClientException.cpp",
+			"ext/yannet/src/yannet/network/httpclient/HTTPDownloadClient.cpp",
+			"ext/yannet/src/yannet/network/udpserver/ServerClientRequestHandlerHubException.cpp",
+			"ext/yannet/src/yannet/network/udpserver/NetworkServerException.cpp",
+			"ext/yannet/src/yannet/network/udpserver/ServerRequest.cpp",
+			"ext/yannet/src/yannet/network/udpserver/ServerClient.cpp",
+			"ext/yannet/src/yannet/network/udpserver/UDPServerClient.cpp",
+			"ext/yannet/src/yannet/network/udpserver/ServerWorkerThread.cpp",
+			"ext/yannet/src/yannet/network/udpserver/UDPServerIOThread.cpp",
+			"ext/yannet/src/yannet/network/udpserver/ServerWorkerThreadPool.cpp",
+			"ext/yannet/src/yannet/network/udpserver/UDPServer.cpp",
+			"ext/yannet/src/yannet/network/udpclient/UDPClientMessage.cpp",
+			"ext/yannet/src/yannet/network/udpclient/NetworkClientException.cpp",
+			"ext/yannet/src/yannet/network/udpclient/UDPClient.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libtdme-ext",
+		"",
 		[
 			# tiny xml
 			"ext/tinyxml/tinystr.cpp",
@@ -296,31 +456,8 @@ function: main()
 	)
 
 	buildLibrary(
-		"libopengl2renderer",
-		[
-			"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
-			"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
-		]
-	)
-
-	buildLibrary(
-		"libopengl3corerenderer",
-		[
-			"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
-			"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
-		]
-	)
-
-	buildLibrary(
-		"libopengles2renderer",
-		[
-			"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
-			"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
-		]
-	)
-
-	buildLibrary(
 		"libtdme",
+		"-L/usr/lib64 -ldl -lglfw -lopenal -lfreetype -lssl -lcrypto -Llib -ltdme-ext -lyannet -lminitscript",
 		[
 			"src/tdme/audio/Audio.cpp",
 			"src/tdme/audio/AudioBufferManager.cpp",
@@ -364,6 +501,7 @@ function: main()
 			"src/tdme/engine/Version.cpp",
 			"src/tdme/engine/fileio/models/DAEReader.cpp",
 			"src/tdme/engine/fileio/models/GLTFReader.cpp",
+			"src/tdme/engine/fileio/models/ModelReader.cpp",
 			"src/tdme/engine/fileio/models/ModelFileIOException.cpp",
 			"src/tdme/engine/fileio/models/TMReader.cpp",
 			"src/tdme/engine/fileio/models/TMWriter.cpp",
@@ -761,8 +899,36 @@ function: main()
 			"src/tdme/video/decoder/VideoDecoderException.cpp"
 		]
 	)
+
+	buildLibrary(
+		"libopengl2renderer",
+		"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libopengl3corerenderer",
+		"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
+		]
+	)
+
+	buildLibrary(
+		"libopengles2renderer",
+		"-L/usr/lib64 -lGLEW -lGL -lglfw -Llib -ltdme",
+		[
+			"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
+			"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
+		]
+	)
 	
 	buildExecutables(
+		"-Llib -ltdme -ltdme-ext -lyannet -lminitscript",
 		[
 			"src/tdme/tests/AudioTest-main.cpp",
 			"src/tdme/tests/ContainerTest-main.cpp",
