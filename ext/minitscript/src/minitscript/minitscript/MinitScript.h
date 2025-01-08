@@ -30,7 +30,6 @@ using std::array;
 using std::exchange;
 using std::find;
 using std::make_unique;
-using std::move;
 using std::pair;
 using std::remove;
 using std::sort;

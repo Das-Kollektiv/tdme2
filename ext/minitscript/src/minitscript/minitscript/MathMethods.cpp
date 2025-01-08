@@ -932,8 +932,7 @@ void MathMethods::mul(const span<MinitScript::Variable>& arguments, MinitScript:
 				"mul",
 				MinitScript::decodeOperator(arguments, 2, "mul"),
 				subStatement,
-				string(isAFloat == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a float value":"") +
-				string(isBFloat == false?string(isAFloat == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a float value":"")
+				"Can not multiply " + arguments[0].getValueAsString() + " by " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -953,8 +952,7 @@ void MathMethods::mul(const span<MinitScript::Variable>& arguments, MinitScript:
 				"mul",
 				MinitScript::decodeOperator(arguments, 2, "mul"),
 				subStatement,
-				string(isAInteger == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a integer value":"") +
-				string(isBInteger == false?string(isAInteger == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a integer value":"")
+				"Can not multiply " + arguments[0].getValueAsString() + " by " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -986,8 +984,7 @@ void MathMethods::div(const span<MinitScript::Variable>& arguments, MinitScript:
 				"div",
 				MinitScript::decodeOperator(arguments, 2, "div"),
 				subStatement,
-				string(isAFloat == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a float value":"") +
-				string(isBFloat == false?string(isAFloat == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a float value":"")
+				"Can not divide " + arguments[0].getValueAsString() + " by " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -1007,8 +1004,7 @@ void MathMethods::div(const span<MinitScript::Variable>& arguments, MinitScript:
 				"div",
 				MinitScript::decodeOperator(arguments, 2, "div"),
 				subStatement,
-				string(isAInteger == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a integer value":"") +
-				string(isBInteger == false?string(isAInteger == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a integer value":"")
+				"Can not divide " + arguments[0].getValueAsString() + " by " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -1034,6 +1030,19 @@ void MathMethods::add(const span<MinitScript::Variable>& arguments, MinitScript:
 	for (const auto dataType: dataTypes) {
 		if (dataType->add(minitScript, arguments, returnValue, subStatement) == true) return;
 	}
+	// array
+	if (arguments[0].getType() == MinitScript::TYPE_ARRAY &&
+		arguments[1].getType() == MinitScript::TYPE_ARRAY) {
+		returnValue.setType(MinitScript::TYPE_ARRAY);
+		auto arrayPtr0 = arguments[0].getArrayPointer();
+		if (arrayPtr0 != nullptr) {
+			for (auto arrayEntry: *arrayPtr0) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+		}
+		auto arrayPtr1 = arguments[1].getArrayPointer();
+		if (arrayPtr1 != nullptr) {
+			for (auto arrayEntry: *arrayPtr1) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+		}
+	} else
 	// float
 	if (MinitScript::hasTypeForOperatorArguments(arguments, MinitScript::TYPE_FLOAT) == true) {
 		float a;
@@ -1049,8 +1058,7 @@ void MathMethods::add(const span<MinitScript::Variable>& arguments, MinitScript:
 				"add",
 				MinitScript::decodeOperator(arguments, 2, "add"),
 				subStatement,
-				string(isAFloat == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a float value":"") +
-				string(isBFloat == false?string(isAFloat == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a float value":"")
+				"Can not add " + arguments[0].getValueAsString() + " to " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -1070,8 +1078,7 @@ void MathMethods::add(const span<MinitScript::Variable>& arguments, MinitScript:
 				"add",
 				MinitScript::decodeOperator(arguments, 2, "add"),
 				subStatement,
-				string(isAInteger == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a integer value":"") +
-				string(isBInteger == false?string(isAInteger == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a integer value":"")
+				"Can not add " + arguments[0].getValueAsString() + " to " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -1103,8 +1110,7 @@ void MathMethods::sub(const span<MinitScript::Variable>& arguments, MinitScript:
 				"sub",
 				MinitScript::decodeOperator(arguments, 2, "sub"),
 				subStatement,
-				string(isAFloat == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a float value":"") +
-				string(isBFloat == false?string(isAFloat == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a float value":"")
+				"Can not subtract " + arguments[0].getValueAsString() + " to " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;
@@ -1124,8 +1130,7 @@ void MathMethods::sub(const span<MinitScript::Variable>& arguments, MinitScript:
 				"sub",
 				MinitScript::decodeOperator(arguments, 2, "sub"),
 				subStatement,
-				string(isAInteger == false?"Left argument '" + arguments[0].getValueAsString() + "' is not a integer value":"") +
-				string(isBInteger == false?string(isAInteger == false?" and right argument":"Right argument") + " '" + arguments[1].getValueAsString() + "' is not a integer value":"")
+				"Can not subtract " + arguments[0].getValueAsString() + " to " + arguments[1].getValueAsString()
 			);
 			minitScript->startErrorScript();
 			return;

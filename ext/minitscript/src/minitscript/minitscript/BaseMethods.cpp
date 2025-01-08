@@ -1,5 +1,6 @@
 #include <span>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <minitscript/minitscript.h>
@@ -144,7 +145,7 @@ void BaseMethods::registerMethods(MinitScript* minitScript) {
 							// create method call arguments
 							vector<MinitScript::Variable> callArguments(1 + (arguments.size() - 3) / 2);
 							//	this
-							callArguments[0] = move(arguments[1]);
+							callArguments[0] = std::move(arguments[1]);
 							//	additional method call arguments
 							{
 								auto callArgumentIdx = 1;
@@ -176,7 +177,7 @@ void BaseMethods::registerMethods(MinitScript* minitScript) {
 										#endif
 									}
 									//
-									callArguments[callArgumentIdx] = move(arguments[argumentIdx + 1]);
+									callArguments[callArgumentIdx] = std::move(arguments[argumentIdx + 1]);
 									callArgumentIdx++;
 								}
 							}
@@ -191,12 +192,12 @@ void BaseMethods::registerMethods(MinitScript* minitScript) {
 							}
 							// write back arguments from call arguments
 							//	this
-							arguments[1] = move(callArgumentsSpan[0]);
+							arguments[1] = std::move(callArgumentsSpan[0]);
 							//	additional arguments
 							{
 								auto callArgumentIdx = 1;
 								for (auto argumentIdx = 3; argumentIdx < arguments.size(); argumentIdx+=2) {
-									arguments[argumentIdx] = move(callArgumentsSpan[callArgumentIdx]);
+									arguments[argumentIdx] = std::move(callArgumentsSpan[callArgumentIdx]);
 									callArgumentIdx++;
 								}
 							}
@@ -2394,10 +2395,10 @@ void BaseMethods::registerMethods(MinitScript* minitScript) {
 							// create method call arguments
 							vector<MinitScript::Variable> callArguments(arguments.size() - 2);
 							//	this
-							callArguments[0] = move(arguments[0]);
+							callArguments[0] = std::move(arguments[0]);
 							//
 							for (auto argumentIdx = 3; argumentIdx < arguments.size(); argumentIdx++) {
-								callArguments[argumentIdx - 2] = move(arguments[argumentIdx]);
+								callArguments[argumentIdx - 2] = std::move(arguments[argumentIdx]);
 							}
 							//
 							span callArgumentsSpan(callArguments);
@@ -2411,11 +2412,11 @@ void BaseMethods::registerMethods(MinitScript* minitScript) {
 							//
 							// write back arguments from call arguments
 							//	this
-							arguments[0] = move(callArguments[0]);
+							arguments[0] = std::move(callArguments[0]);
 							//	additional arguments
 							{
 								for (auto argumentIdx = 3; argumentIdx < arguments.size(); argumentIdx++) {
-									arguments[argumentIdx] = move(callArguments[argumentIdx - 2]);
+									arguments[argumentIdx] = std::move(callArguments[argumentIdx - 2]);
 								}
 							}
 						} else {

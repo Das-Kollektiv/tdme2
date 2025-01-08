@@ -1,29 +1,38 @@
 #include <array>
 #include <cstdio>
 #include <cstdlib>
-#include <span>
 #include <memory>
+#include <span>
+#include <vector>
 
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/ApplicationMethods.h>
 #include <minitscript/minitscript/MinitScript.h>
 #include <minitscript/os/filesystem/FileSystem.h>
+#include <minitscript/os/threading/Mutex.h>
+#include <minitscript/os/threading/Thread.h>
 #include <minitscript/utilities/Console.h>
 #include <minitscript/utilities/Exception.h>
 #include <minitscript/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::span;
 using std::shared_ptr;
+using std::unique_ptr;
+using std::vector;
 
 using minitscript::minitscript::ApplicationMethods;
 
 using minitscript::minitscript::MinitScript;
-using minitscript::os::filesystem::FileSystem;
-using minitscript::utilities::Exception;
 
 using _Console = minitscript::utilities::Console;
+using _Exception = minitscript::utilities::Exception;
+using _FileSystem = minitscript::os::filesystem::FileSystem;
+using _Mutex = minitscript::os::threading::Mutex;
 using _StringTools = minitscript::utilities::StringTools;
+using _Thread = minitscript::os::threading::Thread;
+
 
 void ApplicationMethods::registerConstants(MinitScript* minitScript) {
 	minitScript->setConstant("$application::EXITCODE_SUCCESS", MinitScript::Variable(static_cast<int64_t>(EXIT_SUCCESS)));
@@ -96,7 +105,7 @@ const string ApplicationMethods::execute(const string& command, int* exitCode, s
 		while (feof(pipe) == false) {
 			if (fgets(buffer.data(), buffer.size(), pipe) != nullptr) result += buffer.data();
 		}
-	} catch (Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::printLine("ApplicationMethods::execute(): An error occurred: " + string(exception.what()));
 	}
 	// get exit code, if we have a pipe
@@ -112,15 +121,15 @@ const string ApplicationMethods::execute(const string& command, int* exitCode, s
 	// store error to given string error pointer
 	if (error != nullptr) {
 		try {
-			*error = FileSystem::getContentAsString(
-				FileSystem::getPathName(errorFile),
-				FileSystem::getFileName(errorFile)
+			*error = _FileSystem::getContentAsString(
+				_FileSystem::getPathName(errorFile),
+				_FileSystem::getFileName(errorFile)
 			);
-			FileSystem::removeFile(
-				FileSystem::getPathName(errorFile),
-				FileSystem::getFileName(errorFile)
+			_FileSystem::removeFile(
+				_FileSystem::getPathName(errorFile),
+				_FileSystem::getFileName(errorFile)
 			);
-		} catch (Exception& exception) {
+		} catch (_Exception& exception) {
 			_Console::printLine("ApplicationMethods::execute(): An error occurred: " + string(exception.what()));
 		}
 	}
@@ -166,6 +175,133 @@ void ApplicationMethods::registerMethods(MinitScript* minitScript) {
 			}
 		};
 		minitScript->registerMethod(new MethodApplicationExecute(minitScript));
+	}
+	{
+		//
+		class MethodApplicationExecuteMultiple: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			MethodApplicationExecuteMultiple(MinitScript* minitScript):
+				MinitScript::Method(
+					{
+						{ .type = MinitScript::TYPE_ARRAY, .name = "commands", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_INTEGER, .name = "concurrency", .optional = true, .reference = false, .nullable = false }
+					},
+					MinitScript::TYPE_BOOLEAN
+				),
+				minitScript(minitScript) {}
+			const string getMethodName() override {
+				return "application.executeMultiple";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				string command;
+				int64_t concurrency = 1;
+				if ((arguments.size() == 1 || arguments.size() == 2) &&
+					arguments[0].getType() == MinitScript::TYPE_ARRAY &&
+					MinitScript::getIntegerValue(arguments, 1, concurrency, true) == true) {
+					// collect commands
+					vector<string> commands;
+					auto arrayPtr = arguments[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						for (auto arrayEntry: *arrayPtr) commands.push_back(arrayEntry->getValueAsString());
+					}
+					/**
+					 * Execution commands container
+					 */
+					class ExecutionCommands {
+						private:
+							_Mutex mutex;
+							const vector<string>& commands;
+							int commandIdx { 0 };
+						public:
+							/**
+							 * Constructor
+							 * @param commands commands
+							 */
+							ExecutionCommands(const vector<string>& commands): mutex("cmdlist-mutex"), commands(commands) {
+							}
+							/**
+							 * @return returns left command
+							 */
+							bool getCommand(string& command) {
+								mutex.lock();
+								if (commandIdx >= commands.size()) {
+									mutex.unlock();
+									return false;
+								}
+								command = commands[commandIdx++];
+								mutex.unlock();
+								return true;
+							}
+							/**
+							 * Stop delivering commands
+							 */
+							void stop() {
+								mutex.lock();
+								commandIdx = commands.size();
+								mutex.unlock();
+							}
+					};
+					/**
+					 * Execution thread
+					 */
+					class ExecutionThread: public _Thread {
+						private:
+							ExecutionCommands* executionCommands;
+							bool failure { false };
+						public:
+							/**
+							 * Constructor
+							 * @param commands commands
+							 */
+							ExecutionThread(ExecutionCommands* executionCommands): _Thread("execution-thread"), executionCommands(executionCommands) {
+							}
+							/**
+							 * @returns returns if an error has occurred
+							 */
+							inline bool hadFailure() {
+								return failure;
+							}
+							/**
+							 * Run
+							 */
+							void run() {
+								string command;
+								while (executionCommands->getCommand(command) == true) {
+									int exitCode;
+									string error;
+									_Console::printLine(command);
+									auto result = ApplicationMethods::execute(command, &exitCode, &error);
+									if (result.empty() == false)_Console::printLine(result);
+									if (exitCode != EXIT_SUCCESS) {
+										executionCommands->stop();
+										if (error.empty() == false)_Console::printLine(error);
+										failure = true;
+									}
+								}
+							}
+					};
+					// execute
+					ExecutionCommands executionCommands(commands);
+					vector<unique_ptr<ExecutionThread>> executionThreads;
+					executionThreads.resize(concurrency);
+					for (auto i = 0; i < concurrency; i++) executionThreads[i] = make_unique<ExecutionThread>(&executionCommands);
+					for (auto i = 0; i < concurrency; i++) executionThreads[i]->start();
+					for (auto i = 0; i < concurrency; i++) executionThreads[i]->join();
+					// failure
+					auto success = true;
+					for (auto i = 0; i < concurrency; i++) {
+						if (executionThreads[i]->hadFailure() == true) success = false;
+					}
+					returnValue.setValue(success);
+					//
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new MethodApplicationExecuteMultiple(minitScript));
 	}
 	//
 	if (minitScript->getContext() != nullptr) {

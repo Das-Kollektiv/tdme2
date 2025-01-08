@@ -101,6 +101,46 @@ void FileSystemMethods::registerMethods(MinitScript* minitScript) {
 	}
 	{
 		//
+		class ScriptFileSystemGetFileTimeStamp: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			ScriptFileSystemGetFileTimeStamp(MinitScript* minitScript):
+				MinitScript::Method(
+					{
+						{ .type = MinitScript::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false }
+					},
+					MinitScript::TYPE_INTEGER,
+					false,
+					true
+				),
+				minitScript(minitScript) {
+				//
+			}
+			const string getMethodName() override {
+				return "filesystem.getFileTimeStamp";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				string pathName;
+				string fileName;
+				if (arguments.size() == 2 &&
+					MinitScript::getStringValue(arguments, 0, pathName) == true &&
+					MinitScript::getStringValue(arguments, 1, fileName) == true) {
+					try {
+						returnValue.setValue(static_cast<int64_t>(_FileSystem::getFileTimeStamp(pathName, fileName)));
+					} catch (_Exception& exception) {
+						minitScript->_throw(string(exception.what()));
+					}
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new ScriptFileSystemGetFileTimeStamp(minitScript));
+	}
+	{
+		//
 		class ScriptFileSystemGetContentAsString: public MinitScript::Method {
 		private:
 			MinitScript* minitScript { nullptr };
@@ -750,7 +790,7 @@ void FileSystemMethods::registerMethods(MinitScript* minitScript) {
 				MinitScript::Method(
 					{
 						{ .type = MinitScript::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
-						{ .type = MinitScript::TYPE_STRING, .name = "recursive", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_BOOLEAN, .name = "recursive", .optional = false, .reference = false, .nullable = false },
 					},
 					MinitScript::TYPE_NULL,
 					false,

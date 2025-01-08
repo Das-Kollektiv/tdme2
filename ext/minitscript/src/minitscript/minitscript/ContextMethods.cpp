@@ -1,6 +1,6 @@
-#include <span>
-
 #include <memory>
+#include <span>
+#include <utility>
 
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/ContextMethods.h>
@@ -99,12 +99,12 @@ void ContextMethods::registerMethods(MinitScript* minitScript) {
 							#if defined (__clang__)
 								// Clang currently does not support initializing span using begin and end iterators,
 								vector<MinitScript::Variable> callArguments(arguments.size() - 2);
-								for (auto i = 2; i < arguments.size(); i++) callArguments[i - 2] = move(arguments[i]);
+								for (auto i = 2; i < arguments.size(); i++) callArguments[i - 2] = std::move(arguments[i]);
 								// call
 								span callArgumentsSpan(callArguments);
 								script->call(scriptIdx, callArgumentsSpan, returnValue);
 								// move back arguments
-								for (auto i = 2; i < arguments.size(); i++) arguments[i] = move(callArguments[i - 2]);
+								for (auto i = 2; i < arguments.size(); i++) arguments[i] = std::move(callArguments[i - 2]);
 							#else
 								span callArgumentsSpan(arguments.begin() + 2, arguments.end());
 								script->call(scriptIdx, callArgumentsSpan, returnValue);

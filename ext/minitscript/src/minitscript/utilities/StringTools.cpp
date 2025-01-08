@@ -80,15 +80,16 @@ const string StringTools::trim(const string& str) {
 }
 
 const string_view StringTools::viewTrim(const string_view& str) {
+	if (str.empty() == true) return str;
 	int64_t start = 0;
 	for (int64_t i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) != 0) start++; else break;
 	}
-	int64_t end = 0;
+	int64_t end = str.size() - 1;
 	for (int64_t i = str.size() - 1; i >= 0; i--) {
-		if (isspace(str[i]) != 0) end++; else break;
+		if (isspace(str[i]) != 0) end--; else break;
 	}
-	return string_view(&str[start], str.size() - (start + end));
+	return string_view(&str[start], (end - start) + 1);
 }
 
 const string StringTools::toLowerCase(const string& str) {

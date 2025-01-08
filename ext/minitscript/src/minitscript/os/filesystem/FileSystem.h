@@ -72,6 +72,15 @@ public:
 	static uint64_t getFileSize(const string& pathName, const string& fileName);
 
 	/**
+	 * Return time stamp of given file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return time stamp
+	 * @throws tdme::os::filesystem::FileSystemException
+	 */
+	static uint64_t getFileTimeStamp(const string& pathName, const string& fileName);
+
+	/**
 	 * Get content as string
 	 * @param pathName path name
 	 * @param fileName file name
