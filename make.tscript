@@ -91,7 +91,7 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 
 end
 
-function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
+function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $files)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 
@@ -99,6 +99,7 @@ function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
+	console.printLine("definitions: " + $definitions)
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
 	console.printLine("libraries: " + $libraries)
@@ -122,9 +123,9 @@ function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
 			$cxx = "clang++"
 		end
  
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $librariesIncludes + " " + $includes
-		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -DRAPIDJSON_HAS_STDSTRING"
-		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING -Wno-enum-constexpr-conversion"
+		$includes = $librariesIncludes + " " + $includes
+		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG" + " " + $definitions
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
 
 		# compile each compilation units
 		$commands = []
@@ -244,7 +245,7 @@ function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
 	console.printLine()
 end
 
-function: buildExecutables($libraries, $includes, $ldFlags, $files)
+function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files)
 	console.printLine("Building executables")
 	console.printLine()
 
@@ -252,6 +253,7 @@ function: buildExecutables($libraries, $includes, $ldFlags, $files)
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
+	console.printLine("definitions: " + $definitions)
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
 	console.printLine("libraries: " + $libraries)
@@ -270,8 +272,8 @@ function: buildExecutables($libraries, $includes, $ldFlags, $files)
 		if ($$.application::OS == "FreeBSD" || $$.application::OS == "MacOSX")
 			$cxx = "clang++"
 		end
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
-		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING -Wno-enum-constexpr-conversion"
+		$includes = $librariesIncludes + " " + $includes
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
 	
 		# compile each executable
 		$commands = []
@@ -369,6 +371,12 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
 		elseif ($$.application::OS == "Haiku")
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [  
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
 		elseif ($$.application::OS == "Linux")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/linux/KernelEventMechanism.cpp"
@@ -380,6 +388,15 @@ function: main()
 			$tdmeIncludes = "-Iext/fbx/linux/include"
 			$tdmeLdFlags = "-Lext/fbx/linux/lib -lfbxsdk -lxml2"
 		elseif ($$.application::OS == "MacOSX")
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/bsd/linux/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [  
+				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
+				"src/tdme/engine/fileio/models/FBXReader.cpp"
+			]
+			$tdmeIncludes = "-Iext/fbx/linux/include"
+			$tdmeLdFlags = "-Lext/fbx/macosx/lib -lfbxsdk"
 		elseif ($$.application::OS == "NetBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -388,8 +405,26 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
 		elseif ($$.application::OS == "OpenBSD")
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
 		elseif ($$.application::OS == "Windows-MSC")
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/fallback/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
 		elseif ($$.application::OS == "Windows-MINGW")
+			$yannetPlatformFiles = [
+				"ext/yannet/src/yannet/os/network/fallback/bsd/KernelEventMechanism.cpp"
+			]
+			$tdmePlatformFiles = [
+				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			]
 		end
 
 		buildLibrary(
@@ -399,6 +434,7 @@ function: main()
 				"libcrypto"
 			],
 			"",
+			"-Iext/minitscript/src",
 			"",
 			[
 				"ext/minitscript/src/minitscript/minitscript/BaseMethods.cpp",
@@ -464,6 +500,7 @@ function: main()
 				"libcrypto"
 			],
 			"",
+			"-Iext/yannet/src",
 			"",
 			[
 				"ext/yannet/src/yannet/os/threading/Barrier.cpp",
@@ -502,11 +539,12 @@ function: main()
 				"ext/yannet/src/yannet/network/udpclient/UDPClient.cpp"
 			] + $yannetPlatformFiles
 		)
-	
+
 		buildLibrary(
 			"libtdme-ext",
 			[],
-			"",
+			"-DRAPIDJSON_HAS_STDSTRING",
+			"-Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib",
 			"",
 			[
 				# tiny xml
@@ -681,7 +719,8 @@ function: main()
 				"libssl",
 				"libcrypto"
 			],
-			$tdmeIncludes,
+			"-DRAPIDJSON_HAS_STDSTRING",
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src" + " " + $tdmeIncludes,
 			$tdmeLdFlags + " -Llib -ltdme-ext -lyannet -lminitscript",
 			[
 				"src/tdme/audio/Audio.cpp",
@@ -1123,7 +1162,7 @@ function: main()
 				"src/tdme/video/decoder/VideoDecoderException.cpp"
 			] + $tdmePlatformFiles
 		)
-	
+
 		buildLibrary(
 			"libopengl2renderer",
 			[
@@ -1132,13 +1171,14 @@ function: main()
 				"glfw3"
 			],
 			"",
+			"-Isrc",
 			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
 			]
 		)
-	
+
 		buildLibrary(
 			"libopengl3corerenderer",
 			[
@@ -1147,6 +1187,7 @@ function: main()
 				"glfw3"
 			],
 			"",
+			"-Isrc",
 			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
@@ -1162,16 +1203,18 @@ function: main()
 				"glfw3"
 			],
 			"",
+			"-Isrc",
 			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
 			]
 		)
-		
+
 		buildExecutables(
 			[],
-			"",
+			"-DRAPIDJSON_HAS_STDSTRING",
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src",
 			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
