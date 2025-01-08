@@ -99,6 +99,9 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
+	$concurrency = integer(concurrency.getHardwareThreadCount() / 1.5)
+
+	console.printLine("concurrency: " + $concurrency)
 	console.printLine("definitions: " + $definitions)
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
@@ -211,7 +214,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 		end
 
 		# execute commands
-		if (application.executeMultiple($commands, integer(concurrency.getHardwareThreadCount() / 1.5)) == false)
+		if (application.executeMultiple($commands, $concurrency) == false)
 			console.printLine("Not all files have been compiled. Stopping")
 		else
 			# link
@@ -253,6 +256,9 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
+	$concurrency = integer(concurrency.getHardwareThreadCount() / 1.5)
+
+	console.printLine("concurrency: " + $concurrency)
 	console.printLine("definitions: " + $definitions)
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
@@ -342,7 +348,7 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	 	end
 	 	
 	 	# execute commands
-		if (application.executeMultiple($commands, integer(concurrency.getHardwareThreadCount() / 1.5)) == false)
+		if (application.executeMultiple($commands, $concurrency) == false)
 			console.printLine("Not all files have been compiled. Stopping")
 		end
 	catch ($exception)
