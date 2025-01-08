@@ -35,8 +35,8 @@ function: clean()
 end
 
 function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFlags)
-	$librariesIncludes = ""
-	$librariesLdFlags = ""
+	$librariesIncludesArray = []
+	$librariesLdFlagsArray = []
 	forEach($library in $libraries)
 		# includes
 		$command = "pkgconf --cflags " + $library
@@ -48,11 +48,15 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
 			return
 		end
-		if ($librariesIncludes->isEmpty() == false)
-			$librariesIncludes = $librariesIncludes + " "
-		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
-		$librariesIncludes = $librariesIncludes + " " + String::trim($result->replace("\n", "")) 
+		$libraryIncludesArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
+		forEach($libraryInclude in $libraryIncludesArray)
+			if ($librariesIncludesArray->contains($libraryInclude) == true)
+				continue
+			end
+			# FIXME: $librariesLdFlagsArray->push($libraryInclude) does not work
+			$librariesIncludesArray[] = $libraryInclude
+		end
 
 		# ld flags
 		$command = "pkgconf --libs " + $library
@@ -64,12 +68,29 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
 			return
 		end
-		if ($librariesLdFlags->isEmpty() == false)
-			$librariesLdFlags = $librariesLdFlags + " "
-		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
-		$librariesLdFlags = $librariesLdFlags + " " + String::trim($result->replace("\n", ""))
+		$libraryLdFlagsArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
+		forEach($libraryLdFlag in $libraryLdFlagsArray)
+			if ($librariesLdFlagsArray->contains($libraryLdFlag) == true)
+				continue
+			end
+			# FIXME: $librariesLdFlagsArray->push($libraryLdFlag) does not work
+			$librariesLdFlagsArray[] = $libraryLdFlag
+		end
 	end
+
+	$librariesIncludes = ""
+	forEach($librariesInclude in $librariesIncludesArray)
+		$librariesIncludes = $librariesIncludes + " " + $librariesInclude
+	end
+	$librariesIncludes = $librariesIncludes->trim()
+
+	$librariesLdFlags = ""
+	forEach($libraryLdFlag in $librariesLdFlagsArray)
+		$librariesLdFlags = $librariesLdFlags + " " + $libraryLdFlag
+	end
+	$librariesLdFlags = $librariesLdFlags->trim()
+
 end
 
 function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
