@@ -34,10 +34,7 @@ function: clean()
 	end
 end
 
-function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
-	console.printLine("Building library: " + $name)
-	console.printLine()
-
+function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFlags)
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
 	forEach($library in $libraries)
@@ -73,9 +70,19 @@ function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
 		$librariesLdFlags = $librariesLdFlags + " " + String::trim($result->replace("\n", ""))
 	end
+end
+
+function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
+	console.printLine("Building library: " + $name)
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
 	console.printLine("libraries includes: " + $librariesIncludes)
 	console.printLine("libraries ld flags: " + $librariesLdFlags)
 
@@ -224,42 +231,11 @@ function: buildExecutables($libraries, $includes, $ldFlags, $files)
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	forEach($library in $libraries)
-		# includes
-		$command = "pkgconf --cflags " + $library
-		# execute
-		$exitCode = $$.application::EXITCODE_SUCCESS
-		$error = null
-		$result = application.execute($command, $exitCode, $error)
-		if ($exitCode != $$.application::EXITCODE_SUCCESS)
-			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
-			return
-		end
-		if ($librariesIncludes->isEmpty() == false)
-			$librariesIncludes = $librariesIncludes + " "
-		end
-		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
-		$librariesIncludes = $librariesIncludes + " " + String::trim($result->replace("\n", ""))
-
-		# ld flags
-		$command = "pkgconf --libs " + $library
-		# execute
-		$exitCode = $$.application::EXITCODE_SUCCESS
-		$error = null
-		$result = application.execute($command, $exitCode, $error)
-		if ($exitCode != $$.application::EXITCODE_SUCCESS)
-			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
-			return
-		end
-		if ($librariesLdFlags->isEmpty() == false)
-			$librariesLdFlags = $librariesLdFlags + " "
-		end
-		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
-		$librariesLdFlags = $librariesLdFlags + " " + String::trim($result->replace("\n", ""))
-	end
+	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
 	console.printLine("includes: " + $includes)
 	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
 	console.printLine("libraries includes: " + $librariesIncludes)
 	console.printLine("libraries ld flags: " + $librariesLdFlags)
 
