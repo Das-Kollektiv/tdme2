@@ -126,7 +126,7 @@ void MapMethods::registerMethods(MinitScript* minitScript) {
 				if (arguments.size() == 3 &&
 					arguments[0].getType() == MinitScript::TYPE_MAP &&
 					MinitScript::getStringValue(arguments, 1, key) == true) {
-					arguments[0].setMapEntry(key, MinitScript::Variable::createNonReferenceVariable(&arguments[2]));
+					arguments[0].setMapEntry(key, arguments[2].isReference() == false?arguments[2]:MinitScript::Variable::createNonReferenceVariable(&arguments[2]));
 				} else {
 					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
 				}

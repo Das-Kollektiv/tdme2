@@ -4992,7 +4992,12 @@ inline void MinitScript::setVariableInternal(const string& variableStatement, Va
 		if (parentVariable->getType() == MinitScript::TYPE_MAP) {
 			// check if our parent is not a const variable
 			if (parentVariable->isConstant() == false) {
-				parentVariable->setMapEntry(key, createReference == false?Variable::createNonReferenceVariable(&variable):Variable::createReferenceVariable(&variable));
+				parentVariable->setMapEntry(
+					key,
+					createReference == true?
+						(variable.isReference() == true?variable:Variable::createReferenceVariable(&variable)):
+						(variable.isReference() == false?variable:Variable::createNonReferenceVariable(&variable))
+				);
 			} else {
 				Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Constant: " + variableStatement + ": assignment of constant is not allowed");
 			}
@@ -5027,7 +5032,11 @@ inline void MinitScript::setVariableInternal(const string& variableStatement, Va
 			// check if our parent is not a const variable
 			if (parentVariable->isConstant() == false) {
 				// all checks passed, push variable to array
-				parentVariable->pushArrayEntry(createReference == false?Variable::createNonReferenceVariable(&variable):Variable::createReferenceVariable(&variable));
+				parentVariable->pushArrayEntry(
+					createReference == true?
+						(variable.isReference() == true?variable:Variable::createReferenceVariable(&variable)):
+						(variable.isReference() == false?variable:Variable::createNonReferenceVariable(&variable))
+				);
 			} else {
 				Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Constant: " + variableStatement + ": assignment of constant is not allowed");
 			}

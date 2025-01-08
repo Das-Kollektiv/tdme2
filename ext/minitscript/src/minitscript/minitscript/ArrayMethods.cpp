@@ -39,7 +39,7 @@ void ArrayMethods::registerMethods(MinitScript* minitScript) {
 			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
 				returnValue.setType(MinitScript::TYPE_ARRAY);
 				for (const auto& argument: arguments) {
-					returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(&argument));
+					returnValue.pushArrayEntry(argument.isReference() == false?argument:MinitScript::Variable::createNonReferenceVariable(&argument));
 				}
 			}
 		};
@@ -126,7 +126,7 @@ void ArrayMethods::registerMethods(MinitScript* minitScript) {
 				if (arguments.size() > 1 &&
 					arguments[0].getType() == MinitScript::TYPE_ARRAY) {
 					for (auto i = 1; i < arguments.size(); i++) {
-						arguments[0].pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(&arguments[i]));
+						arguments[0].pushArrayEntry(arguments[i].isReference() == false?arguments[i]:MinitScript::Variable::createNonReferenceVariable(&arguments[i]));
 					}
 				} else {
 					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
@@ -190,7 +190,7 @@ void ArrayMethods::registerMethods(MinitScript* minitScript) {
 				if (arguments.size() == 3 &&
 					arguments[0].getType() == MinitScript::TYPE_ARRAY &&
 					MinitScript::getIntegerValue(arguments, 1, index) == true) {
-					arguments[0].setArrayEntry(index, MinitScript::Variable::createNonReferenceVariable(&arguments[2]));
+					arguments[0].setArrayEntry(index, arguments[2].isReference() == false?arguments[2]:MinitScript::Variable::createNonReferenceVariable(&arguments[2]));
 				} else {
 					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
 				}
