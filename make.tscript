@@ -54,7 +54,6 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 			if ($librariesIncludesArray->contains($libraryInclude) == true)
 				continue
 			end
-			# FIXME: $librariesLdFlagsArray->push($libraryInclude) does not work
 			$librariesIncludesArray[] = $libraryInclude
 		end
 
@@ -74,7 +73,6 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 			if ($librariesLdFlagsArray->contains($libraryLdFlag) == true)
 				continue
 			end
-			# FIXME: $librariesLdFlagsArray->push($libraryLdFlag) does not work
 			$librariesLdFlagsArray[] = $libraryLdFlag
 		end
 	end
