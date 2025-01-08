@@ -361,6 +361,7 @@ function: main()
 	if (application.getArguments()->contains("clean") == true)
 		clean()
 	else
+		$yannetLdFlags = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = ""
 		if ($$.application::OS == "FreeBSD")
@@ -370,6 +371,7 @@ function: main()
 			$tdmePlatformFiles = [  
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
+			$yannetLdFlags = "-L/usr/local/lib -ldl -lexecinfo"
 			$tdmeLdFlags = "-L/usr/local/lib -ldl -lexecinfo"
 		elseif ($$.application::OS == "Haiku")
 			$yannetPlatformFiles = [
@@ -502,7 +504,7 @@ function: main()
 			],
 			"",
 			"-Iext/yannet/src",
-			"",
+			$yannetLdFlags,
 			[
 				"ext/yannet/src/yannet/os/threading/Barrier.cpp",
 				"ext/yannet/src/yannet/os/filesystem/FileSystem.cpp",
