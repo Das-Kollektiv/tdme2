@@ -34,8 +34,51 @@ function: clean()
 	end
 end
 
-function: buildLibrary($name, $includes, $ldFlags, $files)
+function: buildLibrary($name, $libraries, $includes, $ldFlags, $files)
 	console.printLine("Building library: " + $name)
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	forEach($library in $libraries)
+		# includes
+		$command = "pkgconf --cflags " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			return
+		end
+		if ($librariesIncludes->isEmpty() == false)
+			$librariesIncludes = $librariesIncludes + " "
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$librariesIncludes = $librariesIncludes + " " + String::trim($result->replace("\n", "")) 
+
+		# ld flags
+		$command = "pkgconf --libs " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			return
+		end
+		if ($librariesLdFlags->isEmpty() == false)
+			$librariesLdFlags = $librariesLdFlags + " "
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$librariesLdFlags = $librariesLdFlags + " " + String::trim($result->replace("\n", ""))
+	end
+
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
+
 	console.printLine()
 
 	try
@@ -53,7 +96,7 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 			$cxx = "clang++"
 		end
  
-		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $includes
+		$includes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src -Iext/yannet/src " + $librariesIncludes + " " + $includes
 		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -DRAPIDJSON_HAS_STDSTRING"
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -DRAPIDJSON_HAS_STDSTRING -Wno-enum-constexpr-conversion"
 
@@ -105,6 +148,8 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 					" " +
 					$cFlags +
 					" " +
+					$librariesIncludes +
+					" " +
 					$includes +
 					" " +
 					" -c -o " +
@@ -116,6 +161,8 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 					$cxx +
 					" " +
 					$cxxFlags +
+					" " +
+					$librariesIncludes +
 					" " +
 					$includes +
 					" " +
@@ -151,6 +198,8 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 				"-o " +
 				$libraryPath + "/" + $name + ".so" +
 				" " +
+				$librariesLdFlags +
+				" " +
 				$ldFlags
 			console.printLine($command)
 	
@@ -169,9 +218,50 @@ function: buildLibrary($name, $includes, $ldFlags, $files)
 	console.printLine()
 end
 
-function: buildExecutables($includes, $ldFlags, $files)
+function: buildExecutables($libraries, $includes, $ldFlags, $files)
 	console.printLine("Building executables")
 	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	forEach($library in $libraries)
+		# includes
+		$command = "pkgconf --cflags " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			return
+		end
+		if ($librariesIncludes->isEmpty() == false)
+			$librariesIncludes = $librariesIncludes + " "
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$librariesIncludes = $librariesIncludes + " " + String::trim($result->replace("\n", ""))
+
+		# ld flags
+		$command = "pkgconf --libs " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			return
+		end
+		if ($librariesLdFlags->isEmpty() == false)
+			$librariesLdFlags = $librariesLdFlags + " "
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$librariesLdFlags = $librariesLdFlags + " " + String::trim($result->replace("\n", ""))
+	end
+
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
 
 	try
 		#
@@ -236,12 +326,16 @@ function: buildExecutables($includes, $ldFlags, $files)
 				" " +
 				$cxxFlags +
 				" " +
+				$librariesIncludes +
+				" " +
 				$includes +
 				" " +
 				"-o " +
 				$executableFile +
 				" " +
 				$sourceFile +
+				" " +
+				$librariesLdFlags +
 				" " +
 				$ldFlags
 			console.printLine($command)
@@ -270,11 +364,9 @@ function: main()
 	if (application.getArguments()->contains("clean") == true)
 		clean()
 	else
-		$includes = ""
-		$ldFlags = ""
+		$tdmeIncludes = ""
+		$tdmeLdFlags = ""
 		if ($$.application::OS == "FreeBSD")
-			$includes = "-I/usr/local/include -I/usr/local/include/freetype2"
-			$ldFlags = "-L/usr/local/lib"
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
 			]
@@ -283,8 +375,6 @@ function: main()
 			]
 		elseif ($$.application::OS == "Haiku")
 		elseif ($$.application::OS == "Linux")
-			$includes = "-I/usr/include/freetype2 -Iext/fbx/linux/include"
-			$ldFlags = "-L/usr/lib64 -Lext/fbx/linux/lib -lfbxsdk -lxml2"
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/linux/KernelEventMechanism.cpp"
 			]
@@ -292,10 +382,10 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
+			$tdmeIncludes = "-Iext/fbx/linux/include"
+			$tdmeLdFlags = "-Lext/fbx/linux/lib -lfbxsdk -lxml2"
 		elseif ($$.application::OS == "MacOSX")
 		elseif ($$.application::OS == "NetBSD")
-			$includes = "-I/usr/X11R7/include -I/usr/pkg/include -I/usr/pkg/include/freetype2"
-			$ldFlags = "-L/usr/X11R7/lib -L/usr/pkg/lib"
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
 			]
@@ -309,8 +399,12 @@ function: main()
 
 		buildLibrary(
 			"libminitscript",
-			$includes,
-			$ldFlags + " -lssl -lcrypto",
+			[
+				"libssl", 
+				"libcrypto"
+			],
+			"",
+			"",
 			[
 				"ext/minitscript/src/minitscript/minitscript/BaseMethods.cpp",
 				"ext/minitscript/src/minitscript/minitscript/StringMethods.cpp",
@@ -370,8 +464,12 @@ function: main()
 	
 		buildLibrary(
 			"libyannet",
-			$includes,
-			$ldFlags + " -lssl -lcrypto",
+			[
+				"libssl", 
+				"libcrypto"
+			],
+			"",
+			"",
 			[
 				"ext/yannet/src/yannet/os/threading/Barrier.cpp",
 				"ext/yannet/src/yannet/os/filesystem/FileSystem.cpp",
@@ -412,8 +510,9 @@ function: main()
 	
 		buildLibrary(
 			"libtdme-ext",
-			$includes,
-			$ldFlags,
+			[],
+			"",
+			"",
 			[
 				# tiny xml
 				"ext/tinyxml/tinystr.cpp",
@@ -580,8 +679,15 @@ function: main()
 	
 		buildLibrary(
 			"libtdme",
-			$includes,
-			$ldFlags + " -ldl -lglfw -lopenal -lfreetype -lssl -lcrypto -Llib -ltdme-ext -lyannet -lminitscript",
+			[
+				"glfw3",
+				"openal",
+				"freetype2",
+				"libssl",
+				"libcrypto"
+			],
+			$tdmeIncludes,
+			$tdmeLdFlags + " -Llib -ltdme-ext -lyannet -lminitscript",
 			[
 				"src/tdme/audio/Audio.cpp",
 				"src/tdme/audio/AudioBufferManager.cpp",
@@ -1025,8 +1131,13 @@ function: main()
 	
 		buildLibrary(
 			"libopengl2renderer",
-			$includes,
-			$ldFlags + " -lGLEW -lGL -lglfw -Llib -ltdme",
+			[
+				"glew",
+				"gl",
+				"glfw3"
+			],
+			"",
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
@@ -1035,8 +1146,13 @@ function: main()
 	
 		buildLibrary(
 			"libopengl3corerenderer",
-			$includes,
-			$ldFlags + " -lGLEW -lGL -lglfw -Llib -ltdme",
+			[
+				"glew",
+				"gl",
+				"glfw3"
+			],
+			"",
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
@@ -1045,8 +1161,13 @@ function: main()
 	
 		buildLibrary(
 			"libopengles2renderer",
-			$includes,
-			$ldFlags + "-lGLESv2 -lEGL -lglfw -Llib -ltdme",
+			[
+				"glesv2",
+				"egl",
+				"glfw3"
+			],
+			"",
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
@@ -1054,7 +1175,8 @@ function: main()
 		)
 		
 		buildExecutables(
-			$includes,
+			[],
+			"",
 			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
