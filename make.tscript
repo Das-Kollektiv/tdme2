@@ -415,6 +415,9 @@ function: main()
 			$tdmePlatformFiles = [
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
+			$minitScriptLdFlags = "-L/usr/lib -lexecinfo"
+			$yannetLdFlags = "-L/usr/lib -lexecinfo"
+			$tdmeLdFlags = "-L/usr/lib -lexecinfo"
 		elseif ($$.application::OS == "OpenBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
