@@ -438,7 +438,7 @@ function: main()
 			]
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
-				"ext/yannet/src/yannet/os/network/fallback/KernelEventMechanism.cpp"
+				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
 			]
 			$tdmePlatformFiles = [
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
