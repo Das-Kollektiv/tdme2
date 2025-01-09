@@ -225,7 +225,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 		if (application.executeMultiple($commands, $concurrency) == false)
 			console.printLine("Not all files have been compiled. Stopping")
 		else
-# link
+			# link
 			$command =
 				$cxx +
 				" " +
