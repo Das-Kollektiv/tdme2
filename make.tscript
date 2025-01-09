@@ -219,7 +219,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 		if (application.executeMultiple($commands, $concurrency) == false)
 			console.printLine("Not all files have been compiled. Stopping")
 		else
-			# link
+# link
 			$command =
 				$cxx +
 				" " +
@@ -227,15 +227,14 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 				" " +
 				$compilationUnits +
 				" " +
-				$librariesLdFlags +
-				" " +
-				$ldFlags +
-				" " +
 				"-o " +
 				$libraryPath + "/" + $name + ".so" +
-				" "
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags
 			console.printLine($command)
-	
+
 			# execute
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
@@ -338,14 +337,14 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 				" " +
 				$includes +
 				" " +
+				"-o " +
+				$executableFile +
+				" " +
 				$sourceFile +
 				" " +
 				$librariesLdFlags +
 				" " +
 				$ldFlags
-				"-o " +
-				" " +
-				$executableFile
 			console.printLine($command)
 
 			#
