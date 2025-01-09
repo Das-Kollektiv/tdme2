@@ -122,7 +122,9 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 
 		# CXX arguments
 		$cxx = "g++"
-		if ($$.application::OS == "FreeBSD" || $$.application::OS == "MacOSX")
+		if ($$.application::OS == "FreeBSD" ||
+			$$.application::OS == "MacOSX" ||
+			$$.application::OS == "OpenBSD")
 			$cxx = "clang++"
 		end
  
@@ -225,12 +227,13 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 				" " +
 				$compilationUnits +
 				" " +
-				"-o " +
-				$libraryPath + "/" + $name + ".so" +
-				" " +
 				$librariesLdFlags +
 				" " +
-				$ldFlags
+				$ldFlags +
+				" " +
+				"-o " +
+				$libraryPath + "/" + $name + ".so" +
+				" "
 			console.printLine($command)
 	
 			# execute
@@ -275,7 +278,9 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	
 		# CXX arguments
 		$cxx = "g++"
-		if ($$.application::OS == "FreeBSD" || $$.application::OS == "MacOSX")
+		if ($$.application::OS == "FreeBSD" ||
+			$$.application::OS == "MacOSX" ||
+			$$.application::OS == "OpenBSD")
 			$cxx = "clang++"
 		end
 		$includes = $librariesIncludes + " " + $includes
@@ -333,14 +338,14 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 				" " +
 				$includes +
 				" " +
-				"-o " +
-				$executableFile +
-				" " +
 				$sourceFile +
 				" " +
 				$librariesLdFlags +
 				" " +
 				$ldFlags
+				"-o " +
+				" " +
+				$executableFile
 			console.printLine($command)
 
 			#
@@ -378,9 +383,9 @@ function: main()
 			$tdmePlatformFiles = [  
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
-			$minitScriptLdFlags = "-L/usr/local/lib -ldl -lexecinfo"
-			$yannetLdFlags = "-L/usr/local/lib -ldl -lexecinfo"
-			$tdmeLdFlags = "-L/usr/local/lib -ldl -lexecinfo"
+			$minitScriptLdFlags = "-L/usr/lib -ldl -lexecinfo"
+			$yannetLdFlags = "-L/usr/lib -ldl -lexecinfo"
+			$tdmeLdFlags = "-L/usr/lib -ldl -lexecinfo"
 		elseif ($$.application::OS == "Haiku")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
