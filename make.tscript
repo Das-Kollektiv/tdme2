@@ -127,7 +127,13 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 			$$.application::OS == "OpenBSD")
 			$cxx = "clang++"
 		end
- 
+
+		$libraryExtension = ".so"
+		if ($$.application::OS == "MacOSX")
+			$libraryExtension = ".dylib"
+		elseif ($$.application::OS == "Windows-MINGW" || $$.application::OS == "Windows-MSC")
+			$libraryExtension = ".dll"
+		end
 		$includes = $librariesIncludes + " " + $includes
 		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG" + " " + $definitions
 		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
@@ -228,7 +234,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 				$compilationUnits +
 				" " +
 				"-o " +
-				$libraryPath + "/" + $name + ".so" +
+				$libraryPath + "/" + $name + $libraryExtension +
 				" " +
 				$librariesLdFlags +
 				" " +
