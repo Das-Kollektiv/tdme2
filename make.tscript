@@ -438,11 +438,14 @@ function: main()
 			]
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
-				"ext/yannet/src/yannet/os/network/fallback/bsd/KernelEventMechanism.cpp"
+				"ext/yannet/src/yannet/os/network/fallback/KernelEventMechanism.cpp"
 			]
 			$tdmePlatformFiles = [
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
+			$minitScriptLdFlags = "-lws2_32"
+			$yannetLdFlags = "-lws2_32"
+			$tdmeLdFlags = "-lws2_32"
 		end
 
 		buildLibrary(
