@@ -375,7 +375,6 @@ function: main()
 		$yannetLdFlags = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = ""
-		$ldLibraryExtension = ""
 		if ($$.application::OS == "FreeBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -447,7 +446,6 @@ function: main()
 			$minitScriptLdFlags = "-lws2_32"
 			$yannetLdFlags = "-lws2_32"
 			$tdmeLdFlags = "-lws2_32"
-			$ldLibraryExtension = ".dll"
 		end
 
 		buildLibrary(
@@ -744,10 +742,7 @@ function: main()
 			],
 			"-DRAPIDJSON_HAS_STDSTRING",
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src" + " " + $tdmeIncludes,
-			$tdmeLdFlags + " -Llib" +
-				" -ltdme-ext" + $ldLibraryExtension + 
-				" -lyannet" + $ldLibraryExtension + 
-				" -lminitscript" + $ldLibraryExtension,
+			$tdmeLdFlags + " -Llib -ltdme-ext -lyannet -lminitscript",
 			[
 				"src/tdme/audio/Audio.cpp",
 				"src/tdme/audio/AudioBufferManager.cpp",
@@ -1198,8 +1193,7 @@ function: main()
 			],
 			"",
 			"-Isrc",
-			"-Llib" +
-				" -ltdme" + $ldLibraryExtension,
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
@@ -1215,8 +1209,7 @@ function: main()
 			],
 			"",
 			"-Isrc",
-			"-Llib" +
-				" -ltdme" + $ldLibraryExtension,
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
@@ -1232,8 +1225,7 @@ function: main()
 			],
 			"",
 			"-Isrc",
-			"-Llib" +
-				" -ltdme" + $ldLibraryExtension,
+			"-Llib -ltdme",
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
@@ -1250,12 +1242,7 @@ function: main()
 			],
 			"-DRAPIDJSON_HAS_STDSTRING",
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src",
-			"-Llib" +
-				" -ltdme" + $ldLibraryExtension + 
-				" -ltdme-ext" + $ldLibraryExtension +
-				" -lyannet" + $ldLibraryExtension + 
-				" -lminitscript" + $ldLibraryExtension + 
-				" -pthread",
+			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
 				"src/tdme/tests/ContainerTest-main.cpp",
