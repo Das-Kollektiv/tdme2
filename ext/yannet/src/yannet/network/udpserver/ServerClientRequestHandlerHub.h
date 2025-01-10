@@ -14,9 +14,6 @@ namespace yannet {
 namespace network {
 namespace udpserver {
 
-using ::yannet::network::udpserver::ServerClientRequestHandler;
-using ::yannet::network::udpserver::ServerClientRequestHandlerHubException;
-
 /**
  * @brief Network server client request handler hub
  * @author Andreas Drewke

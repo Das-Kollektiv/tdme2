@@ -4,8 +4,6 @@
 #include <minitscript/minitscript/fwd-minitscript.h>
 #include <minitscript/minitscript/MinitScript.h>
 
-using minitscript::minitscript::MinitScript;
-
 /**
  * MinitScript script base methods
  * @author Andreas Drewke

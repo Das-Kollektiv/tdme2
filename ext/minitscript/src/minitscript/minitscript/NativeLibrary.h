@@ -8,8 +8,6 @@
 
 using std::string;
 
-using minitscript::minitscript::MinitScript;
-
 /** 
  * Native script library
  * @author Andreas Drewke

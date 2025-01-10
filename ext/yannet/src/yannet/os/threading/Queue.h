@@ -13,9 +13,6 @@ namespace yannet {
 namespace os {
 namespace threading {
 
-using ::yannet::os::threading::Condition;
-using ::yannet::os::threading::Mutex;
-
 /**
  * Consumer/producer queue.
  * @author Andreas Drewke

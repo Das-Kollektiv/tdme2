@@ -9,16 +9,6 @@
 
 using std::string;
 
-// namespaces
-namespace yannet {
-namespace os {
-namespace threading {
-	using ::yannet::os::threading::Condition;
-	using ::yannet::os::threading::Mutex;
-}
-}
-}
-
 /**
  * Barrier implementation.
  * @author Andreas Drewke

@@ -33,8 +33,6 @@ namespace udpclient {
 	using ::yannet::os::threading::Mutex;
 	using ::yannet::os::threading::Thread;
 	using ::yannet::network::udp::UDPPacket;
-	using ::yannet::network::udpclient::NetworkClientException;
-	using ::yannet::network::udpclient::UDPClientMessage;
 }
 }
 }

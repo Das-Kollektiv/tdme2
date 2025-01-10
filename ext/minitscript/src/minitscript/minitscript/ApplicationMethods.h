@@ -5,8 +5,6 @@
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/fwd-minitscript.h>
 
-using minitscript::minitscript::MinitScript;
-
 using std::string;
 
 /**

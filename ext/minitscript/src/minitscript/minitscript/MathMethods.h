@@ -7,8 +7,6 @@
 
 using std::span;
 
-using minitscript::minitscript::MinitScript;
-
 /**
  * MinitScript math methods
  * @author Andreas Drewke

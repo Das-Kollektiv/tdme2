@@ -1,8 +1,17 @@
+#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__) || defined(__OpenBSD__)
+	#include <spawn.h>
+	#include <sys/types.h>
+	#include <sys/wait.h>
+
+	#include <cstring>
+#endif
+
 #include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
 #include <span>
+#include <string>
 #include <vector>
 
 #include <minitscript/minitscript.h>
@@ -19,6 +28,8 @@ using std::array;
 using std::make_unique;
 using std::span;
 using std::shared_ptr;
+using std::string;
+using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
@@ -33,6 +44,7 @@ using _Mutex = minitscript::os::threading::Mutex;
 using _StringTools = minitscript::utilities::StringTools;
 using _Thread = minitscript::os::threading::Thread;
 
+extern char **environ;
 
 void ApplicationMethods::registerConstants(MinitScript* minitScript) {
 	minitScript->setConstant("$application::EXITCODE_SUCCESS", MinitScript::Variable(static_cast<int64_t>(EXIT_SUCCESS)));
@@ -89,7 +101,11 @@ const string ApplicationMethods::execute(const string& command, int* exitCode, s
 	// error stream
 	string errorFile;
 	if (error != nullptr) {
-		errorFile = tmpnam(nullptr);
+		#if defined(__MINGW32__) || defined(__MINGW64__)
+			errorFile = string() + "." + tmpnam(nullptr);
+		#else
+			errorFile = tmpnam(nullptr);
+		#endif
 		_command+= " 2>" + errorFile;
 	}
 	// execute command
@@ -102,8 +118,8 @@ const string ApplicationMethods::execute(const string& command, int* exitCode, s
 			pipe = popen(_command.c_str(), "r");
 		#endif
 		if (pipe == nullptr) throw std::runtime_error("popen() failed!");
-		while (feof(pipe) == false) {
-			if (fgets(buffer.data(), buffer.size(), pipe) != nullptr) result += buffer.data();
+		while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
+			result += buffer.data();
 		}
 	} catch (_Exception& exception) {
 		_Console::printLine("ApplicationMethods::execute(): An error occurred: " + string(exception.what()));
@@ -248,14 +264,16 @@ void ApplicationMethods::registerMethods(MinitScript* minitScript) {
 					 */
 					class ExecutionThread: public _Thread {
 						private:
+							int idx;
 							ExecutionCommands* executionCommands;
 							bool failure { false };
 						public:
 							/**
 							 * Constructor
-							 * @param commands commands
+							 * @param idx thread index
+							 * @param executionCommands excecution commands
 							 */
-							ExecutionThread(ExecutionCommands* executionCommands): _Thread("execution-thread"), executionCommands(executionCommands) {
+							ExecutionThread(int idx, ExecutionCommands* executionCommands): _Thread("execution-thread"), idx(idx), executionCommands(executionCommands) {
 							}
 							/**
 							 * @returns returns if an error has occurred
@@ -269,14 +287,37 @@ void ApplicationMethods::registerMethods(MinitScript* minitScript) {
 							void run() {
 								string command;
 								while (executionCommands->getCommand(command) == true) {
-									int exitCode;
-									string error;
-									_Console::printLine(command);
-									auto result = ApplicationMethods::execute(command, &exitCode, &error);
-									if (result.empty() == false)_Console::printLine(result);
+									_Console::printLine("[" + to_string(idx) + "]: " + command);
+									#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__) || defined(__OpenBSD__)
+										//
+										pid_t pid;
+										auto commandC = new char[command.size() + 1];
+										strcpy(commandC, command.c_str());
+										char *argv[] = {"/bin/sh", "-c", commandC, nullptr};
+										//
+										auto exitCode = EXIT_FAILURE;
+										auto status = posix_spawn(&pid, "/bin/sh", nullptr, nullptr, argv, ::environ);
+										if (status == 0) {
+											do {
+												if (waitpid(pid, &status, 0) != -1) {
+													exitCode = WEXITSTATUS(status);
+												} else {
+													break;
+												}
+											} while (WIFEXITED(status) == 0 && WIFSIGNALED(status) == 0);
+										}
+										delete [] commandC;
+									#else
+										int exitCode;
+										string error;
+										_Console::printLine("[" + to_string(idx) + "]: " + command);
+										auto result = ApplicationMethods::execute(command, &exitCode, &error);
+										if (result.empty() == false)_Console::printLine(result);
+										if (error.empty() == false) _Console::printLine(error);
+									#endif
+									//
 									if (exitCode != EXIT_SUCCESS) {
 										executionCommands->stop();
-										if (error.empty() == false)_Console::printLine(error);
 										failure = true;
 									}
 								}
@@ -286,7 +327,7 @@ void ApplicationMethods::registerMethods(MinitScript* minitScript) {
 					ExecutionCommands executionCommands(commands);
 					vector<unique_ptr<ExecutionThread>> executionThreads;
 					executionThreads.resize(concurrency);
-					for (auto i = 0; i < concurrency; i++) executionThreads[i] = make_unique<ExecutionThread>(&executionCommands);
+					for (auto i = 0; i < concurrency; i++) executionThreads[i] = make_unique<ExecutionThread>(i, &executionCommands);
 					for (auto i = 0; i < concurrency; i++) executionThreads[i]->start();
 					for (auto i = 0; i < concurrency; i++) executionThreads[i]->join();
 					// failure

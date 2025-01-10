@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -115,7 +116,19 @@ uint64_t FileSystem::getFileSize(const string& pathName, const string& fileName)
 		throw FileSystemException("Unable to determine file size: " + fileName + ": " + string(exception.what()));
 	}
 	//
-	return false;
+	return 0ll;
+}
+
+uint64_t FileSystem::getFileTimeStamp(const string& pathName, const string& fileName) {
+	try {
+		auto fileTime = std::filesystem::last_write_time(std::filesystem::path((const char8_t*)composeURI(pathName, fileName).c_str()));
+		auto timePoint = time_point_cast<std::chrono::system_clock::duration>(fileTime - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
+		return std::chrono::system_clock::to_time_t(timePoint);
+	} catch (Exception& exception) {
+		throw FileSystemException("Unable to determine file size: " + fileName + ": " + string(exception.what()));
+	}
+	//
+	return 0ll;
 }
 
 const string FileSystem::getContentAsString(const string& pathName, const string& fileName) {

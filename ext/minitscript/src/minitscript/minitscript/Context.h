@@ -11,8 +11,6 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using minitscript::minitscript::MinitScript;
-
 /** 
  * Scripts context
  * @author Andreas Drewke

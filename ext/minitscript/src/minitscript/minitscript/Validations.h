@@ -6,8 +6,6 @@
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/MinitScript.h>
 
-using minitscript::minitscript::MinitScript;
-
 using std::string;
 using std::vector;
 

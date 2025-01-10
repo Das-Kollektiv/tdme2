@@ -8,15 +8,6 @@
 
 using std::string;
 
-// namespaces
-namespace yannet {
-namespace os {
-namespace network {
-	using ::yannet::os::network::NetworkSocketException;
-}
-}
-}
-
 /**
  * Base class of network sockets
  * @author Andreas Drewke

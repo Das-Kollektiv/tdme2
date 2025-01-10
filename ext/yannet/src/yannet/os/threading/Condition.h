@@ -13,15 +13,6 @@ using std::condition_variable_any;
 using std::mutex;
 using std::string;
 
-// namespaces
-namespace yannet {
-namespace os {
-namespace threading {
-	using ::yannet::os::threading::Mutex;
-}
-}
-}
-
 /**
 * Threading condition variable implementation
 * @author Andreas Drewke

@@ -16,7 +16,6 @@ using std::vector;
 namespace yannet {
 namespace utilities {
 	using ::yannet::math::Math;
-	using ::yannet::utilities::Console;
 }
 }
 

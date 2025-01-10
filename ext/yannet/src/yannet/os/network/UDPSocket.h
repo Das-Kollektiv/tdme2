@@ -16,17 +16,6 @@
 
 using std::string;
 
-// namespaces
-namespace yannet {
-namespace os {
-namespace network {
-	using ::yannet::os::network::NetworkIOException;
-	using ::yannet::os::network::NetworkSocket;
-	using ::yannet::os::network::NetworkSocketException;
-}
-}
-}
-
 /**
  * Class representing a UDP socket
  * @author Andreas Drewke

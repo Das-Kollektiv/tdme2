@@ -10,8 +10,10 @@
 using std::make_unique;
 using std::string;
 
-using minitscript::minitscript::Context;
 using minitscript::minitscript::Library;
+
+using minitscript::minitscript::Context;
+using minitscript::minitscript::MinitScript;
 using minitscript::utilities::Console;
 
 Library::Library(Context* context) {

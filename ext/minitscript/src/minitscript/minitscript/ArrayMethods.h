@@ -3,8 +3,6 @@
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/fwd-minitscript.h>
 
-using minitscript::minitscript::MinitScript;
-
 /**
  * MinitScript script array methods
  * @author Andreas Drewke

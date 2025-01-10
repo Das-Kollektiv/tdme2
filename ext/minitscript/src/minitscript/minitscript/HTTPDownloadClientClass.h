@@ -14,8 +14,6 @@ using std::shared_ptr;
 using std::span;
 using std::vector;
 
-using minitscript::minitscript::MinitScript;
-
 // namespaces
 namespace minitscript {
 namespace minitscript {

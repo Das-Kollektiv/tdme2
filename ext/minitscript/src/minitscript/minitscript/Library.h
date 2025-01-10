@@ -7,8 +7,6 @@
 
 using std::string;
 
-using minitscript::minitscript::MinitScript;
-
 /** 
  * Script library
  * @author Andreas Drewke
