@@ -368,15 +368,36 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	console.printLine()
 end
 
+function: printUsage()
+	console.printLine("Usage: minitscript [clean] [libraries] [executables]")
+end
+
 function: main()
 	console.printLine("-------------------")
 	console.printLine("TDME2 build script")
 	console.printLine("-------------------")
 	console.printLine()
 
+	if (application.getArguments()->getSize() == 1)
+			printUsage()
+			return ($$.application::EXITCODE_FAILURE)
+	end
+
+	$argumentIdx = 0
+	forEach($argument in application.getArguments())
+		if ($argumentIdx == 0) 
+			continue
+		end
+		if ($argument != "clean" && $argument != "libraries" && $argument != "executables")
+			printUsage()
+			return ($$.application::EXITCODE_FAILURE)
+		end
+		++$argumentIdx
+	end
+
 	if (application.getArguments()->contains("clean") == true)
 		clean()
-	else
+	elseif (application.getArguments()->contains("libraries") == true || application.getArguments()->contains("executables") == true)
 		$minitScriptLdFlags = ""
 		$yannetLdFlags = ""
 		$tdmeIncludes = ""
@@ -1237,7 +1258,9 @@ function: main()
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
 			]
 		)
+	end
 
+	if (application.getArguments()->contains("executables") == true)
 		buildExecutables(
 			[
 				"glfw3",
