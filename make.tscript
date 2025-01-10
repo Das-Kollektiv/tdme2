@@ -99,7 +99,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
-	$concurrency = integer(concurrency.getHardwareThreadCount() / 1.5)
+	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
 
 	console.printLine("concurrency: " + $concurrency)
 	console.printLine("definitions: " + $definitions)
@@ -264,7 +264,7 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	$librariesLdFlags = ""
 	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
 
-	$concurrency = integer(concurrency.getHardwareThreadCount() / 1.5)
+	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
 
 	console.printLine("concurrency: " + $concurrency)
 	console.printLine("definitions: " + $definitions)
