@@ -15,6 +15,7 @@ end
 
 function: clean()
 	console.printLine("Cleaning")
+	console.printLine()
 	#
 	$objectPath = "obj"
 	$libraryPath = "lib"
@@ -397,7 +398,9 @@ function: main()
 
 	if (application.getArguments()->contains("clean") == true)
 		clean()
-	elseif (application.getArguments()->contains("libraries") == true || application.getArguments()->contains("executables") == true)
+	end
+	
+	if (application.getArguments()->contains("libraries") == true || application.getArguments()->contains("executables") == true)
 		$minitScriptLdFlags = ""
 		$yannetLdFlags = ""
 		$tdmeIncludes = ""
