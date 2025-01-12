@@ -35,7 +35,7 @@ function: clean()
 	end
 end
 
-function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
+function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
 	$librariesIncludesArray = []
 	$librariesLdFlagsArray = []
 	forEach($library in $libraries)
@@ -107,7 +107,7 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	if (determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
+	if (determineLibraryFlagsUnix($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
 		return
 	end
 
@@ -283,7 +283,7 @@ function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $f
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	if (determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags) == false)
+	if (determineLibraryFlagsUnix($libraries, $librariesIncludes, $librariesLdFlags) == false)
 		return
 	end
 
