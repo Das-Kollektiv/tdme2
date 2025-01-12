@@ -51,7 +51,7 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 				console.printLine()
 				application.exit($$.application::EXITCODE_FAILURE)
 			end
-			return
+			return(false)
 		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
 		$libraryIncludesArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
@@ -74,7 +74,7 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 				console.printLine()
 				application.exit($$.application::EXITCODE_FAILURE)
 			end
-			return
+			return(false)
 		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
 		$libraryLdFlagsArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
@@ -98,6 +98,7 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 	end
 	$librariesLdFlags = $librariesLdFlags->trim()
 
+	return(true)
 end
 
 function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
@@ -106,7 +107,9 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
+	if (determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
+		return
+	end
 
 	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
 
@@ -280,7 +283,9 @@ function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $f
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags)
+	if (determineLibraryFlags($libraries, $librariesIncludes, $librariesLdFlags) == false)
+		return
+	end
 
 	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
 
@@ -400,7 +405,11 @@ function: findLibMSC($fileNamePrefix, $pathName)
 		if ($file == "..")
 			continue
 		end
-		if (filesystem.isPath($pathName + "/" + $file) == false && $file->startsWith($fileNamePrefix) == true && $file->endsWith(".lib") == true)
+		# TODO: $file->toLowerCase()->startsWith($fileNamePrefix)
+		$fileLowerCase = $file->toLowerCase()
+		if (filesystem.isPath($pathName + "/" + $file) == false && 
+			$fileLowerCase->startsWith($fileNamePrefix) == true && 
+			$fileLowerCase->endsWith(".lib") == true)
 			return($pathName + "/" + $file)
 		end
 	end
@@ -428,8 +437,11 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 		$libraryLibFile = findLibMSC($library, "./ext")
 		if ($libraryLibFile == null)
 			console.printLine("Could not find library in ext: " + $library)
-			console.printLine()
-			application.exit($$.application::EXITCODE_FAILURE)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+			return(false)
 		end
 		# add to ld flags array
 		if ($librariesLdFlagsArray->contains($libraryLibFile) == false)
@@ -451,8 +463,11 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 		end
 		if ($includePathName == null)
 			console.printLine("Could not find library include in ext: " + $library)
-			console.printLine()
-			application.exit($$.application::EXITCODE_FAILURE)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+			return(false)
 		end
 		# add to ld flags array
 		if ($librariesIncludesArray->contains($includePathName) == false)
@@ -462,15 +477,17 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 
 	$librariesIncludes = ""
 	forEach($librariesInclude in $librariesIncludesArray)
-		$librariesIncludes = $librariesIncludes + " " + $librariesInclude
+		$librariesIncludes = $librariesIncludes + " /I " + $librariesInclude
 	end
-	$librariesIncludes = "/I " + $librariesIncludes->trim()
+	$librariesIncludes = $librariesIncludes->trim()
 
 	$librariesLdFlags = ""
 	forEach($libraryLdFlag in $librariesLdFlagsArray)
-		$librariesLdFlags = $librariesLdFlags + " " + $libraryLdFlag
+		$librariesLdFlags = $librariesLdFlags + " /LIBPATH " + $libraryLdFlag
 	end
-	$librariesLdFlags = "/LIBPATH " + $librariesLdFlags->trim()
+	$librariesLdFlags = $librariesLdFlags->trim()
+
+	return(true)
 end
 
 function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
@@ -479,7 +496,9 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 
 	$librariesIncludes = ""
 	$librariesLdFlags = ""
-	determineLibraryFlagsMSC($libraries, $librariesIncludes, $librariesLdFlags)
+	if (determineLibraryFlagsMSC($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
+		return
+	end
 
 	# TODO: find newest version by name in folder
 	$WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0"
@@ -572,8 +591,8 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				$includes +
 				" " +
 				$file + 
-				" " +
-				"> nul"
+				" " + 
+				"> nul 2>&1"
 			#
 			if ($command == null)
 				continue
@@ -696,8 +715,8 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
-			$tdmeIncludes = "-Iext/fbx/win/include"
-			$tdmeLdFlags = "-Lext/fbx/win/lib -lfbxsdk"
+			$tdmeIncludes = "-Iext/fbx/win64/include"
+			$tdmeLdFlags = "-Lext/fbx/win64/lib -lfbxsdk"
 			$buildLibrary = "buildLibraryWindowsMSC"
 			$minitScriptLdFlags = "-lws2_32"
 			$yannetLdFlags = "-lws2_32"
