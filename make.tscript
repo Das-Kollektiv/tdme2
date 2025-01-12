@@ -35,7 +35,7 @@ function: clean()
 	end
 end
 
-function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFlags)
+function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
 	$librariesIncludesArray = []
 	$librariesLdFlagsArray = []
 	forEach($library in $libraries)
@@ -47,6 +47,10 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 		$result = application.execute($command, $exitCode, $error)
 		if ($exitCode != $$.application::EXITCODE_SUCCESS)
 			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
 			return
 		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
@@ -66,6 +70,10 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 		$result = application.execute($command, $exitCode, $error)
 		if ($exitCode != $$.application::EXITCODE_SUCCESS)
 			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
 			return
 		end
 		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
@@ -92,7 +100,7 @@ function: determineLibraryFlags($libraries, &$librariesIncludes, &$librariesLdFl
 
 end
 
-function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $files)
+function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 
@@ -224,7 +232,12 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 
 		# execute commands
 		if (application.executeMultiple($commands, $concurrency) == false)
+			console.printLine()
 			console.printLine("Not all files have been compiled. Stopping")
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
 		else
 			# link
 			$command =
@@ -248,6 +261,10 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 			application.execute($command, $exitCode, $error)
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
 			end
 		end
 	catch ($exception)
@@ -257,7 +274,7 @@ function: buildLibrary($name, $libraries, $definitions, $includes, $ldFlags, $fi
 	console.printLine()
 end
 
-function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files)
+function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building executables")
 	console.printLine()
 
@@ -361,6 +378,10 @@ function: buildExecutables($libraries, $definitions, $includes, $ldFlags, $files
 	 	# execute commands
 		if (application.executeMultiple($commands, $concurrency) == false)
 			console.printLine("Not all files have been compiled. Stopping")
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
 		end
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
@@ -478,7 +499,10 @@ function: main()
 			$tdmeLdFlags = "-lws2_32"
 		end
 
-		buildLibrary(
+		$buildLibrary = "buildLibraryUnix"
+
+		script.call(
+			$buildLibrary,
 			"libminitscript",
 			[
 				"libssl", 
@@ -541,10 +565,12 @@ function: main()
 				"ext/minitscript/src/minitscript/network/httpclient/HTTPClient.cpp",
 				"ext/minitscript/src/minitscript/network/httpclient/HTTPClientException.cpp",
 				"ext/minitscript/src/minitscript/network/httpclient/HTTPDownloadClient.cpp"
-			]
+			],
+			false
 		)
 	
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libyannet",
 			[
 				"libssl", 
@@ -588,10 +614,12 @@ function: main()
 				"ext/yannet/src/yannet/network/udpclient/UDPClientMessage.cpp",
 				"ext/yannet/src/yannet/network/udpclient/NetworkClientException.cpp",
 				"ext/yannet/src/yannet/network/udpclient/UDPClient.cpp"
-			] + $yannetPlatformFiles
+			] + $yannetPlatformFiles,
+			false
 		)
 
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libtdme-ext",
 			[],
 			"-DRAPIDJSON_HAS_STDSTRING",
@@ -758,10 +786,12 @@ function: main()
 				# bc 7
 				"ext/bc7enc_rdo/bc7decomp.cpp",
 				"ext/bc7enc_rdo/bc7enc.cpp"
-			]
+			],
+			false
 		)
 	
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libtdme",
 			[
 				"glfw3",
@@ -1211,10 +1241,12 @@ function: main()
 				"src/tdme/utilities/UTF8StringTools.cpp",
 				"src/tdme/video/decoder/MPEG1Decoder.cpp",
 				"src/tdme/video/decoder/VideoDecoderException.cpp"
-			] + $tdmePlatformFiles
+			] + $tdmePlatformFiles,
+			false
 		)
 
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libopengl2renderer",
 			[
 				"glew",
@@ -1227,10 +1259,12 @@ function: main()
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
-			]
+			],
+			true
 		)
 
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libopengl3corerenderer",
 			[
 				"glew",
@@ -1243,10 +1277,12 @@ function: main()
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
-			]
+			],
+			true
 		)
 	
-		buildLibrary(
+		script.call(
+			$buildLibrary,
 			"libopengles2renderer",
 			[
 				"glesv2",
@@ -1259,12 +1295,16 @@ function: main()
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"
-			]
+			],
+			true
 		)
 	end
 
 	if (application.getArguments()->contains("executables") == true)
-		buildExecutables(
+		$buildExecutables = "buildExecutablesUnix"
+		
+		script.call(
+			$buildExecutables,
 			[
 				"glfw3",
 				"openal",
@@ -1333,7 +1373,8 @@ function: main()
 				"src/tdme/tools/cli/recreatevkcache-main.cpp",
 				"src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp",
 				"src/tdme/tools/cli/sortincludes-main.cpp"
-			]
+			],
+			false
 		)
 	end
 end
