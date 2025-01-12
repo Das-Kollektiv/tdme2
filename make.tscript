@@ -394,6 +394,213 @@ function: printUsage()
 	console.printLine("Usage: minitscript [clean] [libraries] [executables]")
 end
 
+function: findLibMSC($fileNamePrefix, $pathName)
+	$files = filesystem.list($pathName)
+	forEach($file in $files)
+		if ($file == "..")
+			continue
+		end
+		if (filesystem.isPath($pathName + "/" + $file) == false && $file->startsWith($fileNamePrefix) == true && $file->endsWith(".lib") == true)
+			return($pathName + "/" + $file)
+		end
+	end
+	forEach($file in $files)
+		if ($file == "..")
+			continue
+		end
+		if (filesystem.isPath($pathName + "/" + $file) == true)
+			$result = findLibMSC($fileNamePrefix, $pathName + "/" + $file)
+			if ($result != null) 
+				return($result)
+			end
+		end
+	end
+	return(null)
+end
+
+function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
+	$librariesIncludesArray = []
+	$librariesLdFlagsArray = []
+
+	# we look for .lib files
+	forEach($library in $libraries)
+		# find lib file
+		$libraryLibFile = findLibMSC($library, "./ext")
+		if ($libraryLibFile == null)
+			console.printLine("Could not find library in ext: " + $library)
+			console.printLine()
+			application.exit($$.application::EXITCODE_FAILURE)
+		end
+		# add to ld flags array
+		if ($librariesLdFlagsArray->contains($libraryLibFile) == false)
+			$librariesLdFlagsArray->push($libraryLibFile)
+		end
+		# find include
+		$includePathName = null
+		$includePathNameCandidate = filesystem.getPathName($libraryLibFile)
+		forCondition($includePathNameCandidate != "./ext")
+			$includePathNameCandidate = filesystem.getPathName($includePathNameCandidate)
+			if (filesystem.exists($includePathNameCandidate + "/include") == true)
+				$includePathName = $includePathNameCandidate + "/include"
+				break
+			end  
+			if (filesystem.exists($includePathNameCandidate + "/includes") == true)
+				$includePathName = $includePathNameCandidate + "/includes"
+				break
+			end
+		end
+		if ($includePathName == null)
+			console.printLine("Could not find library include in ext: " + $library)
+			console.printLine()
+			application.exit($$.application::EXITCODE_FAILURE)
+		end
+		# add to ld flags array
+		if ($librariesIncludesArray->contains($includePathName) == false)
+			$librariesIncludesArray->push($includePathName)
+		end
+	end
+
+	$librariesIncludes = ""
+	forEach($librariesInclude in $librariesIncludesArray)
+		$librariesIncludes = $librariesIncludes + " " + $librariesInclude
+	end
+	$librariesIncludes = "/I " + $librariesIncludes->trim()
+
+	$librariesLdFlags = ""
+	forEach($libraryLdFlag in $librariesLdFlagsArray)
+		$librariesLdFlags = $librariesLdFlags + " " + $libraryLdFlag
+	end
+	$librariesLdFlags = "/LIBPATH " + $librariesLdFlags->trim()
+end
+
+function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building library: " + $name)
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	determineLibraryFlagsMSC($libraries, $librariesIncludes, $librariesLdFlags)
+
+	# TODO: find newest version by name in folder
+	$WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0"
+
+	# minimal required MSC libraries
+	# TODO: " is not working
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/user32.lib" + "'"
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/ws2_32.lib" + "'"
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/dbghelp.lib" + "'"
+
+	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
+
+	console.printLine("concurrency: " + $concurrency)
+	console.printLine("definitions: " + $definitions)
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
+
+	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+
+	try
+		#
+		$objectPath = "obj"	
+		$libraryPath = "lib"
+
+		# create paths
+		createPathRecusively($objectPath)
+		createPathRecusively($libraryPath)
+
+		# CXX arguments
+		$cxx = "cl"
+		$libraryExtension = ".dll"
+
+		$includes = $librariesIncludes + " " + $includes->replace("-I", "/I ")
+		$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+
+		# compile each compilation units
+		$commands = []
+		$compilationUnits = ""
+		forEach($file in $files)
+			#
+			$fileObjectPath = filesystem.getPathName($file)
+			
+			# create file object path
+			createPathRecusively($objectPath + "/" + $fileObjectPath)
+
+			#
+			$compilationUnit = $objectPath + "/" + $file + ".o"
+			if ($compilationUnits->isEmpty() == false)
+				$compilationUnits = $compilationUnits + " "
+			end
+			$compilationUnits = $compilationUnits + $compilationUnit
+
+			#
+			$timeStampFile = 0
+			$timeStampCompilationUnit = 0;
+			if (filesystem.exists($file) == true)
+				$timeStampFile = filesystem.getFileTimeStamp(
+					filesystem.getPathName($file),
+					filesystem.getFileName($file)
+				)
+			end
+			if (filesystem.exists($compilationUnit) == true)
+				$timeStampCompilationUnit = filesystem.getFileTimeStamp(
+					filesystem.getPathName($compilationUnit),
+					filesystem.getFileName($compilationUnit)
+				)
+			end
+			if ($timeStampFile != 0 &&
+				$timeStampCompilationUnit != 0 &&
+				$timeStampCompilationUnit > $timeStampFile)
+				continue
+			end
+			
+			# command
+			$command =
+				$cxx +
+				" " +
+				"/c" +
+				" " +				
+				"/Fo:" +
+				$compilationUnit +
+				" " +
+				$cxxFlags +
+				" " +
+				$librariesIncludes +
+				" " +
+				$includes +
+				" " +
+				$file + 
+				" " +
+				"> nul"
+			#
+			if ($command == null)
+				continue
+			end
+
+			#
+			$commands[] = $command
+		end
+
+		# execute commands
+		if (application.executeMultiple($commands, $concurrency) == false)
+			console.printLine()
+			console.printLine("Not all files have been compiled. Stopping")
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+		else
+			console.printLine("LINK")
+		end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+	
+	console.printLine()
+end
+
 function: main()
 	console.printLine("-------------------")
 	console.printLine("TDME2 build script")
@@ -426,6 +633,7 @@ function: main()
 		$yannetLdFlags = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = ""
+		$buildLibrary = "buildLibraryUnix"
 		if ($$.application::OS == "FreeBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -482,11 +690,18 @@ function: main()
 			]
 		elseif ($$.application::OS == "Windows-MSC")
 			$yannetPlatformFiles = [
-				"ext/yannet/src/yannet/os/network/fallback/bsd/KernelEventMechanism.cpp"
+				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
 			]
-			$tdmePlatformFiles = [
-				"src/tdme/engine/fileio/models/ModelReader.cpp"
+			$tdmePlatformFiles = [  
+				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
+				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
+			$tdmeIncludes = "-Iext/fbx/win/include"
+			$tdmeLdFlags = "-Lext/fbx/win/lib -lfbxsdk"
+			$buildLibrary = "buildLibraryWindowsMSC"
+			$minitScriptLdFlags = "-lws2_32"
+			$yannetLdFlags = "-lws2_32"
+			$tdmeLdFlags = "-lws2_32"
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
@@ -498,8 +713,6 @@ function: main()
 			$yannetLdFlags = "-lws2_32"
 			$tdmeLdFlags = "-lws2_32"
 		end
-
-		$buildLibrary = "buildLibraryUnix"
 
 		script.call(
 			$buildLibrary,

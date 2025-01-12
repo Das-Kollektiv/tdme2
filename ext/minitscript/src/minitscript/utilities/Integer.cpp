@@ -61,7 +61,11 @@ int Integer::viewParse(const string_view& str) {
 	if (trimmedStr.empty() == true) return 0;
 	if (trimmedStr == "-") return -0;
 	int result;
-	from_chars(trimmedStr.begin(), trimmedStr.end(), result);
+	#if defined(_MSC_VER)
+		from_chars(&trimmedStr[0], &trimmedStr[trimmedStr.size()], result);
+	#else
+		from_chars(trimmedStr.begin(), trimmedStr.end(), result);
+	#endif
 	return result;
 }
 

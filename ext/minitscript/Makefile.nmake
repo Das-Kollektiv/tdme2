@@ -13,7 +13,7 @@ INCLUDES = \
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
-WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0
 
 MAIN_LDFLAGS = /LIBPATH $(MSCBIN)\$(LIBNAME).lib
 LIBS_LDFLAGS = \
