@@ -8,9 +8,9 @@
 	CLASS& operator=(const CLASS&) = delete;
 
 #if defined(YANNET_DLL_EXPORT)
-	#define STATIC_DLL_IMPEXT __declspec(dllexport)
-#elif defined(YANNET__DLL_IMPORT)
-	#define STATIC_DLL_IMPEXT __declspec(dllimport)
+	#define YANNET_STATIC_DLL_IMPEXT __declspec(dllexport)
+#elif defined(YANNET_DLL_IMPORT)
+	#define YANNET_STATIC_DLL_IMPEXT __declspec(dllimport)
 #else
-	#define STATIC_DLL_IMPEXT
+	#define YANNET_STATIC_DLL_IMPEXT
 #endif

@@ -84,9 +84,9 @@ private:
 	};
 
 	//
-	STATIC_DLL_IMPEXT static Mutex mutex;
-	STATIC_DLL_IMPEXT static bool newline;
-	STATIC_DLL_IMPEXT static vector<string> messages;
-	STATIC_DLL_IMPEXT static Logger* logger;
-	STATIC_DLL_IMPEXT static unique_ptr<LogWriterThread> logWriterThread;
+	YANNET_STATIC_DLL_IMPEXT static Mutex mutex;
+	YANNET_STATIC_DLL_IMPEXT static bool newline;
+	YANNET_STATIC_DLL_IMPEXT static vector<string> messages;
+	YANNET_STATIC_DLL_IMPEXT static Logger* logger;
+	YANNET_STATIC_DLL_IMPEXT static unique_ptr<LogWriterThread> logWriterThread;
 };

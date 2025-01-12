@@ -65,11 +65,11 @@ private:
 	void parseHTTPResponseHeaders(stringstream& rawResponse);
 
 public:
-	STATIC_DLL_IMPEXT static const string HTTP_METHOD_GET;
-	STATIC_DLL_IMPEXT static const string HTTP_METHOD_HEAD;
-	STATIC_DLL_IMPEXT static const string HTTP_METHOD_POST;
-	STATIC_DLL_IMPEXT static const string HTTP_METHOD_PUT;
-	STATIC_DLL_IMPEXT static const string HTTP_METHOD_DELETE;
+	YANNET_STATIC_DLL_IMPEXT static const string HTTP_METHOD_GET;
+	YANNET_STATIC_DLL_IMPEXT static const string HTTP_METHOD_HEAD;
+	YANNET_STATIC_DLL_IMPEXT static const string HTTP_METHOD_POST;
+	YANNET_STATIC_DLL_IMPEXT static const string HTTP_METHOD_PUT;
+	YANNET_STATIC_DLL_IMPEXT static const string HTTP_METHOD_DELETE;
 
 	//
 	enum HttpStatusCode {

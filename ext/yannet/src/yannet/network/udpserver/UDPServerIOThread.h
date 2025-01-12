@@ -45,7 +45,7 @@ class yannet::network::udpserver::UDPServerIOThread final: private Thread {
 
 private:
 	const static int MESSAGEACK_RESENDTIMES_TRIES = 7;
-	STATIC_DLL_IMPEXT const static uint64_t MESSAGEACK_RESENDTIMES[MESSAGEACK_RESENDTIMES_TRIES];
+	YANNET_STATIC_DLL_IMPEXT const static uint64_t MESSAGEACK_RESENDTIMES[MESSAGEACK_RESENDTIMES_TRIES];
 	const static int MESSAGEQUEUE_SEND_BATCH_SIZE = 100;
 	const static uint64_t MESSAGEACK_KEEPTIME = 5000L;
 	struct Message {

@@ -31,7 +31,7 @@ class yannet::network::udpserver::ServerClient : public ::yannet::utilities::Ref
 	friend class ServerWorkerThread;
 
 public:
-	STATIC_DLL_IMPEXT static const char* KEY_PREFIX_UNNAMED;
+	YANNET_STATIC_DLL_IMPEXT static const char* KEY_PREFIX_UNNAMED;
 
 	/**
 	 * @brief returns client's ip
