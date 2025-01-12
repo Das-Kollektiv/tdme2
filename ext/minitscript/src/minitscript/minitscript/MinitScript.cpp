@@ -1001,7 +1001,7 @@ void MinitScript::executeStateMachine() {
 	while (true == true) {
 		{
 			auto& scriptState = getScriptState();
-			// determine state machine state if it did change
+			// determine state machine state
 			{
 				if (scriptState.lastStateMachineState == nullptr || scriptState.state != scriptState.lastState) {
 					scriptState.lastState = scriptState.state;
@@ -1015,8 +1015,11 @@ void MinitScript::executeStateMachine() {
 
 			// execute state machine
 			if (scriptState.lastStateMachineState != nullptr) {
-				if (native == true && scriptState.state == STATEMACHINESTATE_NEXT_STATEMENT) {
+				if (scriptState.state == STATEMACHINESTATE_NEXT_STATEMENT &&
+					(native == true || scriptState.running == false)) {
 					// ignore STATEMACHINESTATE_NEXT_STATEMENT on native
+					// break if not running anymore
+					if (scriptState.running == false) break;
 				} else {
 					scriptState.lastStateMachineState->execute();
 				}
@@ -1987,7 +1990,7 @@ bool MinitScript::parseScriptInternal(const string& scriptCode, const string& _m
 					}
 				} else
 				// array/set forEach
-				if (StringTools::regexMatch(regexStatementCode, "^forEach[\\s]*\\([\\s]*(&?\\$[a-zA-Z0-9_]+)[\\s]*in[\\s]*((\\$[a-zA-Z0-9_]+)|(\\[.*\\])|(\\{.*\\}))[\\s]*\\)$", &matches) == true) {
+				if (StringTools::regexMatch(regexStatementCode, "^forEach[\\s]*\\([\\s]*(&?\\$[a-zA-Z0-9_]+)[\\s]*in[\\s]*(.+)\\)$", &matches) == true) {
 					Statement generatedStatement(
 						_scriptFileName,
 						currentLineIdx + lineIdxOffset,
@@ -2035,7 +2038,11 @@ bool MinitScript::parseScriptInternal(const string& scriptCode, const string& _m
 							"end; " +
 							containerVariableType + " = getType(" + containerVariable + "); " +
 							"if (" + containerVariableType + " == \"Array\"); " +
-								"setVariableReference(\"" + containerArrayVariable + "\", " + containerVariable + "); " +
+								(
+									isVariableAccess(containerVariable, nullptr, false) == true || containerByInitializer == true?
+										"setVariableReference(\"" + containerArrayVariable + "\", " + containerVariable + "); ":
+										"setVariable(\"" + containerArrayVariable + "\", " + containerVariable + "); "
+								) +
 							"elseif (" + containerVariableType + " == \"Set\"); " +
 								containerArrayVariable + " = Set::getKeys(" + containerVariable + "); " +
 							"else; " +
@@ -2099,7 +2106,7 @@ bool MinitScript::parseScriptInternal(const string& scriptCode, const string& _m
 						"})";
 				} else
 				// map forEach
-				if (StringTools::regexMatch(regexStatementCode, "^forEach[\\s]*\\([\\s]*(\\$[a-zA-Z0-9_]+)[\\s]*,[\\s]*(&?\\$[a-zA-Z0-9_]+)[\\s]*in[\\s]*((\\$[a-zA-Z0-9_]+)|(\\[.*\\])|(\\{.*\\}))[\\s]*\\)$", &matches) == true) {
+				if (StringTools::regexMatch(regexStatementCode, "^forEach[\\s]*\\([\\s]*(\\$[a-zA-Z0-9_]+)[\\s]*,[\\s]*(&?\\$[a-zA-Z0-9_]+)[\\s]*in[\\s]*((.+))[\\s]*\\)$", &matches) == true) {
 					Statement generatedStatement(
 						_scriptFileName,
 						currentLineIdx + lineIdxOffset,

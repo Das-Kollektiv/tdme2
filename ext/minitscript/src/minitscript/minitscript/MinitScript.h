@@ -3592,7 +3592,6 @@ protected:
 		//
 		garbageCollection();
 		//
-		auto& scriptState = getScriptState();
 		for (auto& scriptState: rootScript->scriptStateStack) {
 			scriptState->running = false;
 		}
@@ -4964,16 +4963,17 @@ public:
 	 * Returns if a given string is a variable name
 	 * @param candidate candidate
 	 * @param statement statement
+	 * @param verbose verbose
 	 * @return if string is a variable name
 	 */
-	inline bool isVariableAccess(const string& candidate, const SubStatement* subStatement = nullptr) {
+	inline bool isVariableAccess(const string& candidate, const SubStatement* subStatement = nullptr, bool verbose = true) {
 		if (candidate.size() < 2) {
-			Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": empty variable statement");
+			if (verbose == true) Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": empty variable statement");
 			return false;
 		}
 		auto i = 0;
 		if (candidate[i++] != '$') {
-			Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must begin with an $");
+			if (verbose == true) Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must begin with an $");
 			return false;
 		}
 		if (candidate[i] == '$') i++;
@@ -4988,16 +4988,16 @@ public:
 				squareBracketCount--;
 			} else
 			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.' && c != ':') {
-				Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": invalid character in variable statement: '" + c + "'");
+				if (verbose == true) Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": invalid character in variable statement: '" + c + "'");
 				return false;
 			}
 		}
 		if (candidate.size() == 2 && string_view(candidate) == string_view("$$", 2)) {
-			Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must not be $$");
+			if (verbose == true) Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must not be $$");
 			return false;
 		}
 		if (candidate.size() == 7 && string_view(candidate) == string_view("$GLOBAL", 7)) {
-			Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must not be $GLOBAL");
+			if (verbose == true) Console::printLine((subStatement != nullptr?getSubStatementInformation(*subStatement):scriptFileName) + ": Variable: " + candidate + ": variable statement must not be $GLOBAL");
 			return false;
 		}
 		return true;

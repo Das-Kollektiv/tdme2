@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: install required packages
-        run: sudo apt update && sudo apt-get install libglew-dev libopenal-dev libglfw3-dev libfreetype-dev libxml2-dev libvulkan-dev
+        run: sudo apt update && sudo apt-get install pkgconf libglew-dev libopenal-dev libglfw3-dev libfreetype-dev libxml2-dev libvulkan-dev
       - uses: actions/checkout@v2
-      - name: make mains
-        run: make mains VULKAN=YES GLES2=YES
+      - name: build
+        run: cd ext/minitscript/ && make mains && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib && ./bin/minitscript/tools/minitscript --working-directory=../.. ../../make.tscript --arguments clean libraries executables && cd ../..

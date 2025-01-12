@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 	};
 	//
 	auto printUsage = [&]() -> void {
-		Console::printLine("Usage: minitscript [--version] [--verbose] [path_to_script | < path_to_script] --arguments [script command line arguments...]");
+		Console::printLine("Usage: minitscript [--version] [--verbose] [--working-directory=./] [path_to_script | < path_to_script] --arguments [script command line arguments...]");
 	};
 	//
 	auto printInformation = [&]() -> void {
@@ -57,6 +57,7 @@ int main(int argc, char** argv)
 	};
 
 	//
+	string workingDirectory;
 	string pathToScript;
 	auto verbose = false;
 	auto version = false;
@@ -71,6 +72,9 @@ int main(int argc, char** argv)
 		} else
 		if (argument == "--verbose") {
 			verbose = true;
+		} else
+		if (StringTools::startsWith(argument, "--working-directory=") == true) {
+			workingDirectory = StringTools::substring(argument, string("--working-directory=").size());
 		} else
 		if (argument == "--arguments") {
 			break;
@@ -183,10 +187,44 @@ int main(int argc, char** argv)
 			} else {
 				// TODO: we need a MinitScript startup routine
 				Network::initialize();
+
 				// Windows MSC: required for OpenSSL to work when having OpenSSL embedded in a DLL which is used here
 				#if defined(_MSC_VER)
 					OPENSSL_Applink();
 				#endif
+
+				/**
+				 * Working directory RAII
+				 */
+				class WorkingDirectoryRAII {
+					public:
+						/**
+						 * Constructor
+						 * @param workingDirectory working directory
+						 */
+						WorkingDirectoryRAII(const string& workingDirectory):
+							workingDirectory(workingDirectory),
+							cwd(FileSystem::getCurrentWorkingPathName()) {
+							// switch to working directory
+							if (workingDirectory.empty() == false) {
+								FileSystem::changePath(workingDirectory);
+							}
+						}
+						/**
+						 * Destructor
+						 */
+						~WorkingDirectoryRAII() {
+							// switch to working directory
+							if (workingDirectory.empty() == false) {
+								FileSystem::changePath(cwd);
+							}
+						}
+					private:
+						string cwd;
+						string workingDirectory;
+				};
+				WorkingDirectoryRAII workingDirectoryRAII(workingDirectory);
+
 				// add script to context
 				auto scriptPtr = script.get();
 				context->push(scriptPtr);
