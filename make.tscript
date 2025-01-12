@@ -478,13 +478,13 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 
 	$librariesIncludes = ""
 	forEach($librariesInclude in $librariesIncludesArray)
-		$librariesIncludes = $librariesIncludes + " /I " + $librariesInclude
+		$librariesIncludes = $librariesIncludes + " /I \"" + $librariesInclude + "\""
 	end
 	$librariesIncludes = $librariesIncludes->trim()
 
 	$librariesLdFlags = ""
 	forEach($libraryLdFlag in $librariesLdFlagsArray)
-		$librariesLdFlags = $librariesLdFlags + " /LIBPATH " + $libraryLdFlag
+		$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $libraryLdFlag + "\""
 	end
 	$librariesLdFlags = $librariesLdFlags->trim()
 
@@ -502,13 +502,13 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 	end
 
 	# TODO: find newest version by name in folder
-	$WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0"
+	$WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.20348.0"
 
 	# minimal required MSC libraries
 	# TODO: " is not working
-	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/user32.lib" + "'"
-	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/ws2_32.lib" + "'"
-	$librariesLdFlags = $librariesLdFlags + " /LIBPATH '" + $WINDOWS_SDK_DIR + "/um/x64/dbghelp.lib" + "'"
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/user32.lib" + "\""
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/ws2_32.lib" + "\""
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/dbghelp.lib" + "\""
 
 	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
 
@@ -633,11 +633,47 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			console.printLine($result)
 
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
-				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+				console.printLine("lib exited with exit code " + $exitCode + ", see error: " + $error)
 				if ($optional == false)
 					console.printLine()
 					application.exit($$.application::EXITCODE_FAILURE)
 				end
+			end
+
+			$libraryFile = $libraryPath + "/" + $name + ".lib"
+			$linkerMemberFile = $libraryPath + "/" + $name + ".lib.linkermember"
+
+			# dump bin
+			$command =
+				"dumpbin" +
+				" " +
+				"/LINKERMEMBER" +
+				" " +
+				$libraryFile +
+				" " +
+				"> " + 
+				$linkerMemberFile
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+			console.printLine($result)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine("dumpbin exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+
+			if (filesystem.exists($libraryFile) == true)
+				filesystem.removeFile(
+					filesystem.getPathName($libraryFile),
+					filesystem.getFileName($libraryFile)
+				)
 			end
 
 		end
@@ -677,7 +713,9 @@ function: main()
 	
 	if (application.getArguments()->contains("libraries") == true || application.getArguments()->contains("executables") == true)
 		$minitScriptLdFlags = ""
+		$minitScriptDefinitions = ""
 		$yannetLdFlags = ""
+		$yannetDefinitions = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = ""
 		$buildLibrary = "buildLibraryUnix"
@@ -748,7 +786,9 @@ function: main()
 			$buildLibrary = "buildLibraryWindowsMSC"
 			# TODO
 			$minitScriptLdFlags = ""
+			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
 			$yannetLdFlags = ""
+			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
 			$tdmeLdFlags = ""
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
@@ -769,7 +809,7 @@ function: main()
 				"libssl", 
 				"libcrypto"
 			],
-			"",
+			$minitScriptDefinitions,
 			"-Iext/minitscript/src",
 			$minitScriptLdFlags,
 			[
@@ -837,7 +877,7 @@ function: main()
 				"libssl", 
 				"libcrypto"
 			],
-			"",
+			$yannetDefinitions,
 			"-Iext/yannet/src",
 			$yannetLdFlags,
 			[
