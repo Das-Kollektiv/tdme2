@@ -491,6 +491,38 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 	return(true)
 end
 
+function: generateLibSymbolsMSC($fileName)
+	console.printLine("mscLibToDLL: " + $fileName + ": init")
+	$fileContent = filesystem.getContentAsStringArray(".", $fileName)
+	$symbolsMode = false
+	$symbols = Set()
+	for($i = 0, $i < $fileContent->getSize(), $i++)
+		$line = $fileContent[$i]->trim()
+		if ($symbolsMode == false)
+			if ($line->endsWith(" public symbols") == true)
+				$symbolsMode = true
+				$i++
+			end
+		else
+			if ($line->isEmpty() == true)
+				$symbolsMode = false
+			else
+				$lineTokens = $line->tokenize(" ")
+				if ($lineTokens->getSize() > 1)
+					$symbols->insert($lineTokens[1]);
+				end
+			end
+		end
+	end
+	$fileContent = []
+	$fileContent[] = "EXPORTS"
+	forEach ($symbol in $symbols)
+		$fileContent[] = "\t" + $symbol
+	end
+	filesystem.setContentFromStringArray(".", $fileName + ".def", $fileContent)
+	console.printLine("mscLibToDLL: " + $fileName + ": done")
+end
+
 function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building library: " + $name)
 	console.printLine()
@@ -675,6 +707,9 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 					filesystem.getFileName($libraryFile)
 				)
 			end
+
+			generateLibSymbolsMSC($linkerMemberFile)
+
 
 		end
 	catch ($exception)
