@@ -492,8 +492,10 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 end
 
 function: generateLibSymbolsMSC($fileName)
-	console.printLine("mscLibToDLL: " + $fileName + ": init")
-	$fileContent = filesystem.getContentAsStringArray(".", $fileName)
+	$fileContent = filesystem.getContentAsStringArray(
+		filesystem.getPathName($fileName),
+		filesystem.getFileName($fileName)
+	)
 	$symbolsMode = false
 	$symbols = Set()
 	for($i = 0, $i < $fileContent->getSize(), $i++)
@@ -519,8 +521,38 @@ function: generateLibSymbolsMSC($fileName)
 	forEach ($symbol in $symbols)
 		$fileContent[] = "\t" + $symbol
 	end
-	filesystem.setContentFromStringArray(".", $fileName + ".def", $fileContent)
-	console.printLine("mscLibToDLL: " + $fileName + ": done")
+	filesystem.setContentFromStringArray(
+		filesystem.getPathName($fileName),
+		filesystem.getFileName($fileName) + ".def",
+		$fileContent
+	)
+end
+
+function: generateRCMSC($template, $fileName)
+	$rc = filesystem.getContentAsString(
+		filesystem.getPathName($template),
+		filesystem.getFileName($template)
+	)
+
+	if ($fileName->endsWith(".exe") == true)
+		$executable = $fileName->substring($fileName->lastIndexOf("/") + 1, $fileName->indexOf(".exe"))
+		$executableLowerCase = $executable->toLowerCase()
+		$rc = $rc->replace("{__EXECUTABLE__}", $executable)
+		if (filesystem.exists("resources/platforms/win32/" + $executableLowerCase + "-icon.ico") == true)
+			$rc = $rc->replace("{__ICON__}", "resources/platforms/win32/" + $executableLowerCase + "-icon.ico")
+		else
+			$rc = $rc->replace("{__ICON__}", "resources/platforms/win32/default-icon.ico")
+		end
+	elseif ($fileName->endsWith(".dll") == true)
+		$library = $fileName->substring($fileName->lastIndexOf("/") + 1, $fileName->indexOf(".dll"))
+		$rc = $rc->replace("{__LIBRARY__}", $library)
+	end
+
+	filesystem.setContentFromString(
+		filesystem.getPathName($fileName),
+		filesystem.getFileName($fileName) + ".rc",
+		$rc
+	)
 end
 
 function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
@@ -710,7 +742,10 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 
 			generateLibSymbolsMSC($linkerMemberFile)
 
-
+			generateRCMSC(
+				"resources/platforms/win32/lib.rc", 
+				$name + ".dll"
+			)
 		end
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
