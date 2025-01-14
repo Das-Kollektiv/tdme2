@@ -262,7 +262,7 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
 			$result = application.execute($command, $exitCode, $error)
-			console.printLine($result)
+
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
 				if ($optional == false)
@@ -491,7 +491,7 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 	return(true)
 end
 
-function: generateLibSymbolsMSC($fileName)
+function: generateLibSymbolsMSC($fileName, $libraryDLLFile)
 	$fileContent = filesystem.getContentAsStringArray(
 		filesystem.getPathName($fileName),
 		filesystem.getFileName($fileName)
@@ -517,6 +517,7 @@ function: generateLibSymbolsMSC($fileName)
 		end
 	end
 	$fileContent = []
+	$fileContent[] = "LIBRARY " + $libraryDLLFile
 	$fileContent[] = "EXPORTS"
 	forEach ($symbol in $symbols)
 		$fileContent[] = "\t" + $symbol
@@ -694,7 +695,6 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
 			$result = application.execute($command, $exitCode, $error)
-			console.printLine($result)
 
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine("lib exited with exit code " + $exitCode + ", see error: " + $error)
@@ -705,7 +705,9 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			end
 
 			$libraryFile = $libraryPath + "/" + $name + ".lib"
-			$linkerMemberFile = $libraryPath + "/" + $name + ".lib.linkermember"
+			$libraryDLLFile = $libraryPath + "/" + $name + ".dll"
+			$libraryDLLRESFile = $libraryPath + "/" + $name + ".dll.res"
+			$linkerDefFile = $libraryPath + "/" + $name + ".def"
 
 			# dump bin
 			$command =
@@ -716,14 +718,12 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				$libraryFile +
 				" " +
 				"> " + 
-				$linkerMemberFile
-			console.printLine($command)
+				$linkerDefFile
 
 			# execute
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
 			$result = application.execute($command, $exitCode, $error)
-			console.printLine($result)
 
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine("dumpbin exited with exit code " + $exitCode + ", see error: " + $error)
@@ -740,12 +740,77 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				)
 			end
 
-			generateLibSymbolsMSC($linkerMemberFile)
+			generateLibSymbolsMSC(
+				$linkerDefFile, 
+				$libraryDLLFile
+			)
 
 			generateRCMSC(
 				"resources/platforms/win32/lib.rc", 
-				$name + ".dll"
+				$libraryDLLFile
 			)
+
+			# rc
+			$command =
+				"rc" +
+				" " +
+				$libraryDLLFile + ".rc"
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine("rc exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+
+			# link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme-ext.lib /OUT:$(MSCBIN)\libtdme.dll
+
+			# link
+			$command =
+				"link" +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags +
+				" " +
+				"/DLL" +
+				" " +
+				"/DEF:" + $linkerDefFile +
+				" " +
+				"/DEBUG" +
+				" " +
+				"/IGNORE:4197" +
+				" " +
+				"/IGNORE:4102" +
+				" " +
+				$compilationUnits +
+				" " +
+				$libraryDLLRESFile + 
+				" " +
+				"/OUT:" + $libraryDLLFile
+
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine("link exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+			
 		end
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
