@@ -491,10 +491,10 @@ function: determineLibraryFlagsMSC($libraries, &$librariesIncludes, &$librariesL
 	return(true)
 end
 
-function: generateLibSymbolsMSC($fileName, $libraryDLLFile)
+function: generateLibSymbolsMSC($linkerSymbolsFile, $linkerDefFile, $libraryDLLFile)
 	$fileContent = filesystem.getContentAsStringArray(
-		filesystem.getPathName($fileName),
-		filesystem.getFileName($fileName)
+		filesystem.getPathName($linkerSymbolsFile),
+		filesystem.getFileName($linkerSymbolsFile)
 	)
 	$symbolsMode = false
 	$symbols = Set()
@@ -523,8 +523,8 @@ function: generateLibSymbolsMSC($fileName, $libraryDLLFile)
 		$fileContent[] = "\t" + $symbol
 	end
 	filesystem.setContentFromStringArray(
-		filesystem.getPathName($fileName),
-		filesystem.getFileName($fileName) + ".def",
+		filesystem.getPathName($linkerDefFile),
+		filesystem.getFileName($linkerDefFile),
 		$fileContent
 	)
 end
@@ -707,6 +707,7 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			$libraryFile = $libraryPath + "/" + $name + ".lib"
 			$libraryDLLFile = $libraryPath + "/" + $name + ".dll"
 			$libraryDLLRESFile = $libraryPath + "/" + $name + ".dll.res"
+			$linkerSymbolsFile = $libraryPath + "/" + $name + ".symbols"
 			$linkerDefFile = $libraryPath + "/" + $name + ".def"
 
 			# dump bin
@@ -718,7 +719,7 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				$libraryFile +
 				" " +
 				"> " + 
-				$linkerDefFile
+				$linkerSymbolsFile
 
 			# execute
 			$exitCode = $$.application::EXITCODE_SUCCESS
@@ -741,7 +742,8 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			end
 
 			generateLibSymbolsMSC(
-				$linkerDefFile, 
+				$linkerSymbolsFile,
+				$linkerDefFile,
 				$libraryDLLFile
 			)
 
@@ -802,7 +804,7 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 			$exitCode = $$.application::EXITCODE_SUCCESS
 			$error = null
 			$result = application.execute($command, $exitCode, $error)
-
+			console.printLine($result)
 			if ($exitCode != $$.application::EXITCODE_SUCCESS)
 				console.printLine("link exited with exit code " + $exitCode + ", see error: " + $error)
 				if ($optional == false)
@@ -924,7 +926,7 @@ function: main()
 			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
 			$yannetLdFlags = ""
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
-			$tdmeLdFlags = ""
+			$tdmeLdFlags = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_EXPORT"
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
