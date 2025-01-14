@@ -784,7 +784,7 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				" " +
 				"/DLL" +
 				" " +
-				"/DEF:" + $linkerDefFile +
+				"/DEF:" + $linkerDefFile->replace("/", "\\") +
 				" " +
 				"/DEBUG" +
 				" " +
@@ -794,9 +794,9 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				" " +
 				$compilationUnits +
 				" " +
-				$libraryDLLRESFile + 
+				$libraryDLLRESFile->replace("/", "\\") + 
 				" " +
-				"/OUT:" + $libraryDLLFile
+				"/OUT:" + $libraryDLLFile->replace("/", "\\") 
 
 			console.printLine($command)
 
