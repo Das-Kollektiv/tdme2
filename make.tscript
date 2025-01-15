@@ -677,13 +677,15 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				application.exit($$.application::EXITCODE_FAILURE)
 			end
 		else
+			$libraryFile = $libraryPath + "/" + $name + ".lib"
+			$libraryDLLFile = $libraryPath + "/" + $name + ".dll"
+			$libraryDLLRESFile = $libraryPath + "/" + $name + ".dll.res"
+			$linkerSymbolsFile = $libraryPath + "/" + $name + ".symbols"
+			$linkerDefFile = $libraryPath + "/" + $name + ".def"
+
 			# link #1
 			$command =
 				"lib" +
-				" " +
-				$librariesLdFlags +
-				" " +
-				$ldFlags +
 				" " +
 				"/OUT:" +
 				$libraryPath + "/" + $name + ".lib" +
@@ -703,12 +705,6 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 					application.exit($$.application::EXITCODE_FAILURE)
 				end
 			end
-
-			$libraryFile = $libraryPath + "/" + $name + ".lib"
-			$libraryDLLFile = $libraryPath + "/" + $name + ".dll"
-			$libraryDLLRESFile = $libraryPath + "/" + $name + ".dll.res"
-			$linkerSymbolsFile = $libraryPath + "/" + $name + ".symbols"
-			$linkerDefFile = $libraryPath + "/" + $name + ".def"
 
 			# dump bin
 			$command =
@@ -784,7 +780,7 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				" " +
 				"/DLL" +
 				" " +
-				"/DEF:" + $linkerDefFile->replace("/", "\\") +
+				"/DEF:" + $linkerDefFile +
 				" " +
 				"/DEBUG" +
 				" " +
@@ -794,9 +790,9 @@ function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ld
 				" " +
 				$compilationUnits +
 				" " +
-				$libraryDLLRESFile->replace("/", "\\") + 
+				$libraryDLLRESFile + 
 				" " +
-				"/OUT:" + $libraryDLLFile->replace("/", "\\") 
+				"/OUT:" + $libraryDLLFile 
 
 			console.printLine($command)
 
