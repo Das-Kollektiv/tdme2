@@ -1,0 +1,365 @@
+module
+
+use: make-module.tscript
+
+function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
+	$librariesIncludesArray = []
+	$librariesLdFlagsArray = []
+	forEach($library in $libraries)
+		# includes
+		$command = "pkgconf --cflags " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+			return(false)
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$libraryIncludesArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
+		forEach($libraryInclude in $libraryIncludesArray)
+			if ($librariesIncludesArray->contains($libraryInclude) == true)
+				continue
+			end
+			$librariesIncludesArray[] = $libraryInclude
+		end
+
+		# ld flags
+		$command = "pkgconf --libs " + $library
+		# execute
+		$exitCode = $$.application::EXITCODE_SUCCESS
+		$error = null
+		$result = application.execute($command, $exitCode, $error)
+		if ($exitCode != $$.application::EXITCODE_SUCCESS)
+			console.printLine("pkgconf exited with exit code " + $exitCode + ", see error: " + $error)
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+			return(false)
+		end
+		# FIXME: String::trim($result->replace("\n", "")) should be $result->replace("\n", "")->trim()
+		$libraryLdFlagsArray = String::tokenize(String::trim($result->replace("\n", "")), " ")
+		forEach($libraryLdFlag in $libraryLdFlagsArray)
+			if ($librariesLdFlagsArray->contains($libraryLdFlag) == true)
+				continue
+			end
+			$librariesLdFlagsArray[] = $libraryLdFlag
+		end
+	end
+
+	$librariesIncludes = ""
+	forEach($librariesInclude in $librariesIncludesArray)
+		$librariesIncludes = $librariesIncludes + " " + $librariesInclude
+	end
+	$librariesIncludes = $librariesIncludes->trim()
+
+	$librariesLdFlags = ""
+	forEach($libraryLdFlag in $librariesLdFlagsArray)
+		$librariesLdFlags = $librariesLdFlags + " " + $libraryLdFlag
+	end
+	$librariesLdFlags = $librariesLdFlags->trim()
+
+	return(true)
+end
+
+function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building library: " + $name)
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	if (determineLibraryFlagsUnix($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
+		return
+	end
+
+	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
+
+	console.printLine("concurrency: " + $concurrency)
+	console.printLine("definitions: " + $definitions)
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
+
+	console.printLine()
+
+	try
+		#
+		$objectPath = "obj"	
+		$libraryPath = "lib"
+
+		# create paths
+		createPathRecusively($objectPath)
+		createPathRecusively($libraryPath)
+
+		# CXX arguments
+		$cxx = "g++"
+		if ($$.application::OS == "FreeBSD" ||
+			$$.application::OS == "MacOSX" ||
+			$$.application::OS == "OpenBSD")
+			$cxx = "clang++"
+		end
+
+		$libraryExtension = ".so"
+		if ($$.application::OS == "MacOSX")
+			$libraryExtension = ".dylib"
+		elseif ($$.application::OS == "Windows-MINGW" || $$.application::OS == "Windows-MSC")
+			$libraryExtension = ".dll"
+		end
+		$includes = $librariesIncludes + " " + $includes
+		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG" + " " + $definitions
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
+
+		# compile each compilation units
+		$commands = []
+		$compilationUnits = ""
+		forEach($file in $files)
+			#
+			$fileObjectPath = filesystem.getPathName($file)
+			
+			# create file object path
+			createPathRecusively($objectPath + "/" + $fileObjectPath)
+
+			#
+			$compilationUnit = $objectPath + "/" + $file + ".o"
+			if ($compilationUnits->isEmpty() == false)
+				$compilationUnits = $compilationUnits + " "
+			end
+			$compilationUnits = $compilationUnits + $compilationUnit
+
+			#
+			$timeStampFile = 0
+			$timeStampCompilationUnit = 0;
+			if (filesystem.exists($file) == true)
+				$timeStampFile = filesystem.getFileTimeStamp(
+					filesystem.getPathName($file),
+					filesystem.getFileName($file)
+				)
+			end
+			if (filesystem.exists($compilationUnit) == true)
+				$timeStampCompilationUnit = filesystem.getFileTimeStamp(
+					filesystem.getPathName($compilationUnit),
+					filesystem.getFileName($compilationUnit)
+				)
+			end
+			if ($timeStampFile != 0 &&
+				$timeStampCompilationUnit != 0 &&
+				$timeStampCompilationUnit > $timeStampFile)
+				continue
+			end
+			
+			# compile
+			$command = null
+			if ($file->endsWith(".c") == true)
+				$command =
+					$cxx +
+					" " +
+					"-x c" +
+					" " +
+					$cFlags +
+					" " +
+					$librariesIncludes +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
+			elseif ($file->endsWith(".cpp") == true)
+				$command =
+					$cxx +
+					" " +
+					$cxxFlags +
+					" " +
+					$librariesIncludes +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
+			else
+				console.printLine("Dont know how to build: " + $file)
+			end
+
+			#
+			if ($command == null)
+				continue
+			end
+
+			#
+			$commands[] = $command
+		end
+
+		# execute commands
+		if (application.executeMultiple($commands, $concurrency) == false)
+			console.printLine()
+			console.printLine("Not all files have been compiled. Stopping")
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+		else
+			# link
+			$command =
+				$cxx +
+				" " +
+				"-shared" +
+				" " +
+				$compilationUnits +
+				" " +
+				"-o " +
+				$libraryPath + "/" + $name + $libraryExtension +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine($cxx + " exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+		end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+	
+	console.printLine()
+end
+
+function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building executables")
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	if (determineLibraryFlagsUnix($libraries, $librariesIncludes, $librariesLdFlags) == false)
+		return
+	end
+
+	$concurrency = integer(math.ceil(concurrency.getHardwareThreadCount() / 1.5))
+
+	console.printLine("concurrency: " + $concurrency)
+	console.printLine("definitions: " + $definitions)
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
+
+	try
+		#
+		$binaryPath = "bin"
+	
+		# create paths
+		createPathRecusively($binaryPath)
+	
+		# CXX arguments
+		$cxx = "g++"
+		if ($$.application::OS == "FreeBSD" ||
+			$$.application::OS == "MacOSX" ||
+			$$.application::OS == "OpenBSD")
+			$cxx = "clang++"
+		end
+		$includes = $librariesIncludes + " " + $includes
+		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
+	
+		# compile each executable
+		$commands = []
+		forEach($file in $files)
+			#
+			$sourceFile = $file
+
+			#
+			if ($file->startsWith("src/") == true)
+				# FIXME: $file->substring("src/"->getSize()) does not work here!
+				$file = $file->substring(String("src/")->getSize())
+			end
+			
+			$fileObjectPath = filesystem.getPathName($file)
+	
+			# create file object path
+			createPathRecusively($binaryPath + "/" + $fileObjectPath)
+
+			#
+			$executableFile = $binaryPath + "/" + $file
+			$executableFile = $executableFile->replace("-main.cpp", "")
+
+			#
+			$timeStampFile = 0
+			$timeStampCompilationUnit = 0;
+			if (filesystem.exists($sourceFile) == true)
+				$timeStampFile = filesystem.getFileTimeStamp(
+					filesystem.getPathName($sourceFile),
+					filesystem.getFileName($sourceFile)
+				)
+			end
+			if (filesystem.exists($executableFile) == true)
+				$timeStampCompilationUnit = filesystem.getFileTimeStamp(
+					filesystem.getPathName($executableFile),
+					filesystem.getFileName($executableFile)
+				)
+			end
+			if ($timeStampFile != 0 &&
+				$timeStampCompilationUnit != 0 &&
+				$timeStampCompilationUnit > $timeStampFile)
+				continue
+			end
+
+			# compile and link
+			$command =
+				$cxx +
+				" " +
+				$cxxFlags +
+				" " +
+				$librariesIncludes +
+				" " +
+				$includes +
+				" " +
+				"-o " +
+				$executableFile +
+				" " +
+				$sourceFile +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags
+			console.printLine($command)
+
+			#
+			$commands[] = $command
+	 	end
+	 	
+	 	# execute commands
+		if (application.executeMultiple($commands, $concurrency) == false)
+			console.printLine("Not all files have been compiled. Stopping")
+			if ($optional == false)
+				console.printLine()
+				application.exit($$.application::EXITCODE_FAILURE)
+			end
+		end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+
+	console.printLine()
+end
+

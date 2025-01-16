@@ -1,0 +1,16 @@
+module
+
+function: createPathRecusively($path)
+	try
+		$pathComponents = $path->tokenize("/")
+		$createdPath = "."
+		forEach($pathComponent in $pathComponents)
+			$createdPath = $createdPath + "/" + $pathComponent
+			if (filesystem.exists($createdPath) == false)
+				filesystem.createPath($createdPath)
+			end
+		end
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+end
