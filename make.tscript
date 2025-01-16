@@ -60,9 +60,10 @@ function: main()
 		$yannetLdFlags = ""
 		$yannetDefinitions = ""
 		$tdmeIncludes = ""
-		$tdmeLdFlags = ""
+		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext"
+		$tdmeRendererLdFlags = "-Llib -ltdme"
 		$glfwDefinitions = ""
-		$rapidJSONDefinitions = "-DRAPIDJSON_HAS_STDSTRING"
+		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
 		$buildLibrary = "buildLibraryUnix"
 		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
@@ -74,7 +75,7 @@ function: main()
 			]
 			$minitScriptLdFlags = "-L/usr/lib -ldl -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -ldl -lexecinfo"
-			$tdmeLdFlags = "-L/usr/lib -ldl -lexecinfo"
+			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
 		elseif ($$.application::OS == "Haiku")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -91,7 +92,7 @@ function: main()
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
 			$tdmeIncludes = "-Iext/fbx/linux/include"
-			$tdmeLdFlags = "-Lext/fbx/linux/lib -lfbxsdk -lxml2"
+			$tdmeLdFlags = $tdmeLdFlags + " " + "-Lext/fbx/linux/lib -lfbxsdk -lxml2"
 		elseif ($$.application::OS == "MacOSX")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/bsd/linux/KernelEventMechanism.cpp"
@@ -101,7 +102,7 @@ function: main()
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
 			$tdmeIncludes = "-Iext/fbx/linux/include"
-			$tdmeLdFlags = "-Lext/fbx/macosx/lib -lfbxsdk"
+			$tdmeLdFlags = $tdmeLdFlags + " " + "-Lext/fbx/macosx/lib -lfbxsdk"
 		elseif ($$.application::OS == "NetBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -111,7 +112,7 @@ function: main()
 			]
 			$minitScriptLdFlags = "-L/usr/lib -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -lexecinfo"
-			$tdmeLdFlags = "-L/usr/lib -lexecinfo"
+			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -lexecinfo"
 		elseif ($$.application::OS == "OpenBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -127,14 +128,19 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
-			$tdmeIncludes = "/I ext/fbx/win64/include"
-			$tdmeLdFlags = "/LIBPATH ext/fbx/win64/lib/libfbxsdk.lib"
+			$tdmeIncludes = "/I \"ext/fbx/win64/include\""
+			$tdmeLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
+			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
+			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
+			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
+			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
 			$buildLibrary = "buildLibraryMSC"
 			$buildExecutables = "buildExecutablesMSC"
 			$minitScriptLdFlags = ""
 			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
-			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_EXPORT"
+			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_EXPORT"
 			$glfwDefinitions = "/D GLFW_DLL"
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
@@ -447,9 +453,9 @@ function: main()
 				"libssl",
 				"libcrypto"
 			],
-			$rapidJSONDefinitions + " " + $glfwDefinitions,
+			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src" + " " + $tdmeIncludes,
-			$tdmeLdFlags + " -Llib -ltdme-ext -lyannet -lminitscript",
+			$tdmeLdFlags,
 			[
 				"src/tdme/audio/Audio.cpp",
 				"src/tdme/audio/AudioBufferManager.cpp",
@@ -900,9 +906,9 @@ function: main()
 				"gl",
 				"glfw3"
 			],
-			$glfwDefinitions,
+			$glfwDefinitions + " " + $tdmeRendererDefinitions,
 			"-Isrc",
-			"-Llib -ltdme",
+			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL2Renderer.cpp"
@@ -918,9 +924,9 @@ function: main()
 				"gl",
 				"glfw3"
 			],
-			$glfwDefinitions,
+			$glfwDefinitions + " " + $tdmeRendererDefinitions,
 			"-Isrc",
-			"-Llib -ltdme",
+			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GL3Renderer.cpp"
@@ -936,9 +942,9 @@ function: main()
 				"egl",
 				"glfw3"
 			],
-			$glfwDefinitions,
+			$glfwDefinitions + " " + $tdmeRendererDefinitions,
 			"-Isrc",
-			"-Llib -ltdme",
+			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
 				"src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp"

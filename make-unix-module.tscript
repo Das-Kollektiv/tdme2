@@ -128,7 +128,7 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 			createPathRecusively($objectPath + "/" + $fileObjectPath)
 
 			#
-			$compilationUnit = $objectPath + "/" + $file + ".o"
+			$compilationUnit = $objectPath + "/" + $file + ".obj"
 			if ($compilationUnits->isEmpty() == false)
 				$compilationUnits = $compilationUnits + " "
 			end

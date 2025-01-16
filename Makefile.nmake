@@ -26,7 +26,7 @@ INCLUDES = \
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
-WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0
 
 MAIN_LDFLAGS = \
 	/LIBPATH $(MSCBIN)\libtdme-ext.lib \
@@ -36,9 +36,9 @@ LIBS_LDFLAGS = \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\user32.lib" \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\dbghelp.lib" \
-	/LIBPATH "ext\glfw3\lib\win64\glfw3dll.lib" \
+	/LIBPATH "ext\glfw3\lib\win64\glfw3.lib" \
 	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
-	/LIBPATH "ext\freetype\lib\win64\freetype.lib" \
+	/LIBPATH "ext\freetype\lib\win64\freetype2.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 	/LIBPATH "ext\windows-msc\openssl\lib\libcrypto.lib" \
 	/LIBPATH "ext\windows-msc\openssl\lib\libssl.lib"

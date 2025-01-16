@@ -191,8 +191,14 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 
 	try
 		#
-		$objectPath = "obj"	
+		$objectPath = "obj"
 		$libraryPath = "lib"
+
+		#
+		try
+			filesystem.removePath($objectPath, true)
+		catch ($exception)
+		end
 
 		# create paths
 		createPathRecusively($objectPath)
@@ -206,17 +212,19 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 		$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
 
 		# compile each compilation units
+		$compilationUnitIdx = 0
 		$commands = []
 		$compilationUnits = ""
 		forEach($file in $files)
 			#
-			$fileObjectPath = filesystem.getPathName($file)
+			# $fileObjectPath = filesystem.getPathName($file)
+			$fileObjectPath = ""
 			
 			# create file object path
 			createPathRecusively($objectPath + "/" + $fileObjectPath)
 
 			#
-			$compilationUnit = $objectPath + "/" + $file + ".o"
+			$compilationUnit = $objectPath + "/" + ($compilationUnitIdx++) + ".obj"
 			if ($compilationUnits->isEmpty() == false)
 				$compilationUnits = $compilationUnits + " "
 			end
