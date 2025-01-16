@@ -158,7 +158,7 @@ function: generateRCMSC($template, $fileName)
 	)
 end
 
-function: buildLibraryWindowsMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 
