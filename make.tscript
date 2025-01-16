@@ -61,7 +61,10 @@ function: main()
 		$yannetDefinitions = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = ""
+		$glfwDefinitions = ""
+		$rapidJSONDefinitions = "-DRAPIDJSON_HAS_STDSTRING"
 		$buildLibrary = "buildLibraryUnix"
+		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -126,13 +129,13 @@ function: main()
 			]
 			$tdmeIncludes = "/I ext/fbx/win64/include"
 			$tdmeLdFlags = "/LIBPATH ext/fbx/win64/lib/libfbxsdk.lib"
-			$buildLibrary = "buildLibraryWindowsMSC"
-			# TODO
+			$buildLibrary = "buildLibraryMSC"
+			$buildExecutables = "buildExecutablesMSC"
 			$minitScriptLdFlags = ""
 			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
-			$yannetLdFlags = ""
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
-			$tdmeLdFlags = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_EXPORT"
+			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_EXPORT"
+			$glfwDefinitions = "/D GLFW_DLL"
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
@@ -266,7 +269,7 @@ function: main()
 			$buildLibrary,
 			"libtdme-ext",
 			[],
-			"-DRAPIDJSON_HAS_STDSTRING",
+			$rapidJSONDefinitions,
 			"-Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib",
 			"",
 			[
@@ -444,7 +447,7 @@ function: main()
 				"libssl",
 				"libcrypto"
 			],
-			"-DRAPIDJSON_HAS_STDSTRING",
+			$rapidJSONDefinitions + " " + $glfwDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src" + " " + $tdmeIncludes,
 			$tdmeLdFlags + " -Llib -ltdme-ext -lyannet -lminitscript",
 			[
@@ -897,7 +900,7 @@ function: main()
 				"gl",
 				"glfw3"
 			],
-			"",
+			$glfwDefinitions,
 			"-Isrc",
 			"-Llib -ltdme",
 			[
@@ -915,7 +918,7 @@ function: main()
 				"gl",
 				"glfw3"
 			],
-			"",
+			$glfwDefinitions,
 			"-Isrc",
 			"-Llib -ltdme",
 			[
@@ -933,7 +936,7 @@ function: main()
 				"egl",
 				"glfw3"
 			],
-			"",
+			$glfwDefinitions,
 			"-Isrc",
 			"-Llib -ltdme",
 			[
@@ -956,7 +959,7 @@ function: main()
 				"libssl",
 				"libcrypto"
 			],
-			"-DRAPIDJSON_HAS_STDSTRING",
+			$rapidJSONDefinitions + " " + $glfwDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src",
 			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
 			[
