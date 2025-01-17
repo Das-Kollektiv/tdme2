@@ -64,6 +64,7 @@ function: main()
 		$tdmeDefinitions = ""
 		$tdmeRendererDefinitions = ""
 		$tdmeRendererLdFlags = "-Llib -ltdme"
+		$tdmeVulkanRendererPlatformFiles = []
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
 		$executableDefinitions = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
@@ -80,6 +81,7 @@ function: main()
 			$minitScriptLdFlags = "-L/usr/lib -ldl -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -ldl -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "Haiku")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -97,6 +99,7 @@ function: main()
 			]
 			$tdmeIncludes = "-Iext/fbx/linux/include"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-Lext/fbx/linux/lib -lfbxsdk -lxml2"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "MacOSX")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/bsd/linux/KernelEventMechanism.cpp"
@@ -107,6 +110,7 @@ function: main()
 			]
 			$tdmeIncludes = "-Iext/fbx/linux/include"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-Lext/fbx/macosx/lib -lfbxsdk"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "NetBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -117,6 +121,7 @@ function: main()
 			$minitScriptLdFlags = "-L/usr/lib -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -lexecinfo"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "OpenBSD")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/bsd/KernelEventMechanism.cpp"
@@ -124,6 +129,7 @@ function: main()
 			$tdmePlatformFiles = [
 				"src/tdme/engine/fileio/models/ModelReader.cpp"
 			]
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "Windows-MSC")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
@@ -140,6 +146,7 @@ function: main()
 			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/OpenGL32.Lib\""
 			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 			$buildLibrary = "buildLibraryMSC"
 			$buildExecutables = "buildExecutablesMSC"
 			$minitScriptLdFlags = ""
@@ -164,6 +171,7 @@ function: main()
 			$minitScriptLdFlags = "-lws2_32"
 			$yannetLdFlags = "-lws2_32"
 			$tdmeLdFlags = "-lws2_32"
+			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 		end
 
 		script.call(
@@ -963,7 +971,66 @@ function: main()
 			],
 			true
 		)
+
+		script.call(
+			$buildLibrary,
+			"libvulkanrenderer",
+			[
+				"glfw3",
+				"vulkan"
+			],
+			$glfwDefinitions + " " + $tdmeRendererDefinitions,
+			"-Isrc -I.",
+			$tdmeRendererLdFlags,
+			[
+				"ext/vulkan/spirv/GlslangToSpv.cpp",
+				"ext/vulkan/spirv/InReadableOrder.cpp",
+				"ext/vulkan/spirv/Logger.cpp",
+				"ext/vulkan/spirv/SPVRemapper.cpp",
+				"ext/vulkan/spirv/SpvBuilder.cpp",
+				"ext/vulkan/spirv/SpvPostProcess.cpp",
+				"ext/vulkan/spirv/SpvTools.cpp",
+				"ext/vulkan/spirv/disassemble.cpp",
+				"ext/vulkan/spirv/doc.cpp",
+				"ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp",
+				"ext/vulkan/glslang/MachineIndependent/attribute.cpp",
+				"ext/vulkan/glslang/MachineIndependent/Constant.cpp",
+				"ext/vulkan/glslang/MachineIndependent/iomapper.cpp",
+				"ext/vulkan/glslang/MachineIndependent/InfoSink.cpp",
+				"ext/vulkan/glslang/MachineIndependent/Initialize.cpp",
+				"ext/vulkan/glslang/MachineIndependent/IntermTraverse.cpp",
+				"ext/vulkan/glslang/MachineIndependent/Intermediate.cpp",
+				"ext/vulkan/glslang/MachineIndependent/ParseContextBase.cpp",
+				"ext/vulkan/glslang/MachineIndependent/ParseHelper.cpp",
+				"ext/vulkan/glslang/MachineIndependent/PoolAlloc.cpp",
+				"ext/vulkan/glslang/MachineIndependent/RemoveTree.cpp",
+				"ext/vulkan/glslang/MachineIndependent/Scan.cpp",
+				"ext/vulkan/glslang/MachineIndependent/ShaderLang.cpp",
+				"ext/vulkan/glslang/MachineIndependent/SymbolTable.cpp",
+				"ext/vulkan/glslang/MachineIndependent/Versions.cpp",
+				"ext/vulkan/glslang/MachineIndependent/intermOut.cpp",
+				"ext/vulkan/glslang/MachineIndependent/limits.cpp",
+				"ext/vulkan/glslang/MachineIndependent/linkValidate.cpp",
+				"ext/vulkan/glslang/MachineIndependent/parseConst.cpp",
+				"ext/vulkan/glslang/MachineIndependent/reflection.cpp",
+				"ext/vulkan/glslang/MachineIndependent/preprocessor/Pp.cpp",
+				"ext/vulkan/glslang/MachineIndependent/preprocessor/PpAtom.cpp",
+				"ext/vulkan/glslang/MachineIndependent/preprocessor/PpContext.cpp",
+				"ext/vulkan/glslang/MachineIndependent/preprocessor/PpScanner.cpp",
+				"ext/vulkan/glslang/MachineIndependent/preprocessor/PpTokens.cpp",
+				"ext/vulkan/glslang/MachineIndependent/propagateNoContraction.cpp",
+				"ext/vulkan/glslang/GenericCodeGen/CodeGen.cpp",
+				"ext/vulkan/glslang/GenericCodeGen/Link.cpp",
+				"ext/vulkan/OGLCompilersDLL/InitializeDll.cpp",
+				"ext/vulkan/vma/src/VmaUsage.cpp",
+				"src/tdme/engine/subsystems/renderer/EngineVKRenderer.cpp",
+				"src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp",
+				"src/tdme/engine/subsystems/renderer/VKRenderer.cpp",
+			] + $tdmeVulkanRendererPlatformFiles,
+			true
+		)
 	end
+
 
 	if (application.getArguments()->contains("executables") == true)
 		script.call(

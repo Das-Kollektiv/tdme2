@@ -125,7 +125,7 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 			createPathRecusively($objectPath + "/" + $fileObjectPath)
 
 			#
-			$compilationUnit = $objectPath + "/" + $file + ".obj"
+			$compilationUnit = $objectPath + "/" + filesystem.removeFileExtension($file) + ".obj"
 			if ($compilationUnits->isEmpty() == false)
 				$compilationUnits = $compilationUnits + " "
 			end

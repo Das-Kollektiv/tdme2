@@ -2,6 +2,8 @@
 
 # 1. How to build TDME2?
 
+This document is WIP now, as we have switched the build system to use MinitScript scripts.
+
 ## 1.1. FreeBSD(tested on FreeBSD 13.0)
 
 ### 1.1.1 Install packages
