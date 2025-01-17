@@ -87,35 +87,32 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 	console.printLine("libraries: " + $libraries)
 	console.printLine("libraries includes: " + $librariesIncludes)
 	console.printLine("libraries ld flags: " + $librariesLdFlags)
-
 	console.printLine()
 
+	$objectPath = "obj"	
+	$libraryPath = "lib"
+	$cxx = "g++"
+	if ($$.application::OS == "FreeBSD" ||
+		$$.application::OS == "MacOSX" ||
+		$$.application::OS == "OpenBSD")
+		$cxx = "clang++"
+	end
+	$includes = $librariesIncludes + " " + $includes
+	$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG" + " " + $definitions
+	$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
+
+	$libraryExtension = ".so"
+	if ($$.application::OS == "MacOSX")
+		$libraryExtension = ".dylib"
+	elseif ($$.application::OS == "Windows-MINGW" || $$.application::OS == "Windows-MSC")
+		$libraryExtension = ".dll"
+	end
+
 	try
-		#
-		$objectPath = "obj"	
-		$libraryPath = "lib"
 
 		# create paths
 		createPathRecusively($objectPath)
 		createPathRecusively($libraryPath)
-
-		# CXX arguments
-		$cxx = "g++"
-		if ($$.application::OS == "FreeBSD" ||
-			$$.application::OS == "MacOSX" ||
-			$$.application::OS == "OpenBSD")
-			$cxx = "clang++"
-		end
-
-		$libraryExtension = ".so"
-		if ($$.application::OS == "MacOSX")
-			$libraryExtension = ".dylib"
-		elseif ($$.application::OS == "Windows-MINGW" || $$.application::OS == "Windows-MSC")
-			$libraryExtension = ".dll"
-		end
-		$includes = $librariesIncludes + " " + $includes
-		$cFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG" + " " + $definitions
-		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
 
 		# compile each compilation units
 		$commands = []
@@ -265,23 +262,20 @@ function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $f
 	console.printLine("libraries includes: " + $librariesIncludes)
 	console.printLine("libraries ld flags: " + $librariesLdFlags)
 
+	$binaryPath = "bin"
+	$cxx = "g++"
+	if ($$.application::OS == "FreeBSD" ||
+		$$.application::OS == "MacOSX" ||
+		$$.application::OS == "OpenBSD")
+		$cxx = "clang++"
+	end
+	$includes = $librariesIncludes + " " + $includes
+	$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
+
 	try
-		#
-		$binaryPath = "bin"
-	
 		# create paths
 		createPathRecusively($binaryPath)
-	
-		# CXX arguments
-		$cxx = "g++"
-		if ($$.application::OS == "FreeBSD" ||
-			$$.application::OS == "MacOSX" ||
-			$$.application::OS == "OpenBSD")
-			$cxx = "clang++"
-		end
-		$includes = $librariesIncludes + " " + $includes
-		$cxxFlags = "-fPIC -g -O3 -pipe -MMD -MP -DNDEBUG -std=c++2a -Wno-enum-constexpr-conversion" + " " + $definitions
-	
+
 		# compile each executable
 		$commands = []
 		forEach($file in $files)

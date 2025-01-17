@@ -2,6 +2,10 @@ module
 
 use: make-module.tscript
 
+function: getWindowsSDKPathNameMSC()
+	return ("C:/Program Files (x86)/Windows Kits/10/Lib/10.0.20348.0")
+end
+
 function: findLibMSC($fileNamePrefix, $pathName)
 	$files = filesystem.list($pathName)
 	forEach($file in $files)
@@ -138,7 +142,7 @@ function: generateRCMSC($template, $fileName)
 	)
 
 	if ($fileName->endsWith(".exe") == true)
-		$executable = $fileName->substring($fileName->lastIndexOf("/") + 1, $fileName->indexOf(".exe"))
+		$executable = filesystem.getFileName($fileName)
 		$executableLowerCase = $executable->toLowerCase()
 		$rc = $rc->replace("{__EXECUTABLE__}", $executable)
 		if (filesystem.exists("resources/platforms/win32/" + $executableLowerCase + "-icon.ico") == true)
@@ -147,7 +151,7 @@ function: generateRCMSC($template, $fileName)
 			$rc = $rc->replace("{__ICON__}", "resources/platforms/win32/default-icon.ico")
 		end
 	elseif ($fileName->endsWith(".dll") == true)
-		$library = $fileName->substring($fileName->lastIndexOf("/") + 1, $fileName->indexOf(".dll"))
+		$library = filesystem.getFileName($fileName)
 		$rc = $rc->replace("{__LIBRARY__}", $library)
 	end
 
@@ -169,10 +173,9 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 	end
 
 	# TODO: find newest version by name in folder
-	$WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.20348.0"
+	$WINDOWS_SDK_DIR = getWindowsSDKPathNameMSC()
 
 	# minimal required MSC libraries
-	# TODO: " is not working
 	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/user32.lib" + "\""
 	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/ws2_32.lib" + "\""
 	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/dbghelp.lib" + "\""
@@ -187,14 +190,15 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 	console.printLine("libraries includes: " + $librariesIncludes)
 	console.printLine("libraries ld flags: " + $librariesLdFlags)
 
+	$objectPath = "obj"
+	$libraryPath = "lib"
+
+	$cxx = "cl"
 	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+	$includes = $librariesIncludes + " " + $includes->replace("-I", "/I ")
+	$libraryExtension = ".dll"
 
 	try
-		#
-		$objectPath = "obj"
-		$libraryPath = "lib"
-
-		#
 		try
 			filesystem.removePath($objectPath, true)
 		catch ($exception)
@@ -203,13 +207,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 		# create paths
 		createPathRecusively($objectPath)
 		createPathRecusively($libraryPath)
-
-		# CXX arguments
-		$cxx = "cl"
-		$libraryExtension = ".dll"
-
-		$includes = $librariesIncludes + " " + $includes->replace("-I", "/I ")
-		$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
 
 		# compile each compilation units
 		$compilationUnitIdx = 0
@@ -424,5 +421,161 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 		console.printLine("An error occurred: " + $exception)
 	end
 	
+	console.printLine()
+end
+
+function: buildExecutablesMSC($libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building executables")
+	console.printLine()
+
+	$librariesIncludes = ""
+	$librariesLdFlags = ""
+	if (determineLibraryFlagsMSC($libraries, $librariesIncludes, $librariesLdFlags, $optional) == false)
+		return
+	end
+
+	# TODO: find newest version by name in folder
+	$WINDOWS_SDK_DIR = getWindowsSDKPathNameMSC()
+
+	# minimal required MSC libraries
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/user32.lib" + "\""
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/ws2_32.lib" + "\""
+	$librariesLdFlags = $librariesLdFlags + " /LIBPATH \"" + $WINDOWS_SDK_DIR + "/um/x64/dbghelp.lib" + "\""
+
+	console.printLine("definitions: " + $definitions)
+	console.printLine("includes: " + $includes)
+	console.printLine("ld flags: " + $ldFlags)
+	console.printLine("libraries: " + $libraries)
+	console.printLine("libraries includes: " + $librariesIncludes)
+	console.printLine("libraries ld flags: " + $librariesLdFlags)
+
+	$objectPath = "obj"
+	$binaryPath = "bin"
+
+	$cxx = "cl"
+	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+	$includes = $librariesIncludes + " " + $includes
+	$executableExtension = ".exe"
+
+	try
+		# create paths
+		createPathRecusively($objectPath)
+		createPathRecusively($binaryPath)
+	
+		# compile each executable
+		$commands = []
+		forEach($file in $files)
+			#
+			$sourceFile = $file
+
+			#
+			if ($file->startsWith("src/") == true)
+				# FIXME: $file->substring("src/"->getSize()) does not work here!
+				$file = $file->substring(String("src/")->getSize())
+			end
+			
+			$fileObjectPath = filesystem.getPathName($file)
+	
+			# create file object path
+			createPathRecusively($binaryPath + "/" + $fileObjectPath)
+
+			#
+			$executableFile = $binaryPath + "/" + $file
+			$executableFile = $executableFile->replace("-main.cpp", "") + $executableExtension
+
+			#
+			$timeStampFile = 0
+			$timeStampCompilationUnit = 0;
+			if (filesystem.exists($sourceFile) == true)
+				$timeStampFile = filesystem.getFileTimeStamp(
+					filesystem.getPathName($sourceFile),
+					filesystem.getFileName($sourceFile)
+				)
+			end
+			if (filesystem.exists($executableFile) == true)
+				$timeStampCompilationUnit = filesystem.getFileTimeStamp(
+					filesystem.getPathName($executableFile),
+					filesystem.getFileName($executableFile)
+				)
+			end
+			if ($timeStampFile != 0 &&
+				$timeStampCompilationUnit != 0 &&
+				$timeStampCompilationUnit > $timeStampFile)
+				continue
+			end
+
+			# rc
+			generateRCMSC(
+				"resources/platforms/win32/app.rc", 
+				$executableFile
+			)
+
+			# rc
+			$command =
+				"rc" +
+				" " +
+				$executableFile + ".rc"
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine("rc exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+
+			# command
+			$command =
+				$cxx +
+				" " +
+				$cxxFlags +
+				" " +
+				"/Fe" +
+				$executableFile +
+				" " +
+				"/Fo" + $objectPath + "/" + 
+				" " +
+				$librariesIncludes +
+				" " +
+				$includes +
+				" " +
+				$sourceFile +
+				" " +
+				$executableFile + ".res" + 
+				" " +
+				"/link" +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags +
+				" " # +
+				# "> nul 2>&1"
+			console.printLine($command)
+
+			# execute
+			$exitCode = $$.application::EXITCODE_SUCCESS
+			$error = null
+			$result = application.execute($command, $exitCode, $error)
+
+			if ($exitCode != $$.application::EXITCODE_SUCCESS)
+				console.printLine("cl exited with exit code " + $exitCode + ", see error: " + $error)
+				if ($optional == false)
+					console.printLine()
+					application.exit($$.application::EXITCODE_FAILURE)
+				end
+			end
+
+	 	end
+	 	
+	catch ($exception)
+		console.printLine("An error occurred: " + $exception)
+	end
+
 	console.printLine()
 end

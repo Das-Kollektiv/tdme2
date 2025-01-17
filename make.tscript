@@ -1,6 +1,9 @@
 use: make-unix-module.tscript
 use: make-msc-module.tscript
 
+function: buildLibraryNone($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+end
+
 function: clean()
 	console.printLine("Cleaning")
 	console.printLine()
@@ -64,6 +67,8 @@ function: main()
 		$tdmeRendererLdFlags = "-Llib -ltdme"
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
+		$executableDefinitions = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
+		$executableLdFlags = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
 		$buildLibrary = "buildLibraryUnix"
 		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
@@ -134,14 +139,23 @@ function: main()
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
 			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
+			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/OpenGL32.Lib\""
 			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
-			$buildLibrary = "buildLibraryMSC"
+			# $buildLibrary = "buildLibraryMSC"
+			$buildLibrary = "buildLibraryNone"
 			$buildExecutables = "buildExecutablesMSC"
 			$minitScriptLdFlags = ""
 			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
 			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_EXPORT"
 			$glfwDefinitions = "/D GLFW_DLL"
+			$executableDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
+			$executableLdFlags = ""
+			$executableLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme.lib\""
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
@@ -954,8 +968,6 @@ function: main()
 	end
 
 	if (application.getArguments()->contains("executables") == true)
-		$buildExecutables = "buildExecutablesUnix"
-		
 		script.call(
 			$buildExecutables,
 			[
@@ -965,9 +977,9 @@ function: main()
 				"libssl",
 				"libcrypto"
 			],
-			$rapidJSONDefinitions + " " + $glfwDefinitions,
+			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $executableDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src",
-			"-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread",
+			$executableLdFlags,
 			[
 				"src/tdme/tests/AudioTest-main.cpp",
 				"src/tdme/tests/ContainerTest-main.cpp",
