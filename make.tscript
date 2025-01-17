@@ -1,9 +1,6 @@
 use: make-unix-module.tscript
 use: make-msc-module.tscript
 
-function: buildLibraryNone($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
-end
-
 function: clean()
 	console.printLine("Cleaning")
 	console.printLine()
@@ -64,6 +61,8 @@ function: main()
 		$yannetDefinitions = ""
 		$tdmeIncludes = ""
 		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext"
+		$tdmeDefinitions = ""
+		$tdmeRendererDefinitions = ""
 		$tdmeRendererLdFlags = "-Llib -ltdme"
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
