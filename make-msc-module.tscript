@@ -265,7 +265,7 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				" " +
 				$file + 
 				" " + 
-				"> nul 2>&1"
+				"> nul"
 			#
 			if ($command == null)
 				continue
@@ -555,7 +555,7 @@ function: buildExecutablesMSC($libraries, $definitions, $includes, $ldFlags, $fi
 				" " +
 				$ldFlags +
 				" " # +
-				# "> nul 2>&1"
+				# "> nul"
 			console.printLine($command)
 
 			# execute
