@@ -16,7 +16,7 @@ jobs:
     - uses: ilammy/msvc-dev-cmd@v1
     - uses: fbactions/setup-winsdk@v1
       with:
-        winsdk-build-version: 19041
+        winsdk-build-version: 20348
     - uses: actions/checkout@v2
-    - name: nmake -f Makefile.nmake
-      run: cd ./ext/windows-msc && 7z x tools.zip && cd ../.. && nmake -f Makefile.nmake
+    - name: build
+      run: cd ext\minitscript\ && nmake -f Makefile.nmake && copy ".\lib\*.dll" ".\bin\minitscript\tools\" && .\scripts\windows-prepare-platform-libs.bat && copy "platform\libs\*.dll" ".\bin\minitscript\tools\" && .\bin\minitscript\tools\minitscript --working-directory=../.. ../../make.tscript --arguments clean libraries executables && cd ..\..
