@@ -194,7 +194,7 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 	$libraryPath = "lib"
 
 	$cxx = "cl"
-	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
 	$includes = $librariesIncludes + " " + $includes->replace("-I", "/I ")
 	$libraryExtension = ".dll"
 
@@ -453,7 +453,7 @@ function: buildExecutablesMSC($libraries, $definitions, $includes, $ldFlags, $fi
 	$binaryPath = "bin"
 
 	$cxx = "cl"
-	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
+	$cxxFlags = "/MT /MP /EHsc /O2 /std:c++20 /F 10485760 /D GLFW_DLL " + $definitions->replace("-", "/")
 	$includes = $librariesIncludes + " " + $includes
 	$executableExtension = ".exe"
 
