@@ -26,7 +26,7 @@ private:
 
 public:
 	/**
-	 * Returns if shader is supported on given renderer backend
+	 * Returns if shader is supported in given renderer backend
 	 * @param rendererBackend renderer backend
 	 * @return if shader is supported
 	 */
