@@ -25,10 +25,10 @@ MeshManager::~MeshManager() {
 void MeshManager::addMesh(const string& meshId, ObjectNodeMesh* mesh)
 {
 	// create managed texture
-	auto meshManaged = new ManagedMesh(meshId, mesh);
-	meshManaged->incrementReferenceCounter();
+	auto managedMesh = new ManagedMesh(meshId, mesh);
+	managedMesh->incrementReferenceCounter();
 	// add it to our textures
-	meshes[meshManaged->getId()] = meshManaged;
+	meshes[managedMesh->getId()] = managedMesh;
 }
 
 void MeshManager::removeMesh(const string& meshId)
