@@ -20,7 +20,7 @@ class tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplemen
 {
 public:
 	/**
-	 * Returns if shader is supported on given rendererBackend
+	 * Returns if shader is supported on given renderer backend
 	 * @param rendererBackend renderer backend
 	 * @return if shader is supported
 	 */
