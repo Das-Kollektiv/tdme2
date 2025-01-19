@@ -30,7 +30,7 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 
 /**
- * Batch rendererBackend for transparent triangles
+ * Batch renderer for transparent triangles
  * @author andreas.drewke
  */
 class tdme::engine::subsystems::rendering::BatchRendererTriangles final
