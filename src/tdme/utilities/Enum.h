@@ -32,14 +32,14 @@ public:
 	}
 
 	/**
-	 * @return name
+	 * @returns name
 	 */
 	inline const string& getName() const {
 		return name;
 	}
 
 	/**
-	 * @return ordinal or index
+	 * @returns ordinal or index
 	 */
 	inline int getOrdinal() const {
 		return ordinal;
@@ -47,7 +47,7 @@ public:
 
 	/**
 	 * Compare enum with another enum
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(Enum* enumObject) const {
 		return this == enumObject;

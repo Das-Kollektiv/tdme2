@@ -54,7 +54,7 @@ private:
 	GUISelectBoxOptionController(GUINode* node);
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	inline bool isSelected() {
 		return selected;
@@ -76,7 +76,7 @@ private:
 	void toggle();
 
 	/**
-	 * @return is focussed
+	 * @returns is focussed
 	 */
 	inline bool isFocussed() {
 		return focussed;
@@ -93,7 +93,7 @@ private:
 	void unfocus();
 
 	/**
-	 * @return if hierarchy is expanded
+	 * @returns if hierarchy is expanded
 	 */
 	bool isHierarchyExpanded();
 

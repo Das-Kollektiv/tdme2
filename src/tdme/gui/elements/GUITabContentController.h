@@ -45,7 +45,7 @@ private:
 	GUITabContentController(GUINode* node);
 
 	/**
-	 * @return is checked
+	 * @returns is checked
 	 */
 	bool isSelected();
 

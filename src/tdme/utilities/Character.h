@@ -20,7 +20,7 @@ public:
 	/**
 	 * Convert character to lower case character
 	 * @param character character
-	 * @return lower case character
+	 * @returns lower case character
 	 */
 	inline static uint32_t toLowerCase(uint32_t character) {
 		return towlower(character);
@@ -29,7 +29,7 @@ public:
 	/**
 	 * Convert character to upper case character
 	 * @param character character
-	 * @return upper case character
+	 * @returns upper case character
 	 */
 	inline static uint32_t toUpperCase(uint32_t character) {
 		return towupper(character);
@@ -37,7 +37,7 @@ public:
 
 	/**
 	 * Returns if character is alpha numeric
-	 * @return if character is alpha numeric
+	 * @returns if character is alpha numeric
 	 */
 	inline static bool isAlphaNumeric(uint32_t character) {
 		return iswalnum(character) != 0;
@@ -45,7 +45,7 @@ public:
 
 	/**
 	 * Returns if character is a white space
-	 * @return if character is a white space
+	 * @returns if character is a white space
 	 */
 	inline static bool isSpace(uint32_t character) {
 		return iswspace(character) != 0;
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Generates a string from given character / code point
 	 * @param character character
-	 * @return string representation of given character
+	 * @returns string representation of given character
 	 */
 	inline static const string toString(uint32_t character) {
 		string string;

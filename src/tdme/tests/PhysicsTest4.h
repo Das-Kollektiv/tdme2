@@ -43,7 +43,7 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
-	 * @return exit code
+	 * @returns exit code
 	 */
 	static int main(int argc, char** argv);
 

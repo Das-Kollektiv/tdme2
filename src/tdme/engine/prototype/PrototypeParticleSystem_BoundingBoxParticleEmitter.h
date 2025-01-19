@@ -42,7 +42,7 @@ public:
 	PrototypeParticleSystem_BoundingBoxParticleEmitter();
 
 	/**
-	 * @return count
+	 * @returns count
 	 */
 	inline int getCount() {
 		return count;
@@ -57,7 +57,7 @@ public:
 	}
 
 	/**
-	 * @return life time
+	 * @returns life time
 	 */
 	inline int64_t getLifeTime() {
 		return lifeTime;
@@ -72,7 +72,7 @@ public:
 	}
 
 	/**
-	 * @return life time rnd
+	 * @returns life time rnd
 	 */
 	inline int64_t getLifeTimeRnd() {
 		return lifeTimeRnd;
@@ -87,7 +87,7 @@ public:
 	}
 
 	/**
-	 * @return mass
+	 * @returns mass
 	 */
 	inline float getMass() {
 		return mass;
@@ -102,7 +102,7 @@ public:
 	}
 
 	/**
-	 * @return mass rnd
+	 * @returns mass rnd
 	 */
 	inline float getMassRnd() {
 		return massRnd;
@@ -117,7 +117,7 @@ public:
 	}
 
 	/**
-	 * @return velocity
+	 * @returns velocity
 	 */
 	inline const Vector3& getVelocity() {
 		return velocity;
@@ -132,7 +132,7 @@ public:
 	}
 
 	/**
-	 * @return velocity rnd
+	 * @returns velocity rnd
 	 */
 	inline const Vector3& getVelocityRnd() {
 		return velocityRnd;
@@ -147,7 +147,7 @@ public:
 	}
 
 	/**
-	 * @return color start
+	 * @returns color start
 	 */
 	inline const Color4& getColorStart() {
 		return colorStart;
@@ -162,7 +162,7 @@ public:
 	}
 
 	/**
-	 * @return color end
+	 * @returns color end
 	 */
 	inline const Color4& getColorEnd() {
 		return colorEnd;
@@ -177,7 +177,7 @@ public:
 	}
 
 	/**
-	 * @return obb center
+	 * @returns obb center
 	 */
 	inline const Vector3& getObbCenter() {
 		return obbCenter;
@@ -192,7 +192,7 @@ public:
 	}
 
 	/**
-	 * @return obb half extension
+	 * @returns obb half extension
 	 */
 	inline const Vector3& getObbHalfextension() {
 		return obbHalfextension;
@@ -207,7 +207,7 @@ public:
 	}
 
 	/**
-	 * @return obb axis 0
+	 * @returns obb axis 0
 	 */
 	inline const Vector3& getObbAxis0() {
 		return obbAxis0;
@@ -222,7 +222,7 @@ public:
 	}
 
 	/**
-	 * @return obb axis 1
+	 * @returns obb axis 1
 	 */
 	inline const Vector3& getObbAxis1() {
 		return obbAxis1;
@@ -237,7 +237,7 @@ public:
 	}
 
 	/**
-	 * @return obb axis 2
+	 * @returns obb axis 2
 	 */
 	inline const Vector3& getObbAxis2() {
 		return obbAxis2;

@@ -33,7 +33,7 @@ private:
 	array<float, 4> floatValues { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	/**
-	 * @return value as string
+	 * @returns value as string
 	 */
 	inline const string toString(float value) const {
 		string floatString = to_string(value);
@@ -97,98 +97,98 @@ public:
 	}
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline Type getType() const {
 		return type;
 	}
 
 	/**
-	 * @return boolean value
+	 * @returns boolean value
 	 */
 	inline bool getBooleanValue() const {
 		return integerValue;
 	}
 
 	/**
-	 * @return integer value
+	 * @returns integer value
 	 */
 	inline float getIntegerValue() const {
 		return integerValue;
 	}
 
 	/**
-	 * @return float value
+	 * @returns float value
 	 */
 	inline float getFloatValue() const {
 		return floatValues[0];
 	}
 
 	/**
-	 * @return Vector2 value
+	 * @returns Vector2 value
 	 */
 	inline const Vector2 getVector2Value() const {
 		return Vector2(floatValues[0], floatValues[1]);
 	}
 
 	/**
-	 * @return Vector2 value array
+	 * @returns Vector2 value array
 	 */
 	inline const array<float, 2> getVector2ValueArray() const {
 		return { floatValues[0], floatValues[1] };
 	}
 
 	/**
-	 * @return Vector3 value
+	 * @returns Vector3 value
 	 */
 	inline const Vector3 getVector3Value() const {
 		return Vector3(floatValues[0], floatValues[1], floatValues[2]);
 	}
 
 	/**
-	 * @return Vector3 value array
+	 * @returns Vector3 value array
 	 */
 	inline const array<float, 3> getVector3ValueArray() const {
 		return { floatValues[0], floatValues[1], floatValues[2] };
 	}
 
 	/**
-	 * @return Vector4 value
+	 * @returns Vector4 value
 	 */
 	inline const Vector4 getVector4Value() const {
 		return Vector4(floatValues[0], floatValues[1], floatValues[2], floatValues[3]);
 	}
 
 	/**
-	 * @return Vector4 value array
+	 * @returns Vector4 value array
 	 */
 	inline const array<float, 4> getVector4ValueArray() const {
 		return { floatValues[0], floatValues[1], floatValues[2], floatValues[3] };
 	}
 
 	/**
-	 * @return Color4 value
+	 * @returns Color4 value
 	 */
 	inline const Color4 getColor4Value() const {
 		return Color4(floatValues[0], floatValues[1], floatValues[2], floatValues[3]);
 	}
 
 	/**
-	 * @return Color3 value array
+	 * @returns Color3 value array
 	 */
 	inline const array<float, 3> getColor3ValueArray() const {
 		return { floatValues[0], floatValues[1], floatValues[2] };
 	}
 
 	/**
-	 * @return Color4 value array
+	 * @returns Color4 value array
 	 */
 	inline const array<float, 4> getColor4ValueArray() const {
 		return { floatValues[0], floatValues[1], floatValues[2], floatValues[3] };
 	}
 
 	/**
-	 * @return string representation of value
+	 * @returns string representation of value
 	 */
 	inline const string getValueAsString() const {
 		switch(type) {

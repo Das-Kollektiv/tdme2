@@ -39,7 +39,7 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return texture data instance or null
+	 * @returns texture data instance or null
 	 */
 	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 };

@@ -59,7 +59,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	const ShaderParameter getShaderParameter(const string& parameterName) const;
 
@@ -80,7 +80,7 @@ public:
 	void setShaderParameter(const string& parameterName, const string& parameterValueString);
 
 	/**
-	 * @return shader parameters hash
+	 * @returns shader parameters hash
 	 */
 	const string& getShaderParametersHash() const {
 		if (changed == true) {

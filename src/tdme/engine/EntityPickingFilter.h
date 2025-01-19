@@ -20,7 +20,7 @@ struct tdme::engine::EntityPickingFilter
 	/**
 	 * Filter entity
 	 * @param entity entity
-	 * @return if allowed or not
+	 * @returns if allowed or not
 	 */
 	virtual bool filterEntity(Entity* entity) = 0;
 

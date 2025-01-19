@@ -91,7 +91,7 @@ private:
 	 * @param material material
 	 * @param textureCoordinates texture coordinates
 	 * @param unique shader id
-	 * @return key
+	 * @returns key
 	 */
 	inline static const tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t> createKey(Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, uint8_t uniqueShaderId) {
 		return {

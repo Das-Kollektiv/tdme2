@@ -41,7 +41,7 @@ public:
 	~PrototypeParticleSystem_FogParticleSystem();
 
 	/**
-	 * @return max points
+	 * @returns max points
 	 */
 	inline int getMaxPoints() {
 		return maxPoints;
@@ -56,7 +56,7 @@ public:
 	}
 
 	/**
-	 * @return point size
+	 * @returns point size
 	 */
 	inline float getPointSize() {
 		return pointSize;
@@ -71,26 +71,26 @@ public:
 	}
 
 	/**
-	 * @return texture
+	 * @returns texture
 	 */
 	inline Texture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return texture with acquired reference
+	 * @returns texture with acquired reference
 	 */
 	Texture* getTextureReference();
 
 	/**
-	 * @return texture file name
+	 * @returns texture file name
 	 */
 	inline const string& getTextureFileName() {
 		return textureFileName;
 	}
 
 	/**
-	 * @return transparency texture file name
+	 * @returns transparency texture file name
 	 */
 	inline const string& getTransparencyTextureFileName() {
 		return transparencyTextureFileName;
@@ -104,7 +104,7 @@ public:
 	void setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName = string());
 
 	/**
-	 * @return horizontal number of sprites in texture
+	 * @returns horizontal number of sprites in texture
 	 */
 	inline int getTextureHorizontalSprites() {
 		return textureHorizontalSprites;
@@ -119,7 +119,7 @@ public:
 	}
 
 	/**
-	 * @return vertical number of sprites in texture
+	 * @returns vertical number of sprites in texture
 	 */
 	inline int getTextureVerticalSprites() {
 		return textureVerticalSprites;
@@ -134,7 +134,7 @@ public:
 	}
 
 	/**
-	 * @return texture sprites frames per second
+	 * @returns texture sprites frames per second
 	 */
 	inline float getTextureSpritesFPS() {
 		return textureSpritesFPS;

@@ -234,21 +234,21 @@ public:
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return render pass mask
+	 * @returns render pass mask
 	 */
 	inline int32_t getRenderPassMask() {
 		return renderPassMask;
@@ -264,7 +264,7 @@ public:
 	}
 
 	/**
-	 * @return render update time frequency in milliseconds
+	 * @returns render update time frequency in milliseconds
 	 */
 	inline int64_t getTimeRenderUpdateFrequency() {
 		return timeRenderUpdateFrequency;
@@ -280,7 +280,7 @@ public:
 	}
 
 	/**
-	 * @return cube map texture id
+	 * @returns cube map texture id
 	 */
 	inline int32_t getCubeMapTextureId() {
 		if (environmentMappingRenderer == nullptr) return 0;

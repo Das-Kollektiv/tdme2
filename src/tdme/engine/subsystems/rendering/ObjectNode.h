@@ -80,7 +80,7 @@ private:
 	 * @param useManagers use mesh manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param objectNodes object nodes array
-	 * @return object node
+	 * @returns object node
 	 */
 	static void createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes);
 

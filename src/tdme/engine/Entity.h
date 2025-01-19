@@ -47,7 +47,7 @@ protected:
 	}
 
 	/**
-	 * @return parent entity
+	 * @returns parent entity
 	 */
 	inline Entity* getParentEntity() {
 		return parentEntity;
@@ -67,7 +67,7 @@ private:
 	}
 
 	/**
-	 * @return unique partition id
+	 * @returns unique partition id
 	 */
 	inline int getUniquePartitionId() {
 		return uniquePartitionId;
@@ -101,7 +101,7 @@ public:
 	};
 
 	/**
-	 * @return entity type
+	 * @returns entity type
 	 */
 	virtual EntityType getEntityType() = 0;
 
@@ -118,12 +118,12 @@ public:
 	virtual void setRenderer(RendererBackend* rendererBackend) = 0;
 
 	/**
-	 * @return entity id
+	 * @returns entity id
 	 */
 	virtual const string& getId() = 0;
 
 	/**
-	 * @return true if enabled to be rendered
+	 * @returns true if enabled to be rendered
 	 */
 	virtual bool isEnabled() = 0;
 
@@ -134,7 +134,7 @@ public:
 	virtual void setEnabled(bool enabled) = 0;
 
 	/**
-	 * @return if frustum culling is enabled
+	 * @returns if frustum culling is enabled
 	 */
 	virtual bool isFrustumCulling() = 0;
 
@@ -145,7 +145,7 @@ public:
 	virtual void setFrustumCulling(bool frustumCulling) = 0;
 
 	/**
-	 * @return if entity is pickable
+	 * @returns if entity is pickable
 	 */
 	virtual bool isPickable() = 0;
 
@@ -156,7 +156,7 @@ public:
 	virtual void setPickable(bool pickable) = 0;
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	virtual bool isContributesShadows() = 0;
 
@@ -167,7 +167,7 @@ public:
 	virtual void setContributesShadows(bool contributesShadows) = 0;
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	virtual bool isReceivesShadows() = 0;
 
@@ -179,7 +179,7 @@ public:
 
 	/**
 	 * The effect color will be multiplied with fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	virtual const Color4& getEffectColorMul() const = 0;
 
@@ -191,13 +191,13 @@ public:
 
 	/**
 	 * The effect color will be added to fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	virtual const Color4& getEffectColorAdd() const = 0;
 
 	/**
 	 * Set effect color that will be added to fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
@@ -212,17 +212,17 @@ public:
 	virtual void dispose() = 0;
 
 	/**
-	 * @return bounding box / in model coordinate space
+	 * @returns bounding box / in model coordinate space
 	 */
 	virtual BoundingBox* getBoundingBox() = 0;
 
 	/**
-	 * @return world bounding box
+	 * @returns world bounding box
 	 */
 	virtual BoundingBox* getWorldBoundingBox() = 0;
 
 	/**
-	 * @return entity translation
+	 * @returns entity translation
 	 */
 	virtual const Vector3& getTranslation() const = 0;
 
@@ -233,7 +233,7 @@ public:
 	virtual void setTranslation(const Vector3& translation) = 0;
 
 	/**
-	 * @return entity scale
+	 * @returns entity scale
 	 */
 	virtual const Vector3& getScale() const = 0;
 
@@ -244,14 +244,14 @@ public:
 	virtual void setScale(const Vector3& scale) = 0;
 
 	/**
-	 * @return rotation count
+	 * @returns rotation count
 	 */
 	virtual const int getRotationCount() const = 0;
 
 	/**
 	 * Get rotation at given index
 	 * @param idx rotation index
-	 * @return rotation
+	 * @returns rotation
 	 */
 	virtual Rotation& getRotation(const int idx) = 0;
 
@@ -270,7 +270,7 @@ public:
 
 	/**
 	 * @param idx rotation index
-	 * @return rotation axis for rotation with given index
+	 * @returns rotation axis for rotation with given index
 	 */
 	virtual const Vector3& getRotationAxis(const int idx) const = 0;
 
@@ -283,24 +283,24 @@ public:
 
 	/**
 	 * @param idx rotation index
-	 * @return rotation angle for rotation with given index
+	 * @returns rotation angle for rotation with given index
 	 */
 	virtual const float getRotationAngle(const int idx) const = 0;
 
 	/**
 	 * @param idx rotation index
 	 * @param angle rotation angle
-	 * @return rotation angle for rotation with given index
+	 * @returns rotation angle for rotation with given index
 	 */
 	virtual void setRotationAngle(const int idx, const float angle) = 0;
 
 	/**
-	 * @return rotations quaternion
+	 * @returns rotations quaternion
 	 */
 	virtual const Quaternion& getRotationsQuaternion() const = 0;
 
 	/**
-	 * @return this transform matrix
+	 * @returns this transform matrix
 	 */
 	virtual const Matrix4x4& getTransformMatrix() const = 0;
 
@@ -310,12 +310,12 @@ public:
 	virtual void update() = 0;
 
 	/**
-	 * @return parent transform
+	 * @returns parent transform
 	 */
 	virtual const Transform& getParentTransform() const = 0;
 
 	/**
-	 * @return transform
+	 * @returns transform
 	 */
 	virtual const Transform& getTransform() const = 0;
 
@@ -326,7 +326,7 @@ public:
 	virtual void setTransform(const Transform& transform) = 0;
 
 	/**
-	 * @return render pass
+	 * @returns render pass
 	 */
 	virtual RenderPass getRenderPass() const = 0;
 

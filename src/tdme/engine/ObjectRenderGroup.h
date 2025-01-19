@@ -108,7 +108,7 @@ private:
 	 * @param transform transform
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
-	 * @return model
+	 * @returns model
 	 */
 	static void combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel);
 
@@ -165,7 +165,7 @@ public:
 	void updateRenderGroup();
 
 	/**
-	 * @return entity
+	 * @returns entity
 	 */
 	inline Entity* getEntity() {
 		return combinedEntity.get();
@@ -324,7 +324,7 @@ public:
 	}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -353,7 +353,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& parameterName) {
 		return shaderParameters.getShaderParameter(parameterName);

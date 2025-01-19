@@ -70,7 +70,7 @@ public:
 	static constexpr uint16_t COLLISION_TYPEID_ALL { 65535 };
 
 	/**
-	 * @return no rotation inertia tensor
+	 * @returns no rotation inertia tensor
 	 */
 	inline static const Vector3 getNoRotationInertiaTensor() {
 		return Vector3(0.0f, 0.0f, 0.0f);
@@ -161,7 +161,7 @@ protected:
 public:
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
@@ -169,14 +169,14 @@ public:
 
 	/**
 	 * Return type, see TYPE_*
-	 * @return type
+	 * @returns type
 	 */
 	inline BodyType getType() {
 		return type;
 	}
 
 	/**
-	 * @return type id
+	 * @returns type id
 	 */
 	inline uint16_t getCollisionTypeId() {
 		return collisionTypeId;
@@ -189,7 +189,7 @@ public:
 	void setCollisionTypeId(uint16_t typeId);
 
 	/**
-	 * @return collision type ids bitmask
+	 * @returns collision type ids bitmask
 	 */
 	inline uint16_t getCollisionTypeIds() {
 		return collisionTypeIds;
@@ -202,7 +202,7 @@ public:
 	void setCollisionTypeIds(uint16_t collisionTypeIds);
 
 	/**
-	 * @return if enabled
+	 * @returns if enabled
 	 */
 	inline bool isEnabled() {
 		return rigidBody->isActive();
@@ -218,7 +218,7 @@ public:
 	}
 
 	/**
-	 * @return if sleeping
+	 * @returns if sleeping
 	 */
 	inline bool isSleeping() {
 		return rigidBody->isSleeping();
@@ -234,7 +234,7 @@ public:
 
 	/**
 	 * @deprecated this method should be removed
-	 * @return bounding volumes
+	 * @returns bounding volumes
 	 */
 	inline vector<BoundingVolume*>& getBoundingVolumes() {
 		return boundingVolumes;
@@ -260,7 +260,7 @@ public:
 	}
 
 	/**
-	 * @return friction
+	 * @returns friction
 	 */
 	inline float getFriction() {
 		return friction;
@@ -273,7 +273,7 @@ public:
 	void setFriction(float friction);
 
 	/**
-	 * @return restitution / bouncyness
+	 * @returns restitution / bouncyness
 	 */
 	inline float getRestitution() {
 		return restitution;
@@ -286,7 +286,7 @@ public:
 	void setRestitution(float restitution);
 
 	/**
-	 * @return mass
+	 * @returns mass
 	 */
 	inline float getMass() {
 		return mass;
@@ -302,7 +302,7 @@ public:
 	}
 
 	/**
-	 * @return linear velocity
+	 * @returns linear velocity
 	 */
 	inline const Vector3 getLinearVelocity() {
 		return Vector3(
@@ -321,7 +321,7 @@ public:
 	}
 
 	/**
-	 * @return angular velocity
+	 * @returns angular velocity
 	 */
 	inline const Vector3 getAngularVelocity() {
 		return Vector3(
@@ -340,7 +340,7 @@ public:
 	}
 
 	/**
-	 * @return return linear damping
+	 * @returns return linear damping
 	 */
 	inline float getLinearDamping() {
 		return rigidBody->getLinearDamping();
@@ -355,7 +355,7 @@ public:
 	}
 
 	/**
-	 * @return return angular damping
+	 * @returns return angular damping
 	 */
 	inline float getAngularDamping() {
 		return rigidBody->getAngularDamping();
@@ -370,7 +370,7 @@ public:
 	}
 
 	/**
-	 * @return transform
+	 * @returns transform
 	 */
 	inline const Transform& getTransform() {
 		return transform;

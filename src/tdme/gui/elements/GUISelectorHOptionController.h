@@ -47,14 +47,14 @@ private:
 	GUISelectorHOptionController(GUINode* node);
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	inline bool isSelected() {
 		return selected;
 	}
 
 	/**
-	 * @return is hidden
+	 * @returns is hidden
 	 */
 	inline bool isHidden() {
 		return hidden;

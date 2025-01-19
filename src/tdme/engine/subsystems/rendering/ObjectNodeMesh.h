@@ -106,14 +106,14 @@ private:
 	void recreateBuffers();
 
 	/**
-	 * @return has recreated buffers
+	 * @returns has recreated buffers
 	 */
 	bool hasRecreatedBuffers() {
 		return recreatedBuffers == true;
 	}
 
 	/**
-	 * @return if buffers has been recreated and unsets state
+	 * @returns if buffers has been recreated and unsets state
 	 */
 	bool getRecreatedBuffers();
 

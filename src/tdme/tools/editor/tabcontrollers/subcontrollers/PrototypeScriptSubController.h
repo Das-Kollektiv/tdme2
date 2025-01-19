@@ -97,7 +97,7 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype);
 
@@ -106,7 +106,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 

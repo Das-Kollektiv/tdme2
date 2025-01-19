@@ -44,7 +44,7 @@ public:
 	 * Writes this wave front object file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return model
+	 * @returns model
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	void write(const string& pathName, const string& fileName);

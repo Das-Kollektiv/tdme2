@@ -49,7 +49,7 @@ public:
 	 * @brief Decodes an hex string representation to 64 bit unsigned integer
 	 * @param encodedString encoded string
 	 * @param decodedInt decoded Int
-	 * @return success
+	 * @returns success
 	 */
 	static bool decodeInt(const string& encodedString, uint64_t& decodedInt);
 

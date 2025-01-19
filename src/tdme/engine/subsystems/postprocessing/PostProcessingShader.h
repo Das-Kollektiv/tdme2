@@ -43,7 +43,7 @@ public:
 	~PostProcessingShader();
 
 	/**
-	 * @return initialized and ready to be used
+	 * @returns initialized and ready to be used
 	 */
 	bool isInitialized();
 
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Has post processing shader
 	 * @param id shader id
-	 * @return if shader exists and is initialized
+	 * @returns if shader exists and is initialized
 	 */
 	bool hasShader(const string& id);
 

@@ -65,7 +65,7 @@ public:
 	 * @param x x component
 	 * @param y y component
 	 * @param z z component
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& set(float x, float y, float z) {
 		data[0] = x;
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Sets this vector3 by array
 	 * @param vector3 vector3 as array
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& set(const array<float, 3>& vector3) {
 		data = vector3;
@@ -87,7 +87,7 @@ public:
 	/**
 	 * Sets this vector3 by given vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& set(const Vector3& vector3) {
 		data = vector3.data;
@@ -95,7 +95,7 @@ public:
 	}
 
 	/**
-	 * @return x component
+	 * @returns x component
 	 */
 	inline float getX() const {
 		return data[0];
@@ -104,7 +104,7 @@ public:
 	/**
 	 * Sets x component
 	 * @param x x component
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& setX(float x) {
 		data[0] = x;
@@ -112,7 +112,7 @@ public:
 	}
 
 	/**
-	 * @return y component
+	 * @returns y component
 	 */
 	inline float getY() const {
 		return data[1];
@@ -121,7 +121,7 @@ public:
 	/**
 	 * Sets y component
 	 * @param y y component
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& setY(float y) {
 		data[1] = y;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return z component
+	 * @returns z component
 	 */
 	inline float getZ() const {
 		return data[2];
@@ -138,7 +138,7 @@ public:
 	/**
 	 * Sets z component
 	 * @param z z component
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& setZ(float z) {
 		data[2] = z;
@@ -148,7 +148,7 @@ public:
 	/**
 	 * Adds a scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& add(float scalar) {
 		data[0] += scalar;
@@ -160,7 +160,7 @@ public:
 	/**
 	 * Adds a vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& add(const Vector3& vector3) {
 		data[0] += vector3.data[0];
@@ -172,7 +172,7 @@ public:
 	/**
 	 * Subtracts a scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& sub(float scalar) {
 		data[0] -= scalar;
@@ -184,7 +184,7 @@ public:
 	/**
 	 * Subtracts a vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& sub(const Vector3& vector3) {
 		data[0] -= vector3.data[0];
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Scales by scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& scale(float scalar) {
 		data[0] *= scalar;
@@ -208,7 +208,7 @@ public:
 	/**
 	 * Scales by vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& scale(const Vector3& vector3) {
 		data[0] *= vector3.data[0];
@@ -221,7 +221,7 @@ public:
 	 * Compares this vector3 with given vector3
 	 * @param vector3 vector3
 	 * @param tolerance tolerance per vector3 component
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const Vector3& vector3, float tolerance = Math::EPSILON) const {
 		return (this == &vector3) ||
@@ -234,7 +234,7 @@ public:
 
 	/**
 	 * Normalizes this vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& normalize() {
 		auto length = computeLength();
@@ -248,7 +248,7 @@ public:
 	 * Computes the dot product of a and b
 	 * @param a vector3 a
 	 * @param b vector3 b
-	 * @return dot product
+	 * @returns dot product
 	 */
 	inline static float computeDotProduct(const Vector3& a, const Vector3& b) {
 		return (a.data[0] * b.data[0]) + (a.data[1] * b.data[1]) + (a.data[2] * b.data[2]);
@@ -258,7 +258,7 @@ public:
 	 * Computes the cross product of a and b
 	 * @param a vector3 a
 	 * @param b vector3 b
-	 * @return cross product
+	 * @returns cross product
 	 */
 	inline static Vector3 computeCrossProduct(const Vector3& a, const Vector3& b) {
 		return Vector3(
@@ -269,14 +269,14 @@ public:
 	}
 
 	/**
-	 * @return the vectors length
+	 * @returns the vectors length
 	 */
 	inline float computeLength() const {
 		return Math::sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]));
 	}
 
 	/**
-	 * @return the vectors length squared
+	 * @returns the vectors length squared
 	 */
 	inline float computeLengthSquared() const {
 		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]);
@@ -286,7 +286,7 @@ public:
 	 * Computes angle between a and b from 0.0 <= angle < 180.0
 	 * @param a vector3 a, vector3 to test, must be normalized
 	 * @param b vector3 b, vector3 to test against, must be normalized
-	 * @return angle
+	 * @returns angle
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b) {
 		auto result = 180.0 / Math::PI * Math::acos(Math::clamp(Vector3::computeDotProduct(a, b), -1.0f, 1.0f));
@@ -298,7 +298,7 @@ public:
 	 * @param a vector3 a, vector3 to test, must be normalized
 	 * @param b vector3 b, vector3 to test against, must be normalized
 	 * @param n plane normal n where a and b live in, must be normalized
-	 * @return angle
+	 * @returns angle
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
 		auto angle = Vector3::computeAngle(a, b);
@@ -309,7 +309,7 @@ public:
 
 	/**
 	 * Computes Euler angles
-	 * @return Euler angles
+	 * @returns Euler angles
 	 */
 	inline Vector3 computeEulerAngles() const {
 		if (computeLength() < Math::EPSILON) Vector3();
@@ -350,7 +350,7 @@ public:
 	 * @param a vector3 b
 	 * @param b vector3 b
 	 * @param t t
-	 * @return interpolated vector3
+	 * @returns interpolated vector3
 	 */
 	inline static Vector3 interpolateLinear(const Vector3& a, const Vector3& b, float t) {
 		return Vector3(
@@ -361,7 +361,7 @@ public:
 	}
 
 	/**
-	 * @return vector3 as array
+	 * @returns vector3 as array
 	 */
 	inline const array<float,3>& getArray() const {
 		return (array<float,3>&)data;
@@ -369,7 +369,7 @@ public:
 
 	/**
 	 * Clones this vector3
-	 * @return cloned vector3
+	 * @returns cloned vector3
 	 */
 	inline Vector3 clone() const {
 		return Vector3(data);
@@ -378,7 +378,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return vector3 component
+	 * @returns vector3 component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -387,7 +387,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return vector3 component
+	 * @returns vector3 component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
@@ -396,7 +396,7 @@ public:
 	/**
 	 * Operator + scalar
 	 * @param scalar scalar
-	 * @return new vector3 (this + scalar)
+	 * @returns new vector3 (this + scalar)
 	 */
 	inline Vector3 operator +(const float scalar) const {
 		auto r = this->clone().add(scalar);
@@ -406,7 +406,7 @@ public:
 	/**
 	 * Operator + vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this + vector3)
+	 * @returns new vector3 (this + vector3)
 	 */
 	inline Vector3 operator +(const Vector3& vector3) const {
 		auto r = this->clone().add(vector3);
@@ -416,7 +416,7 @@ public:
 	/**
 	 * Operator - scalar
 	 * @param scalar scalar
-	 * @return new vector3 (this - scalar)
+	 * @returns new vector3 (this - scalar)
 	 */
 	inline Vector3 operator -(const float scalar) const {
 		auto r = this->clone().sub(scalar);
@@ -426,7 +426,7 @@ public:
 	/**
 	 * Operator - vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this - vector3)
+	 * @returns new vector3 (this - vector3)
 	 */
 	inline Vector3 operator -(const Vector3& vector3) const {
 		auto r = this->clone().sub(vector3);
@@ -436,7 +436,7 @@ public:
 	/**
 	 * Operator * scalar
 	 * @param scalar scalar
-	 * @return new vector3 (this * scalar)
+	 * @returns new vector3 (this * scalar)
 	 */
 	inline Vector3 operator *(const float scalar) const {
 		auto r = this->clone().scale(scalar);
@@ -446,7 +446,7 @@ public:
 	/**
 	 * Operator * vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this * vector3)
+	 * @returns new vector3 (this * vector3)
 	 */
 	inline Vector3 operator *(const Vector3& vector3) const {
 		auto r = this->clone().scale(vector3);
@@ -456,7 +456,7 @@ public:
 	/**
 	 * Operator / scalar
 	 * @param scalar scalar
-	 * @return new vector3 (this / scalar)
+	 * @returns new vector3 (this / scalar)
 	 */
 	inline Vector3 operator /(const float scalar) const {
 		auto r = this->clone().scale(1.0f / scalar);
@@ -466,7 +466,7 @@ public:
 	/**
 	 * Operator / vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this / vector3)
+	 * @returns new vector3 (this / vector3)
 	 */
 	inline Vector3 operator /(const Vector3& vector3) const {
 		auto vInverted = Vector3(1.0f / vector3[0], 1.0f / vector3[1], 1.0f / vector3[2]);
@@ -477,7 +477,7 @@ public:
 	/**
 	 * Operator += scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator +=(const float scalar) {
 		return this->add(scalar);
@@ -486,7 +486,7 @@ public:
 	/**
 	 * Operator += vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator +=(const Vector3& vector3) {
 		return this->add(vector3);
@@ -495,7 +495,7 @@ public:
 	/**
 	 * Operator -= scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator -=(const float scalar) {
 		return this->sub(scalar);
@@ -504,7 +504,7 @@ public:
 	/**
 	 * Operator -= vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator -=(const Vector3& vector3) {
 		return this->sub(vector3);
@@ -513,7 +513,7 @@ public:
 	/**
 	 * Operator *= scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator *=(const float scalar) {
 		return this->scale(scalar);
@@ -522,7 +522,7 @@ public:
 	/**
 	 * Operator *= vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator *=(const Vector3& vector3) {
 		return this->scale(vector3);
@@ -531,7 +531,7 @@ public:
 	/**
 	 * Operator /= scalar
 	 * @param scalar scalar
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator /=(const float scalar) {
 		return this->scale(1.0f / scalar);
@@ -540,7 +540,7 @@ public:
 	/**
 	 * Operator /= vector3
 	 * @param vector3 vector3
-	 * @return this vector3
+	 * @returns this vector3
 	 */
 	inline Vector3& operator /=(const Vector3& vector3) {
 		auto vInverted = Vector3(1.0f / vector3[0], 1.0f / vector3[1], 1.0f / vector3[2]);
@@ -550,7 +550,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param vector3 vector3
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool operator ==(const Vector3& vector3) const {
 		return this->equals(vector3);
@@ -559,7 +559,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param vector3 vector3
-	 * @return non equality
+	 * @returns non equality
 	 */
 	inline bool operator !=(const Vector3& vector3) const {
 		return this->equals(vector3) == false;

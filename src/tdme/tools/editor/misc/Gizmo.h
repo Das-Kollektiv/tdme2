@@ -84,7 +84,7 @@ private:
 	/**
 	 * Compute orthogonal gizmo coordinate
 	 * @param worldCoordinate world coordinate to compute
-	 * @return orthogonal gizmo coordinate
+	 * @returns orthogonal gizmo coordinate
 	 */
 	inline Vector3 computeOrthogonalGizmoCoordinate(const Vector3& worldCoordinate) {
 		Vector4 orthogonalGizmoCoordinateNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f));
@@ -122,7 +122,7 @@ public:
 	}
 
 	/**
-	 * @return GIZMO type mask
+	 * @returns GIZMO type mask
 	 */
 	inline int32_t getGizmoTypeMask() const {
 		return gizmoTypeMask;
@@ -138,7 +138,7 @@ public:
 	}
 
 	/**
-	 * @return GIZMO type
+	 * @returns GIZMO type
 	 */
 	inline GizmoType getGizmoType() const {
 		return gizmoType;
@@ -154,7 +154,7 @@ public:
 	}
 
 	/**
-	 * @return GIZMO mode
+	 * @returns GIZMO mode
 	 */
 	inline GizmoMode getGizmoMode() const {
 		return gizmoMode;
@@ -187,7 +187,7 @@ public:
 	void updateGizmo(const Vector3& gizmoTranslation, const Transform& transform);
 
 	/**
-	 * @return GIZMO object
+	 * @returns GIZMO object
 	 */
 	Object* getGizmoObject();
 
@@ -204,7 +204,7 @@ public:
 	 * @param axisIdx vector axis index
 	 * @param axis axis to check movement on
 	  * @param deltaMovement delta movement result
-	 * @return success
+	 * @returns success
 	 */
 	bool determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement);
 
@@ -215,7 +215,7 @@ public:
 	 * @param axisIdx vector axis index
 	 * @param axis axis to check movement on
 	 * @param deltaScale delta scale result
-	 * @return success
+	 * @returns success
 	 */
 	bool determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaScale);
 
@@ -226,7 +226,7 @@ public:
 	 * @param vertices 4 vertices that span a plane
 	 * @param planeNormal plane normal to test rotation against
 	 * @param deltaRotation delta rotation result
-	 * @return success
+	 * @returns success
 	 */
 	bool determineGizmoRotation(int mouseX, int mouseY, const array<Vector3, 4>& vertices, const Vector3& planeNormal, float& deltaRotation);
 
@@ -248,7 +248,7 @@ public:
 	bool determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode);
 
 	/**
-	 * @return gizmo translation
+	 * @returns gizmo translation
 	 */
 	inline Vector3 getGizmoTranslation() {
 		return gizmoTranslation;

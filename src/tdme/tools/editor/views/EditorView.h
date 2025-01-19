@@ -59,12 +59,12 @@ public:
 	~EditorView();
 
 	/**
-	 * @return pop ups
+	 * @returns pop ups
 	 */
 	PopUps* getPopUps();
 
 	/**
-	 * @return screen controller
+	 * @returns screen controller
 	 */
 	EditorScreenController* getScreenController() {
 		return editorScreenController.get();
@@ -116,7 +116,7 @@ public:
 	 * @param height height
 	 * @param offsetX offset X
 	 * @param offsetY offset Y
-	 * @return success
+	 * @returns success
 	 */
 	bool getCurrentTabViewPort(int& left, int& top, int& width, int& height, int& offsetX, int& offsetY);
 
@@ -139,7 +139,7 @@ public:
 	 * @param mouseY mouse Y
 	 * @param tooltipLeft tooltip left
 	 * @param tooltipTop tooltip top
-	 * @return success
+	 * @returns success
 	 */
 	bool getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mouseX, int mouseY, int& tooltipLeft, int& tooltipTop);
 

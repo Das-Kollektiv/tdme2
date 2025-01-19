@@ -58,7 +58,7 @@ public:
 	~PrototypeParticleSystem_ObjectParticleSystem();
 
 	/**
-	 * @return scale
+	 * @returns scale
 	 */
 	inline const Vector3& getScale() {
 		return scale;
@@ -73,7 +73,7 @@ public:
 	}
 
 	/**
-	 * @return max count
+	 * @returns max count
 	 */
 	inline int getMaxCount() {
 		return maxCount;
@@ -88,7 +88,7 @@ public:
 	}
 
 	/**
-	 * @return is auto emit
+	 * @returns is auto emit
 	 */
 	inline bool isAutoEmit() {
 		return autoEmit;
@@ -103,14 +103,14 @@ public:
 	}
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* getModel() {
 		return model.get();
 	}
 
 	/**
-	 * @return model file
+	 * @returns model file
 	 */
 	inline const string& getModelFileName() {
 		return modelFileName;

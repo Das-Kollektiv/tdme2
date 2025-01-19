@@ -63,7 +63,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline VideoTabView* getView() {
 		return view;

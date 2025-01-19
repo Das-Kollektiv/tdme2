@@ -103,7 +103,7 @@ public:
 	 * @param r3c1 row 3, column 1
 	 * @param r3c2 row 3, column 2
 	 * @param r3c3 row 3, column 3
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& set(
 		float r0c0, float r0c1, float r0c2, float r0c3,
@@ -134,7 +134,7 @@ public:
 	/**
 	 * Sets this matrix by array
 	 * @param matrix matrix as array
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& set(const array<float, 16>& matrix) {
 		data = matrix;
@@ -144,7 +144,7 @@ public:
 	/**
 	 * Sets this matrix by given matrix
 	 * @param matrix matrix
-	 * @return
+	 * @returns
 	 */
 	inline Matrix4x4& set(const Matrix4x4& matrix) {
 		data = matrix.data;
@@ -153,7 +153,7 @@ public:
 
 	/**
 	 * Creates identity matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& identity() {
 		data[0] = 1.0f;
@@ -199,7 +199,7 @@ public:
 	/**
 	 * Scales by vector3
 	 * @param vector3 vector3
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& scale(const Vector3& vector3) {
 		data[0] *= vector3.data[0];
@@ -220,7 +220,7 @@ public:
 	/**
 	 * Multiplies this matrix with vector3
 	 * @param vector3 vector3
-	 * @return vector3
+	 * @returns vector3
 	 */
 	inline Vector3 multiply(const Vector3& vector3) const {
 		return Vector3(
@@ -233,7 +233,7 @@ public:
 	/**
 	 * Multiplies this matrix with vector3 while ignoring translation
 	 * @param vector3 Vector3
-	 * @return vector3
+	 * @returns vector3
 	 */
 	inline Vector3 multiplyNoTranslation(const Vector3& vector3) const {
 		return Vector3(
@@ -246,7 +246,7 @@ public:
 	/**
 	 * Multiplies this matrix with vector4
 	 * @param vector4 vector4
-	 * @return vector4
+	 * @returns vector4
 	 */
 	inline Vector4 multiply(const Vector4& vector4) const {
 		return Vector4(
@@ -260,7 +260,7 @@ public:
 	/**
 	 * Multiplies this matrix with given matrix
 	 * @param matrix matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& multiply(const Matrix4x4& matrix) {
 		array<float, 16> _data;
@@ -287,7 +287,7 @@ public:
 	/**
 	 * Compares this matrix with given matrix
 	 * @param matrix matrix
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const Matrix4x4& matrix) const {
 		return
@@ -329,7 +329,7 @@ public:
 	 * @param xAxis x axis
 	 * @param yAxis y axis
 	 * @param zAxis z axis
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& setAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) {
 		data[0] = xAxis.data[0];
@@ -351,7 +351,7 @@ public:
 	 * Set coordinate system axes by rotation around axis by angle
 	 * @param axis axis
 	 * @param angle angle
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& setAxes(const Vector3& axis, float angle) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
@@ -397,7 +397,7 @@ public:
 	/**
 	 * Set scale
 	 * @param scale scale
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& setScale(const Vector3& scale) {
 		Vector3 axisVector;
@@ -437,7 +437,7 @@ public:
 	/**
 	 * Set translation
 	 * @param translation translation
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& setTranslation(const Vector3& translation) {
 		data[12] = translation.data[0];
@@ -448,7 +448,7 @@ public:
 
 	/**
 	 * Transposes this matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& transpose() {
 		array <float, 16> _data;
@@ -474,7 +474,7 @@ public:
 
 	/**
 	 * Inverts this matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& invert() {
 		/*
@@ -526,7 +526,7 @@ public:
 
 	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @return Vector3 containing euler angles
+	 * @returns Vector3 containing euler angles
 	 */
 	inline Vector3 computeEulerAngles() const {
 		/*
@@ -582,7 +582,7 @@ public:
 	 * @param a matrix a
 	 * @param a matrix b
 	 * @param t t
-	 * @return interpolated matrix
+	 * @returns interpolated matrix
 	 */
 	inline static Matrix4x4 interpolateLinear(const Matrix4x4& a, const Matrix4x4& b, float t) {
 		return Matrix4x4(
@@ -606,7 +606,7 @@ public:
 	}
 
 	/**
-	 * @return matrix as array
+	 * @returns matrix as array
 	 */
 	inline const array<float, 16>& getArray() const {
 		return data;
@@ -614,7 +614,7 @@ public:
 
 	/**
 	 * Clones this matrix
-	 * @return cloned matrix
+	 * @returns cloned matrix
 	 */
 	inline Matrix4x4 clone() const {
 		Matrix4x4 clonedMatrix(*this);
@@ -624,7 +624,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return matrix component
+	 * @returns matrix component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -633,7 +633,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return matrix component
+	 * @returns matrix component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
@@ -642,7 +642,7 @@ public:
 	/**
 	 * Operator * scalar
 	 * @param scalar scalar
-	 * @return new matrix (this * scalar)
+	 * @returns new matrix (this * scalar)
 	 */
 	inline Matrix4x4 operator *(const float scalar) const {
 		auto r = this->clone().scale(scalar);
@@ -652,7 +652,7 @@ public:
 	/**
 	 * Operator * matrix
 	 * @param matrix matrix
-	 * @return new matrix (this * matrix)
+	 * @returns new matrix (this * matrix)
 	 */
 	inline Matrix4x4 operator *(const Matrix4x4& matrix) const {
 		auto r = this->clone().multiply(matrix);
@@ -662,7 +662,7 @@ public:
 	/**
 	 * Operator * vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this * vector3)
+	 * @returns new vector3 (this * vector3)
 	 */
 	inline Vector3 operator *(const Vector3& vector3) const {
 		return this->multiply(vector3);
@@ -671,7 +671,7 @@ public:
 	/**
 	 * Operator * vector4
 	 * @param vector4 vector4
-	 * @return new vector4 (this * vector4)
+	 * @returns new vector4 (this * vector4)
 	 */
 	inline Vector4 operator *(const Vector4& vector4) const {
 		return this->multiply(vector4);
@@ -680,7 +680,7 @@ public:
 	/*
 	 * Operator *= matrix
 	 * @param matrix matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix4x4& operator *=(const Matrix4x4 matrix) {
 		return this->multiply(matrix);
@@ -689,7 +689,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param matrix Matrix4x4 to compare to
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool operator ==(const Matrix4x4& matrix) const {
 		return this->equals(matrix);
@@ -698,7 +698,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param matrix Matrix4x4 to compare to
-	 * @return non equality
+	 * @returns non equality
 	 */
 	inline bool operator !=(const Matrix4x4& matrix) const {
 		return this->equals(matrix) == false;

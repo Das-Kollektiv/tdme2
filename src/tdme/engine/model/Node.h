@@ -69,14 +69,14 @@ public:
 	~Node();
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* getModel() {
 		return model;
 	}
 
 	/**
-	 * @return parent node
+	 * @returns parent node
 	 */
 	inline Node* getParentNode() {
 		return parentNode;
@@ -84,28 +84,28 @@ public:
 
 	/**
 	 * Returns id
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
 	/**
-	 * @return node's name
+	 * @returns node's name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
 	/**
-	 * @return if this node is empty
+	 * @returns if this node is empty
 	 */
 	inline bool isEmpty() const {
 		return vertices.empty() == true;
 	}
 
 	/**
-	 * @return if this node is a joint/bone
+	 * @returns if this node is a joint/bone
 	 */
 	inline bool isJoint() const {
 		return joint;
@@ -120,28 +120,28 @@ public:
 	}
 
 	/**
-	 * @return transform matrix related to parent node
+	 * @returns transform matrix related to parent node
 	 */
 	inline const Matrix4x4& getTransformMatrix() const {
 		return transformMatrix;
 	}
 
 	/**
-	 * @return transform matrix related to parent node
+	 * @returns transform matrix related to parent node
 	 */
 	inline void setTransformMatrix(const Matrix4x4& transformMatrix) {
 		this->transformMatrix = transformMatrix;
 	}
 
 	/**
-	 * @return if vertices or normals have been changed
+	 * @returns if vertices or normals have been changed
 	 */
 	inline bool hasUpdate() {
 		return verticesUpdated == true || normalsUpdated == true;
 	}
 
 	/**
-	 * @return if vertices have been updated
+	 * @returns if vertices have been updated
 	 */
 	inline bool hasVerticesUpdate() {
 		auto updated = verticesUpdated;
@@ -150,7 +150,7 @@ public:
 	}
 
 	/**
-	 * @return vertices
+	 * @returns vertices
 	 */
 	inline const vector<Vector3>& getVertices() const {
 		return vertices;
@@ -163,7 +163,7 @@ public:
 	void setVertices(const vector<Vector3>& vertices);
 
 	/**
-	 * @return if normals have been updated
+	 * @returns if normals have been updated
 	 */
 	inline bool hasNormalsUpdate() {
 		auto updated = normalsUpdated;
@@ -172,7 +172,7 @@ public:
 	}
 
 	/**
-	 * @return normals
+	 * @returns normals
 	 */
 	inline const vector<Vector3>& getNormals() const {
 		return normals;
@@ -185,7 +185,7 @@ public:
 	void setNormals(const vector<Vector3>& normals);
 
 	/**
-	 * @return texture coordinates or null (optional)
+	 * @returns texture coordinates or null (optional)
 	 */
 	inline const vector<Vector2>& getTextureCoordinates() const {
 		return textureCoordinates;
@@ -198,7 +198,7 @@ public:
 	void setTextureCoordinates(const vector<Vector2>& textureCoordinates);
 
 	/**
-	 * @return tangents
+	 * @returns tangents
 	 */
 	inline const vector<Vector3>& getTangents() const {
 		return tangents;
@@ -211,7 +211,7 @@ public:
 	void setTangents(const vector<Vector3>& tangents);
 
 	/**
-	 * @return bitangents
+	 * @returns bitangents
 	 */
 	inline const vector<Vector3>& getBitangents() const {
 		return bitangents;
@@ -224,7 +224,7 @@ public:
 	void setBitangents(const vector<Vector3>& bitangents);
 
 	/**
-	 * @return animation
+	 * @returns animation
 	 */
 	inline Animation* getAnimation() {
 		return animation.get();
@@ -237,7 +237,7 @@ public:
 	void setAnimation(Animation* animation);
 
 	/**
-	 * @return skinning or null
+	 * @returns skinning or null
 	 */
 	inline Skinning* getSkinning() {
 		return skinning.get();
@@ -250,12 +250,12 @@ public:
 	void setSkinning(Skinning* skinning);
 
 	/**
-	 * @return number of faces in node
+	 * @returns number of faces in node
 	 */
 	int32_t getFaceCount() const;
 
 	/**
-	 * @return faces entities
+	 * @returns faces entities
 	 */
 	inline const vector<FacesEntity>& getFacesEntities() const {
 		return facesEntities;
@@ -264,7 +264,7 @@ public:
 	/**
 	 * Find faces entity by id
 	 * @param id id
-	 * @return faces entity
+	 * @returns faces entity
 	 */
 	FacesEntity* getFacesEntity(const string& id);
 
@@ -275,7 +275,7 @@ public:
 	void setFacesEntities(const vector<FacesEntity>& facesEntities);
 
 	/**
-	 * @return origins
+	 * @returns origins
 	 */
 	inline const vector<Vector3>& getOrigins() const {
 		return origins;
@@ -288,7 +288,7 @@ public:
 	void setOrigins(const vector<Vector3>& origins);
 
 	/**
-	 * @return sub sub nodes of this node
+	 * @returns sub sub nodes of this node
 	 */
 	inline unordered_map<string, Node*>& getSubNodes() {
 		return subNodes;

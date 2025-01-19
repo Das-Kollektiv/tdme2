@@ -140,28 +140,28 @@ public:
 	}
 
 	/**
-	 * @return LOD object 1
+	 * @returns LOD object 1
 	 */
 	inline Object* getLOD1Object() {
 		return objectLOD1.get();
 	}
 
 	/**
-	 * @return LOD object 2
+	 * @returns LOD object 2
 	 */
 	inline Object* getLOD2Object() {
 		return objectLOD2.get();
 	}
 
 	/**
-	 * @return LOD object 3
+	 * @returns LOD object 3
 	 */
 	inline Object* getLOD3Object() {
 		return objectLOD3.get();
 	}
 
 	/**
-	 * @return LOD object
+	 * @returns LOD object
 	 */
 	inline Object* getLODObject() {
 		// set effect colors
@@ -195,7 +195,7 @@ public:
 	/**
 	 * Get current lod object
 	 * @param camera camera
-	 * @return LOD object to render
+	 * @returns LOD object to render
 	 */
 	inline Object* determineLODObject(Camera* camera) {
 		LODObject::LODLevelType lodLevelType = LODObject::LODLEVELTYPE_NONE;
@@ -245,7 +245,7 @@ public:
 	}
 
 	/**
-	 * @return effect color add for LOD2 level
+	 * @returns effect color add for LOD2 level
 	 */
 	inline const Color4& getEffectColorAddLOD2() const {
 		return effectColorAddLOD2;
@@ -260,7 +260,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul for LOD2 level
+	 * @returns effect color mul for LOD2 level
 	 */
 	inline const Color4& getEffectColorMulLOD2() const {
 		return effectColorMulLOD2;
@@ -275,7 +275,7 @@ public:
 	}
 
 	/**
-	 * @return effect color add for LOD3 level
+	 * @returns effect color add for LOD3 level
 	 */
 	inline const Color4& getEffectColorAddLOD3() const {
 		return effectColorAddLOD3;
@@ -290,7 +290,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul for LOD3 level
+	 * @returns effect color mul for LOD3 level
 	 */
 	inline const Color4& getEffectColorMulLOD3() const {
 		return effectColorMulLOD3;
@@ -459,7 +459,7 @@ public:
 	}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -481,7 +481,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& parameterName) {
 		return shaderParameters.getShaderParameter(parameterName);

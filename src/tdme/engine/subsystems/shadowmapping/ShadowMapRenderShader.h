@@ -53,7 +53,7 @@ public:
 	~ShadowMapRenderShader();
 
 	/**
-	 * @return if initialized and ready to use
+	 * @returns if initialized and ready to use
 	 */
 	bool isInitialized();
 

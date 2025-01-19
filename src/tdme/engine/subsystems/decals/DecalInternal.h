@@ -106,7 +106,7 @@ public:
 	virtual ~DecalInternal();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return is enabled
+	 * @returns is enabled
 	 */
 	inline bool isEnabled() {
 		return enabled;
@@ -144,7 +144,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline const Color4& getEffectColorMul() const {
 		return effectColorMul;
@@ -159,7 +159,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline const Color4& getEffectColorAdd() const {
 		return effectColorMul;
@@ -174,7 +174,7 @@ public:
 	}
 
 	/**
-	 * @return is pickable
+	 * @returns is pickable
 	 */
 	inline bool isPickable() const {
 		return pickable;
@@ -189,7 +189,7 @@ public:
 	}
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
 		return contributesShadows;
@@ -204,7 +204,7 @@ public:
 	}
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	inline bool isReceivesShadows() {
 		return receivesShadows;
@@ -219,14 +219,14 @@ public:
 	}
 
 	/**
-	 * @return bounding box
+	 * @returns bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
 	/**
-	 * @return world bounding box
+	 * @returns world bounding box
 	 */
 	inline BoundingBox* getWorldBoundingBox() {
 		return &worldBoundingBox;
@@ -254,42 +254,42 @@ public:
 	void dispose();
 
 	/**
-	 * @return decal texture
+	 * @returns decal texture
 	 */
 	inline Texture* getDecalTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return world to decal space matrix
+	 * @returns world to decal space matrix
 	 */
 	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
 		return worldToDecalSpaceMatrix;
 	}
 
 	/**
-	 * @return texture horizontal sprites
+	 * @returns texture horizontal sprites
 	 */
 	inline int32_t getTextureHorizontalSprites(){
 		return textureHorizontalSprites;
 	}
 
 	/**
-	 * @return texture vertical sprites
+	 * @returns texture vertical sprites
 	 */
 	inline int32_t getTextureVerticalSprites(){
 		return textureVerticalSprites;
 	}
 
 	/**
-	 * @return fps
+	 * @returns fps
 	 */
 	inline float getFPS(){
 		return fps;
 	}
 
 	/**
-	 * @return current texture sprite index
+	 * @returns current texture sprite index
 	 */
 	inline int32_t computeTextureSpriteIdx() {
 		auto now = Time::getCurrentMillis();

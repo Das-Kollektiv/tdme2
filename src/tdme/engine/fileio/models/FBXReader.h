@@ -52,7 +52,7 @@ public:
 	}
 
 	/**
-	 * @return state
+	 * @returns state
 	 */
 	virtual EState GetState() {
 		return opened?eOpen:eClosed;
@@ -106,14 +106,14 @@ public:
 	}
 
 	/**
-	 * @return reader id
+	 * @returns reader id
 	 */
 	virtual int GetReaderID() const {
 		return readerID;
 	}
 
 	/**
-	 * @return writer id
+	 * @returns writer id
 	 */
 	virtual int GetWriterID() const {
 		return -1;
@@ -139,7 +139,7 @@ public:
 	}
 
 	/**
-	 * @return position
+	 * @returns position
 	 */
 	virtual long GetPosition() const {
 		return position;
@@ -154,7 +154,7 @@ public:
 	}
 
 	/**
-	 * @return error or 0 if no error occurred, we dont support errors, lol
+	 * @returns error or 0 if no error occurred, we dont support errors, lol
 	 */
 	virtual int GetError() const {
 		return 0;
@@ -194,7 +194,7 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return model instance
+	 * @returns model instance
 	 */
 	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 

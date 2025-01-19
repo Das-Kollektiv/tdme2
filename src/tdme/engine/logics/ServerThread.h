@@ -37,7 +37,7 @@ public:
 	ServerThread(Context* context, ApplicationServer* server);
 
 	/**
-	 * @return mutex
+	 * @returns mutex
 	 */
 	Mutex* getMutex();
 
@@ -63,7 +63,7 @@ private:
 	/**
 	 * Get network packets game logic types
 	 * @param logicNetworkPackets logic network packets
-	 * @return network packet logics string
+	 * @returns network packet logics string
 	 */
 	const string getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets);
 };

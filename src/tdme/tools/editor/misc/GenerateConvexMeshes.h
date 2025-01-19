@@ -44,7 +44,7 @@ public:
 	 * @param fileName file name
 	 * @param convexMeshTMsData convex mesh TM data vectors
 	 * @param parameters parameters
-	 * @return success
+	 * @returns success
 	 */
 	static bool generateConvexMeshes(
 		Prototype* prototype,

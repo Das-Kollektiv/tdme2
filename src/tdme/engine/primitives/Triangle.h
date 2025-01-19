@@ -31,7 +31,7 @@ public:
 	Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3& vertex2);
 
 	/**
-	 * @return triangle vertices
+	 * @returns triangle vertices
 	 */
 	inline const
 	vector<Vector3>& getVertices() const {

@@ -49,21 +49,21 @@ public:
 
 	public:
 		/**
-		 * @return mesh id
+		 * @returns mesh id
 		 */
 		inline const string& getId() {
 			return id;
 		}
 
 		/**
-		 * @return object node mesh
+		 * @returns object node mesh
 		 */
 		inline ObjectNodeMesh* getMesh() {
 			return mesh.get();
 		}
 
 		/**
-		 * @return reference counter
+		 * @returns reference counter
 		 */
 		inline int32_t getReferenceCounter() {
 			return referenceCounter;
@@ -72,7 +72,7 @@ public:
 	private:
 		/**
 		 * decrement reference counter
-		 * @return if reference counter = 0
+		 * @returns if reference counter = 0
 		 */
 		inline bool decrementReferenceCounter() {
 			referenceCounter--;
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Get mesh from managed meshes
 	 * @param meshId mesh id
-	 * @return object node mesh or null
+	 * @returns object node mesh or null
 	 */
 	inline ObjectNodeMesh* getMesh(const string& meshId) {
 		// check if we already manage this mesh

@@ -126,7 +126,7 @@ public:
 	}
 
 	/**
-	 * @return GUI
+	 * @returns GUI
 	 */
 	inline GUI* getGUI() {
 		return gui;
@@ -153,7 +153,7 @@ public:
 	void doneRendering();
 
 	/**
-	 * @return GUI screen node
+	 * @returns GUI screen node
 	 */
 	inline GUIScreenNode* getScreenNode() {
 		return screenNode;
@@ -195,7 +195,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline const GUIColor& getGUIEffectColorMul() {
 		return guiEffectColorMul;
@@ -210,7 +210,7 @@ public:
 	}
 
 	/**
-	 * @return effect color add
+	 * @returns effect color add
 	 */
 	inline const GUIColor& getGUIEffectColorAdd() {
 		return guiEffectColorAdd;
@@ -225,7 +225,7 @@ public:
 	}
 
 	/**
-	 * @return GUI effect offset X
+	 * @returns GUI effect offset X
 	 */
 	inline float getGUIEffectOffsetX() {
 		return guiEffectOffsetX;
@@ -238,7 +238,7 @@ public:
 	void setGUIEffectOffsetX(float guiEffectOffsetX);
 
 	/**
-	 * @return GUI effect offset Y
+	 * @returns GUI effect offset Y
 	 */
 	inline float getGUIEffectOffsetY() {
 		return guiEffectOffsetY;
@@ -251,7 +251,7 @@ public:
 	void setGUIEffectOffsetY(float guiEffectOffsetY);
 
 	/**
-	 * @return render area left
+	 * @returns render area left
 	 */
 	inline float getRenderAreaLeft() {
 		return renderAreaLeft;
@@ -274,7 +274,7 @@ public:
 	}
 
 	/**
-	 * @return render area top
+	 * @returns render area top
 	 */
 	inline float getRenderAreaTop() {
 		return renderAreaTop;
@@ -297,7 +297,7 @@ public:
 	}
 
 	/**
-	 * @return render area right
+	 * @returns render area right
 	 */
 	inline float getRenderAreaRight() {
 		return renderAreaRight;
@@ -320,7 +320,7 @@ public:
 	}
 
 	/**
-	 * @return render area bottom
+	 * @returns render area bottom
 	 */
 	inline float getRenderAreaBottom() {
 		return renderAreaBottom;
@@ -343,7 +343,7 @@ public:
 	}
 
 	/**
-	 * @return render offset x
+	 * @returns render offset x
 	 */
 	inline float getRenderOffsetX() {
 		return renderOffsetX;
@@ -358,7 +358,7 @@ public:
 	}
 
 	/**
-	 * @return render offset y
+	 * @returns render offset y
 	 */
 	inline float getRenderOffsetY() {
 		return renderOffsetY;
@@ -407,7 +407,7 @@ public:
 	}
 
 	/**
-	 * @return if quad is visible
+	 * @returns if quad is visible
 	 */
 	inline bool isQuadVisible(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
 		x1 -= renderOffsetX;
@@ -439,7 +439,7 @@ public:
 	}
 
 	/**
-	 * @return if quad is visible without taking X into account
+	 * @returns if quad is visible without taking X into account
 	 */
 	inline bool isQuadVisible2(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
 		y1 += renderOffsetY;

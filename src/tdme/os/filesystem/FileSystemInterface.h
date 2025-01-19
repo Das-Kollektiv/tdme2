@@ -30,7 +30,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Compose URI from path name and file name
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return complete file URI with path name and file name
+	 * @returns complete file URI with path name and file name
 	 */
 	virtual const string composeURI(const string& pathName, const string& fileName) = 0;
 
@@ -38,7 +38,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Return file size of given file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return file size
+	 * @returns file size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual uint64_t getFileSize(const string& pathName, const string& fileName) = 0;
@@ -47,7 +47,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Get content as string
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return string
+	 * @returns string
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual const string getContentAsString(const string& pathName, const string& fileName) = 0;
@@ -93,7 +93,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param content string array
-	 * @return byte array
+	 * @returns byte array
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) = 0;
@@ -104,7 +104,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param files files
 	 * @param filter filter or null, this filter can be created on stack as ownership will not be taken over
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
-	 * @return file names
+	 * @returns file names
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) = 0;
@@ -112,7 +112,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	/**
 	 * Check if file is a path
 	 * @param uri uniform resource identifier
-	 * @return if file is a path
+	 * @returns if file is a path
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual bool isPath(const string& uri) = 0;
@@ -120,14 +120,14 @@ struct tdme::os::filesystem::FileSystemInterface
 	/**
 	 * Check if file is a drive (applies to Microsoft Windows only)
 	 * @param uri uniform resource identifier
-	 * @return if file is a drive
+	 * @returns if file is a drive
 	 */
 	virtual bool isDrive(const string& uri) = 0;
 
 	/**
 	 * Check if file exists
 	 * @param uri uniform resource identifier
-	 * @return bool if file exists
+	 * @returns bool if file exists
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual bool exists(const string& uri) = 0;
@@ -136,7 +136,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Returns if file is a executable file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return is executable
+	 * @returns is executable
 	 */
 	virtual bool isExecutable(const string& pathName, const string& fileName) = 0;
 
@@ -144,7 +144,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Set up file to be an executable file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return success
+	 * @returns success
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void setExecutable(const string& pathName, const string& fileName) = 0;
@@ -153,13 +153,13 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Get canonical URI from given path name and file name
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return canonical URI
+	 * @returns canonical URI
 	 */
 	virtual const string getCanonicalURI(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Get current working path name
-	 * @return current working path
+	 * @returns current working path
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual const string getCurrentWorkingPathName() = 0;
@@ -174,21 +174,21 @@ struct tdme::os::filesystem::FileSystemInterface
 	/**
 	 * Get path name
 	 * @param uri uniform resource identifier
-	 * @return canonical path
+	 * @returns canonical path
 	 */
 	virtual const string getPathName(const string& uri) = 0;
 
 	/**
 	 * Get file name
 	 * @param uri uniform resource identifier
-	 * @return canonical path
+	 * @returns canonical path
 	 */
 	virtual const string getFileName(const string& uri) = 0;
 
 	/**
 	 * Remove file extension, e.g. .dae, .fbx, ...
 	 * @param fileName file name
-	 * @return file name
+	 * @returns file name
 	 */
 	virtual const string removeFileExtension(const string& fileName) = 0;
 
@@ -203,7 +203,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Remove path
 	 * @param pathName path name
 	 * @param recursive remove recursive
-	 * @return success
+	 * @returns success
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void removePath(const string& pathName, bool recursive) = 0;
@@ -212,7 +212,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Remove file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return success
+	 * @returns success
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void removeFile(const string& pathName, const string& fileName) = 0;
@@ -230,7 +230,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param thumbnailAttachmentContent thumbnail attachment content
-	 * @return attachment available
+	 * @returns attachment available
 	 */
 	virtual bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) = 0;
 
@@ -238,7 +238,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Reads a thumbnail attachment from data vector
 	 * @param content content
 	 * @param thumbnailAttachmentContent thumbnail attachment content
-	 * @return attachment available
+	 * @returns attachment available
 	 */
 	virtual bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) = 0;
 };

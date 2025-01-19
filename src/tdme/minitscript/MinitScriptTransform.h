@@ -55,7 +55,7 @@ public:
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
-	 * @return success
+	 * @returns success
 	 */
 	static inline bool getTransformValue(const span<MinitScript::Variable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;

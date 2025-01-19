@@ -78,28 +78,28 @@ public:
 	}
 
 	/**
-	 * @return is running in editor
+	 * @returns is running in editor
 	 */
 	inline bool isRunningInEditor() {
 		return runsInEditor;
 	}
 
 	/**
-	 * @return Returns mini script
+	 * @returns Returns mini script
 	 */
 	inline LogicMinitScript* getMinitScript() {
 		return miniScript.get();
 	}
 
 	/**
-	 * @return hierarchy id
+	 * @returns hierarchy id
 	 */
 	inline const string& getHierarchyId() {
 		return hierarchyId;
 	}
 
 	/**
-	 * @return hierarchy parent id
+	 * @returns hierarchy parent id
 	 */
 	inline const string& getHierarchyParentId() {
 		return hierarchyParentId;

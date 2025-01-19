@@ -15,7 +15,7 @@ class tdme::engine::subsystems::renderer::RendererBackendPlugin
 {
 public:
 	/**
-	 * @return renderer version
+	 * @returns renderer version
 	 */
 	inline static const string getRendererVersion() {
 		return "1.9.200";

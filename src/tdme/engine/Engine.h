@@ -384,14 +384,14 @@ private:
 		virtual void run();
 
 		/**
-		 * @return transparent render faces pool
+		 * @returns transparent render faces pool
 		 */
 		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
 			return transparentRenderFacesPool.get();
 		}
 
 		/**
-		 * @return processed elements
+		 * @returns processed elements
 		 */
 		inline int getProcessedElements() {
 			return elementsProcessed;
@@ -429,98 +429,98 @@ private:
 	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**
-	 * @return renderer backend
+	 * @returns renderer backend
 	 */
 	inline static RendererBackend* getRendererBackend() {
 		return rendererBackend;
 	}
 
 	/**
-	 * @return mesh manager
+	 * @returns mesh manager
 	 */
 	inline static MeshManager* getMeshManager() {
 		return meshManager.get();
 	}
 
 	/**
-	 * @return shadow mapping or nullptr if disabled
+	 * @returns shadow mapping or nullptr if disabled
 	 */
 	inline ShadowMapping* getShadowMapping() {
 		return shadowMapping.get();
 	}
 
 	/**
-	 * @return particles shader
+	 * @returns particles shader
 	 */
 	inline static ParticlesShader* getParticlesShader() {
 		return particlesShader.get();
 	}
 
 	/**
-	 * @return lines shader
+	 * @returns lines shader
 	 */
 	inline static LinesShader* getLinesShader() {
 		return linesShader.get();
 	}
 
 	/**
-	 * @return skinning shader
+	 * @returns skinning shader
 	 */
 	inline static SkinningShader* getSkinningShader() {
 		return skinningShader.get();
 	}
 
 	/**
-	 * @return GUI shader
+	 * @returns GUI shader
 	 */
 	inline static GUIShader* getGUIShader() {
 		return guiShader.get();
 	}
 
 	/**
-	 * @return BRDF LUT shader
+	 * @returns BRDF LUT shader
 	 */
 	inline static BRDFLUTShader* getBRDFLUTShader() {
 		return brdfLUTShader.get();
 	}
 
 	/**
-	 * @return frame buffer render shader
+	 * @returns frame buffer render shader
 	 */
 	inline static FrameBufferRenderShader* getFrameBufferRenderShader() {
 		return frameBufferRenderShader.get();
 	}
 
 	/**
-	 * @return deferred lighting render shader
+	 * @returns deferred lighting render shader
 	 */
 	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
 		return deferredLightingRenderShader.get();
 	}
 
 	/**
-	 * @return sky shader
+	 * @returns sky shader
 	 */
 	inline static SkyRenderShader* getSkyRenderShader() {
 		return skyRenderShader.get();
 	}
 
 	/**
-	 * @return entity renderer
+	 * @returns entity renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
 		return entityRenderer.get();;
 	}
 
 	/**
-	 * @return point particle system texture atlas
+	 * @returns point particle system texture atlas
 	 */
 	inline TextureAtlas& getPointParticleSystemTextureAtlas() {
 		return ppsTextureAtlas;
 	}
 
 	/**
-	 * @return decals texture atlas
+	 * @returns decals texture atlas
 	 */
 	inline TextureAtlas& getDecalsTextureAtlas() {
 		return decalsTextureAtlas;
@@ -607,7 +607,7 @@ public:
 
 	/**
 	 * Returns engine instance
-	 * @return engine instance
+	 * @returns engine instance
 	 */
 	inline static Engine* getInstance() {
 		if (instance == nullptr) {
@@ -622,7 +622,7 @@ public:
 	static void shutdown();
 
 	/**
-	 * @return texture manager
+	 * @returns texture manager
 	 */
 	inline static TextureManager* getTextureManager() {
 		return Engine::textureManager.get();
@@ -630,42 +630,42 @@ public:
 
 
 	/**
-	 * @return vertex buffer object manager
+	 * @returns vertex buffer object manager
 	 */
 	inline static VBOManager* getVBOManager() {
 		return vboManager.get();
 	}
 
 	/**
-	 * @return lighting shader
+	 * @returns lighting shader
 	 */
 	inline static LightingShader* getLightingShader() {
 		return lightingShader.get();
 	}
 
 	/**
-	 * @return post processing shader
+	 * @returns post processing shader
 	 */
 	inline static PostProcessingShader* getPostProcessingShader() {
 		return postProcessingShader.get();
 	}
 
 	/**
-	 * @return shadow mapping shader
+	 * @returns shadow mapping shader
 	 */
 	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
 		return shadowMappingShaderPre.get();
 	}
 
 	/**
-	 * @return shadow mapping shader
+	 * @returns shadow mapping shader
 	 */
 	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
 		return shadowMappingShaderRender.get();
 	}
 
 	/**
-	 * @return engine thread count
+	 * @returns engine thread count
 	 */
 	inline static int getThreadCount() {
 		return Engine::threadCount;
@@ -680,7 +680,7 @@ public:
 	}
 
 	/**
-	 * @return if having 4k
+	 * @returns if having 4k
 	 */
 	inline static bool is4K() {
 		return Engine::have4K;
@@ -695,7 +695,7 @@ public:
 	}
 
 	/**
-	 * @return animation blending time
+	 * @returns animation blending time
 	 */
 	inline static float getAnimationBlendingTime() {
 		return Engine::animationBlendingTime;
@@ -710,7 +710,7 @@ public:
 	}
 
 	/**
-	 * @return shadow map light eye distance scale
+	 * @returns shadow map light eye distance scale
 	 */
 	inline float getShadowMapLightEyeDistanceScale() {
 		return shadowMapLightEyeDistanceScale;
@@ -725,21 +725,21 @@ public:
 	}
 
 	/**
-	 * @return shadow map width
+	 * @returns shadow map width
 	 */
 	inline static int32_t getShadowMapWidth() {
 		return Engine::shadowMapWidth;
 	}
 
 	/**
-	 * @return shadow map height
+	 * @returns shadow map height
 	 */
 	inline static int32_t getShadowMapHeight() {
 		return Engine::shadowMapHeight;
 	}
 
 	/**
-	 * @return shadow map render look ups
+	 * @returns shadow map render look ups
 	 */
 	inline static int32_t getShadowMapRenderLookUps() {
 		return Engine::shadowMapRenderLookUps;
@@ -764,14 +764,14 @@ public:
 	}
 
 	/**
-	 * @return environment mapping width
+	 * @returns environment mapping width
 	 */
 	inline static int32_t getEnvironmentMappingWidth() {
 		return Engine::environmentMappingWidth;
 	}
 
 	/**
-	 * @return environment mapping height
+	 * @returns environment mapping height
 	 */
 	inline static int32_t getEnvironmentMappingHeight() {
 		return Engine::environmentMappingHeight;
@@ -788,7 +788,7 @@ public:
 	}
 
 	/**
-	 * @return distance of animated object including skinned objects from which animation computing will be computed only every second frame
+	 * @returns distance of animated object including skinned objects from which animation computing will be computed only every second frame
 	 */
 	inline static float getAnimationComputationReduction1Distance() {
 		return Engine::animationComputationReduction1Distance;
@@ -803,7 +803,7 @@ public:
 	}
 
 	/**
-	 * @return distance of animated object including skinned objects from which animation computation will be computed only every forth frame
+	 * @returns distance of animated object including skinned objects from which animation computation will be computed only every forth frame
 	 */
 	inline static float getAnimationComputationReduction2Distance() {
 		return Engine::animationComputationReduction2Distance;
@@ -818,7 +818,7 @@ public:
 	}
 
 	/**
-	 * @return unique shader id
+	 * @returns unique shader id
 	 */
 	static uint8_t getUniqueShaderId(const string& shaderId) {
 		auto uniqueShaderIdIt = uniqueShaderIds.find(shaderId);
@@ -877,7 +877,7 @@ public:
 	/**
 	 * Returns parameter defaults of shader with given id
 	 * @param shaderId shader id
-	 * @return shader parameter defaults
+	 * @returns shader parameter defaults
 	 */
 	inline static const vector<Shader::ParameterDefaults>* getShaderParameterDefaults(const string& shaderId) {
 		auto shaderIt = shadersById.find(shaderId);
@@ -891,7 +891,7 @@ public:
 	/**
 	 * Returns shader parameter names of shader with given id
 	 * @param shaderId shader id
-	 * @return shader parameter names
+	 * @returns shader parameter names
 	 */
 	inline static const vector<string> getShaderParameterNames(const string& shaderId) {
 		vector<string> shaderParameterNames;
@@ -910,7 +910,7 @@ public:
 	 * Returns shader parameter default value for given shader id and parameter name
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline static const Shader::ParameterDefaults* getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
 		// try to find registered shader
@@ -936,7 +936,7 @@ public:
 	 * Returns shader parameter for given shader id and parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& shaderId, const string& parameterName) {
 		// try to find shader in engine shader parameters
@@ -995,92 +995,92 @@ public:
 	 * @param enableShadowMapping enable shadow mapping
 	 * @param enableDepthBuffer enable depth buffer
 	 * @param enableDepthBuffer enable geometry buffer
-	 * @return off screen engine
+	 * @returns off screen engine
 	 */
 	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer);
 
 	/**
-	 * @return graphics vendor
+	 * @returns graphics vendor
 	 */
 	const string getGraphicsVendor();
 
 	/**
-	 * @return graphics renderer
+	 * @returns graphics renderer
 	 */
 	const string getGraphicsRenderer();
 
 	/**
-	 * @return graphics renderer backend type
+	 * @returns graphics renderer backend type
 	 */
 	inline RendererBackend::RendererType getGraphicsRendererBackendType() {
 		return rendererBackend->getRendererType();
 	}
 
 	/**
-	 * @return if initialized and ready to be used
+	 * @returns if initialized and ready to be used
 	 */
 	inline bool isInitialized() {
 		return initialized;
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return scaled width or -1 if not in use
+	 * @returns scaled width or -1 if not in use
 	 */
 	inline int32_t getScaledWidth() {
 		return scaledWidth;
 	}
 
 	/**
-	 * @return scaled height -1 if not in use
+	 * @returns scaled height -1 if not in use
 	 */
 	inline int32_t getScaledHeight() {
 		return scaledHeight;
 	}
 
 	/**
-	 * @return GUI
+	 * @returns GUI
 	 */
 	inline GUI* getGUI() {
 		return gui.get();
 	}
 
 	/**
-	 * @return Timing
+	 * @returns Timing
 	 */
 	inline Timing* getTiming() {
 		return timing.get();
 	}
 
 	/**
-	 * @return Camera
+	 * @returns Camera
 	 */
 	inline Camera* getCamera() {
 		return camera.get();
 	}
 
 	/**
-	 * @return GIZMO Camera
+	 * @returns GIZMO Camera
 	 */
 	inline Camera* getGizmoCamera() {
 		return gizmoCamera.get();
 	}
 
 	/**
-	 * @return partition
+	 * @returns partition
 	 */
 	inline Partition* getPartition() {
 		return partition.get();
@@ -1093,21 +1093,21 @@ public:
 	void setPartition(Partition* partition);
 
 	/**
-	 * @return frame buffer or nullptr
+	 * @returns frame buffer or nullptr
 	 */
 	inline FrameBuffer* getFrameBuffer() {
 		return frameBuffer.get();;
 	}
 
 	/**
-	 * @return geometry buffer or nullptr
+	 * @returns geometry buffer or nullptr
 	 */
 	inline GeometryBuffer* getGeometryBuffer() {
 		return geometryBuffer.get();;
 	}
 
 	/**
-	 * @return sky shader enabled
+	 * @returns sky shader enabled
 	 */
 	inline bool isSkyShaderEnabled() {
 		return skyShaderEnabled;
@@ -1122,14 +1122,14 @@ public:
 	}
 
 	/**
-	 * @return lights iterator
+	 * @returns lights iterator
 	 */
 	inline UniquePtrSequenceIterator<Light> getLights() {
 		return UniquePtrSequenceIterator<Light>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**
-	 * @return count of lights
+	 * @returns count of lights
 	 */
 	inline int32_t getLightCount() {
 		return lights.size();
@@ -1138,7 +1138,7 @@ public:
 	/**
 	 * Returns light at idx (0 <= idx < 8)
 	 * @param idx idx
-	 * @return Light
+	 * @returns Light
 	 */
 	inline Light* getLightAt(int32_t idx) {
 		if (idx < 0 || idx >= lights.size()) return nullptr;
@@ -1146,7 +1146,7 @@ public:
 	}
 
 	/**
-	 * @return scene / background color
+	 * @returns scene / background color
 	 */
 	inline const Color4& getSceneColor() const {
 		return sceneColor;
@@ -1161,7 +1161,7 @@ public:
 	}
 
 	/**
-	 * @return entity count
+	 * @returns entity count
 	 */
 	inline int32_t getEntityCount() {
 		return entitiesById.size();
@@ -1170,7 +1170,7 @@ public:
 	/**
 	 * Returns a entity by given id
 	 * @param id id
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	inline Entity* getEntity(const string& id) {
 		auto entityByIdIt = entitiesById.find(id);
@@ -1189,7 +1189,7 @@ public:
 	/**
 	 * Removes an entity
 	 * @param id id
-	 * @return if entity was found and removed
+	 * @returns if entity was found and removed
 	 */
 	bool removeEntity(const string& id);
 
@@ -1237,7 +1237,7 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @return gizmo coordinate
+	 * @returns gizmo coordinate
 	 */
 	inline Vector3 computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
 		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCamera.get());
@@ -1248,7 +1248,7 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @return world coordinate
+	 * @returns world coordinate
 	 */
 	inline Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
 		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera.get());
@@ -1259,7 +1259,7 @@ public:
 	 * Note: this does not work with GLES2 as reading from depth buffer is not available
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @return coordinate
+	 * @returns coordinate
 	 */
 	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY);
 
@@ -1270,7 +1270,7 @@ public:
 	 * @param filter filter
 	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystem** particleSystemEntity = nullptr) {
 		return
@@ -1293,7 +1293,7 @@ public:
 	 * @param filter filter
 	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystem** particleSystemEntity = nullptr);
 
@@ -1303,7 +1303,7 @@ public:
 	 * @param endPoint end point
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	inline Entity* doRayCasting(
 		const Vector3& startPoint,
@@ -1327,7 +1327,7 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	Entity* getEntityContactPointByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
@@ -1352,7 +1352,7 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param removeAlphaChannel remove alpha channel
-	 * @return success
+	 * @returns success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName, bool removeAlphaChannel = true);
 
@@ -1360,7 +1360,7 @@ public:
 	 * Creates a PNG file from current screen into a data vector
 	 * 	This does not seem to work with GLES2 and offscreen engines
 	 * @param pngData png data
-	 * @return success
+	 * @returns success
 	 */
 	bool makeScreenshot(vector<uint8_t>& pngData);
 
@@ -1376,7 +1376,7 @@ public:
 	void addPostProcessingProgram(const string& programId);
 
 	/**
-	 * @return renderer backend statistics
+	 * @returns renderer backend statistics
 	 */
 	inline RendererBackend::Renderer_Statistics getRendererStatistics() {
 		return rendererBackend->getStatistics();
@@ -1416,7 +1416,7 @@ private:
 	 * @param mouseY mouse y
 	 * @param z z
 	 * @param camera camera or engine camera
-	 * @return world coordinate
+	 * @returns world coordinate
 	 */
 	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera);
 
@@ -1426,7 +1426,7 @@ private:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param camera camera or engine camera
-	 * @return world coordinate
+	 * @returns world coordinate
 	 */
 	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Camera* camera);
 
@@ -1439,7 +1439,7 @@ private:
 	 * @param filter filter
 	 * @param objectNode pointer to store node of Object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(
 		DecomposedEntities& decomposedEntities,
@@ -1459,7 +1459,7 @@ private:
 	 * @param endPoint end point
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
-	 * @return entity or nullptr
+	 * @returns entity or nullptr
 	 */
 	Entity* doRayCasting(
 		DecomposedEntities& decomposedEntities,
@@ -1521,7 +1521,7 @@ private:
 	 * Render light sources
 	 * @param width render target width
 	 * @param height render target height
-	 * @return if light source is visible
+	 * @returns if light source is visible
 	 */
 	bool renderLightSources(int width, int height);
 

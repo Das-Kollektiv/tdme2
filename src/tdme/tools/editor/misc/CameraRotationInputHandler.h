@@ -58,12 +58,12 @@ public:
 	~CameraRotationInputHandler();
 
 	/**
-	 * @return look from rotation
+	 * @returns look from rotation
 	 */
 	const Transform& getLookFromRotations();
 
 	/**
-	 * @return default scale
+	 * @returns default scale
 	 */
 	inline float getDefaultScale() {
 		return defaultScale;
@@ -78,7 +78,7 @@ public:
 	}
 
 	/**
-	 * @return scale
+	 * @returns scale
 	 */
 	inline float getScale() {
 		return scale;

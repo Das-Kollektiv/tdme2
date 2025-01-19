@@ -73,14 +73,14 @@ public:
 	~PrototypeSoundsSubController();
 
 	/**
-	 * @return view
+	 * @returns view
 	 */
 	inline PrototypeSoundsSubView* getView() {
 		return view.get();
 	}
 
 	/**
-	 * @return screen node
+	 * @returns screen node
 	 */
 	inline GUIScreenNode* getScreenNode() {
 		return screenNode;
@@ -146,7 +146,7 @@ public:
 	 * Apply sound details rename
 	 * @param prototype prototype
 	 * @param soundId sound Id
-	 * @return new sound id
+	 * @returns new sound id
 	 */
 	const string applySoundDetailsRename(Prototype* prototype, const string& soundId);
 
@@ -174,7 +174,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 * @param model model
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype, Model* model);
 
@@ -182,7 +182,7 @@ public:
 	 * On focus
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onFocus(GUIElementNode* node, Prototype* prototype);
 
@@ -190,7 +190,7 @@ public:
 	 * On unfocus
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onUnfocus(GUIElementNode* node, Prototype* prototype);
 
@@ -199,7 +199,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 

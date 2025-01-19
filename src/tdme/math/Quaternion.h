@@ -93,7 +93,7 @@ public:
 	 * @param y y component
 	 * @param z z component
 	 * @param w w component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& set(float x, float y, float z, float w) {
 		data[0] = x;
@@ -107,7 +107,7 @@ public:
 	 * Sets this quaternion by vector3 by array and w component
 	 * @param vector3 vector3 as array
 	 * @param w w component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& set(const array<float, 3>& vector3, float w) {
 		data[0] = vector3[0];
@@ -121,7 +121,7 @@ public:
 	 * Sets this quaternion by vector3 and w component
 	 * @param vector3 vector3
 	 * @param w w component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& set(const Vector3& vector3, float w) {
 		data[0] = vector3.data[0];
@@ -134,7 +134,7 @@ public:
 	/**
 	 * Sets this quaternion by array
 	 * @param quaternion quaternion as array
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& set(const array<float, 4>& quaternion) {
 		data = quaternion;
@@ -144,7 +144,7 @@ public:
 	/**
 	 * Sets this quaternion by given quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& set(const Quaternion& quaternion) {
 		data = quaternion.data;
@@ -152,7 +152,7 @@ public:
 	}
 
 	/**
-	 * @return x component
+	 * @returns x component
 	 */
 	inline float getX() const {
 		return data[0];
@@ -161,7 +161,7 @@ public:
 	/**
 	 * Sets x component
 	 * @param x x component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& setX(float x) {
 		data[0] = x;
@@ -169,7 +169,7 @@ public:
 	}
 
 	/**
-	 * @return y component
+	 * @returns y component
 	 */
 	inline float getY() const {
 		return data[1];
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Sets y component
 	 * @param y y component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& setY(float y) {
 		data[1] = y;
@@ -186,7 +186,7 @@ public:
 	}
 
 	/**
-	 * @return z component
+	 * @returns z component
 	 */
 	inline float getZ() const {
 		return data[2];
@@ -195,7 +195,7 @@ public:
 	/**
 	 * Sets z component
 	 * @param z z component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& setZ(float z) {
 		data[2] = z;
@@ -203,7 +203,7 @@ public:
 	}
 
 	/**
-	 * @return w component
+	 * @returns w component
 	 */
 	inline float getW() const {
 		return data[3];
@@ -212,7 +212,7 @@ public:
 	/**
 	 * Sets w component
 	 * @param w w component
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& setW(float w) {
 		data[3] = w;
@@ -221,7 +221,7 @@ public:
 
 	/**
 	 * Creates identity quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& identity() {
 		data[0] = 0.0f;
@@ -234,7 +234,7 @@ public:
 	/**
 	 * Adds quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& add(const Quaternion& quaternion) {
 		data[0] += quaternion.data[0];
@@ -247,7 +247,7 @@ public:
 	/**
 	 * Subtracts quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& sub(const Quaternion& quaternion) {
 		data[0] -= quaternion.data[0];
@@ -260,7 +260,7 @@ public:
 	/**
 	 * Scales by scalar
 	 * @param scalar scalar
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& scale(float scalar) {
 		data[0] *= scalar;
@@ -273,7 +273,7 @@ public:
 	/**
 	 * Multiplies this quaternion with given quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& multiply(const Quaternion quaternion) {
 		array<float, 4> _data;
@@ -288,7 +288,7 @@ public:
 	/**
 	 * Multiplies this quaternion with vector3
 	 * @param vector3 vector3
-	 * @return vector3
+	 * @returns vector3
 	 */
 	inline Vector3 multiply(const Vector3& vector3) const {
 		// t = 2 * cross(quaternion.xyz, vector3)
@@ -307,7 +307,7 @@ public:
 	/**
 	 * Compares this quaternion with given quaternion
 	 * @param quaternion quaternion
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const Quaternion& quaternion) const {
 		return equals(quaternion, Math::EPSILON);
@@ -317,7 +317,7 @@ public:
 	 * Compares this quaternion with given quaternion
 	 * @param quaternion quaternion
 	 * @param tolerance tolerance per component(x, y, z, w)
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const Quaternion& quaternion, float tolerance) const {
 		return (this == &quaternion) ||
@@ -331,7 +331,7 @@ public:
 
 	/**
 	 * Inverts this quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& invert() {
 		data[0] *= -1.0f;
@@ -356,7 +356,7 @@ public:
 	 * Creates rotation quaternion
 	 * @param axis axis
 	 * @param angle angle
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& rotate(const Vector3& axis, float angle) {
 		// converts the angle in degrees to radians
@@ -374,7 +374,7 @@ public:
 
 	/**
 	 * Computes a rotation matrix4x4 from this quaternion
-	 * @return rotation matrix
+	 * @returns rotation matrix
 	 */
 	inline Matrix4x4 computeMatrix() const {
 		return Matrix4x4(
@@ -399,7 +399,7 @@ public:
 
 	/**
 	 * Compute Euler angles
-	 * @return Euler angles
+	 * @returns Euler angles
 	 */
 	inline Vector3 computeEulerAngles() const {
 		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
@@ -422,14 +422,14 @@ public:
 
 	/**
 	 * Clones this quaternion
-	 * @return new cloned quaternion
+	 * @returns new cloned quaternion
 	 */
 	inline Quaternion clone() const {
 		return Quaternion(*this);
 	}
 
 	/**
-	 * @return quaternion as array
+	 * @returns quaternion as array
 	 */
 	inline const array<float, 4>& getArray() const {
 		return data;
@@ -438,7 +438,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return quaternion component
+	 * @returns quaternion component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -447,7 +447,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return quaternion component
+	 * @returns quaternion component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
@@ -456,7 +456,7 @@ public:
 	/**
 	 * Operator + quaternion
 	 * @param quaternion quaternion
-	 * @return new quaternion (this + quaternion)
+	 * @returns new quaternion (this + quaternion)
 	 */
 	inline Quaternion operator +(const Quaternion& quaternion) const {
 		auto r = this->clone().add(quaternion);
@@ -466,7 +466,7 @@ public:
 	/**
 	 * Operator - quaternion
 	 * @param quaternion quaternion
-	 * @return new quaternion (this - quaternion)
+	 * @returns new quaternion (this - quaternion)
 	 */
 	inline Quaternion operator -(const Quaternion& quaternion) const {
 		auto r = this->clone().sub(quaternion);
@@ -476,7 +476,7 @@ public:
 	/**
 	 * Operator * scalar
 	 * @param scalar scalar
-	 * @return new quaternion (this * scalar)
+	 * @returns new quaternion (this * scalar)
 	 */
 	inline Quaternion operator *(const float scalar) const {
 		auto r = this->clone().scale(scalar);
@@ -486,7 +486,7 @@ public:
 	/**
 	 * Operator * quaternion
 	 * @param scalar scalar
-	 * @return new quaternion (this * quaternion)
+	 * @returns new quaternion (this * quaternion)
 	 */
 	inline Quaternion operator *(const Quaternion& quaternion) const {
 		auto r = this->clone().multiply(quaternion);
@@ -496,7 +496,7 @@ public:
 	/**
 	 * Operator * vector3
 	 * @param vector3 vector3
-	 * @return new vector3 (this * vector3)
+	 * @returns new vector3 (this * vector3)
 	 */
 	inline Vector3 operator *(const Vector3& vector3) const {
 		return this->multiply(vector3);
@@ -505,7 +505,7 @@ public:
 	/**
 	 * Operator / scalar
 	 * @param scalar scalar
-	 * @return new quaternion (this / scalar)
+	 * @returns new quaternion (this / scalar)
 	 */
 	inline Quaternion operator /(const float scalar) const {
 		auto r = this->clone().scale(1.0f / scalar);
@@ -515,7 +515,7 @@ public:
 	/**
 	 * Operator / quaternion
 	 * @param quaternion quaternion
-	 * @return new quaternion (this / quaternion)
+	 * @returns new quaternion (this / quaternion)
 	 */
 	inline Quaternion operator /(const Quaternion& quaternion) const {
 		auto qInverted = Quaternion(1.0f / quaternion[0], 1.0f / quaternion[1], 1.0f / quaternion[2], 1.0f / quaternion[3]);
@@ -526,7 +526,7 @@ public:
 	/**
 	 * Operator += quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& operator +=(const Quaternion& quaternion) {
 		return this->add(quaternion);
@@ -535,7 +535,7 @@ public:
 	/**
 	 * Operator -= quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& operator -=(const Quaternion& quaternion) {
 		return this->sub(quaternion);
@@ -544,7 +544,7 @@ public:
 	/**
 	 * Operator *= quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& operator *=(const Quaternion& quaternion) {
 		return this->multiply(quaternion);
@@ -553,7 +553,7 @@ public:
 	/**
 	 * Operator /= quaternion
 	 * @param quaternion quaternion
-	 * @return this quaternion
+	 * @returns this quaternion
 	 */
 	inline Quaternion& operator /=(const Quaternion& quaternion) {
 		auto qInverted = Quaternion(1.0f / quaternion[0], 1.0f / quaternion[1], 1.0f / quaternion[2], 1.0f / quaternion[3]);
@@ -563,7 +563,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param quaternion quaternion
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool operator ==(const Quaternion& quaternion) const {
 		return this->equals(quaternion);
@@ -572,7 +572,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param quaternion quaternion
-	 * @return non equality
+	 * @returns non equality
 	 */
 	inline bool operator !=(const Quaternion& quaternion) const {
 		return this->equals(quaternion) == false;

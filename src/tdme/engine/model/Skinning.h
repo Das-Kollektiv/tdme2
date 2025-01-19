@@ -39,7 +39,7 @@ public:
 	Skinning();
 
 	/**
-	 * @return weights
+	 * @returns weights
 	 */
 	inline const vector<float>& getWeights() {
 		return weights;
@@ -52,7 +52,7 @@ public:
 	void setWeights(const vector<float>& weights);
 
 	/**
-	 * @return all joints
+	 * @returns all joints
 	 */
 	inline const vector<Joint>& getJoints() {
 		return joints;
@@ -65,7 +65,7 @@ public:
 	void setJoints(const vector<Joint>& joints);
 
 	/**
-	 * @return all vertex joints
+	 * @returns all vertex joints
 	 */
 	inline const vector<vector<JointWeight>>& getVerticesJointsWeights() {
 		return verticesJointsWeights;
@@ -80,7 +80,7 @@ public:
 	/**
 	 * Get joint by node id
 	 * @param nodeId node id
-	 * @return joint or nullptr if not found
+	 * @returns joint or nullptr if not found
 	 */
 	inline Joint* getJointByNodeId(const string& nodeId) {
 		auto jointIt = jointsByNodeIds.find(nodeId);

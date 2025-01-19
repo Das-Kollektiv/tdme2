@@ -51,7 +51,7 @@ public:
 	~PrototypeImposterLOD();
 
 	/**
-	 * @return file name
+	 * @returns file name
 	 */
 	inline const vector<string>& getFileNames() {
 		return fileNames;
@@ -66,7 +66,7 @@ public:
 	}
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline const vector<Model*>& getModels() {
 		return models;
@@ -87,7 +87,7 @@ public:
 	}
 
 	/**
-	 * @return min distance
+	 * @returns min distance
 	 */
 	inline float getMinDistance() const {
 		return minDistance;
@@ -102,7 +102,7 @@ public:
 	}
 
 	/**
-	 * @return color add
+	 * @returns color add
 	 */
 	inline const Color4& getColorAdd() const {
 		return colorAdd;
@@ -117,7 +117,7 @@ public:
 	}
 
 	/**
-	 * @return color mul
+	 * @returns color mul
 	 */
 	inline const Color4& getColorMul() const {
 		return colorMul;

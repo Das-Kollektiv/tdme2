@@ -117,7 +117,7 @@ protected:
 	);
 
 	/**
-	 * @return node type
+	 * @returns node type
 	 */
 	const string getNodeType() override;
 
@@ -131,7 +131,7 @@ public:
 	void dispose() override;
 
 	/**
-	 * @return image source
+	 * @returns image source
 	 */
 	const string& getSource();
 

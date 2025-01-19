@@ -63,7 +63,7 @@ public:
 	~PBRMaterialProperties();
 
 	/**
-	 * @return base color factor
+	 * @returns base color factor
 	 */
 	inline const Color4& getBaseColorFactor() const {
 		return baseColorFactor;
@@ -78,14 +78,14 @@ public:
 	}
 
 	/**
-	 * @return base color texture path name
+	 * @returns base color texture path name
 	 */
 	inline const string& getBaseColorTexturePathName() const {
 		return baseColorTexturePathName;
 	}
 
 	/**
-	 * @return base color texture file name
+	 * @returns base color texture file name
 	 */
 	inline const string& getBaseColorTextureFileName() const {
 		return baseColorTextureFileName;
@@ -105,21 +105,21 @@ public:
 	void setBaseColorTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a base color texture
+	 * @returns if material has a base color texture
 	 */
 	inline bool hasBaseColorTexture() const {
 		return baseColorTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's base color texture
+	 * @returns the material's base color texture
 	 */
 	inline Texture* getBaseColorTexture() const {
 		return baseColorTexture;
 	}
 
 	/**
-	 * @return base color texture has transparent pixels
+	 * @returns base color texture has transparent pixels
 	 */
 	inline bool hasBaseColorTextureTransparency() const {
 		return baseColorTextureTransparency;
@@ -134,7 +134,7 @@ public:
 	}
 
 	/**
-	 * @return base color texture has masked transparency, means pixel are eighter opaque or not visible
+	 * @returns base color texture has masked transparency, means pixel are eighter opaque or not visible
 	 */
 	inline bool hasBaseColorTextureMaskedTransparency() const {
 		return baseColorTextureMaskedTransparency;
@@ -149,7 +149,7 @@ public:
 	}
 
 	/**
-	 * @return base color texture masked transparency threshold
+	 * @returns base color texture masked transparency threshold
 	 */
 	inline float getBaseColorTextureMaskedTransparencyThreshold() const {
 		return baseColorTextureMaskedTransparencyThreshold;
@@ -164,7 +164,7 @@ public:
 	}
 
 	/**
-	 * @return metallic factor
+	 * @returns metallic factor
 	 */
 	inline float getMetallicFactor() const {
 		return metallicFactor;
@@ -179,7 +179,7 @@ public:
 	}
 
 	/**
-	 * @return roughness factor
+	 * @returns roughness factor
 	 */
 	inline float getRoughnessFactor() const {
 		return roughnessFactor;
@@ -194,14 +194,14 @@ public:
 	}
 
 	/**
-	 * @return metallic roughness texture path name
+	 * @returns metallic roughness texture path name
 	 */
 	inline const string& getMetallicRoughnessTexturePathName() const {
 		return metallicRoughnessTexturePathName;
 	}
 
 	/**
-	 * @return metallic roughness texture file name
+	 * @returns metallic roughness texture file name
 	 */
 	inline const string& getMetallicRoughnessTextureFileName() const {
 		return metallicRoughnessTextureFileName;
@@ -221,21 +221,21 @@ public:
 	void setMetallicRoughnessTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a metallic roughness texture
+	 * @returns if material has a metallic roughness texture
 	 */
 	inline bool hasMetallicRoughnessTexture() const {
 		return metallicRoughnessTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's metallic roughness texture
+	 * @returns the material's metallic roughness texture
 	 */
 	inline Texture* getMetallicRoughnessTexture() const {
 		return metallicRoughnessTexture;
 	}
 
 	/**
-	 * @return normal scale
+	 * @returns normal scale
 	 */
 	inline float getNormalScale() const {
 		return normalScale;
@@ -250,14 +250,14 @@ public:
 	}
 
 	/**
-	 * @return normal texture path name
+	 * @returns normal texture path name
 	 */
 	inline const string& getNormalTexturePathName() const {
 		return normalTexturePathName;
 	}
 
 	/**
-	 * @return normal texture file name
+	 * @returns normal texture file name
 	 */
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
@@ -277,21 +277,21 @@ public:
 	void setNormalTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a normal texture
+	 * @returns if material has a normal texture
 	 */
 	inline bool hasNormalTexture() const {
 		return normalTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's normal texture
+	 * @returns the material's normal texture
 	 */
 	inline Texture* getNormalTexture() const {
 		return normalTexture;
 	}
 
 	/**
-	 * @return emissive factor
+	 * @returns emissive factor
 	 */
 	inline const Color4& getEmissiveFactor() const {
 		return emissiveFactor;
@@ -306,14 +306,14 @@ public:
 	}
 
 	/**
-	 * @return emissive texture path name
+	 * @returns emissive texture path name
 	 */
 	inline const string& getEmissiveTexturePathName() const {
 		return emissiveTexturePathName;
 	}
 
 	/**
-	 * @return emissive texture file name
+	 * @returns emissive texture file name
 	 */
 	inline const string& getEmissiveTextureFileName() const {
 		return emissiveTextureFileName;
@@ -333,21 +333,21 @@ public:
 	void setEmissiveTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a emissive texture
+	 * @returns if material has a emissive texture
 	 */
 	inline bool hasEmissiveTexture() const {
 		return emissiveTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's emissive texture
+	 * @returns the material's emissive texture
 	 */
 	inline Texture* getEmissiveTexture() const {
 		return emissiveTexture;
 	}
 
 	/**
-	 * @return exposure
+	 * @returns exposure
 	 */
 	inline float getExposure() const {
 		return exposure;

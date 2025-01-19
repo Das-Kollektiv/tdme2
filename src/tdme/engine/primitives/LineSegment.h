@@ -22,7 +22,7 @@ public:
 	 * @param q1 q1 line 1 point 2
 	 * @param p p point
 	 * @param c c closest point
-	 * @return if collides or not
+	 * @returns if collides or not
 	 */
 	static void computeClosestPointOnLineSegment(const Vector3& p1, const Vector3& q1, const Vector3& p, Vector3& c);
 
@@ -33,7 +33,7 @@ public:
 	 * @param p2 p2 line 2 point 1
 	 * @param q2 q2 line 2 point 2
 	 * @param p p intersection point
-	 * @return if collides or not
+	 * @returns if collides or not
 	 */
 	static bool doesLineSegmentsCollide(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2, Vector3& p);
 
@@ -63,7 +63,7 @@ public:
 	 * @param q point q on line segment
 	 * @param contactMin contact point min
 	 * @param contactMax contact point max
-	 * @return true if collides or false if not
+	 * @returns true if collides or false if not
 	 */
 	static bool doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox, const Vector3& p, const Vector3& q, Vector3& contactMin, Vector3& contactMax);
 
@@ -78,7 +78,7 @@ public:
 	 * @param q point q on line segment
 	 * @param contactMin contact point min
 	 * @param contactMax contact point max
-	 * @return true if collides or false if not
+	 * @returns true if collides or false if not
 	 */
 	static bool doesOrientedBoundingBoxCollideWithLineSegment(OrientedBoundingBox* orientedBoundingBox, const Vector3& p, const Vector3& q, Vector3& contactMin, Vector3& contactMax);
 
@@ -90,7 +90,7 @@ public:
 	 * @param r1 r1 line segment point 1
 	 * @param r2 r2 line segment point 2
 	 * @param contact point of intersection
-	 * @return line segment collides with triangle
+	 * @returns line segment collides with triangle
 	 */
 	static bool doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact);
 
@@ -101,7 +101,7 @@ public:
 	 * @param p1 p1 line segment point 1
 	 * @param p2 p2 line segment point 2
 	 * @param contact point of intersection
-	 * @return line segment collides with plane
+	 * @returns line segment collides with plane
 	 */
 	static bool doesLineSegmentCollideWithPlane(const Vector3& n, float d, const Vector3& p1, const Vector3& p2, Vector3& contact);
 

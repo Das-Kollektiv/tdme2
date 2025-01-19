@@ -69,7 +69,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline FontTabView* getView() {
 		return view;

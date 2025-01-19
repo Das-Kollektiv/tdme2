@@ -69,35 +69,35 @@ public:
 	~MarkdownTabView();
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return markdownTabController.get();
 	}
 
 	/**
-	 * @return markdown screen node
+	 * @returns markdown screen node
 	 */
 	inline GUIScreenNode* getScreenNode() {
 		return screenNode;
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return table of content
+	 * @returns table of content
 	 */
 	inline const vector<Markdown::TOCEntry>& getTableOfContent() {
 		return toc;

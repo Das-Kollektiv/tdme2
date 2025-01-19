@@ -54,7 +54,7 @@ public:
 	/**
 	 * Return RGB/A texture depth by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return RGB/A texture depth by bits per pixel
+	 * @returns RGB/A texture depth by bits per pixel
 	 */
 	inline static TextureDepth getRGBDepthByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
@@ -67,7 +67,7 @@ public:
 	/**
 	 * Return RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return RGB/A texture format by bits per pixel
+	 * @returns RGB/A texture format by bits per pixel
 	 */
 	inline static TextureFormat getRGBFormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
@@ -80,7 +80,7 @@ public:
 	/**
 	 * Return PNG RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return PNG RGB/A texture format by bits per pixel
+	 * @returns PNG RGB/A texture format by bits per pixel
 	 */
 	inline static TextureFormat getPNGFormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
@@ -93,7 +93,7 @@ public:
 	/**
 	 * Return BC7 RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return BC7 RGB/A texture format by bits per pixel
+	 * @returns BC7 RGB/A texture format by bits per pixel
 	 */
 	inline static TextureFormat getBC7FormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
@@ -167,21 +167,21 @@ public:
 	}
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() const  {
 		return id;
 	}
 
 	/**
-	 * @return depth
+	 * @returns depth
 	 */
 	inline TextureDepth getDepth() {
 		return depth;
 	}
 
 	/**
-	 * @return RGB depth in bits per pixel
+	 * @returns RGB depth in bits per pixel
 	 */
 	inline uint8_t getRGBDepthBitsPerPixel() const {
 		switch (depth) {
@@ -192,70 +192,70 @@ public:
 	}
 
 	/**
-	 * @return image width
+	 * @returns image width
 	 */
 	inline uint16_t getWidth() const {
 		return width;
 	}
 
 	/**
-	 * @return image height
+	 * @returns image height
 	 */
 	inline uint16_t getHeight() const {
 		return height;
 	}
 
 	/**
-	 * @return texture height
+	 * @returns texture height
 	 */
 	inline uint16_t getTextureHeight() const {
 		return textureHeight;
 	}
 
 	/**
-	 * @return texture width
+	 * @returns texture width
 	 */
 	inline uint16_t getTextureWidth() const {
 		return textureWidth;
 	}
 
 	/**
-	 * @return texture format
+	 * @returns texture format
 	 */
 	inline TextureFormat getTextureFormat() const {
 		return format;
 	}
 
 	/**
-	 * @return texture has RGB/RGBA raw texture format
+	 * @returns texture has RGB/RGBA raw texture format
 	 */
 	inline bool isRGBTextureFormat() const {
 		return format == TEXTUREFORMAT_RGBA || format == TEXTUREFORMAT_RGB;
 	}
 
 	/**
-	 * @return texture has PNG texture format
+	 * @returns texture has PNG texture format
 	 */
 	inline bool isPNGTextureFormat() const {
 		return format == TEXTUREFORMAT_RGBA_PNG || format == TEXTUREFORMAT_RGB_PNG;
 	}
 
 	/**
-	 * @return texture has BC7 texture format
+	 * @returns texture has BC7 texture format
 	 */
 	inline bool isBC7TextureFormat() const {
 		return format == TEXTUREFORMAT_RGBA_BC7 || format == TEXTUREFORMAT_RGB_BC7;
 	}
 
 	/**
-	 * @return RGB/RGBA texture data wrapped in a byte buffer
+	 * @returns RGB/RGBA texture data wrapped in a byte buffer
 	 */
 	inline ByteBuffer getRGBTextureData() {
 		return getRGBTextureData(format, textureData);
 	}
 
 	/**
-	 * @return BC7 texture data wrapped in a byte buffer
+	 * @returns BC7 texture data wrapped in a byte buffer
 	 */
 	ByteBuffer getBC7TextureData();
 
@@ -267,14 +267,14 @@ public:
 	void setTextureData(TextureFormat format, const ByteBuffer& textureData);
 
 	/**
-	 * @return backing texture data wrapped in a byte buffer
+	 * @returns backing texture data wrapped in a byte buffer
 	 */
 	inline ByteBuffer* getTextureData() {
 		return &textureData;
 	}
 
 	/**
-	 * @return is use compression
+	 * @returns is use compression
 	 */
 	inline bool isUseCompression() const {
 		return useCompression;
@@ -289,7 +289,7 @@ public:
 	}
 
 	/**
-	 * @return use mip map
+	 * @returns use mip map
 	 */
 	inline bool isUseMipMap() const {
 		return useMipMap;
@@ -304,7 +304,7 @@ public:
 	}
 
 	/**
-	 * @return is repeat
+	 * @returns is repeat
 	 */
 	inline bool isRepeat() const {
 		return repeat;
@@ -319,7 +319,7 @@ public:
 	}
 
 	/**
-	 * @return clamp mode
+	 * @returns clamp mode
 	 */
 	inline ClampMode getClampMode() const {
 		return clampMode;
@@ -334,7 +334,7 @@ public:
 	}
 
 	/**
-	 * @return texture min filter
+	 * @returns texture min filter
 	 */
 	inline TextureFilter getMinFilter() const {
 		return minFilter;
@@ -349,7 +349,7 @@ public:
 	}
 
 	/**
-	 * @return texture mag filter
+	 * @returns texture mag filter
 	 */
 	inline TextureFilter getMagFilter() const {
 		return magFilter;
@@ -364,7 +364,7 @@ public:
 	}
 
 	/**
-	 * @return atlas size
+	 * @returns atlas size
 	 */
 	inline uint16_t getAtlasSize() const {
 		return atlasSize;
@@ -379,7 +379,7 @@ public:
 	}
 
 	/**
-	 * @return mip levels
+	 * @returns mip levels
 	 */
 	inline int getMipLevels() {
 		if (useMipMap == false) return 1;
@@ -420,7 +420,7 @@ public:
 	/**
 	 * Get mip map textures
 	 * @param bc7Encoded bc7 encoded if true or RGB/A if false
-	 * @return mip map textures
+	 * @returns mip map textures
 	 */
 	const vector<MipMapTexture>& getMipMapTextures(bool bc7Encoded);
 
@@ -455,7 +455,7 @@ private:
 	 * Get RGB/RGBA texture data wrapped in a byte buffer
 	 * @param format texture data format
 	 * @param textureData texture data
-	 * @return RGB/RGBA texture data wrapped in a byte buffer
+	 * @returns RGB/RGBA texture data wrapped in a byte buffer
 	 */
 	ByteBuffer getRGBTextureData(TextureFormat format, const ByteBuffer& textureData);
 

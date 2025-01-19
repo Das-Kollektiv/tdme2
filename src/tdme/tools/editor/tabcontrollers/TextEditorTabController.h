@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline TextEditorTabView* getView() {
 		return view;
@@ -107,7 +107,7 @@ public:
 	}
 
 	/**
-	 * @return EngineMinitScript
+	 * @returns EngineMinitScript
 	 */
 	inline EngineMinitScript* getMinitScript() {
 		return scriptInstance.get();
@@ -124,42 +124,42 @@ public:
 	}
 
 	/**
-	 * @return context menu type
+	 * @returns context menu type
 	 */
 	inline ContextMenuType getContextMenuType() {
 		return contextMenuType;
 	}
 
 	/**
-	 * @return context menu x
+	 * @returns context menu x
 	 */
 	inline int getContextMenuX() {
 		return contextMenuX;
 	}
 
 	/**
-	 * @return context menu y
+	 * @returns context menu y
 	 */
 	inline int getContextMenuY() {
 		return contextMenuY;
 	}
 
 	/**
-	 * @return context menu node id
+	 * @returns context menu node id
 	 */
 	inline const string& getContextMenuNodeId() {
 		return contextMenuNodeId;
 	}
 
 	/**
-	 * @return add node x
+	 * @returns add node x
 	 */
 	inline int getAddNodeX() {
 		return addNodeX;
 	}
 
 	/**
-	 * @return add node y
+	 * @returns add node y
 	 */
 	inline int getAddNodeY() {
 		return addNodeY;
@@ -189,7 +189,7 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
-	 * @return minitscript syntax trees
+	 * @returns minitscript syntax trees
 	 */
 	inline const vector<MinitScriptScriptSyntaxTree>& getMinitScriptSyntaxTrees() {
 		return minitScriptSyntaxTrees;

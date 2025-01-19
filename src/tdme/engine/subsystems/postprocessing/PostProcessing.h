@@ -34,7 +34,7 @@ public:
 	/**
 	 * Get post processing program
 	 * @param programId program id
-	 * @return post processing program
+	 * @returns post processing program
 	 */
 	inline PostProcessingProgram* getPostProcessingProgram(const string& programId) {
 		auto programIt = programs.find(programId);

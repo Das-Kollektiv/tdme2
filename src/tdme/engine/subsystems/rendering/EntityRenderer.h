@@ -93,7 +93,7 @@ private:
 		/**
 		 * Check if matrix is right handed
 		 * @param matrix matrix
-		 * @return right handed
+		 * @returns right handed
 		 */
 		inline bool isRightHanded(Matrix4x4& matrix) {
 			// copy into x,y,z axes
@@ -345,7 +345,7 @@ public:
 	void dispose();
 
 	/**
-	 * @return batch rendererBackend for triangles
+	 * @returns batch rendererBackend for triangles
 	 */
 	BatchRendererTriangles* acquireTrianglesBatchRenderer();
 

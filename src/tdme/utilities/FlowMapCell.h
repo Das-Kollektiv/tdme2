@@ -56,21 +56,21 @@ public:
 	}
 
 	/**
-	 * @return cell position
+	 * @returns cell position
 	 */
 	inline const Vector3& getPosition() const {
 		return position;
 	}
 
 	/**
-	 * @return if cell is walkable
+	 * @returns if cell is walkable
 	 */
 	inline bool isWalkable() const {
 		return walkable;
 	}
 
 	/**
-	 * @return cell movement direction
+	 * @returns cell movement direction
 	 */
 	inline const Vector3& getDirection() const {
 		return direction;
@@ -78,21 +78,21 @@ public:
 
 	/**
 	 * Get path node index
-	 * @return path node index
+	 * @returns path node index
 	 */
 	inline int getPathNodeIdx() {
 		return pathNodeIdx;
 	}
 
 	/**
-	 * @return has missing neighbor cell
+	 * @returns has missing neighbor cell
 	 */
 	inline bool hasMissingNeighborCell() {
 		return missingNeighborCell;
 	}
 
 	/**
-	 * @return cloned flow map cell
+	 * @returns cloned flow map cell
 	 */
 	inline FlowMapCell* clone() {
 		return new FlowMapCell(

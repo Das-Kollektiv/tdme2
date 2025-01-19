@@ -134,14 +134,14 @@ public:
 	~PrototypePhysicsSubController();
 
 	/**
-	 * @return view
+	 * @returns view
 	 */
 	inline PrototypePhysicsSubView* getView() {
 		return view.get();
 	}
 
 	/**
-	 * @return screen node
+	 * @returns screen node
 	 */
 	inline GUIScreenNode* getScreenNode() {
 		return screenNode;
@@ -266,7 +266,7 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype);
 
@@ -275,7 +275,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 

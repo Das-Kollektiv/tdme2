@@ -66,7 +66,7 @@ public:
 	~PrototypePhysicsSubView();
 
 	/**
-	 * @return pop ups
+	 * @returns pop ups
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
@@ -81,7 +81,7 @@ public:
 	}
 
 	/**
-	 * @return display bounding volume
+	 * @returns display bounding volume
 	 */
 	inline  bool isDisplayBoundingVolume() {
 		return displayBoundingVolume;
@@ -96,7 +96,7 @@ public:
 	}
 
 	/**
-	 * @return bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
+	 * @returns bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
 	 */
 	inline int getDisplayBoundingVolumeIdx() const {
 		return displayBoundingVolumeIdx;
@@ -232,7 +232,7 @@ public:
 	void endEditingBoundingVolume(Prototype* prototype);
 
 	/**
-	 * @return is editing bounding volume
+	 * @returns is editing bounding volume
 	 */
 	bool isEditingBoundingVolume(Prototype* prototype);
 

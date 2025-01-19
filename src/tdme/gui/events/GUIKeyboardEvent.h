@@ -78,7 +78,7 @@ public:
 	}
 
 	/**
-	 * @return time in milliseconds
+	 * @returns time in milliseconds
 	 */
 	inline int64_t getTime() const {
 		return time;
@@ -93,7 +93,7 @@ public:
 	}
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline GUIKeyboardEventType getType() const {
 		return type;
@@ -108,7 +108,7 @@ public:
 	}
 
 	/**
-	 * @return key code
+	 * @returns key code
 	 */
 	inline int32_t getKeyCode() const {
 		return keyCode;
@@ -123,7 +123,7 @@ public:
 	}
 
 	/**
-	 * @return key char
+	 * @returns key char
 	 */
 	inline int32_t getKeyChar() const {
 		return keyChar;
@@ -138,7 +138,7 @@ public:
 	}
 
 	/**
-	 * @return is meta down
+	 * @returns is meta down
 	 */
 	inline bool isMetaDown() const {
 		return metaDown;
@@ -153,7 +153,7 @@ public:
 	}
 
 	/**
-	 * @return control down
+	 * @returns control down
 	 */
 	inline bool isControlDown() const {
 		return controlDown;
@@ -168,7 +168,7 @@ public:
 	}
 
 	/**
-	 * @return is alt down
+	 * @returns is alt down
 	 */
 	inline bool isAltDown() const {
 		return altDown;
@@ -183,7 +183,7 @@ public:
 	}
 
 	/**
-	 * @return is shift down
+	 * @returns is shift down
 	 */
 	inline bool isShiftDown() const {
 		return shiftDown;
@@ -198,7 +198,7 @@ public:
 	}
 
 	/**
-	 * @return is repeat
+	 * @returns is repeat
 	 */
 	inline bool isRepeat() const {
 		return repeat;
@@ -213,7 +213,7 @@ public:
 	}
 
 	/**
-	 * @return event has been processed already
+	 * @returns event has been processed already
 	 */
 	inline bool isProcessed() const {
 		return processed;

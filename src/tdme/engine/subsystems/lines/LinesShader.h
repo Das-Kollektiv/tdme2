@@ -43,12 +43,12 @@ public:
 	LinesShader(Engine* engine, RendererBackend* rendererBackend);
 
 	/**
-	 * @return initialized and ready to be used
+	 * @returns initialized and ready to be used
 	 */
 	bool isInitialized();
 
 	/**
-	 * Initialize rendererBackend
+	 * Initialize
 	 */
 	void initialize();
 

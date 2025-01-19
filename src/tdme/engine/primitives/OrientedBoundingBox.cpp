@@ -139,7 +139,7 @@ const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
 }
 
 /**
- * @return faces vertices indexes
+ * @returns faces vertices indexes
  */
 const array<array<int32_t,3>,12>& OrientedBoundingBox::getFacesVerticesIndexes() {
 	return facesVerticesIndexes;

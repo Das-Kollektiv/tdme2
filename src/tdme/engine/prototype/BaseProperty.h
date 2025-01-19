@@ -31,7 +31,7 @@ public:
 	~BaseProperty();
 
 	/**
-	 * @return name
+	 * @returns name
 	 */
 	inline const string& getName() const {
 		return name;
@@ -46,7 +46,7 @@ public:
 	}
 
 	/**
-	 * @return value
+	 * @returns value
 	 */
 	inline const string& getValue() const {
 		return value;

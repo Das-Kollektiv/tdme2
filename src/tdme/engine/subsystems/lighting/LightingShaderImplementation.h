@@ -29,17 +29,17 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	virtual ~LightingShaderImplementation() {}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	virtual const string getId() = 0;
 
 	/**
-	 * @return initialized and ready to be used
+	 * @returns initialized and ready to be used
 	 */
 	virtual bool isInitialized() = 0;
 
 	/**
-	 * Initialize rendererBackend
+	 * Initialize
 	 */
 	virtual void initialize() = 0;
 

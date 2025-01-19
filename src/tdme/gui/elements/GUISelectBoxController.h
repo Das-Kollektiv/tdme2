@@ -54,12 +54,12 @@ private:
 	GUISelectBoxController(GUINode* node);
 
 	/**
-	 * @return if multiple selection is enabled
+	 * @returns if multiple selection is enabled
 	 */
 	bool isMultipleSelection();
 
 	/**
-	 * @return is control down
+	 * @returns is control down
 	 */
 	bool isKeyControlDown();
 

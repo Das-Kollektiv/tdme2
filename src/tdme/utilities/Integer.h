@@ -30,28 +30,28 @@ public:
 	/**
 	 * Check if given string is a integer string
 	 * @param str string
-	 * @return given string is integer
+	 * @returns given string is integer
 	 */
 	static bool is(const string& str);
 
 	/**
 	 * Check if given string is a integer string
 	 * @param str string
-	 * @return given string is integer
+	 * @returns given string is integer
 	 */
 	static bool viewIs(const string_view& str);
 
 	/**
 	 * Parse integer
 	 * @param str string
-	 * @return integer
+	 * @returns integer
 	 */
 	static int parse(const string& str);
 
 	/**
 	 * Parse integer
 	 * @param str string
-	 * @return integer
+	 * @returns integer
 	 */
 	static int viewParse(const string_view& str);
 

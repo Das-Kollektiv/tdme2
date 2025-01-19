@@ -65,7 +65,7 @@ public:
 	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
 
 	/**
-	 * @return render groups partition size / width
+	 * @returns render groups partition size / width
 	 */
 	inline static float getRenderGroupsPartitionWidth() {
 		return renderGroupsPartitionWidth;
@@ -80,7 +80,7 @@ public:
 	}
 
 	/**
-	 * @return render groups partition size / height
+	 * @returns render groups partition size / height
 	 */
 	inline static float getRenderGroupsPartitionHeight() {
 		return renderGroupsPartitionHeight;
@@ -95,7 +95,7 @@ public:
 	}
 
 	/**
-	 * @return render groups partition size / depth
+	 * @returns render groups partition size / depth
 	 */
 	inline static float getRenderGroupsPartitionDepth() {
 		return renderGroupsPartitionDepth;
@@ -118,14 +118,14 @@ public:
 	}
 
 	/**
-	 * @return render groups objects reduce by factor
+	 * @returns render groups objects reduce by factor
 	 */
 	inline static int getRenderGroupsReduceBy() {
 		return renderGroupsReduceBy;
 	}
 
 	/**
-	 * @return render groups LOD levels
+	 * @returns render groups LOD levels
 	 */
 	inline static int getRenderGroupsLodLevels() {
 		return renderGroupsLODLevels;
@@ -140,7 +140,7 @@ public:
 	}
 
 	/**
-	 * @return render groups LOD2 minumum distance
+	 * @returns render groups LOD2 minumum distance
 	 */
 	inline static float getRenderGroupsLod2MinDistance() {
 		return renderGroupsLOD2MinDistance;
@@ -155,7 +155,7 @@ public:
 	}
 
 	/**
-	 * @return render groups LOD3 minumum distance
+	 * @returns render groups LOD3 minumum distance
 	 */
 	inline static float getRenderGroupsLod3MinDistance() {
 		return renderGroupsLOD3MinDistance;
@@ -170,7 +170,7 @@ public:
 	}
 
 	/**
-	 * @return render groups LOD2 reduce by factor
+	 * @returns render groups LOD2 reduce by factor
 	 */
 	inline static int getRenderGroupsLod2ReduceBy() {
 		return renderGroupsLOD2ReduceBy;
@@ -185,7 +185,7 @@ public:
 	}
 
 	/**
-	 * @return render groups LOD3 reduce by factor
+	 * @returns render groups LOD3 reduce by factor
 	 */
 	inline static int getRenderGroupsLod3ReduceBy() {
 		return renderGroupsLOD3ReduceBy;
@@ -220,7 +220,7 @@ public:
 	 * @param particleSystem prototype particle system
 	 * @param id id
 	 * @param enableDynamicShadows enable dynamic shadows
-	 * @return engine particle system entity
+	 * @returns engine particle system entity
 	 */
 	static Entity* createParticleSystem(PrototypeParticleSystem* particleSystem, const string& id, bool enableDynamicShadows = true);
 
@@ -228,7 +228,7 @@ public:
 	 * Create engine entity
 	 * @param id id
 	 * @param transform transform
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEmpty(const string& id, const Transform& transform);
 
@@ -238,7 +238,7 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1);
 
@@ -249,7 +249,7 @@ public:
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
 	 * @param noEntityHierarchy do not create a entity hierarchy
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, bool noEntityHierarchy = false);
 
@@ -258,7 +258,7 @@ public:
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1);
 
@@ -268,7 +268,7 @@ public:
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
 	 * @param noEntityHierarchy do not create a entity hierarchy
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, bool noEntityHierarchy = false);
 
@@ -297,7 +297,7 @@ public:
 	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
-	 * @return body
+	 * @returns body
 	 */
 	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = BODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
@@ -310,7 +310,7 @@ public:
 	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
-	 * @return body
+	 * @returns body
 	 */
 	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = BODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
@@ -322,7 +322,7 @@ public:
 	 * @param transform transform
 	 * @param bodyHierarchyId body hierarchy id
 	 * @param bodyHierarchyParentId body hierarchy parent id
-	 * @return body hierarchy
+	 * @returns body hierarchy
 	 */
 	static BodyHierarchy* createSubBody(World* world, Prototype* prototype, const string& id, const Transform& transform, const string& bodyHierarchyId, const string& bodyHierarchyParentId);
 

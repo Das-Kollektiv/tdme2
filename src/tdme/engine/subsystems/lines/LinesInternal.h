@@ -106,7 +106,7 @@ public:
 	virtual ~LinesInternal();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return is enabled
+	 * @returns is enabled
 	 */
 	inline bool isEnabled() {
 		return enabled;
@@ -144,7 +144,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline const Color4& getEffectColorMul() const {
 		return effectColorMul;
@@ -159,7 +159,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline const Color4& getEffectColorAdd() const {
 		return effectColorMul;
@@ -174,7 +174,7 @@ public:
 	}
 
 	/**
-	 * @return is pickable
+	 * @returns is pickable
 	 */
 	inline bool isPickable() const {
 		return pickable;
@@ -189,7 +189,7 @@ public:
 	}
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
 		return contributesShadows;
@@ -204,7 +204,7 @@ public:
 	}
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	inline bool isReceivesShadows() {
 		return receivesShadows;
@@ -219,28 +219,28 @@ public:
 	}
 
 	/**
-	 * @return bounding box
+	 * @returns bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
 	/**
-	 * @return world bounding box
+	 * @returns world bounding box
 	 */
 	inline BoundingBox* getWorldBoundingBox() {
 		return &worldBoundingBox;
 	}
 
 	/**
-	 * @return line width
+	 * @returns line width
 	 */
 	inline float getLineWidth() {
 		return lineWidth;
 	}
 
 	/**
-	 * @return texture id
+	 * @returns texture id
 	 */
 	inline int32_t getTextureId() {
 		return textureId;

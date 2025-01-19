@@ -49,14 +49,14 @@ public:
 	virtual ~ApplicationClient();
 
 	/**
-	 * @return mutex
+	 * @returns mutex
 	 */
 	inline Mutex* getMutex() {
 		return &mutex;
 	}
 
 	/**
-	 * @return audio gain
+	 * @returns audio gain
 	 */
 	inline float getAudioGain() {
 		return audioGain;
@@ -71,7 +71,7 @@ public:
 	}
 
 	/**
-	 * @return context
+	 * @returns context
 	 */
 	inline Context* getContext() {
 		return context.get();

@@ -135,7 +135,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline TerrainEditorTabView* getView() {
 		return view;
@@ -147,14 +147,14 @@ public:
 	}
 
 	/**
-	 * @return current terrain brush operation
+	 * @returns current terrain brush operation
 	 */
 	inline Terrain::BrushOperation getTerrainBrushOperation() {
 		return currentTerrainBrushOperation;
 	}
 
 	/**
-	 * @return current foliage brush operation
+	 * @returns current foliage brush operation
 	 */
 	inline Terrain::BrushOperation getFoliageBrushOperation() {
 		return currentFoliageBrushOperation;
@@ -278,7 +278,7 @@ public:
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
-	 * @return success
+	 * @returns success
 	 */
 	bool determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
 
@@ -288,7 +288,7 @@ public:
 	 * @param terrainModels terrain models
 	 * @param position position
 	 * @param height height
-	 * @return success
+	 * @returns success
 	 */
 	bool determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height);
 
@@ -345,17 +345,17 @@ public:
 	void applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
-	 * @return UI terrain brush operation
+	 * @returns UI terrain brush operation
 	 */
 	Terrain::BrushOperation getUITerrainBrushOperation();
 
 	/**
-	 * @return UI water operation
+	 * @returns UI water operation
 	 */
 	Terrain::BrushOperation getUIWaterOperation();
 
 	/**
-	 * @return UI foliage brush operation
+	 * @returns UI foliage brush operation
 	 */
 	Terrain::BrushOperation getUIFoliageBrushOperation();
 

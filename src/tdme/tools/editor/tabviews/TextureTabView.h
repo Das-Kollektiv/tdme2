@@ -62,21 +62,21 @@ public:
 	~TextureTabView();
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return textureTabController.get();
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;

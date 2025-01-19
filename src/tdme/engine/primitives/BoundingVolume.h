@@ -53,7 +53,7 @@ protected:
 	virtual void createCollisionShape(World* world) = 0;
 
 	/**
-	 * @return is attached to world
+	 * @returns is attached to world
 	 */
 	inline bool isAttachedToWorld() {
 		return world != nullptr;
@@ -73,24 +73,24 @@ public:
 
 	/**
 	 * Get local scale
-	 * @return scale
+	 * @returns scale
 	 */
 	const Vector3& getScale();
 
 	/**
 	 * Set local scale
-	 * @return if collision shape had been recreated
+	 * @returns if collision shape had been recreated
 	 */
 	virtual void setScale(const Vector3& scale) = 0;
 
 	/**
-	 * @return center
+	 * @returns center
 	 */
 	const Vector3& getCenter() const;
 
 	/**
 	 * Clones this bounding volume
-	 * @return cloned bounding volume
+	 * @returns cloned bounding volume
 	 */
 	virtual BoundingVolume* clone() const = 0;
 

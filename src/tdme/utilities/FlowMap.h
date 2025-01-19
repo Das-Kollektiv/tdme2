@@ -88,7 +88,7 @@ public:
 	 * Return string representation of given x,z for flow map cell id
 	 * @param x x
 	 * @param z z
-	 * @return string representation
+	 * @returns string representation
 	 */
 	inline const tuple<int, int> toId(float x, float z) const {
 		return toId(x, z, stepSize);
@@ -99,7 +99,7 @@ public:
 	 * @param x x
 	 * @param z z
 	 * @param stepSize step size
-	 * @return string representation
+	 * @returns string representation
 	 */
 	inline static const tuple<int, int> toId(float x, float z, float stepSize) {
 		return tuple<int, int> { static_cast<int>(Math::ceil(x / stepSize)), static_cast<int>(Math::ceil(z / stepSize)) };
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Returns integer position component
 	 * @param value value
-	 * @return integer position component
+	 * @returns integer position component
 	 */
 	inline int getIntegerPositionComponent(float value) const {
 		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
@@ -135,7 +135,7 @@ public:
 	 * Returns integer position component
 	 * @param value value
 	 * @param stepSize step size
-	 * @return integer position component
+	 * @returns integer position component
 	 */
 	inline static int getIntegerPositionComponent(float value, float stepSize) {
 		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
@@ -145,7 +145,7 @@ public:
 	 * Return string representation of given x,z integer flow map position representation for flow map cell id
 	 * @param x x
 	 * @param z z
-	 * @return string representation
+	 * @returns string representation
 	 */
 	inline static const tuple<int, int> toIdInt(int x, int z) {
 		return tuple<int, int> { x, z };
@@ -164,14 +164,14 @@ public:
 	}
 
 	/**
-	 * @return if flow map is complete
+	 * @returns if flow map is complete
 	 */
 	inline bool isComplete() const {
 		return complete;
 	}
 
 	/**
-	 * @return step size
+	 * @returns step size
 	 */
 	inline float getStepSize() const {
 		return stepSize;
@@ -179,7 +179,7 @@ public:
 
 	/**
 	 * Returns end positions
-	 * @return end positions
+	 * @returns end positions
 	 */
 	inline const vector<Vector3>& getEndPositions() const {
 		return endPositions;
@@ -187,7 +187,7 @@ public:
 
 	/**
 	 * Returns path flow map is generated on
-	 * @return path
+	 * @returns path
 	 */
 	inline const vector<Vector3>& getPath() const {
 		return path;
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Get cell by id
 	 * @param id id
-	 * @return cell
+	 * @returns cell
 	 */
 	inline const FlowMapCell* getCell(const tuple<int, int>& id) const {
 		auto cellIt = cells.find(id);
@@ -207,7 +207,7 @@ public:
 	/**
 	 * Get cell by id
 	 * @param id id
-	 * @return cell
+	 * @returns cell
 	 */
 	inline FlowMapCell* getCell(const tuple<int, int>& id) {
 		auto cellIt = cells.find(id);
@@ -219,7 +219,7 @@ public:
 	 * Get cell by position
 	 * @param x x
 	 * @param z z
-	 * @return cell
+	 * @returns cell
 	 */
 	inline const FlowMapCell* getCell(float x, float z) const {
 		auto id = toId(
@@ -235,7 +235,7 @@ public:
 	 * Get cell by position
 	 * @param x x
 	 * @param z z
-	 * @return cell
+	 * @returns cell
 	 */
 	inline FlowMapCell* getCell(float x, float z) {
 		auto cellId = toId(

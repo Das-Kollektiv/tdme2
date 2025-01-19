@@ -54,7 +54,7 @@ public:
 	/**
 	 * Formats a float to a human readable format
 	 * @param value value
-	 * @return value as string
+	 * @returns value as string
 	 */
 	static string formatFloat(float value);
 
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Compute max axis dimension for given bounding box
 	 * @param boundingBox bounding box
-	 * @return max axis dimension
+	 * @returns max axis dimension
 	 */
 	static float computeMaxAxisDimension(BoundingBox* boundingBox);
 
@@ -93,13 +93,13 @@ public:
 	 * @param width width
 	 * @param depth depth
 	 * @param y float y
-	 * @return ground model
+	 * @returns ground model
 	 */
 	static Model* createGroundModel(float width, float depth, float y);
 
 	/**
 	 * Creates grid plate with 1m x 1m texture
-	 * @return grid model
+	 * @returns grid model
 	 */
 	static Model* createGridModel();
 
@@ -118,21 +118,21 @@ public:
 	 * Get relative resources file name
 	 * @param applicationRoot application root
 	 * @param fileName file name
-	 * @return relative resources file name
+	 * @returns relative resources file name
 	 */
 	static const string getRelativeResourcesFileName(const string& applicationRoot, const string& fileName);
 
 	/**
 	 * Get application root path name
 	 * @param fileName file name
-	 * @return application root path name
+	 * @returns application root path name
 	 */
 	static const string getApplicationRootPathName(const string& fileName);
 
 	/**
 	 * Get application sub path name
 	 * @param fileName application sub path name
-	 * @return application sub path name
+	 * @returns application sub path name
 	 */
 	static const string getApplicationSubPathName(const string& fileName);
 
@@ -140,28 +140,28 @@ public:
 	 * Get canonical URI of given path and file name
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return path
+	 * @returns path
 	 */
 	static const string getCanonicalURI(const string& pathName, const string& fileName);
 
 	/**
 	 * Get path of given file name
 	 * @param fileName file name
-	 * @return path
+	 * @returns path
 	 */
 	static const string getPathName(const string& fileName);
 
 	/**
 	 * Get file name of given file name
 	 * @param fileName file name
-	 * @return file name
+	 * @returns file name
 	 */
 	static const string getFileName(const string& fileName);
 
 	/**
 	 * Remove file extension, e.g. .dae, .fbx, ...
 	 * @param fileName file name
-	 * @return file name
+	 * @returns file name
 	 */
 	static const string removeFileExtension(const string& fileName);
 
@@ -169,14 +169,14 @@ public:
 	 * Ensure file extension
 	 * @param fileName file name
 	 * @param extension extension
-	 * @return file name
+	 * @returns file name
 	 */
 	static const string ensureFileExtension(const string& fileName, const string& extension);
 
 	/**
 	 * Get file extension
 	 * @param fileName file name
-	 * @return file extension
+	 * @returns file extension
 	 */
 	static const string getFileExtension(const string& fileName);
 
@@ -187,32 +187,32 @@ public:
 	static void loadSettings(Application* application);
 
 	/**
-	 * @return GIZMO translation/rotations/scale
+	 * @returns GIZMO translation/rotations/scale
 	 */
 	static Model* getGizmoAll();
 
 	/**
-	 * @return GIZMO translation/rotations/scale
+	 * @returns GIZMO translation/rotations/scale
 	 */
 	static Model* getGizmoTranslationScale();
 
 	/**
-	 * @return GIZMO for translation
+	 * @returns GIZMO for translation
 	 */
 	static Model* getGizmoTranslation();
 
 	/**
-	 * @return GIZMO for scale
+	 * @returns GIZMO for scale
 	 */
 	static Model* getGizmoScale();
 
 	/**
-	 * @return GIZMO for rotations
+	 * @returns GIZMO for rotations
 	 */
 	static Model* getGizmoRotations();
 
 	/**
-	 * @return default obb
+	 * @returns default obb
 	 */
 	static Model* getDefaultObb();
 
@@ -220,14 +220,14 @@ public:
 	 * Returns if file extension of given file name does match a extension in given extensions
 	 * @param fileName file name
 	 * @param extensions extensions
-	 * @return success
+	 * @returns success
 	 */
 	static bool hasFileExtension(const string& fileName, const vector<string>& extensions);
 
 	/**
 	 * Enumerate file extensions
 	 * @param extensions extensions
-	 * @return file extensions as human readable string
+	 * @returns file extensions as human readable string
 	 */
 	inline static const string enumerateFileExtensions(const vector<string>& extensions) {
 		string result;

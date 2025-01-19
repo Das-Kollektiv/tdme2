@@ -15,12 +15,12 @@ struct tdme::engine::Version final
 {
 public:
 	/**
-	 * @return version
+	 * @returns version
 	 */
 	static string getVersion();
 
 	/**
-	 * @return copyright
+	 * @returns copyright
 	 */
 	static string getCopyright();
 

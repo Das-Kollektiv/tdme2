@@ -64,7 +64,7 @@ private:
 	 * Get the terrain vertex for given x and z position without providing y component
 	 * @param x x
 	 * @param z z
-	 * @return terrain vertex
+	 * @returns terrain vertex
 	 */
 	inline static void getTerrainVertex(int x, int z, Vector3& vertex) {
 		vertex.set(
@@ -80,7 +80,7 @@ private:
 	 * @param verticesPerZ vertices per z
 	 * @param x x
 	 * @param z z
-	 * @return terrain vertex
+	 * @returns terrain vertex
 	 */
 	inline static bool getTerrainVertex(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, Vector3& vertex) {
 		vertex.set(
@@ -134,7 +134,7 @@ private:
 	 * @param verticesPerZ vertices per z
 	 * @param x x
 	 * @param z z
-	 * @return normal for given vertex index
+	 * @returns normal for given vertex index
 	 */
 	static const Vector3 computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z);
 
@@ -146,7 +146,7 @@ private:
 	 * @param x x
 	 * @param z z
 	 * @param waterHeight water height
-	 * @return if water can be generated at given position
+	 * @returns if water can be generated at given position
 	 */
 	inline static bool determineWater(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight) {
 		if (x < 0 || x >= verticesPerX ||
@@ -166,7 +166,7 @@ private:
 	 * @param z z
 	 * @param waterHeight water height
 	 * @param waterXPositionSet water x position set
-	 * @return if water can be generated at given position
+	 * @returns if water can be generated at given position
 	 */
 	inline static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, unordered_set<int>& waterXPositionSet) {
 		auto xMin = -1;
@@ -220,7 +220,7 @@ public:
 	 * @param depth depth
 	 * @param terrainHeightVector terrain height vector
 	 * @param maxNavigationSlope max navigation slope
-	 * @return navigation map texture
+	 * @returns navigation map texture
 	 */
 	static Texture* createTerrainNavigationMap(float width, float depth, vector<float>& terrainHeightVector, float maxNavigationSlope = 30.0f);
 
@@ -346,7 +346,7 @@ public:
 	 * Compute water reflection environment mapping position
 	 * @param waterPositionMap water position map
 	 * @param waterHeight water height
-	 * @return water reflection environment mapping position
+	 * @returns water reflection environment mapping position
 	 *
 	 */
 	static Vector3 computeWaterReflectionEnvironmentMappingPosition(

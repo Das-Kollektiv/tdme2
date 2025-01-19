@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * Retrieve next triangle
-	 * @return next 3 triangle vectors
+	 * @returns next 3 triangle vectors
 	 */
 	inline const array<Vector3, 3>& next() {
 		auto objectNode = objectBase->objectNodes[objectNodeIdx];
@@ -219,7 +219,7 @@ public:
 	}
 
 	/**
-	 * @return current node
+	 * @returns current node
 	 */
 	inline Node* getNode() {
 		return node;

@@ -33,7 +33,7 @@ public:
 	 * @param bytesPerPixel bytes per pixel
 	 * @param textureByteBuffer texture RGB byte buffer
 	 * @param bc7Data BC7 data
-	 * @return success
+	 * @returns success
 	 */
 	static bool write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& bc7Data);
 

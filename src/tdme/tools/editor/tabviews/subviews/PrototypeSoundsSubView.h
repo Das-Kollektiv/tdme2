@@ -30,7 +30,7 @@ public:
 	PrototypeSoundsSubView(PrototypeSoundsSubController* prototypeSoundsSubController, PopUps* popUps);
 
 	/**
-	 * @return pop ups
+	 * @returns pop ups
 	 */
 	PopUps* getPopUps();
 

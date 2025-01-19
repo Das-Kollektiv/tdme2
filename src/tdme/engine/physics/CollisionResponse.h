@@ -53,7 +53,7 @@ public:
 	/**
 	 * Adds a collision response entity
 	 * @param distance distance
-	 * @return Entity or null
+	 * @returns Entity or null
 	 */
 	inline CollisionResponse_Entity* addResponse(float distance) {
 		entities.push_back(CollisionResponse_Entity());
@@ -67,14 +67,14 @@ public:
 	}
 
 	/**
-	 * @return entity count
+	 * @returns entity count
 	 */
 	inline int32_t getEntityCount() {
 		return entities.size();
 	}
 
 	/**
-	 * @return selected entity
+	 * @returns selected entity
 	 */
 	inline CollisionResponse_Entity* getSelectedEntity() {
 		return selectedEntity;
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Selects entity at given index
 	 * @param idx idx
-	 * @return
+	 * @returns
 	 */
 	inline CollisionResponse_Entity* getEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return nullptr;
@@ -93,7 +93,7 @@ public:
 	/**
 	 * Selects entity at given index
 	 * @param idx idx
-	 * @return
+	 * @returns
 	 */
 	inline CollisionResponse* selectEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return this;
@@ -102,14 +102,14 @@ public:
 	}
 
 	/**
-	 * @return if collision entity is selected
+	 * @returns if collision entity is selected
 	 */
 	inline bool hasEntitySelected() {
 		return selectedEntity != nullptr;
 	}
 
 	/**
-	 * @return collision distance or negative penetration
+	 * @returns collision distance or negative penetration
 	 */
 	inline float getDistance() {
 		if (selectedEntity == nullptr) return 0.0f;
@@ -117,7 +117,7 @@ public:
 	}
 
 	/**
-	 * @return if we have a penetration
+	 * @returns if we have a penetration
 	 */
 	inline bool hasPenetration() {
 		if (selectedEntity == nullptr) return false;
@@ -125,7 +125,7 @@ public:
 	}
 
 	/**
-	 * @return penetration
+	 * @returns penetration
 	 */
 	inline float getPenetration() {
 		if (selectedEntity == nullptr) return 0.0f;
@@ -133,7 +133,7 @@ public:
 	}
 
 	/**
-	 * @return normal
+	 * @returns normal
 	 */
 	inline const Vector3* getNormal() {
 		if (selectedEntity == nullptr) return nullptr;
@@ -141,7 +141,7 @@ public:
 	}
 
 	/**
-	 * @return get hit points
+	 * @returns get hit points
 	 */
 	inline const vector<Vector3>& getHitPoints() {
 		if (selectedEntity == nullptr) return fallbackHitPointsVector;
@@ -149,7 +149,7 @@ public:
 	}
 
 	/**
-	 * @return hit point count
+	 * @returns hit point count
 	 */
 	inline int32_t getHitPointCount() {
 		if (selectedEntity == nullptr) return 0;
@@ -159,7 +159,7 @@ public:
 	/**
 	 * Get hit point of given index
 	 * @param i i
-	 * @return hit point for given hit points index
+	 * @returns hit point for given hit points index
 	 */
 	inline Vector3* getHitPoint(int32_t idx) {
 		if (selectedEntity == nullptr) return nullptr;

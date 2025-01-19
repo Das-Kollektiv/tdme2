@@ -37,7 +37,7 @@ public:
 	}
 
 	/**
-	 * @return float distance from origin
+	 * @returns float distance from origin
 	 */
 	inline float getDistance() const {
 		return distance;
@@ -52,14 +52,14 @@ public:
 	}
 
 	/**
-	 * @return normal
+	 * @returns normal
 	 */
 	inline const Vector3& getNormal() const {
 		return normal;
 	}
 
 	/**
-	 * @return normal
+	 * @returns normal
 	 */
 	inline void setNormal(const Vector3& normal) {
 		this->normal = normal;
@@ -68,7 +68,7 @@ public:
 	/**
 	 * Compute distance from plane
 	 * @param point point
-	 * @return distance
+	 * @returns distance
 	 */
 	inline float computeDistance(const Vector3& point) const {
 		return Vector3::computeDotProduct(normal, point) + getDistance();

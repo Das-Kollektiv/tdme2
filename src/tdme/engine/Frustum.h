@@ -55,7 +55,7 @@ public:
 	Frustum(RendererBackend* rendererBackend);
 
 	/**
-	 * @return planes
+	 * @returns planes
 	 */
 	inline const array<Plane, 6>& getPlanes() {
 		return planes;
@@ -69,7 +69,7 @@ public:
 	/**
 	 * Checks if given vertex is in frustum
 	 * @param vector vector
-	 * @return visibility
+	 * @returns visibility
 	 */
 	inline bool isVisible(const Vector3& vertex) {
 		for (const auto& p: planes) {
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Checks if sphere is in frustum
 	 * @param s s
-	 * @return visibility
+	 * @returns visibility
 	 */
 	inline bool isVisible(Sphere* s) {
 		const auto& center = s->getCenter();
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Checks if bounding box is in frustum
 	 * @param b s
-	 * @return visibility
+	 * @returns visibility
 	 */
 	inline bool isVisible(BoundingBox* b) {
 		auto minX = b->getMin()[0];

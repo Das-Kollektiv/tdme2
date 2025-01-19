@@ -100,14 +100,14 @@ private:
 	}
 
 	/**
-	 * @return unique model id
+	 * @returns unique model id
 	 */
 	inline int getUniqueModelId() {
 		return uniqueModelId;
 	}
 
 	/**
-	 * @return if this object instance requries animation computation each frame
+	 * @returns if this object instance requries animation computation each frame
 	 */
 	inline bool isRequiringAnimationComputation() {
 		return model->hasSkinning() == true || model->hasAnimations() == true;
@@ -146,7 +146,7 @@ private:
 	}
 
 	/**
-	 * @return if this object instance requires a preRender() call each frame
+	 * @returns if this object instance requires a preRender() call each frame
 	 */
 	inline bool isRequiringPreRender() {
 		return
@@ -168,7 +168,7 @@ private:
 	}
 
 	/**
-	 * @return if this object needs forward shading
+	 * @returns if this object needs forward shading
 	 */
 	inline bool isRequiringForwardShading() {
 		return requiresForwardShading == true || reflectionEnvironmentMappingId.empty() == false;
@@ -355,7 +355,7 @@ public:
 	}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -368,35 +368,35 @@ public:
 	void setShader(const string& id);
 
 	/**
-	 * @return unique shader id
+	 * @returns unique shader id
 	 */
 	inline uint8_t getUniqueShaderId() {
 		return uniqueShaderId;
 	}
 
 	/**
-	 * @return reflection environment mapping id
+	 * @returns reflection environment mapping id
 	 */
 	inline const string& getReflectionEnvironmentMappingId() {
 		return reflectionEnvironmentMappingId;
 	}
 
 	/**
-	 * @return reflection environment mapping id
+	 * @returns reflection environment mapping id
 	 */
 	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
 	}
 
 	/**
-	 * @return if object has a reflection environment mapping position
+	 * @returns if object has a reflection environment mapping position
 	 */
 	inline bool hasReflectionEnvironmentMappingPosition() {
 		return reflectionEnvironmentMappingPositionSet;
 	}
 
 	/**
-	 * @return reflection environment mapping position
+	 * @returns reflection environment mapping position
 	 */
 	inline const Vector3& getReflectionEnvironmentMappingPosition() {
 		return reflectionEnvironmentMappingPosition;
@@ -420,7 +420,7 @@ public:
 	}
 
 	/**
-	 * @return if to exclude from a certain effect pass
+	 * @returns if to exclude from a certain effect pass
 	 */
 	inline Engine::EffectPass getExcludeFromEffectPass() const {
 		return excludeFromEffectPass;
@@ -435,7 +435,7 @@ public:
 	}
 
 	/**
-	 * @return if depth test is disabled
+	 * @returns if depth test is disabled
 	 */
 	inline bool isDisableDepthTest() const {
 		return disableDepthTest;
@@ -453,7 +453,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& parameterName) {
 		return shaderParameters.getShaderParameter(parameterName);
@@ -470,7 +470,7 @@ public:
 	}
 
 	/**
-	 * @return if transform computing LOD is enabled
+	 * @returns if transform computing LOD is enabled
 	 */
 	inline bool isAnimationComputationLODEnabled() const {
 		return animationComputingLODEnabled;

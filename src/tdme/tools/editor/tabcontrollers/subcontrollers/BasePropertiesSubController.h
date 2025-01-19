@@ -147,7 +147,7 @@ public:
 	 * @param node node
 	 * @param baseProperties base properties
 	 * @param prototype prototype or nullptr
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
 
@@ -156,7 +156,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 * @param baseProperties base properties
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
 
@@ -164,7 +164,7 @@ public:
 	 * On focus
 	 * @param node node
 	 * @param baseProperties base properties
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onFocus(GUIElementNode* node, BaseProperties* baseProperties);
 
@@ -172,7 +172,7 @@ public:
 	 * On unfocus
 	 * @param node node
 	 * @param baseProperties base properties
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onUnfocus(GUIElementNode* node, BaseProperties* baseProperties);
 

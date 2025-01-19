@@ -52,7 +52,7 @@ public:
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
-	 * @return success
+	 * @returns success
 	 */
 	static inline bool getVector4Value(const span<MinitScript::Variable>& arguments, int idx, Vector4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;

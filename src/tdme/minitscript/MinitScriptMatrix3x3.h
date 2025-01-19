@@ -53,7 +53,7 @@ public:
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
-	 * @return success
+	 * @returns success
 	 */
 	static inline bool getMatrix3x3Value(const span<MinitScript::Variable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;

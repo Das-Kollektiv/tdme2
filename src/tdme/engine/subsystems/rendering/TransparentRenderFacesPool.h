@@ -122,14 +122,14 @@ public:
 	}
 
 	/**
-	 * @return transparent render faces vector
+	 * @returns transparent render faces vector
 	 */
 	inline vector<TransparentRenderFace*>& getTransparentRenderFaces() {
 		return transparentRenderFaces;
 	}
 
 	/**
-	 * @return allocated faces
+	 * @returns allocated faces
 	 */
 	inline int32_t size() {
 		return transparentRenderFacesPool.size();

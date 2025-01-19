@@ -50,7 +50,7 @@ private:
 	 * Transforms a given ReactPhysics3D vector with bounding volume transform
 	 * @param boundingVolume bounding volume
 	 * @param vector vector
-	 * @return transformed vector
+	 * @returns transformed vector
 	 */
 	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
 		//	Note: there is no hurry as LE and ME do not use scale for prototype bounding volumes
@@ -62,7 +62,7 @@ private:
 	 * Transforms a given ReactPhysics3D vector with bounding volume transform
 	 * @param boundingVolume bounding volume
 	 * @param normal vector
-	 * @return transformed vector
+	 * @returns transformed vector
 	 */
 	inline static Vector3 transformVector3Normal(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& normal) {
 		//	Note: there is no hurry as LE and ME do not use scale for prototype bounding volumes
@@ -83,7 +83,7 @@ public:
 	 * Creates a model from bounding box
 	 * @param boundingBox bounding box
 	 * @param id id
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const string& id);
 
@@ -91,7 +91,7 @@ public:
 	 * Creates a model from oriented bounding box
 	 * @param orientedBoundingBox bounding box
 	 * @param id id
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id);
 
@@ -101,7 +101,7 @@ public:
 	 * @param id id
 	 * @param segmentsX number of x segments
 	 * @param segmentsY number of y segments
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY);
 
@@ -111,7 +111,7 @@ public:
 	 * @param id id
 	 * @param segmentsX number of x segments
 	 * @param segmentsY number of y segments
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY);
 
@@ -119,7 +119,7 @@ public:
 	 * Creates a model from convex mesh
 	 * @param mesh convex mesh
 	 * @param id id
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
 
@@ -134,7 +134,7 @@ public:
 	 * Creates a model from bounding volume
 	 * @param boundingVolume bounding volume
 	 * @param id id
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createModel(BoundingBox* boundingVolume, const string& id);
 
@@ -142,7 +142,7 @@ public:
 	 * Creates a model from bounding volume
 	 * @param boundingVolume bounding box
 	 * @param id id
-	 * @return model
+	 * @returns model
 	 */
 	static Model* createModel(BoundingVolume* boundingVolume, const string& id);
 };

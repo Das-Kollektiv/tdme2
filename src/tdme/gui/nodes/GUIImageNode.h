@@ -118,7 +118,7 @@ protected:
 	);
 
 	/**
-	 * @return node type
+	 * @returns node type
 	 */
 	const string getNodeType() override;
 
@@ -128,14 +128,14 @@ public:
 
 
 	/**
-	 * @return texture
+	 * @returns texture
 	 */
 	inline Texture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return image source
+	 * @returns image source
 	 */
 	const string& getSource();
 
@@ -158,7 +158,7 @@ public:
 	void setTexture(DynamicColorTexture* texture);
 
 	/**
-	 * @return frame buffer
+	 * @returns frame buffer
 	 */
 	FrameBuffer* getFrameBuffer();
 

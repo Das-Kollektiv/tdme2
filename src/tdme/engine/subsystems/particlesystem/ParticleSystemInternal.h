@@ -26,22 +26,22 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual ~ParticleSystemInternal() {}
 
 	/**
-	 * @return particle emitter
+	 * @returns particle emitter
 	 */
 	virtual ParticleEmitter* getEmitter() = 0;
 
 	/**
-	 * @return object id
+	 * @returns object id
 	 */
 	virtual const string& getId() = 0;
 
 	/**
-	 * @return true if enabled to be rendered
+	 * @returns true if enabled to be rendered
 	 */
 	virtual bool isEnabled() = 0;
 
 	/**
-	 * @return true if active / particles available
+	 * @returns true if active / particles available
 	 */
 	virtual bool isActive() = 0;
 
@@ -52,7 +52,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual void setEnabled(bool enabled) = 0;
 
 	/**
-	 * @return if object is pickable
+	 * @returns if object is pickable
 	 */
 	virtual bool isPickable() = 0;
 
@@ -63,7 +63,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual void setPickable(bool pickable) = 0;
 
 	/**
-	 * @return if auto emit is enabled
+	 * @returns if auto emit is enabled
 	 */
 	virtual bool isAutoEmit() = 0;
 
@@ -75,7 +75,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 
 	/**
 	 * The effect color will be multiplied with fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	virtual const Color4& getEffectColorMul() const = 0;
 
@@ -87,7 +87,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 
 	/**
 	 * The effect color will be added to fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	virtual const Color4& getEffectColorAdd() const = 0;
 
@@ -119,7 +119,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual void update() = 0;
 
 	/**
-	 * @return local transform
+	 * @returns local transform
 	 */
 	virtual const Transform& getLocalTransform() = 0;
 

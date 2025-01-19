@@ -61,28 +61,28 @@ public:
 	virtual void reset() = 0;
 
 	/**
-	 * @return number of channels or CHANNELS_NONE
+	 * @returns number of channels or CHANNELS_NONE
 	 */
 	inline uint8_t getChannels() const {
 		return channels;
 	}
 
 	/**
-	 * @return sample rate in hz or SAMPLERATE_NONE
+	 * @returns sample rate in hz or SAMPLERATE_NONE
 	 */
 	inline uint32_t getSampleRate() const {
 		return sampleRate;
 	}
 
 	/**
-	 * @return bits per sample or BITSPERSAMPLES_NONE
+	 * @returns bits per sample or BITSPERSAMPLES_NONE
 	 */
 	inline uint8_t getBitsPerSample() const {
 		return bitsPerSample;
 	}
 
 	/**
-	 * @return samples or SAMPLES_NONE
+	 * @returns samples or SAMPLES_NONE
 	 */
 	inline uint64_t getSamples() const {
 		return samples;
@@ -93,7 +93,7 @@ public:
 	 * @param data byte buffer
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::audio::decoder::AudioDecoderException
-	 * @return number of bytes read
+	 * @returns number of bytes read
 	 */
 	virtual int64_t readFromStream(ByteBuffer* data) = 0;
 

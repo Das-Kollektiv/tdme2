@@ -45,12 +45,12 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
-	 * @return exit code
+	 * @returns exit code
 	 */
 	static int main(int argc, char** argv);
 
 	/**
-	 * @return particle system instance
+	 * @returns particle system instance
 	 */
 	inline static Editor* getInstance() {
 		return instance;
@@ -70,7 +70,7 @@ public:
 	~Editor();
 
 	/**
-	 * @return if editor is running in full screen
+	 * @returns if editor is running in full screen
 	 */
 	bool isFullScreen();
 
@@ -81,7 +81,7 @@ public:
 	void setView(View* view);
 
 	/**
-	 * @return current view
+	 * @returns current view
 	 */
 	View* getView();
 

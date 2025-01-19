@@ -174,7 +174,7 @@ private:
 	/**
 	 * Is partition empty
 	 * @param node node
-	 * @return partition empty
+	 * @returns partition empty
 	 */
 	inline bool isPartitionNodeEmpty(PartitionTreeNode* node) {
 		// lowest level node has objects attached?
@@ -213,7 +213,7 @@ private:
 	 * Do partition tree lookup
 	 * @param frustum frustum
 	 * @param node node
-	 * @return number of look ups
+	 * @returns number of look ups
 	 */
 	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionTreeNode* node) {
 		auto lookUps = 1;

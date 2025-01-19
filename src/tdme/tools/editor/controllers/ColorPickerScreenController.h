@@ -124,7 +124,7 @@ public:
 	void setColor(const Color4& color);
 
 	/**
-	 * @return color
+	 * @returns color
 	 */
 	inline Color4 getColor() {
 		return color;

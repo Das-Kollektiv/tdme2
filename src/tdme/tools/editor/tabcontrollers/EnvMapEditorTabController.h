@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline EnvMapEditorTabView* getView() {
 		return view;

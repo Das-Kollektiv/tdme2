@@ -90,14 +90,14 @@ public:
 	 * @param fileName file name
 	 * @param definitions preprocessor definitions
 	 * @param functions included functions
-	 * @return shader handle
+	 * @returns shader handle
 	 */
 	static void loadShader(VKRenderer::shader_type& shader, int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string());
 
 	/**
 	 * Links attached shaders to a program
 	 * @param program program
-	 * @return success
+	 * @returns success
 	 */
 	static bool linkProgram(VKRenderer::program_type& program);
 };

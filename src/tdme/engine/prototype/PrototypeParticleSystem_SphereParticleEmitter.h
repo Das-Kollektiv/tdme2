@@ -39,7 +39,7 @@ public:
 	PrototypeParticleSystem_SphereParticleEmitter();
 
 	/**
-	 * @return count
+	 * @returns count
 	 */
 	inline int getCount() {
 		return count;
@@ -54,7 +54,7 @@ public:
 	}
 
 	/**
-	 * @return life time
+	 * @returns life time
 	 */
 	inline int64_t getLifeTime() {
 		return lifeTime;
@@ -69,7 +69,7 @@ public:
 	}
 
 	/**
-	 * @return life time rnd
+	 * @returns life time rnd
 	 */
 	inline int64_t getLifeTimeRnd() {
 		return lifeTimeRnd;
@@ -84,7 +84,7 @@ public:
 	}
 
 	/**
-	 * @return mass
+	 * @returns mass
 	 */
 	inline float getMass() {
 		return this->mass;
@@ -99,7 +99,7 @@ public:
 	}
 
 	/**
-	 * @return mass rnd
+	 * @returns mass rnd
 	 */
 	inline float getMassRnd() {
 		return massRnd;
@@ -114,7 +114,7 @@ public:
 	}
 
 	/**
-	 * @return velocity
+	 * @returns velocity
 	 */
 	inline const Vector3& getVelocity() {
 		return velocity;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return velocity rnd
+	 * @returns velocity rnd
 	 */
 	inline const Vector3& getVelocityRnd() {
 		return velocityRnd;
@@ -144,7 +144,7 @@ public:
 	}
 
 	/**
-	 * @return color start
+	 * @returns color start
 	 */
 	inline const Color4& getColorStart() {
 		return colorStart;
@@ -159,7 +159,7 @@ public:
 	}
 
 	/**
-	 * @return color end
+	 * @returns color end
 	 */
 	inline const Color4& getColorEnd() {
 		return colorEnd;
@@ -174,7 +174,7 @@ public:
 	}
 
 	/**
-	 * @return center
+	 * @returns center
 	 */
 	inline const Vector3& getCenter() {
 		return center;
@@ -189,7 +189,7 @@ public:
 	}
 
 	/**
-	 * @return radius
+	 * @returns radius
 	 */
 	inline float getRadius() {
 		return radius;

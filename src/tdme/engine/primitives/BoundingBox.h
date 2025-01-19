@@ -73,7 +73,7 @@ public:
 	/**
 	 * Compute closest point in bounding box of given point
 	 * @param point point
-	 * @return closest point of given point in bounding box
+	 * @returns closest point of given point in bounding box
 	 */
 	inline Vector3 computeClosestPointInBoundingBox(const Vector3& point) {
 		const auto& pointXYZ = point.getArray();
@@ -87,14 +87,14 @@ public:
 	}
 
 	/**
-	 * @return min x,y,z vertex
+	 * @returns min x,y,z vertex
 	 */
 	inline Vector3& getMin() {
 		return min;
 	}
 
 	/**
-	 * @return max x,y,z vertex
+	 * @returns max x,y,z vertex
 	 */
 	inline Vector3& getMax() {
 		return max;
@@ -102,28 +102,28 @@ public:
 
 	/**
 	 * Returns bounding box vertices
-	 * @return vertices
+	 * @returns vertices
 	 */
 	const vector<Vector3>& getVertices() const {
 		return vertices;
 	}
 
 	/**
-	 * @return faces vertices indexes
+	 * @returns faces vertices indexes
 	 */
 	inline static const array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
 		return &facesVerticesIndexes;
 	}
 
 	/**
-	 * @return center
+	 * @returns center
 	 */
 	inline const Vector3& getCenter() const {
 		return center;
 	}
 
 	/**
-	 * @return half extension
+	 * @returns half extension
 	 */
 	inline const Vector3& getDimensions() const {
 		return dimensions;

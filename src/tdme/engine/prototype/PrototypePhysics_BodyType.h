@@ -34,7 +34,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static PrototypePhysics_BodyType* valueOf(const string& name);
 

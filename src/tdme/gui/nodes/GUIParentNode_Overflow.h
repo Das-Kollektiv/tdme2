@@ -33,7 +33,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static GUIParentNode_Overflow* valueOf(const string& name);
 };

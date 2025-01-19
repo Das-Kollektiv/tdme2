@@ -39,14 +39,14 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return model instance
+	 * @returns model instance
 	 */
 	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 private:
 
 	/**
-	 * @return component byte size
+	 * @returns component byte size
 	 */
 	inline static size_t getComponentTypeByteSize(int type) {
 		switch (type) {
@@ -69,7 +69,7 @@ private:
 	}
 
 	/**
-	 * @return component type string
+	 * @returns component type string
 	 */
 	inline static string getComponentTypeString(int type) {
 		switch (type) {
@@ -95,7 +95,7 @@ private:
 	}
 
 	/**
-	 * @return type string
+	 * @returns type string
 	 */
 	inline static string getTypeString(int type) {
 		switch (type) {
@@ -143,7 +143,7 @@ private:
 	 * @param parentNode TDME parent node
 	 * @param anonymousNodeIdx anonymous node index
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return node
+	 * @returns node
 	 */
 	static Node* parseNode(const string& pathName, const string& fileName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
 
@@ -164,7 +164,7 @@ private:
 	 * @param pathName model path name
 	 * @param fileName model file name
 	 * @param imageName image name
-	 * @return file name
+	 * @returns file name
 	 */
 	inline static const string determineTextureFileName(const string& pathName, const string& fileName, const string& imageName) {
 		return pathName + "/" + fileName + "-" + imageName + ".png";
@@ -180,7 +180,7 @@ private:
 	 * Get node scale matrix
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return scale matrix of given node
+	 * @returns scale matrix of given node
 	 */
 	static const Matrix4x4 getNodeScaleMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
 
@@ -188,7 +188,7 @@ private:
 	 * Get node rotation matrix
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return rotation matrix of given node
+	 * @returns rotation matrix of given node
 	 */
 	static const Matrix4x4 getNodeRotationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
 
@@ -196,7 +196,7 @@ private:
 	 * Get node translation matrix
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return translation matrix of given node
+	 * @returns translation matrix of given node
 	 */
 	static const Matrix4x4 getNodeTranslationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
 

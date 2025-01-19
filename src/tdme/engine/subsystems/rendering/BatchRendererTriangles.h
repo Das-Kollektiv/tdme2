@@ -73,7 +73,7 @@ private:
 	 * @param vertex vertex
 	 * @param normal normal
 	 * @param textureCoordinate texture coordinate
-	 * @return success
+	 * @returns success
 	 */
 	inline bool addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
 		// check if full
@@ -106,7 +106,7 @@ public:
 	~BatchRendererTriangles();
 
 	/**
-	 * @return acquired
+	 * @returns acquired
 	 */
 	bool isAcquired();
 

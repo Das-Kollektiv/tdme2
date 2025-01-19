@@ -41,17 +41,17 @@ public:
 	~Capsule();
 
 	/**
-	 * @return radius
+	 * @returns radius
 	 */
 	float getRadius() const;
 
 	/**
-	 * @return line segment point a
+	 * @returns line segment point a
 	 */
 	const Vector3& getA() const;
 
 	/**
-	 * @return line segment point b
+	 * @returns line segment point b
 	 */
 	const Vector3& getB() const;
 

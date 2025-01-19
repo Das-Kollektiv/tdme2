@@ -44,12 +44,12 @@ public:
 	ApplicationServerClient(const uint32_t clientId, const string& ip, const unsigned int port);
 
 	/**
-	 * @return incoming network packets mutex
+	 * @returns incoming network packets mutex
 	 */
 	Mutex& getNetworkPacketsMutex();
 
 	/**
-	 * @return incoming network packets
+	 * @returns incoming network packets
 	 */
 	vector<LogicNetworkPacket>& getNetworkPackets();
 

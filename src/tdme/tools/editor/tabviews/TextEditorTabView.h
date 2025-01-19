@@ -125,7 +125,7 @@ private:
 		CREATECONNECTIONMODE_ARGUMENT_IN
 	};
 	/**
-	 * @return Returns the create connection mode name
+	 * @returns Returns the create connection mode name
 	 */
 	inline static const string getCreateConnectionModeName(CreateConnectionMode createConnectionMode) {
 		switch (createConnectionMode) {
@@ -149,7 +149,7 @@ private:
 	int nodeIdx;
 
 	/**
-	 * @return start node which is the node with a flow output but no flow input
+	 * @returns start node which is the node with a flow output but no flow input
 	 */
 	inline const string getStartNodeId() {
 		// we only look for flow node ids
@@ -179,7 +179,7 @@ private:
 	/**
 	 * Find next node
 	 * @param nodeId node id to find next node to
-	 * @return next node id
+	 * @returns next node id
 	 */
 	inline const string getNextNodeId(const string& nodeId) {
 		auto flowNodeId = nodeId + "_fo";
@@ -198,7 +198,7 @@ private:
 	 * Create argument node id
 	 * @param nodeId node id
 	 * @param argumentIdx argument index
-	 * @return argument node id
+	 * @returns argument node id
 	 */
 	inline const string getArgumentNodeId(const string& nodeId, int argumentIdx) {
 		return nodeId + "_a" + to_string(argumentIdx);
@@ -208,7 +208,7 @@ private:
 	 * Find argument node id
 	 * @param nodeId node id
 	 * @param argumentIdx argument index
-	 * @return argument node id
+	 * @returns argument node id
 	 */
 	inline const string getConnectedArgumentNodeId(const string& nodeId, int argumentIdx) {
 		auto argumentNodeId = getArgumentNodeId(nodeId, argumentIdx);
@@ -227,7 +227,7 @@ private:
 	 * Create condition node id
 	 * @param nodeId node id
 	 * @param conditionIdx condition index
-	 * @return condition node id
+	 * @returns condition node id
 	 */
 	inline const string getConditionNodeId(const string& nodeId, int conditionIdx) {
 		return nodeId + "_c" + to_string(conditionIdx);
@@ -237,7 +237,7 @@ private:
 	 * Find condition node id
 	 * @param nodeId node id
 	 * @param conditionIdx condition index
-	 * @return condition node id
+	 * @returns condition node id
 	 */
 	inline const string getConnectedConditionNodeId(const string& nodeId, int conditionIdx) {
 		auto conditionNodeId = getConditionNodeId(nodeId, conditionIdx);
@@ -256,7 +256,7 @@ private:
 	 * Create branch node id
 	 * @param nodeId node id
 	 * @param branchIdx branch index
-	 * @return branch node id
+	 * @returns branch node id
 	 */
 	inline const string getBranchNodeId(const string& nodeId, int branchIdx) {
 		return nodeId + "_b" + to_string(branchIdx);
@@ -266,7 +266,7 @@ private:
 	 * Find branch node id
 	 * @param nodeId node id
 	 * @param branchIdx branch index
-	 * @return branch node id
+	 * @returns branch node id
 	 */
 	inline const string getConnectedBranchNodeId(const string& nodeId, int branchIdx) {
 		auto branchNodeId = getBranchNodeId(nodeId, branchIdx);
@@ -284,7 +284,7 @@ private:
 	/**
 	 * Get node by id
 	 * @param nodeId node id
-	 * @return node
+	 * @returns node
 	 */
 	inline Node* getNodeById(const string& nodeId) {
 		auto nodeIt = nodes.find(nodeId);
@@ -295,7 +295,7 @@ private:
 	/**
 	 * Get script variable type pin color
 	 * @param type type
-	 * @return string with color property name from theme
+	 * @returns string with color property name from theme
 	 */
 	inline const string getVariableTypePinColor(EngineMinitScript::VariableType type) {
 		switch (type) {
@@ -371,14 +371,14 @@ public:
 	~TextEditorTabView();
 
 	/**
-	 * @return file name
+	 * @returns file name
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * @return lower case extension
+	 * @returns lower case extension
 	 */
 	inline const string& getExtension() {
 		return extension;
@@ -392,7 +392,7 @@ public:
 	void saveFile(const string& pathName, const string& fileName);
 
 	/**
-	 * @return code completion
+	 * @returns code completion
 	 * TODO: maybe move me into controller
 	 */
 	const TextFormatter::CodeCompletion* getCodeCompletion() {
@@ -400,35 +400,35 @@ public:
 	}
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return tab screen node
+	 * @returns tab screen node
 	 */
 	inline GUIScreenNode* getTabScreenNode() {
 		return screenNode;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return textEditorTabController.get();
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return is showing visual editor
+	 * @returns is showing visual editor
 	 */
 	inline bool isVisualEditor() {
 		return visualEditor;
@@ -456,7 +456,7 @@ public:
 	/**
 	 * Get EngineMinitScript node flattened id from hierarchical id
 	 * @param hierarchicalId hierarchical id
-	 * @return flattened id
+	 * @returns flattened id
 	 */
 	inline const string getMinitScriptNodeFlattenedId(unordered_map<string, string>& idMapping, const string& hierarchicalId) {
 		auto idMappingIt = idMapping.find(hierarchicalId);
@@ -529,7 +529,7 @@ public:
 	void createMinitScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMinitScript::SyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MinitScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * @return MinitScript script index
+	 * @returns MinitScript script index
 	 */
 	inline int getMinitScriptScriptIdx() {
 		return minitScriptScriptIdx;
@@ -585,7 +585,7 @@ public:
 	void onMethodSelection(const string& methodName);
 
 	/**
-	 * @return text index
+	 * @returns text index
 	 */
 	int getTextIndex();
 
@@ -597,7 +597,7 @@ public:
 	 * @param selection only find in selection
 	 * @param firstSearch first search
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
 
@@ -618,7 +618,7 @@ public:
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
 
@@ -629,7 +629,7 @@ public:
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
-	 * @return success
+	 * @returns success
 	 */
 	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
 
@@ -703,7 +703,7 @@ public:
 
 	/**
 	 * Returns if creating a connection currently
-	 * @return if creating a connection currently
+	 * @returns if creating a connection currently
 	 */
 	inline bool isCreatingConnection() {
 		return createConnectionMode != CREATECONNECTIONMODE_NONE;

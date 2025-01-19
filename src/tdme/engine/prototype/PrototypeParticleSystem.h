@@ -70,7 +70,7 @@ public:
 	~PrototypeParticleSystem();
 
 	/**
-	 * @return particle system type
+	 * @returns particle system type
 	 */
 	inline PrototypeParticleSystem_Type* getType() {
 		return type;
@@ -83,28 +83,28 @@ public:
 	void setType(PrototypeParticleSystem_Type* type);
 
 	/**
-	 * @return object particle system
+	 * @returns object particle system
 	 */
 	inline PrototypeParticleSystem_ObjectParticleSystem* getObjectParticleSystem() {
 		return ops.get();
 	}
 
 	/**
-	 * @return point particle system
+	 * @returns point particle system
 	 */
 	inline PrototypeParticleSystem_PointParticleSystem* getPointParticleSystem() {
 		return pps.get();
 	}
 
 	/**
-	 * @return fog particle system
+	 * @returns fog particle system
 	 */
 	inline PrototypeParticleSystem_FogParticleSystem* getFogParticleSystem() {
 		return fps.get();
 	}
 
 	/**
-	 * @return particle system emitter
+	 * @returns particle system emitter
 	 */
 	inline PrototypeParticleSystem_Emitter* getEmitter() {
 		return emitter;
@@ -117,35 +117,35 @@ public:
 	void setEmitter(PrototypeParticleSystem_Emitter* emitter);
 
 	/**
-	 * @return point particle emitter
+	 * @returns point particle emitter
 	 */
 	inline PrototypeParticleSystem_PointParticleEmitter* getPointParticleEmitter() {
 		return ppe.get();
 	}
 
 	/**
-	 * @return bounding box particle emitter
+	 * @returns bounding box particle emitter
 	 */
 	inline PrototypeParticleSystem_BoundingBoxParticleEmitter* getBoundingBoxParticleEmitters() {
 		return bbpe.get();
 	}
 
 	/**
-	 * @return circle particle emitter
+	 * @returns circle particle emitter
 	 */
 	inline PrototypeParticleSystem_CircleParticleEmitter* getCircleParticleEmitter() {
 		return cpe.get();
 	}
 
 	/**
-	 * @return circle particle emitter plane velocity
+	 * @returns circle particle emitter plane velocity
 	 */
 	inline PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity* getCircleParticleEmitterPlaneVelocity() {
 		return cpepv.get();
 	}
 
 	/**
-	 * @return sphere particle emitter
+	 * @returns sphere particle emitter
 	 */
 	inline PrototypeParticleSystem_SphereParticleEmitter* getSphereParticleEmitter() {
 		return spe.get();

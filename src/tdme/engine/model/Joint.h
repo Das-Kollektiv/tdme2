@@ -35,7 +35,7 @@ public:
 
 	/**
 	 * Associated node or bone id
-	 * @return node id
+	 * @returns node id
 	 */
 	inline const string& getNodeId() const {
 		return nodeId;
@@ -43,7 +43,7 @@ public:
 
 	/**
 	 * Bind matrix
-	 * @return matrix
+	 * @returns matrix
 	 */
 	inline const Matrix4x4& getBindMatrix() const {
 		return bindMatrix;
@@ -51,7 +51,7 @@ public:
 
 	/**
 	 * Bind matrix
-	 * @return matrix
+	 * @returns matrix
 	 */
 	inline void setBindMatrix(const Matrix4x4& bindMatrix) {
 		this->bindMatrix = bindMatrix;

@@ -78,28 +78,28 @@ public:
 	virtual void seek(float time) = 0;
 
 	/**
-	 * @return number of channels or AUDIO_CHANNELS_NONE
+	 * @returns number of channels or AUDIO_CHANNELS_NONE
 	 */
 	inline uint8_t getAudioChannels() const {
 		return audioChannels;
 	}
 
 	/**
-	 * @return sample rate in hz or AUDIO_SAMPLERATE_NONE
+	 * @returns sample rate in hz or AUDIO_SAMPLERATE_NONE
 	 */
 	inline uint32_t getAudioSampleRate() const {
 		return audioSampleRate;
 	}
 
 	/**
-	 * @return bits per sample or AUDIO_BITSPERSAMPLES_NONE
+	 * @returns bits per sample or AUDIO_BITSPERSAMPLES_NONE
 	 */
 	inline uint8_t getAudioBitsPerSample() const {
 		return audioBitsPerSample;
 	}
 
 	/**
-	 * @return samples or AUDIO_SAMPLES_NONE
+	 * @returns samples or AUDIO_SAMPLES_NONE
 	 */
 	inline int64_t getAudioSamples() {
 		return audioSamples;
@@ -108,33 +108,33 @@ public:
 	/**
 	 * Read raw PCM data from stream
 	 * @param data byte buffer
-	 * @return number of bytes read
+	 * @returns number of bytes read
 	 */
 	virtual int64_t readAudioFromStream(ByteBuffer* data) = 0;
 
 	/**
-	 * @return video frame rate
+	 * @returns video frame rate
 	 */
 	inline float getVideoFrameRate() const {
 		return videoFrameRate;
 	}
 
 	/**
-	 * @return video duration
+	 * @returns video duration
 	 */
 	inline float getVideoDuration() const {
 		return videoDuration;
 	}
 
 	/**
-	 * @return video width
+	 * @returns video width
 	 */
 	inline uint16_t getVideoWidth() const {
 		return videoWidth;
 	}
 
 	/**
-	 * @return video height
+	 * @returns video height
 	 */
 	inline uint16_t getVideoHeight() const {
 		return videoHeight;
@@ -143,7 +143,7 @@ public:
 	/**
 	 * Read raw RGB video data from stream
 	 * @param data byte buffer
-	 * @return number of bytes read
+	 * @returns number of bytes read
 	 */
 	virtual int64_t readVideoFromStream(ByteBuffer* data) = 0;
 

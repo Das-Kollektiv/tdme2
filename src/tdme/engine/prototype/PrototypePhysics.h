@@ -41,7 +41,7 @@ public:
 	~PrototypePhysics();
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline PrototypePhysics_BodyType* getType() const {
 		return type;
@@ -56,7 +56,7 @@ public:
 	}
 
 	/**
-	 * @return friction
+	 * @returns friction
 	 */
 	inline float getFriction() const {
 		return friction;
@@ -71,7 +71,7 @@ public:
 	}
 
 	/**
-	 * @return mass
+	 * @returns mass
 	 */
 	inline float getMass() const {
 		return mass;
@@ -86,7 +86,7 @@ public:
 	}
 
 	/**
-	 * @return restitution / bounciness
+	 * @returns restitution / bounciness
 	 */
 	inline float getRestitution() const {
 		return restitution;
@@ -101,7 +101,7 @@ public:
 	}
 
 	/**
-	 * @return inertia tensor
+	 * @returns inertia tensor
 	 */
 	inline const Vector3& getInertiaTensor() const {
 		return inertiaTensor;

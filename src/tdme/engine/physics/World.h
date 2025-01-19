@@ -83,7 +83,7 @@ public:
 	~World();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	const string& getId() {
 		return world->getName();
@@ -105,7 +105,7 @@ public:
 	 * @param mass mass
 	 * @param inertiaTensor inertia matrix
 	 * @param boundingVolumes bounding volumes
-	 * @return body
+	 * @returns body
 	 */
 	Body* addRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
@@ -116,7 +116,7 @@ public:
 	 * @param enabled enabled
 	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
-	 * @return body
+	 * @returns body
 	 */
 	Body* addStaticCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
@@ -127,7 +127,7 @@ public:
 	 * @param enabled enabled
 	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
-	 * @return body
+	 * @returns body
 	 */
 	Body* addDynamicCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
@@ -139,14 +139,14 @@ public:
 	 * @param transform transform
 	 * @param friction friction
 	 * @param boundingVolumes bounding volumes
-	 * @return body
+	 * @returns body
 	 */
 	Body* addStaticRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
 	/**
 	 * Returns body identified by id
 	 * @param id id
-	 * @return body
+	 * @returns body
 	 */
 	inline Body* getBody(const string& id) {
 		auto bodyByIdIt = bodiesById.find(id);
@@ -159,7 +159,7 @@ public:
 	/**
 	 * Returns body hierarchy identified by id
 	 * @param id id
-	 * @return body hierarchy
+	 * @returns body hierarchy
 	 */
 	BodyHierarchy* getBodyHierarchy(const string& id);
 
@@ -203,7 +203,7 @@ public:
 	 * @param heightPoint point with determined height
 	 * @param minHeight min height to determine height from
 	 * @param maxHeight max height to start raytracing from
-	 * @return body from which height was determined or null
+	 * @returns body from which height was determined or null
 	 */
 	Body* determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight = -10000.0f, float maxHeight = 10000.0f);
 
@@ -215,7 +215,7 @@ public:
 	 * @param end end
 	 * @param hitPoint hit point
 	 * @param actorId actor rigid body id, which will be exlcluded from ray tracing
-	 * @return body
+	 * @returns body
 	 *
 	 */
 	Body* doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const Vector3& end, Vector3& hitPoint, const string& actorId = string());
@@ -225,7 +225,7 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param body body
 	 * @param collisionBodies bodies that collide with given body
-	 * @return if collision happpened or not
+	 * @returns if collision happpened or not
 	 */
 	bool doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& collisionBodies);
 
@@ -235,7 +235,7 @@ public:
 	 * @param transform transform
 	 * @param boundingVolumes bounding volume
 	 * @param collisionBodies bodies that collide with given body
-	 * @return if collision happpened or not
+	 * @returns if collision happpened or not
 	 */
 	bool doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies);
 
@@ -243,7 +243,7 @@ public:
 	 * Check if body 1 collides with body 2
 	 * @param body1 body 1
 	 * @param body2 body 2
-	 * @return if collision happpened or not
+	 * @returns if collision happpened or not
 	 */
 	bool doCollide(Body* body1, Body* body2);
 
@@ -252,7 +252,7 @@ public:
 	 * @param body1 body 1
 	 * @param body2 body 2
 	 * @param collision collision response
-	 * @return if having hit points
+	 * @returns if having hit points
 	 */
 	bool getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision);
 

@@ -51,7 +51,7 @@ public:
 	 * @param timePassedSeconds time passed in seconds
 	 * @param degreesPerSeconds deegrees per seconds
 	 * @param interpolatedAngle interpolated angle
-	 * @return rotation is finished
+	 * @returns rotation is finished
 	 */
 	inline static bool interpolate(float currentAngle, float targetAngle, float timePassedSeconds, float degreesPerSeconds, float& interpolatedAngle) {
 		currentAngle = Math::absmod(currentAngle, 360.0f);
@@ -90,7 +90,7 @@ public:
 	}
 
 	/**
-	 * @return angle
+	 * @returns angle
 	 */
 	inline const float getAngle() const {
 		return angle;
@@ -104,7 +104,7 @@ public:
 	}
 
 	/**
-	 * @return axis
+	 * @returns axis
 	 */
 	inline const Vector3& getAxis() const {
 		return axis;
@@ -119,7 +119,7 @@ public:
 	}
 
 	/**
-	 * @return quaternion
+	 * @returns quaternion
 	 */
 	inline const Quaternion& getQuaternion() const {
 		return quaternion;
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Returns rotation from a quaternion
 	 * @param quaternion quaternion
-	 * @return rotation
+	 * @returns rotation
 	 */
 	inline static const Rotation fromQuaternion(const Quaternion& quaternion) {
 		auto q = quaternion.clone().normalize();

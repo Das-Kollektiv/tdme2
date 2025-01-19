@@ -75,7 +75,7 @@ private:
 	/**
 	 * Get body hierarchy level by given body id
 	 * @param id id
-	 * @return body hierarchy level
+	 * @returns body hierarchy level
 	 *
 	 */
 	inline BodyHierarchyLevel* getBodyHierarchyLevel(const string& id) {
@@ -87,7 +87,7 @@ private:
 	 * Retrieve body hierarchy level by given body id or nullptr if not found
 	 * @param bodyHierarchyLevel body hierarchy level
 	 * @param id body id
-	 * @return body hierarchy level by given body id or nullptr if not found
+	 * @returns body hierarchy level by given body id or nullptr if not found
 	 */
 	inline BodyHierarchyLevel* getBodyHierarchyLevel(BodyHierarchyLevel* bodyHierarchyLevel, const string& id) {
 		if (id == bodyHierarchyLevel->id) return bodyHierarchyLevel;
@@ -109,7 +109,7 @@ private:
 public:
 
 	/**
-	 * @return body from hierarchy by given unique id
+	 * @returns body from hierarchy by given unique id
 	 */
 	inline const SubBody* getBody(const string& id) {
 		auto bodyHierarchyLevel = getBodyHierarchyLevel(id);
@@ -142,12 +142,12 @@ public:
 	/**
 	 * Query sub bodies of parent body
 	 * @param parentId parent body id
-	 * @return bodies
+	 * @returns bodies
 	 */
 	const vector<SubBody*> query(const string& parentId = string());
 
 	/**
-	 * @return bodies
+	 * @returns bodies
 	 */
 	inline const vector<SubBody*>& getBodies() {
 		return bodies;

@@ -68,21 +68,21 @@ public:
 	Face(Node* node, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
 
 	/**
-	 * @return node
+	 * @returns node
 	 */
 	inline Node* getNode() const {
 		return node;
 	}
 
 	/**
-	 * @return vertex indices
+	 * @returns vertex indices
 	 */
 	inline const array<int32_t, 3>& getVertexIndices() const {
 		return vertexIndices;
 	}
 
 	/**
-	 * @return normal indices
+	 * @returns normal indices
 	 */
 	inline const array<int32_t, 3>& getNormalIndices() const {
 		return normalIndices;
@@ -105,7 +105,7 @@ public:
 	void setTextureCoordinateIndices(int32_t vt0, int32_t vt1, int32_t vt2);
 
 	/**
-	 * @return texture coordinate indices or null (optional)
+	 * @returns texture coordinate indices or null (optional)
 	 */
 	inline const array<int32_t, 3>& getTextureCoordinateIndices() const {
 		return textureCoordinateIndices;
@@ -120,7 +120,7 @@ public:
 	void setTangentIndices(int32_t ti0, int32_t ti1, int32_t ti2);
 
 	/**
-	 * @return tangent indices
+	 * @returns tangent indices
 	 */
 	inline const array<int32_t, 3>& getTangentIndices() const {
 		return tangentIndices;
@@ -135,7 +135,7 @@ public:
 	void setBitangentIndices(int32_t bi0, int32_t bi1, int32_t bi2);
 
 	/**
-	 * @return bi tangent indices
+	 * @returns bi tangent indices
 	 */
 	inline const array<int32_t, 3>& getBitangentIndices() const {
 		return bitangentIndices;

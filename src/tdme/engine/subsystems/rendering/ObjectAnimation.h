@@ -192,7 +192,7 @@ protected:
 	/**
 	 * Get skinning nodes transform matrices
 	 * @param node node
-	 * @return matrices
+	 * @returns matrices
 	 */
 	unordered_map<string, Matrix4x4*>* getSkinningNodesTransformMatrices(Node* node);
 
@@ -234,34 +234,34 @@ public:
 	void removeOverlayAnimations();
 
 	/**
-	 * @return active animation setup id
+	 * @returns active animation setup id
 	 */
 	const string getAnimation();
 
 	/**
 	 * Returns current base animation time
-	 * @return 0.0 <= time <= 1.0
+	 * @returns 0.0 <= time <= 1.0
 	 */
 	float getAnimationTime();
 
 	/**
 	 * Returns if there is currently running a overlay animation with given id
 	 * @param id id
-	 * @return animation is running
+	 * @returns animation is running
 	 */
 	bool hasOverlayAnimation(const string& id);
 
 	/**
 	 * Returns current overlay animation time
 	 * @param id id
-	 * @return 0.0 <= time <= 1.0
+	 * @returns 0.0 <= time <= 1.0
 	 */
 	float getOverlayAnimationTime(const string& id);
 
 	/**
 	 * Returns transform matrix for given node
 	 * @param id node id
-	 * @return transform matrix or identity matrix if not found
+	 * @returns transform matrix or identity matrix if not found
 	 */
 	const Matrix4x4 getNodeTransformMatrix(const string& id);
 

@@ -51,7 +51,7 @@ public:
 	}
 
 	/**
-	 * @return object translation
+	 * @returns object translation
 	 */
 	inline const Vector3& getTranslation() const {
 		return translation;
@@ -66,7 +66,7 @@ public:
 	}
 
 	/**
-	 * @return object scale
+	 * @returns object scale
 	 */
 	inline const Vector3& getScale() const {
 		return scale;
@@ -81,7 +81,7 @@ public:
 	}
 
 	/**
-	 * @return rotation count
+	 * @returns rotation count
 	 */
 	inline const int getRotationCount() const {
 		return rotations.size();
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Get rotation at given index
 	 * @param idx rotation index
-	 * @return rotation
+	 * @returns rotation
 	 */
 	inline Rotation& getRotation(const int idx) {
 		return rotations[idx];
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Get rotation at given index
 	 * @param idx rotation index
-	 * @return rotation
+	 * @returns rotation
 	 */
 	inline const Rotation& getRotation(const int idx) const {
 		return rotations[idx];
@@ -124,7 +124,7 @@ public:
 
 	/**
 	 * @param idx rotation index
-	 * @return rotation axis for rotation with given index
+	 * @returns rotation axis for rotation with given index
 	 */
 	inline const Vector3& getRotationAxis(const int idx) const {
 		return rotations[idx].getAxis();
@@ -141,7 +141,7 @@ public:
 
 	/**
 	 * @param idx rotation index
-	 * @return rotation angle for rotation with given index
+	 * @returns rotation angle for rotation with given index
 	 */
 	inline const float getRotationAngle(const int idx) const {
 		return rotations[idx].getAngle();
@@ -150,21 +150,21 @@ public:
 	/**
 	 * @param idx rotation index
 	 * @param angle rotation angle
-	 * @return rotation angle for rotation with given index
+	 * @returns rotation angle for rotation with given index
 	 */
 	inline void setRotationAngle(const int idx, const float angle) {
 		rotations[idx].setAngle(angle);
 	}
 
 	/**
-	 * @return rotations quaternion
+	 * @returns rotations quaternion
 	 */
 	inline const Quaternion& getRotationsQuaternion() const {
 		return rotationsQuaternion;
 	}
 
 	/**
-	 * @return this transform matrix
+	 * @returns this transform matrix
 	 */
 	inline const Matrix4x4& getTransformMatrix() const {
 		return transformMatrix;
@@ -199,7 +199,7 @@ public:
 
 	/**
 	 * Clones the transform
-	 * @return new cloned transform
+	 * @returns new cloned transform
 	 */
 	inline Transform clone() const {
 		Transform clonedTransform;
@@ -215,7 +215,7 @@ public:
 	/**
 	 * Multiplies this transform with another transform
 	 * @param t transform
-	 * @return this transform
+	 * @returns this transform
 	 */
 	inline Transform& multiply(const Transform& t) {
 		update();
@@ -234,7 +234,7 @@ public:
 	/**
 	 * Operator *
 	 * @param v vec3 to multiply by
-	 * @return new vec3 (this * v)
+	 * @returns new vec3 (this * v)
 	 */
 	inline Vector3 operator *(const Vector3& v) const {
 		return transformMatrix * v;
@@ -243,7 +243,7 @@ public:
 	/*
 	 * Operator *=
 	 * @param t transform to multiply by
-	 * @return this transform multiplied by t
+	 * @returns this transform multiplied by t
 	 */
 	inline Transform& operator *=(const Transform& t) {
 		return this->multiply(t);
@@ -252,7 +252,7 @@ public:
 	/**
 	 * Operator *
 	 * @param t transform to multiply by
-	 * @return new transform (this * t)
+	 * @returns new transform (this * t)
 	 */
 	inline Transform operator *(const Transform& t) const {
 		auto r = this->clone().multiply(t);
@@ -262,7 +262,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param t transform to compare to
-	 * @return equality
+	 * @returns equality
 	 */
 
 	inline bool operator ==(const Transform& t) const {
@@ -272,7 +272,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param t transform to compare to
-	 * @return non equality
+	 * @returns non equality
 	 */
 
 	inline bool operator !=(const Transform& t) const {

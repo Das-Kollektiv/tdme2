@@ -25,7 +25,7 @@ private:
 protected:
 	/**
 	 * Instantiate element
-	 * @return instantiates a new element
+	 * @returns instantiates a new element
 	 */
 	virtual T* instantiate() = 0;
 
@@ -50,7 +50,7 @@ public:
 
 	/**
 	 * Allocate a new element from pool
-	 * @return element
+	 * @returns element
 	 */
 	T* allocate() {
 		if (freeElements.empty() == false) {
@@ -79,14 +79,14 @@ public:
 	}
 
 	/**
-	 * @return element capacity
+	 * @returns element capacity
 	 */
 	int32_t capacity() {
 		return usedElements.size() + freeElements.size();
 	}
 
 	/**
-	 * @return elements in use
+	 * @returns elements in use
 	 */
 	int32_t size() {
 		return usedElements.size();

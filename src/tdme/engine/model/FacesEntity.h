@@ -54,7 +54,7 @@ public:
 	FacesEntity(Node* node, const string& id);
 
 	/**
-	 * @return faces entity id
+	 * @returns faces entity id
 	 */
 	inline const string& getId() const {
 		return id;
@@ -69,14 +69,14 @@ public:
 	}
 
 	/**
-	 * @return entity's material
+	 * @returns entity's material
 	 */
 	inline const Material* getMaterial() const {
 		return material;
 	}
 
 	/**
-	 * @return entity's faces
+	 * @returns entity's faces
 	 */
 	inline const vector<Face>& getFaces() const {
 		return faces;
@@ -89,21 +89,21 @@ public:
 	void setFaces(const vector<Face>& faces);
 
 	/**
-	 * @return if texture coordinates are available for the whole entity
+	 * @returns if texture coordinates are available for the whole entity
 	 */
 	inline bool isTextureCoordinatesAvailable() const {
 		return textureCoordinatesAvailable == true && node->getTextureCoordinates().size() > 0;
 	}
 
 	/**
-	 * @return if tangents and bitangents are available for the whole entity
+	 * @returns if tangents and bitangents are available for the whole entity
 	 */
 	inline bool isTangentBitangentAvailable() const {
 		return tangentBitangentAvailable == true && node->getTangents().size() > 0 && node->getBitangents().size() > 0;
 	}
 
 	/**
-	 * @return LOD1 distance
+	 * @returns LOD1 distance
 	 */
 	inline float getLOD1Distance() const {
 		return lod1Distance;
@@ -118,7 +118,7 @@ public:
 	}
 
 	/**
-	 * @return LOD1 indices
+	 * @returns LOD1 indices
 	 */
 	inline const vector<int32_t>& getLOD1Indices() const {
 		return lod1Indices;
@@ -131,7 +131,7 @@ public:
 	void setLOD1Indices(const vector<int32_t>& lod1Indices);
 
 	/**
-	 * @return LOD2 distance
+	 * @returns LOD2 distance
 	 */
 	inline float getLOD2Distance() const {
 		return lod2Distance;
@@ -146,7 +146,7 @@ public:
 	}
 
 	/**
-	 * @return LOD2 indices
+	 * @returns LOD2 indices
 	 */
 	inline const vector<int32_t>& getLOD2Indices() const {
 		return lod2Indices;
@@ -159,7 +159,7 @@ public:
 	void setLOD2Indices(const vector<int32_t>& lod2Indices);
 
 	/**
-	 * @return LOD3 distance
+	 * @returns LOD3 distance
 	 */
 	inline float getLOD3Distance() const {
 		return lod3Distance;
@@ -174,7 +174,7 @@ public:
 	}
 
 	/**
-	 * @return LOD3 indices
+	 * @returns LOD3 indices
 	 */
 	inline const vector<int32_t>& getLOD3Indices() const {
 		return lod3Indices;

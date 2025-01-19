@@ -84,14 +84,14 @@ public:
 	virtual ~Logic();
 
 	/**
-	 * @return context
+	 * @returns context
 	 */
 	inline Context* getContext() {
 		return context;
 	}
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
@@ -108,7 +108,7 @@ public:
 	virtual void updateLogic() = 0;
 
 	/**
-	 * @return if handling human interface devices input
+	 * @returns if handling human interface devices input
 	 */
 	inline bool isHandlingHIDInput() {
 		return handlingHIDInput;
@@ -177,7 +177,7 @@ public:
 	}
 
 	/**
-	 * @return queued sounds associated with this game logic
+	 * @returns queued sounds associated with this game logic
 	 */
 	inline const vector<QueuedSound>& getQueuedSounds() {
 		return queuedSounds;
@@ -200,7 +200,7 @@ public:
 
 	/**
 	 * Returns if a signal is in signal queue
-	 * @return has signal
+	 * @returns has signal
 	 */
 	inline bool hasSignal() {
 		return signals.empty() == false;
@@ -220,7 +220,7 @@ public:
 
 	/**
 	 * Get signal name from first signal in signal queue
-	 * @return signal name
+	 * @returns signal name
 	 */
 	inline const string getSignalName() {
 		if (signals.empty() == true) return string();
@@ -229,7 +229,7 @@ public:
 
 	/**
 	 * Get signal argument count
-	 * @return signal argument count
+	 * @returns signal argument count
 	 */
 	inline int getSignalArgumentCount() {
 		if (signals.empty() == true) return 0;
@@ -238,7 +238,7 @@ public:
 
 	/**
 	 * Get signal argument
-	 * @return signal argument at given index
+	 * @returns signal argument at given index
 	 */
 	inline EngineMinitScript::Variable getSignalArgument(int idx) {
 		if (signals.empty() == true) return EngineMinitScript::Variable();

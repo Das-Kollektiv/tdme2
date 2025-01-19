@@ -62,7 +62,7 @@ private:
 		/**
 		 * Check if matrix is negative
 		 * @param matrix matrix
-		 * @return negative
+		 * @returns negative
 		 */
 		inline bool isRightHanded(Matrix4x4& matrix) {
 			// copy into x,y,z axes
@@ -80,14 +80,14 @@ public:
 	/**
 	 * Determines vertex order of face
 	 * @param vertices vertices
-	 * @return vertex order
+	 * @returns vertex order
 	 */
 	static VertexOrder determineVertexOrder(const vector<Vector3>& vertices);
 
 	/**
 	 * Computes face normal for given face vertices
 	 * @param vertices face vertices
-	 * @return computed face normal
+	 * @returns computed face normal
 	 */
 	inline static Vector3 computeNormal(const array<Vector3,3>& vertices) {
 		// face normal
@@ -110,7 +110,7 @@ public:
 	 * Computes face normals for given face vertices
 	 * these normals will not be smooth
 	 * @param vertices face vertices
-	 * @return normals computed face normals
+	 * @returns normals computed face normals
 	 */
 	static array<Vector3,3> computeNormals(const array<Vector3,3>& vertices) {
 		// face normal
@@ -186,7 +186,7 @@ public:
 	/**
 	 * Check default animation
 	 * @param model model
-	 * @return if animation exists
+	 * @returns if animation exists
 	 */
 	static bool hasDefaultAnimation(Model* model);
 
@@ -201,7 +201,7 @@ public:
 	 * Clone material
 	 * @param material material
 	 * @param id new id to use
-	 * @return material
+	 * @returns material
 	 */
 	static Material* cloneMaterial(const Material* material, const string& id = string());
 

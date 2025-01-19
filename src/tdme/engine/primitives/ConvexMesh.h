@@ -64,7 +64,7 @@ private:
 	 * Checks if vertex lives on triangle plane
 	 * @param triangle triangle
 	 * @param vertex vertex
-	 * @return if vertex lives on triangle plane
+	 * @returns if vertex lives on triangle plane
 	 */
 	inline bool isVertexOnTrianglePlane(const Triangle& triangle, const Vector3& vertex) {
 		for (const auto& triangleVertex: triangle.getVertices()) {
@@ -85,7 +85,7 @@ private:
 	 * Checks if 2 triangles are adjacent
 	 * @param triangle1 triangle 1
 	 * @param triangle2 triangle 2
-	 * @return if triangles are adjacent
+	 * @returns if triangles are adjacent
 	 */
 	inline bool areTrianglesAdjacent(const Triangle& triangle1, const Triangle& triangle2) {
 		auto equalVertices = 0;
@@ -134,7 +134,7 @@ public:
 	BoundingVolume* clone() const override;
 
 	/**
-	 * @return vertices
+	 * @returns vertices
 	 */
 	const vector<Vector3>& getVertices();
 

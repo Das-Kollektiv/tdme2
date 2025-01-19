@@ -43,7 +43,7 @@ public:
 	~BRDFLUTShader();
 
 	/**
-	 * @return if initialized and ready to use
+	 * @returns if initialized and ready to use
 	 */
 	bool isInitialized();
 
@@ -58,7 +58,7 @@ public:
 	void generate();
 
 	/**
-	 * @return color texture id
+	 * @returns color texture id
 	 */
 	inline int32_t getColorTextureId() override {
 		return colorBufferTextureId;

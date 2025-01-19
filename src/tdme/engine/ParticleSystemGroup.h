@@ -95,7 +95,7 @@ public:
 	}
 
 	/**
-	 * @return particle systems
+	 * @returns particle systems
 	 */
 	inline const vector<ParticleSystem*>& getParticleSystems() {
 		return particleSystems;

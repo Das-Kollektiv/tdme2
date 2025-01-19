@@ -62,7 +62,7 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline static Prototype* read(const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true) {
 		return read(Prototype::ID_NONE, pathName, fileName, transformFilter, useBC7TextureCompression);
@@ -77,7 +77,7 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return prototype
+	 * @returns prototype
 	 */
 	static Prototype* read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
 
@@ -85,7 +85,7 @@ public:
 	 * Get resource path name
 	 * @param pathName path name within a TDME2 resource path where parent resource was loaded from
 	 * @param fileName file name containing a path and file in a TDME2 resource path
-	 * @return model path name
+	 * @returns model path name
 	 */
 	static const string getResourcePathName(const string& pathName, const string& fileName);
 
@@ -99,7 +99,7 @@ private:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return prototype
+	 * @returns prototype
 	 */
 	static Prototype* read(int id, const string& pathName, const Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
 
@@ -110,7 +110,7 @@ private:
 	 * @param jBv JSON bounding volume node
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return prototype bounding volume
+	 * @returns prototype bounding volume
 	 */
 	static PrototypeBoundingVolume* parseBoundingVolume(Prototype* prototype, const string& pathName, const Value& jBv);
 
@@ -119,7 +119,7 @@ private:
 	 * @param pathName path name
 	 * @param jLodLevel JSON LOD level
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return prototype lod level
+	 * @returns prototype lod level
 	 */
 	static PrototypeLODLevel* parseLODLevel(const string& pathName, const Value& jLodLevel, bool useBC7TextureCompression);
 
@@ -128,7 +128,7 @@ private:
 	 * @param pathName path name
 	 * @param jImposterLOD JSON Imposter LOD level
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return prototype imposter LOD
+	 * @returns prototype imposter LOD
 	 */
 	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, const Value& jImposterLOD, bool useBC7TextureCompression);
 
@@ -137,7 +137,7 @@ private:
 	 * @param pathName path name
 	 * @param jParticleSystem JSON particle system object
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return particle system
+	 * @returns particle system
 	 */
 	static PrototypeParticleSystem* parseParticleSystem(const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression);
 

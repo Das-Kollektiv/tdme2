@@ -45,28 +45,28 @@ public:
 	Prototype_Type(const string& name, int ordinal, int boundingVolumeCount, int gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension);
 
 	/**
-	 * @return bounding volume count
+	 * @returns bounding volume count
 	 */
 	inline int getBoundingVolumeCount() {
 		return boundingVolumeCount;
 	}
 
 	/**
-	 * @return gizmo types
+	 * @returns gizmo types
 	 */
 	inline int32_t getGizmoTypeMask() {
 		return gizmoTypeMask;
 	}
 
 	/**
-	 * @return has non edit scale down mode
+	 * @returns has non edit scale down mode
 	 */
 	inline bool hasNonEditScaleDownMode() {
 		return nonEditScaleDownMode;
 	}
 
 	/**
-	 * @return has non edit scale down mode
+	 * @returns has non edit scale down mode
 	 */
 	inline const Vector3& getNonEditScaleDownModeDimension() {
 		return nonEditScaleDownModeDimension;
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static Prototype_Type* valueOf(const string& name);
 

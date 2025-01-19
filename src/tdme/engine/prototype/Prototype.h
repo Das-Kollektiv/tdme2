@@ -120,21 +120,21 @@ public:
 	virtual ~Prototype();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline int getId() {
 		return id;
 	}
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline Prototype_Type* getType() {
 		return type;
 	}
 
 	/**
-	 * @return if this prototype is embedded into a tscene file
+	 * @returns if this prototype is embedded into a tscene file
 	 */
 	inline bool isEmbedded() {
 		return embedded;
@@ -149,7 +149,7 @@ public:
 	}
 
 	/**
-	 * @return prototype file name including relative path
+	 * @returns prototype file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
@@ -164,7 +164,7 @@ public:
 	}
 
 	/**
-	 * @return model file name
+	 * @returns model file name
 	 */
 	inline const string& getModelFileName() {
 		return modelFileName;
@@ -179,7 +179,7 @@ public:
 	}
 
 	/**
-	 * @return thumbnail base 64 PNG data
+	 * @returns thumbnail base 64 PNG data
 	 */
 	inline const string& getThumbnail() {
 		return thumbnail;
@@ -194,7 +194,7 @@ public:
 	}
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* getModel() {
 		return model.get();
@@ -208,21 +208,21 @@ public:
 
 	/**
 	 * Unset model without deleting current one
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* unsetModel() {
 		return model.release();
 	}
 
 	/**
-	 * @return script attached to prototype
+	 * @returns script attached to prototype
 	 */
 	inline bool hasScript() {
 		return script.empty() == false;
 	}
 
 	/**
-	 * @return prototype script name
+	 * @returns prototype script name
 	 */
 	inline const string& getScript() {
 		return script;
@@ -237,7 +237,7 @@ public:
 	}
 
 	/**
-	 * @return is entity hierarchy
+	 * @returns is entity hierarchy
 	 */
 	inline bool isEntityHierarchy() {
 		return entityHierachy;
@@ -252,7 +252,7 @@ public:
 	}
 
 	/**
-	 * @return script is handling HID (input)
+	 * @returns script is handling HID (input)
 	 */
 	inline bool isScriptHandlingHID() {
 		return scriptHandlingHID;
@@ -267,14 +267,14 @@ public:
 	}
 
 	/**
-	 * @return bounding volumes iterator
+	 * @returns bounding volumes iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeBoundingVolume> getBoundingVolumes() {
 		return UniquePtrSequenceIterator<PrototypeBoundingVolume>(&(*boundingVolumes.begin()), &(*boundingVolumes.end()));
 	}
 
 	/**
-	 * @return bounding volume count
+	 * @returns bounding volume count
 	 */
 	inline int getBoundingVolumeCount() {
 		return boundingVolumes.size();
@@ -283,7 +283,7 @@ public:
 	/**
 	 * Get bounding volume at given index
 	 * @param idx index
-	 * @return prototype bounding volume
+	 * @returns prototype bounding volume
 	 */
 	inline PrototypeBoundingVolume* getBoundingVolume(int idx) {
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx].get():nullptr;
@@ -303,7 +303,7 @@ public:
 
 	/**
 	 * Get bounding volumes primitibves to be added to physics engine
-	 * @return bounding volume primitives
+	 * @returns bounding volume primitives
 	 */
 	inline const vector<BoundingVolume*> getBoundingVolumesPrimitives() {
 		vector<BoundingVolume*> boundingVolumePrimitives;
@@ -316,14 +316,14 @@ public:
 	}
 
 	/**
-	 * @return physics
+	 * @returns physics
 	 */
 	inline PrototypePhysics* getPhysics() {
 		return physics.get();
 	}
 
 	/**
-	 * @return LOD level 2
+	 * @returns LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
 		return lodLevel2.get();
@@ -336,7 +336,7 @@ public:
 	void setLODLevel2(PrototypeLODLevel* lodLevel);
 
 	/**
-	 * @return LOD level 3
+	 * @returns LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
 		return lodLevel3.get();
@@ -355,7 +355,7 @@ public:
 	void removeLODLevel(int lodLevel);
 
 	/**
-	 * @return imposter LOD
+	 * @returns imposter LOD
 	 */
 	inline PrototypeImposterLOD* getImposterLOD() {
 		return imposterLOD.get();
@@ -368,14 +368,14 @@ public:
 	void setImposterLOD(PrototypeImposterLOD* imposterLOD);
 
 	/**
-	 * @return particle systems iterator
+	 * @returns particle systems iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeParticleSystem> getParticleSystems() {
 		return UniquePtrSequenceIterator<PrototypeParticleSystem>(&(*particleSystems.begin()), &(*particleSystems.end()));
 	}
 
 	/**
-	 * @return particle systems count
+	 * @returns particle systems count
 	 */
 	inline int getParticleSystemsCount() {
 		return particleSystems.size();
@@ -384,7 +384,7 @@ public:
 	/**
 	 * Get particle system at given index
 	 * @param idx particle system index
-	 * @return prototype particle system
+	 * @returns prototype particle system
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
 		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
@@ -402,7 +402,7 @@ public:
 	/**
 	 * Remove particle system at given index
 	 * @param idx particle system index
-	 * @return success
+	 * @returns success
 	 */
 	inline bool removeParticleSystemAt(int idx) {
 		if (idx < 0 || idx >= particleSystems.size()) return false;
@@ -412,7 +412,7 @@ public:
 	}
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
 		return contributesShadows;
@@ -427,7 +427,7 @@ public:
 	}
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	inline bool isReceivesShadows() {
 		return receivesShadows;
@@ -443,7 +443,7 @@ public:
 
 	/**
 	 * Is terrain mesh
-	 * @return terrain mesh
+	 * @returns terrain mesh
 	 */
 	inline bool isTerrainMesh() {
 		return terrainMesh;
@@ -459,7 +459,7 @@ public:
 
 	/**
 	 * Is using render groups
-	 * @return render groups enabled
+	 * @returns render groups enabled
 	 */
 	inline bool isRenderGroups() {
 		return renderGroups;
@@ -475,7 +475,7 @@ public:
 
 	/**
 	 * Get shader
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -492,7 +492,7 @@ public:
 
 	/**
 	 * Get shader parameters
-	 * @return shader parameters
+	 * @returns shader parameters
 	 */
 	inline const EntityShaderParameters& getShaderParameters() {
 		return shaderParameters;
@@ -507,14 +507,14 @@ public:
 	}
 
 	/**
-	 * @return sounds iterator
+	 * @returns sounds iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeAudio> getSounds() {
 		return UniquePtrSequenceIterator<PrototypeAudio>(&(*sounds.begin()), &(*sounds.end()));
 	}
 
 	/**
-	 * @return sound count
+	 * @returns sound count
 	 */
 	inline int getSoundCount() {
 		return sounds.size();
@@ -523,7 +523,7 @@ public:
 	/**
 	 * Get sound at given index
 	 * @param idx index
-	 * @return prototype sound
+	 * @returns prototype sound
 	 */
 	inline PrototypeAudio* getSoundAt(int idx) {
 		return idx >= 0 && idx < sounds.size()?sounds[idx].get():nullptr;
@@ -565,7 +565,7 @@ public:
 	 * Renames sound of given sound id with new id
 	 * @param id existing id
 	 * @param newId new id
-	 * @return success
+	 * @returns success
 	 */
 	inline bool renameSound(const string& id, const string& newId) {
 		auto soundIt = soundsById.find(id);
@@ -578,7 +578,7 @@ public:
 	}
 
 	/**
-	 * @return environment map render pass mask
+	 * @returns environment map render pass mask
 	 */
 	inline int getEnvironmentMapRenderPassMask() {
 		return environmentMapRenderPassMask;
@@ -593,7 +593,7 @@ public:
 	}
 
 	/**
-	 * @return environment map render update time frequency in milliseconds
+	 * @returns environment map render update time frequency in milliseconds
 	 */
 	inline int64_t getEnvironmentMapTimeRenderUpdateFrequency() {
 		return environmentMapTimeRenderUpdateFrequency;
@@ -608,14 +608,14 @@ public:
 	}
 
 	/**
-	 * @return terrain definitions
+	 * @returns terrain definitions
 	 */
 	inline PrototypeTerrain* getTerrain() {
 		return terrain.get();
 	}
 
 	/**
-	 * @return decal definitions
+	 * @returns decal definitions
 	 */
 	inline PrototypeDecal* getDecal() {
 		return decal.get();

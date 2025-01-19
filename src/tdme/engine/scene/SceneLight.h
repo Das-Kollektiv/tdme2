@@ -44,14 +44,14 @@ public:
 	SceneLight(int id);
 
 	/**
-	 * @return light id
+	 * @returns light id
 	 */
 	inline int getId() {
 		return id;
 	}
 
 	/**
-	 * @return enabled
+	 * @returns enabled
 	 */
 	inline bool isEnabled() const {
 		return enabled;
@@ -66,7 +66,7 @@ public:
 	}
 
 	/**
-	 * @return ambient light component
+	 * @returns ambient light component
 	 */
 	inline const Color4& getAmbient() const {
 		return ambient;
@@ -81,7 +81,7 @@ public:
 	}
 
 	/**
-	 * @return diffuse light component
+	 * @returns diffuse light component
 	 */
 	inline const Color4& getDiffuse() const {
 		return diffuse;
@@ -96,7 +96,7 @@ public:
 	}
 
 	/**
-	 * @return specular light component
+	 * @returns specular light component
 	 */
 	inline const Color4& getSpecular() const {
 		return specular;
@@ -111,7 +111,7 @@ public:
 	}
 
 	/**
-	 * @return position of light
+	 * @returns position of light
 	 */
 	inline const Vector4& getPosition() const {
 		return position;
@@ -126,7 +126,7 @@ public:
 	}
 
 	/**
-	 * @return spot direction
+	 * @returns spot direction
 	 */
 	inline const Vector3& getSpotDirection() const {
 		return spotDirection;
@@ -141,7 +141,7 @@ public:
 	}
 
 	/**
-	 * @return spot exponent
+	 * @returns spot exponent
 	 */
 	inline float getSpotExponent() const {
 		return spotExponent;
@@ -156,7 +156,7 @@ public:
 	}
 
 	/**
-	 * @return spot cutoff
+	 * @returns spot cutoff
 	 */
 	inline float getSpotCutOff() const {
 		return spotCutOff;
@@ -171,7 +171,7 @@ public:
 	}
 
 	/**
-	 * @return constant attenuation
+	 * @returns constant attenuation
 	 */
 	inline float getConstantAttenuation() const {
 		return constantAttenuation;
@@ -186,7 +186,7 @@ public:
 	}
 
 	/**
-	 * @return linear attenuation
+	 * @returns linear attenuation
 	 */
 	inline float getLinearAttenuation() const {
 		return linearAttenuation;
@@ -201,7 +201,7 @@ public:
 	}
 
 	/**
-	 * @return quadratic attenuation
+	 * @returns quadratic attenuation
 	 */
 	inline float getQuadraticAttenuation() const {
 		return quadraticAttenuation;

@@ -31,12 +31,12 @@ public:
 	NetworkLogic(Context* context, const string& id, bool handlingHIDInput);
 
 	/**
-	 * @return is handling network input
+	 * @returns is handling network input
 	 */
 	virtual bool isHandlingNetworkInput();
 
 	/**
-	 * @return network packet type id
+	 * @returns network packet type id
 	 */
 	virtual uint32_t getNetworkPacketTypeId() = 0;
 
@@ -46,12 +46,12 @@ public:
 	void setSynchedFromNetwork();
 
 	/**
-	 * @return if entity have been synched from network, will be reset in call
+	 * @returns if entity have been synched from network, will be reset in call
 	 */
 	bool isSynchedFromNetwork();
 
 	/**
-	 * @return is server
+	 * @returns is server
 	 */
 	bool isServer();
 
@@ -63,7 +63,7 @@ public:
 
 	/**
 	 * Get outgoing network packets
-	 * @return network packets
+	 * @returns network packets
 	 */
 	vector<LogicNetworkPacket>& getNetworkPackets();
 

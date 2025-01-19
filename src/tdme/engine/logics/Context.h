@@ -151,7 +151,7 @@ public:
 		virtual ~PathFindingThread();
 
 		/**
-		 * @return thread index
+		 * @returns thread index
 		 */
 		inline int getThreadIdx() {
 			return idx;
@@ -197,7 +197,7 @@ public:
 		 * Get flow map extension
 		 * @param actorId actor id
 		 * @param flowMap pointer to flowmap variable to store flowmap into
-		 * @return flow map extension state
+		 * @returns flow map extension state
 		 */
 		FlowMapExtensionState getFlowMapExtension(const string& actorId, FlowMap** flowMap);
 
@@ -213,7 +213,7 @@ public:
 		void cancel(const string& actorId);
 
 		/**
-		 * @return current pathfinding actor id
+		 * @returns current pathfinding actor id
 		 */
 		string getActorId();
 	};
@@ -294,7 +294,7 @@ public:
 		 * Get flow map extension
 		 * @param actorId actor id
 		 * @param flowMap pointer to flowmap variable to store flowmap into
-		 * @return if this is the last flow map extensions
+		 * @returns if this is the last flow map extensions
 		 */
 		bool getFlowMapExtension(const string& actorId, FlowMap** flowMap);
 
@@ -388,7 +388,7 @@ public:
 	virtual ~Context();
 
 	/**
-	 * @return application root path name
+	 * @returns application root path name
 	 */
 	inline const string& getApplicationRootPathName() {
 		return applicationRootPathName;
@@ -406,7 +406,7 @@ public:
 	 * Return relative uri
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return relative uri
+	 * @returns relative uri
 	 */
 	inline const string getRelativeURI(const string& pathName, const string& fileName) {
 		return getRelativeURI(pathName + "/" + fileName);
@@ -415,26 +415,26 @@ public:
 	/**
 	 * Return relative uri
 	 * @param uri uri
-	 * @return relative uri
+	 * @returns relative uri
 	 */
 	const string getRelativeURI(const string& uri);
 
 	/**
-	 * @return time started
+	 * @returns time started
 	 */
 	inline int64_t getTimeStarted() {
 		return timeStarted;
 	}
 
 	/**
-	 * @return if initialized
+	 * @returns if initialized
 	 */
 	inline bool isInitialized() {
 		return initialized;
 	}
 
 	/**
-	 * @return logics mutex
+	 * @returns logics mutex
 	 */
 	inline Mutex* getLogicsMutex() {
 		return logicsMutex;
@@ -448,14 +448,14 @@ public:
 	}
 
 	/**
-	 * @return is context is server context
+	 * @returns is context is server context
 	 */
 	inline bool isServer() {
 		return server;
 	}
 
 	/**
-	 * @return engine
+	 * @returns engine
 	 */
 	inline Engine* getEngine() {
 		return engine.get();
@@ -471,14 +471,14 @@ public:
 
 	/**
 	 * Unset engine
-	 * @return engine
+	 * @returns engine
 	 */
 	inline Engine* unsetEngine() {
 		return this->engine.release();
 	}
 
 	/**
-	 * @return GUI engine
+	 * @returns GUI engine
 	 */
 	inline Engine* getGUIEngine() {
 		return guiEngine.get();
@@ -494,14 +494,14 @@ public:
 
 	/**
 	 * Unset GUI engine
-	 * @return GUI engine
+	 * @returns GUI engine
 	 */
 	inline Engine* unsetGUIEngine() {
 		return this->guiEngine.release();
 	}
 
 	/**
-	 * @return audio instance
+	 * @returns audio instance
 	 */
 	inline Audio* getAudio() {
 		return audio;
@@ -516,7 +516,7 @@ public:
 	}
 
 	/**
-	 * @return physics world
+	 * @returns physics world
 	 */
 	inline World* getWorld() {
 		return world.get();
@@ -531,7 +531,7 @@ public:
 	}
 
 	/**
-	 * @return scene
+	 * @returns scene
 	 */
 	inline Scene* getScene() {
 		return scene.get();
@@ -547,7 +547,7 @@ public:
 
 	/**
 	 * Unset scene
-	 * @return scene
+	 * @returns scene
 	 */
 	inline Scene* unsetScene() {
 		return this->scene.release();
@@ -572,7 +572,7 @@ public:
 	/**
 	 * Get logic
 	 * @param id id
-	 * @return logic or nullptr
+	 * @returns logic or nullptr
 	 */
 	inline Logic* getLogic(const string& id) {
 		auto logicIt = logicsById.find(id);
@@ -581,7 +581,7 @@ public:
 
 	/**
 	 * Add logics that have been added and tagged as new
-	 * @return count of new logics that have been finally added to context
+	 * @returns count of new logics that have been finally added to context
 	 */
 	inline int addNewLogics() {
 		int newLogicsCount = newLogics.size();
@@ -596,21 +596,21 @@ public:
 	}
 
 	/**
-	 * @return logics
+	 * @returns logics
 	 */
 	inline const vector<Logic*>& getLogics() {
 		return logics;
 	}
 
 	/**
-	 * @return new logics
+	 * @returns new logics
 	 */
 	inline const vector<Logic*>& getNewLogics() {
 		return newLogics;
 	}
 
 	/**
-	 * @return path finding body collision type id mask
+	 * @returns path finding body collision type id mask
 	 */
 	inline uint16_t getBodyCollisionTypeIdMask() {
 		return bodyCollisionTypeIdMask;
@@ -625,7 +625,7 @@ public:
 	}
 
 	/**
-	 * @return body collision type id mask to skip on in path finding
+	 * @returns body collision type id mask to skip on in path finding
 	 */
 	inline uint16_t getSkipOnBodyCollisionTypeIdMask() {
 		return skipOnBodyCollisionTypeIdMask;
@@ -640,7 +640,7 @@ public:
 	}
 
 	/**
-	 * @return body collision type id clone mask
+	 * @returns body collision type id clone mask
 	 */
 	inline uint16_t getBodyCollisionTypeIdCloneMask() {
 		return bodyCollisionTypeIdCloneMask;
@@ -655,7 +655,7 @@ public:
 	}
 
 	/**
-	 * @return sound pool size
+	 * @returns sound pool size
 	 */
 	inline int getSoundPoolSize() {
 		return soundPoolSize;
@@ -681,7 +681,7 @@ public:
 	 * @param logic logic
 	 * @param packet packet
 	 * @param key key
-	 * @return if to process packet
+	 * @returns if to process packet
 	 */
 	bool doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, const string& key);
 
@@ -691,7 +691,7 @@ public:
 	 * @param packet packet
 	 * @param line line
 	 * @param key key
-	 * @return if to process packet
+	 * @returns if to process packet
 	 */
 	inline bool doProcessPacketAtLine(NetworkLogic* logic, LogicNetworkPacket& packet, uint32_t line, const string& key = string()) {
 		return doProcessPacket(logic, packet, to_string(line) + (key.length() == 0?"":"_" + key));

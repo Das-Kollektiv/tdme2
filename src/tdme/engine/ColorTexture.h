@@ -17,7 +17,7 @@ struct tdme::engine::ColorTexture
 	inline virtual ~ColorTexture() {}
 
 	/**
-	 * @return color texture id
+	 * @returns color texture id
 	 */
 	virtual int32_t getColorTextureId() = 0;
 

@@ -219,14 +219,14 @@ public:
 	}
 
 	/**
-	 * @return decal texture
+	 * @returns decal texture
 	 */
 	inline Texture* getDecalTexture() {
 		return DecalInternal::getDecalTexture();
 	}
 
 	/**
-	 * @return world to decal space matrix
+	 * @returns world to decal space matrix
 	 */
 	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
 		return DecalInternal::getWorldToDecalSpaceMatrix();

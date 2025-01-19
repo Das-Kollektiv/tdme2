@@ -124,27 +124,27 @@ private:
 
 	/**
 	 * Get LOD level
-	 * @return created or existing LOD level with given level
+	 * @returns created or existing LOD level with given level
 	 */
 	PrototypeLODLevel* getLODLevel(int level);
 
 	/**
-	 * @return prototype lod level or nullptr
+	 * @returns prototype lod level or nullptr
 	 */
 	Model* getLODLevelModel(int level);
 
 	/**
-	 * @return current selected model
+	 * @returns current selected model
 	 */
 	Model* getSelectedModel();
 
 	/**
-	 * @return current selected material
+	 * @returns current selected material
 	 */
 	Material* getSelectedMaterial();
 
 	/**
-	 * @return current selected animation setup
+	 * @returns current selected animation setup
 	 */
 	AnimationSetup* getSelectedAnimationSetup();
 
@@ -173,28 +173,28 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline ModelEditorTabView* getView() {
 		return view;
 	}
 
 	/**
-	 * @return prototype display sub screen controller
+	 * @returns prototype display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
 		return prototypeDisplaySubController.get();
 	}
 
 	/**
-	 * @return prototype bounding volume sub screen controller
+	 * @returns prototype bounding volume sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
 		return prototypePhysicsSubController.get();
 	}
 
 	/**
-	 * @return prototype sounds sub screen controller
+	 * @returns prototype sounds sub screen controller
 	 */
 	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
 		return prototypeSoundsSubController.get();
@@ -225,7 +225,7 @@ public:
 	void setDetailsContent();
 
 	/**
-	 * @return current material
+	 * @returns current material
 	 */
 	Material* getCurrentMaterial();
 
@@ -593,7 +593,7 @@ public:
 	 * @param modelOutlinerNode model outliner node
 	 * @param model model
 	 * @param lodLevel lod level
-	 * @return success
+	 * @returns success
 	 */
 	bool getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model = nullptr, int* lodLevel = nullptr);
 

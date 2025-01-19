@@ -78,7 +78,7 @@ public:
 	~PrototypeDisplaySubController();
 
 	/**
-	 * @return view
+	 * @returns view
 	 */
 	inline PrototypeDisplaySubView* getView() {
 		return view.get();
@@ -91,21 +91,21 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * @return display shadowing checked
+	 * @returns display shadowing checked
 	 */
 	inline bool getDisplayShadowing() {
 		return displayShadowing;
 	}
 
 	/**
-	 * @return display ground checked
+	 * @returns display ground checked
 	 */
 	inline bool getDisplayGround() {
 		return displayGround;
 	}
 
 	/**
-	 * @return display bounding volume checked
+	 * @returns display bounding volume checked
 	 */
 	inline bool getDisplayBoundingVolume() {
 		return displayBoundingVolumes;
@@ -155,7 +155,7 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if this event has been handled
+	 * @returns if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype);
 

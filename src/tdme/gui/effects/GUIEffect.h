@@ -64,21 +64,21 @@ public:
 	virtual ~GUIEffect();
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline EffectType getType() const {
 		return type;
 	}
 
 	/**
-	 * @return active
+	 * @returns active
 	 */
 	inline bool isActive() const {
 		return active;
 	}
 
 	/**
-	 * @return time total
+	 * @returns time total
 	 */
 	inline float getTimeTotal() const {
 		return timeTotal;
@@ -93,7 +93,7 @@ public:
 	}
 
 	/**
-	 * @return repeat count or -1 for unlimited repeating
+	 * @returns repeat count or -1 for unlimited repeating
 	 */
 	inline int getRepeat() const {
 		return repeat;
@@ -108,7 +108,7 @@ public:
 	}
 
 	/**
-	 * @return yoyo
+	 * @returns yoyo
 	 */
 	inline float isYoyo() const {
 		return yoyo;
@@ -123,7 +123,7 @@ public:
 	}
 
 	/**
-	 * @return if this effect is persistant, means if duration is reached this effect will still remain until removal
+	 * @returns if this effect is persistant, means if duration is reached this effect will still remain until removal
 	 */
 	inline float isPersistant() const {
 		return persistant;
@@ -138,7 +138,7 @@ public:
 	}
 
 	/**
-	 * @return action to be performed on effect end
+	 * @returns action to be performed on effect end
 	 */
 	inline Action* getAction() const {
 		return action.get();
@@ -165,7 +165,7 @@ public:
 	/**
 	 * Updates the effect to GUI rendererBackend and updates time
 	 * @param guiRenderer GUI renderer
-	 * @return if action should be called
+	 * @returns if action should be called
 	 */
 	virtual bool update(GUIRenderer* guiRenderer);
 

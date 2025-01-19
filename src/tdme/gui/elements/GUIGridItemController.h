@@ -54,7 +54,7 @@ private:
 	GUIGridItemController(GUINode* node);
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	inline bool isSelected() {
 		return selected;
@@ -76,7 +76,7 @@ private:
 	void toggle();
 
 	/**
-	 * @return is focussed
+	 * @returns is focussed
 	 */
 	inline bool isFocussed() {
 		return focussed;

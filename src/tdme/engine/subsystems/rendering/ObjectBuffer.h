@@ -49,7 +49,7 @@ public:
 	/**
 	 * Get byte buffer for given context
 	 * @param bytes bytes
-	 * @return byte buffer
+	 * @returns byte buffer
 	 */
 	static ByteBuffer* getByteBuffer(int contextIdx, int32_t bytes);
 

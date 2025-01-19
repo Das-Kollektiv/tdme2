@@ -143,35 +143,35 @@ public:
 		{}
 
 		/**
-		 * @return id
+		 * @returns id
 		 */
 		inline const string& getId() {
 			return id;
 		}
 
 		/**
-		 * @return id
+		 * @returns id
 		 */
 		inline const string& getName() {
 			return name;
 		}
 
 		/**
-		 * @return tab type
+		 * @returns tab type
 		 */
 		inline TabType getType() {
 			return type;
 		}
 
 		/**
-		 * @return tab view
+		 * @returns tab view
 		 */
 		inline TabView* getTabView() {
 			return tabView.get();
 		}
 
 		/**
-		 * @return frame buffer GUI node
+		 * @returns frame buffer GUI node
 		 */
 		inline GUIImageNode* getFrameBufferNode() {
 			return frameBufferNode;
@@ -219,63 +219,63 @@ private:
 		FileOpenThread(const string& tabId, FileType fileType, const string& absoluteFileName): Thread("FileOpenThread"), tabId(tabId), fileType(fileType), absoluteFileName(absoluteFileName) {}
 
 		/**
-		 * @return tab id
+		 * @returns tab id
 		 */
 		inline const string& getTabId() {
 			return tabId;
 		}
 
 		/**
-		 * @return file type
+		 * @returns file type
 		 */
 		inline FileType getFileType() {
 			return fileType;
 		}
 
 		/**
-		 * @return absolute filename
+		 * @returns absolute filename
 		 */
 		inline const string& getAbsoluteFileName() {
 			return absoluteFileName;
 		}
 
 		/**
-		 * @return error message
+		 * @returns error message
 		 */
 		inline const string& getErrorMessage() {
 			return errorMessage;
 		}
 
 		/**
-		 * @return progress
+		 * @returns progress
 		 */
 		inline float getProgress() {
 			return progress;
 		}
 
 		/**
-		 * @return prototype
+		 * @returns prototype
 		 */
 		inline unique_ptr<Prototype>& getPrototype() {
 			return prototype;
 		}
 
 		/**
-		 * @return scene
+		 * @returns scene
 		 */
 		inline unique_ptr<Scene>& getScene() {
 			return scene;
 		}
 
 		/**
-		 * @return if error occurred during opening files
+		 * @returns if error occurred during opening files
 		 */
 		inline bool isError() {
 			return error;
 		}
 
 		/**
-		 * @return if thread has finished
+		 * @returns if thread has finished
 		 */
 		inline bool isFinished() {
 			return finished;
@@ -320,35 +320,35 @@ private:
 		ScanFilesThread(EditorScreenController* editorScreenController, const string& pathName, const string& searchTerm): Thread("ScanFilesThread"), editorScreenController(editorScreenController), pathName(pathName), searchTerm(searchTerm) {}
 
 		/**
-		 * @return path name
+		 * @returns path name
 		 */
 		inline const string& getPathName() {
 			return pathName;
 		}
 
 		/**
-		 * @return error message
+		 * @returns error message
 		 */
 		inline const string& getErrorMessage() {
 			return errorMessage;
 		}
 
 		/**
-		 * @return progress
+		 * @returns progress
 		 */
 		inline float getProgress() {
 			return progress;
 		}
 
 		/**
-		 * @return if error occurred during opening files
+		 * @returns if error occurred during opening files
 		 */
 		inline bool isError() {
 			return error;
 		}
 
 		/**
-		 * @return if thread has finished
+		 * @returns if thread has finished
 		 */
 		inline bool isFinished() {
 			return finished;
@@ -391,7 +391,7 @@ private:
 	}
 
 	/**
-	 * @return file entities
+	 * @returns file entities
 	 */
 	inline vector<unique_ptr<FileEntity>>& getFileEntities() {
 		return fileEntities;
@@ -437,7 +437,7 @@ public:
 	void onDragRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
-	 * @return project path
+	 * @returns project path
 	 */
 	const string& getProjectPath() {
 		return projectPath;
@@ -580,7 +580,7 @@ public:
 	void restoreOutlinerState(const TabView::OutlinerState& outlinerState);
 
 	/**
-	 * @return outliner selection
+	 * @returns outliner selection
 	 */
 	const string getOutlinerSelection();
 
@@ -609,7 +609,7 @@ public:
 	void setDetailsContent(const string& xml);
 
 	/**
-	 * @return is full screen
+	 * @returns is full screen
 	 */
 	bool isFullScreen();
 
@@ -657,13 +657,13 @@ public:
 	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height);
 
 	/**
-	 * @return selected tab id
+	 * @returns selected tab id
 	 */
 	const string getSelectedTabId();
 
 	/**
 	 * Returns editor tabs
-	 * @return tabs
+	 * @returns tabs
 	 */
 	inline vector<EditorTabView*>& getTabs() {
 		return tabViewVector;
@@ -672,7 +672,7 @@ public:
 	/**
 	 * Returns editor tab view by given tab id
 	 * @param tabId editor tab id
-	 * @return tab
+	 * @returns tab
 	 */
 	inline EditorTabView* getTab(const string& tabId) {
 		auto tabViewIt = tabViews.find(tabId);
@@ -683,7 +683,7 @@ public:
 	}
 
 	/**
-	 * @return selected tab
+	 * @returns selected tab
 	 */
 	inline EditorTabView* getSelectedTab() {
 		return getTab(getSelectedTabId());
@@ -691,7 +691,7 @@ public:
 
 	/**
 	 * Get tab at given index
-	 * @return tab at given index
+	 * @returns tab at given index
 	 */
 	inline EditorTabView* getTabAt(int idx) {
 		if (idx < 0 || idx >= tabViewVector.size()) return nullptr;
@@ -705,14 +705,14 @@ public:
 	bool selectTab(const string& tabId);
 
 	/**
-	 * @return tab count
+	 * @returns tab count
 	 */
 	inline int getTabCount() {
 		return tabViewVector.size();
 	}
 
 	/**
-	 * @return selected tab index
+	 * @returns selected tab index
 	 */
 	int getSelectedTabIdx();
 
@@ -737,14 +737,14 @@ public:
 	 * @param dropX drop x
 	 * @param dropY drop y
 	 * @param nodeId node id
-	 * @return drop is on node or not
+	 * @returns drop is on node or not
 	 */
 	bool isDropOnNode(int dropX, int dropY, const string& nodeId);
 
 	/**
 	 * Returns relative path within project path
 	 * @param absoluteFileName absolute file name
-	 * @return relative path within project path
+	 * @returns relative path within project path
 	 */
 	inline const string getRelativePath(const string& absoluteFileName) {
 		auto absoluteFileNameUnix = StringTools::replace(absoluteFileName, "\\", "/");

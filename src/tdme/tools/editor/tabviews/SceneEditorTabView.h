@@ -177,21 +177,21 @@ public:
 	virtual ~SceneEditorTabView();
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return scene
+	 * @returns scene
 	 */
 	inline Scene* getScene() {
 		return scene.get();
@@ -363,7 +363,7 @@ public:
 	 * Apply base information
 	 * @param name name
 	 * @param description description
-	 * @return success
+	 * @returns success
 	 */
 	bool applyBase(const string& name, const string& description);
 
@@ -402,7 +402,7 @@ public:
 	void removeGrid();
 
 	/**
-	 * @return grid enabled
+	 * @returns grid enabled
 	 */
 	bool isGridEnabled();
 
@@ -412,7 +412,7 @@ public:
 	void setGridEnabled(bool gridEnabled);
 
 	/**
-	 * @return grid y
+	 * @returns grid y
 	 */
 	float getGridY();
 
@@ -450,7 +450,7 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1);
 
@@ -459,7 +459,7 @@ public:
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
-	 * @return entity
+	 * @returns entity
 	 */
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1);
 

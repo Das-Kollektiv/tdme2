@@ -141,7 +141,7 @@ public:
 	void setTextureMatrix(const Matrix3x3& textureMatrix);
 
 	/**
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	const GUIColor& getEffectColorMul();
 
@@ -152,7 +152,7 @@ public:
 	void setEffectColorMul(const GUIColor& effectColorMul);
 
 	/**
-	 * @return effect color add
+	 * @returns effect color add
 	 */
 	const GUIColor& getEffectColorAdd();
 
@@ -163,7 +163,7 @@ public:
 	void setEffectColorAdd(const GUIColor& effectColorAdd);
 
 	/**
-	 * @return clipping
+	 * @returns clipping
 	 */
 	GUINode_Clipping& getClipping();
 
@@ -178,7 +178,7 @@ public:
 	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
 
 	/**
-	 * @return mask source
+	 * @returns mask source
 	 */
 	const string& getMask();
 
@@ -189,7 +189,7 @@ public:
 	void setMask(const string& mask);
 
 	/**
-	 * @return maximum value of mask to display image
+	 * @returns maximum value of mask to display image
 	 */
 	float getMaskMaxValue() {
 		return maskMaxValue;

@@ -45,63 +45,63 @@ public:
 	}
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	uint32_t getId() {
 		return id;
 	}
 
 	/**
-	 * @return x location on the sprite sheet
+	 * @returns x location on the sprite sheet
 	 */
 	float getX() {
 		return x;
 	}
 
 	/**
-	 * @return y location on the sprite sheet
+	 * @returns y location on the sprite sheet
 	 */
 	float getY() {
 		return y;
 	}
 
 	/**
-	 * @return width of the character image
+	 * @returns width of the character image
 	 */
 	float getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height of the character image
+	 * @returns height of the character image
 	 */
 	float getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return the amount the x position should be offset when drawing the image
+	 * @returns the amount the x position should be offset when drawing the image
 	 */
 	float getXOffset() {
 		return xOffset;
 	}
 
 	/**
-	 * @return the amount the y position should be offset when drawing the image
+	 * @returns the amount the y position should be offset when drawing the image
 	 */
 	float getYOffset() {
 		return yOffset;
 	}
 
 	/**
-	 * @return the amount to move the current position after drawing the character
+	 * @returns the amount to move the current position after drawing the character
 	 */
 	float getXAdvance() {
 		return xAdvance;
 	}
 
 	/**
-	 * @return if the character is rotated in texture atlas
+	 * @returns if the character is rotated in texture atlas
 	 */
 	bool isRotated() {
 		return rotated;

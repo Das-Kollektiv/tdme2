@@ -84,27 +84,27 @@ public:
 	void onTooltipCloseRequest() override;
 
 	/**
-	 * @return find text
+	 * @returns find text
 	 */
 	const string getFindText();
 
 	/**
-	 * @return replace text
+	 * @returns replace text
 	 */
 	const string getReplaceText();
 
 	/**
-	 * @return is match case checked
+	 * @returns is match case checked
 	 */
 	bool isMatchCase();
 
 	/**
-	 * @return is whole world only checked
+	 * @returns is whole world only checked
 	 */
 	bool isWholeWordOnly();
 
 	/**
-	 * @return is in selection only checked
+	 * @returns is in selection only checked
 	 */
 	bool isInSelectionOnly();
 

@@ -40,7 +40,7 @@ public:
 	GUIColorEffect(GUINode* guiNode);
 
 	/**
-	 * @return color add
+	 * @returns color add
 	 */
 	inline const GUIColor& getColorAdd() const {
 		return originalEndState.colorAdd;
@@ -55,7 +55,7 @@ public:
 	}
 
 	/**
-	 * @return color mul
+	 * @returns color mul
 	 */
 	inline const GUIColor& getColorMul() const {
 		return originalEndState.colorMul;
@@ -70,7 +70,7 @@ public:
 	}
 
 	/**
-	 * @return start color add
+	 * @returns start color add
 	 */
 	inline const GUIColor& getStartColorAdd() const {
 		return originalStartState.colorAdd;
@@ -85,7 +85,7 @@ public:
 	}
 
 	/**
-	 * @return start color mul
+	 * @returns start color mul
 	 */
 	inline const GUIColor& getStartColorMul() const {
 		return originalStartState.colorMul;

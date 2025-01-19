@@ -65,21 +65,21 @@ public:
 	~Camera();
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return camera mode
+	 * @returns camera mode
 	 */
 	inline CameraMode getCameraMode() const {
 		return cameraMode;
@@ -94,7 +94,7 @@ public:
 	}
 
 	/**
-	 * @return frustum mode
+	 * @returns frustum mode
 	 */
 	inline FrustumMode getFrustumMode() const {
 		return frustumMode;
@@ -109,7 +109,7 @@ public:
 	}
 
 	/**
-	 * @return orthographic frustum scale
+	 * @returns orthographic frustum scale
 	 */
 	inline float getOrthographicFrustumScale() const {
 		return orthographicFrustumScale;
@@ -124,7 +124,7 @@ public:
 	}
 
 	/**
-	 * @return field of view X
+	 * @returns field of view X
 	 */
 	inline float getFovX() const {
 		return fovX;
@@ -139,7 +139,7 @@ public:
 	}
 
 	/**
-	 * @return float
+	 * @returns float
 	 */
 	inline float getZNear() const {
 		return zNear;
@@ -154,7 +154,7 @@ public:
 	}
 
 	/**
-	 * @return float
+	 * @returns float
 	 */
 	inline float getZFar() const {
 		return zFar;
@@ -169,7 +169,7 @@ public:
 	}
 
 	/**
-	 * @return up vector
+	 * @returns up vector
 	 */
 	inline const Vector3& getUpVector() const {
 		return upVector;
@@ -184,7 +184,7 @@ public:
 	}
 
 	/**
-	 * @return forward vector
+	 * @returns forward vector
 	 */
 	inline const Vector3& getForwardVector() const {
 		return forwardVector;
@@ -199,7 +199,7 @@ public:
 	}
 
 	/**
-	 * @return side vector
+	 * @returns side vector
 	 */
 	inline const Vector3& getSideVector() const {
 		return sideVector;
@@ -214,7 +214,7 @@ public:
 	}
 
 	/**
-	 * @return look from vector
+	 * @returns look from vector
 	 */
 	inline const Vector3& getLookFrom() const {
 		return lookFrom;
@@ -229,7 +229,7 @@ public:
 	}
 
 	/**
-	 * @return look at vector
+	 * @returns look at vector
 	 */
 	inline const Vector3& getLookAt() const {
 		return lookAt;
@@ -244,35 +244,35 @@ public:
 	}
 
 	/**
-	 * @return camera matrix
+	 * @returns camera matrix
 	 */
 	inline const Matrix4x4& getCameraMatrix() const {
 		return cameraMatrix;
 	}
 
 	/**
-	 * @return projection matrix
+	 * @returns projection matrix
 	 */
 	inline const Matrix4x4& getProjectionMatrix() const {
 		return projectionMatrix;
 	}
 
 	/**
-	 * @return model view projection matrix
+	 * @returns model view projection matrix
 	 */
 	inline const Matrix4x4& getModelViewProjectionMatrix() const {
 		return mvpMatrix;
 	}
 
 	/**
-	 * @return inverted model view porjection matrix
+	 * @returns inverted model view porjection matrix
 	 */
 	inline const Matrix4x4& getModelViewProjectionInvertedMatrix() const {
 		return mvpInvertedMatrix;
 	}
 
 	/**
-	 * @return frustum
+	 * @returns frustum
 	 */
 	inline Frustum* getFrustum() {
 		return frustum.get();
@@ -282,7 +282,7 @@ public:
 	 * Computes the up vector for given look from and look at vectors
 	 * @param lookFrom look from
 	 * @param lookAt look at
-	 * @return up vector
+	 * @returns up vector
 	 */
 	static Vector3 computeUpVector(const Vector3& lookFrom, const Vector3& lookAt);
 
@@ -298,13 +298,13 @@ private:
 
 	/**
 	 * Computes the projection matrix
-	 * @return projection matrix
+	 * @returns projection matrix
 	 */
 	Matrix4x4& computeProjectionMatrix();
 
 	/**
 	 * Computes projection matrix for given look from, look at and up vector
-	 * @return model view matrix
+	 * @returns model view matrix
 	 */
 	Matrix4x4& computeModelViewMatrix();
 

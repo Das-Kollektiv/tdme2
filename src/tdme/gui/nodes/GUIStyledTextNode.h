@@ -159,14 +159,14 @@ private:
 	bool editMode { false };
 
 	/**
-	 * @return edit mode
+	 * @returns edit mode
 	 */
 	inline bool isEditMode() {
 		return editMode;
 	}
 
 	/**
-	 * @return edit mode
+	 * @returns edit mode
 	 */
 	inline void setEditMode(bool editMode) {
 		this->editMode = editMode;
@@ -193,7 +193,7 @@ private:
 	void setSelectionIndexMousePosition(int x, int y);
 
 	/**
-	 * @return URL areas
+	 * @returns URL areas
 	 */
 	inline const vector<URLArea>& getURLAreas() {
 		return urlAreas;
@@ -201,13 +201,13 @@ private:
 
 	/**
 	 * Do page up
-	 * @return cursor index
+	 * @returns cursor index
 	 */
 	int doPageUp();
 
 	/**
 	 * Do page down
-	 * @return cursor index
+	 * @returns cursor index
 	 */
 	int doPageDown();
 
@@ -216,7 +216,7 @@ private:
 	 * @param lineCharIdxs line character indices
 	 * @param lineCharIdx line character idx
 	 * @param textStyleIdx text style to start looking up with, will also be written
-	 * @return text style
+	 * @returns text style
 	 */
 	inline TextStyle* getTextStyle(const vector<int>& lineCharIdxs, int lineCharIdx, int& textStyleIdx) {
 		if (styles.empty() == true) return nullptr;
@@ -335,28 +335,28 @@ public:
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
-	 * @return if is editable
+	 * @returns if is editable
 	 */
 	inline bool isEditable() {
 		return editable;
 	}
 
 	/**
-	 * @return index position x
+	 * @returns index position x
 	 */
 	inline int getIndexPositionX() {
 		return indexPositionX;
 	}
 
 	/**
-	 * @return index position x
+	 * @returns index position x
 	 */
 	inline int getIndexPositionY() {
 		return indexPositionY;
 	}
 
 	/**
-	 * @return text
+	 * @returns text
 	 */
 	inline const MutableString& getText() const {
 		return text;
@@ -467,7 +467,7 @@ public:
 	}
 
 	/**
-	 * @return text size
+	 * @returns text size
 	 */
 	inline int getTextLength() {
 		return text.length();
@@ -477,7 +477,7 @@ public:
 	 * Remove characters at idx with given length
 	 * @param idx idx
 	 * @param count length
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	void removeText(int32_t idx, int32_t count);
 
@@ -485,7 +485,7 @@ public:
 	 * Insert character c at idx
 	 * @param idx index
 	 * @param c char
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	void insertText(int32_t idx, int c);
 
@@ -493,7 +493,7 @@ public:
 	 * Insert string at idx
 	 * @param idx index
 	 * @param s string
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	void insertText(int32_t idx, const string& s);
 

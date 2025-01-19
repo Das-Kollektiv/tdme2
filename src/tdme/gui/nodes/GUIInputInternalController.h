@@ -73,21 +73,21 @@ private:
 	GUIInputInternalController(GUINode* node);
 
 	/**
-	 * @return index
+	 * @returns index
 	 */
 	inline int getIndex() {
 		return index;
 	}
 
 	/**
-	 * @return selection index
+	 * @returns selection index
 	 */
 	inline int getSelectionIndex() {
 		return selectionIndex;
 	}
 
 	/**
-	 * @return offset
+	 * @returns offset
 	 */
 	inline int getOffset() {
 		return offset;
@@ -99,7 +99,7 @@ private:
 	void resetCursorMode();
 
 	/**
-	 * @return cursor mode
+	 * @returns cursor mode
 	 */
 	CursorMode getCursorMode();
 
@@ -120,7 +120,7 @@ public:
 	void formatText();
 
 	/**
-	 * @return show cursor
+	 * @returns show cursor
 	 */
 	bool isShowCursor();
 

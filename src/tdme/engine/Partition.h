@@ -47,7 +47,7 @@ struct tdme::engine::Partition
 	/**
 	 * Get visible entities
 	 * @param frustum frustum
-	 * @return visible entities
+	 * @returns visible entities
 	 */
 	virtual const vector<Entity*>& getVisibleEntities(Frustum* frustum) = 0;
 
@@ -55,7 +55,7 @@ struct tdme::engine::Partition
 	 * Check if entity is visible
 	 * @param frustum frustum
 	 * @param entity entity
-	 * @return if entity has been determined to be visible by last getVisibleEntities() call
+	 * @returns if entity has been determined to be visible by last getVisibleEntities() call
 	 */
 	virtual bool isVisibleEntity(Entity* entity) = 0;
 

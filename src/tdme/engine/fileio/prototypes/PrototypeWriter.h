@@ -35,7 +35,7 @@ private:
 	 * @param jLodLevelRoot JSON LOD level root value
 	 * @param lodLevel lod level
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return json root
+	 * @returns json root
 	 */
 	static void writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel, bool useBC7TextureCompression);
 

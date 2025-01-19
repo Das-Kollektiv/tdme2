@@ -41,7 +41,7 @@ public:
 	 * Get property value by key
 	 * @param key key
 	 * @param defaultValue default value
-	 * @return value if found or default value
+	 * @returns value if found or default value
 	 */
 	inline const string& get(const string& key, const string& defaultValue) const {
 		auto it = properties.find(key);
@@ -78,7 +78,7 @@ public:
 	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr) const;
 
 	/**
-	 * @return properties map
+	 * @returns properties map
 	 */
 	inline const unordered_map<string, string>& getProperties() {
 		return properties;

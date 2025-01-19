@@ -53,7 +53,7 @@ public:
 	ObjectNodeRenderer(ObjectNode* objectNode);
 
 	/**
-	 * @return if preRender call is required
+	 * @returns if preRender call is required
 	 */
 	inline bool needsPreRender() {
 		return haveVBOs == false || objectNode->mesh->hasRecreatedBuffers() == true || objectNode->mesh->node->hasUpdate();

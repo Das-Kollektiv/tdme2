@@ -37,7 +37,7 @@ public:
 	}
 
 	/**
-	 * @return distance
+	 * @returns distance
 	 */
 	inline float getDistance() {
 		return distance;
@@ -52,14 +52,14 @@ public:
 	}
 
 	/**
-	 * @return penetration
+	 * @returns penetration
 	 */
 	inline float getPenetration() {
 		return -distance;
 	}
 
 	/**
-	 * @return normal
+	 * @returns normal
 	 */
 	inline const Vector3& getNormal() {
 		return normal;
@@ -86,7 +86,7 @@ public:
 	}
 
 	/**
-	 * @return hit point count
+	 * @returns hit point count
 	 */
 	inline int32_t getHitPointCount() {
 		return hitPoints.size();
@@ -95,7 +95,7 @@ public:
 	/**
 	 * Get hit point of given index
 	 * @param idx index
-	 * @return hit point for given hit points index
+	 * @returns hit point for given hit points index
 	 */
 	inline Vector3& getHitPoint(int32_t idx) {
 		return hitPoints[idx];

@@ -75,28 +75,28 @@ public:
 	virtual ~FrameBuffer();
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return frame buffer id
+	 * @returns frame buffer id
 	 */
 	inline int32_t getId() {
 		return frameBufferId;
 	}
 
 	/**
-	 * @return depth buffer texture id
+	 * @returns depth buffer texture id
 	 */
 	inline int32_t getDepthBufferTextureId() {
 		return depthBufferTextureId;
@@ -111,7 +111,7 @@ public:
 	}
 
 	/**
-	 * @return color buffer texture id
+	 * @returns color buffer texture id
 	 */
 	inline int32_t getColorBufferTextureId() {
 		return colorBufferTextureId;

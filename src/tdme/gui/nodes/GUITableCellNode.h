@@ -97,7 +97,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param factor factor
-	 * @return requested constraints
+	 * @returns requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 

@@ -41,7 +41,7 @@ public:
 	~FrameBufferRenderShader();
 
 	/**
-	 * @return if initialized and ready to use
+	 * @returns if initialized and ready to use
 	 */
 	bool isInitialized();
 
@@ -66,14 +66,14 @@ public:
 	void unUseProgram();
 
 	/**
-	 * @return vertices VBO
+	 * @returns vertices VBO
 	 */
 	inline int32_t getVBOVertices() {
 		return vboVertices;
 	}
 
 	/**
-	 * @return texture coordinates VBO
+	 * @returns texture coordinates VBO
 	 */
 	inline int32_t getVBOTextureCoordinates() {
 		return vboTextureCoordinates;

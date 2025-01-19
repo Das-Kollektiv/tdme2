@@ -42,7 +42,7 @@ public:
 	~PrototypeAudio();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
@@ -57,7 +57,7 @@ public:
 	}
 
 	/**
-	 * @return animation
+	 * @returns animation
 	 */
 	inline const string& getAnimation() {
 		return animation;
@@ -72,7 +72,7 @@ public:
 	}
 
 	/**
-	 * @return file name
+	 * @returns file name
 	 */
 	inline const string& getFileName() const {
 		return fileName;
@@ -87,7 +87,7 @@ public:
 	}
 
 	/**
-	 * @return gain
+	 * @returns gain
 	 */
 	inline float getGain() const {
 		return gain;
@@ -102,7 +102,7 @@ public:
 	}
 
 	/**
-	 * @return pitch
+	 * @returns pitch
 	 */
 	inline float getPitch() const {
 		return pitch;
@@ -117,7 +117,7 @@ public:
 	}
 
 	/**
-	 * @return offset in ms
+	 * @returns offset in ms
 	 */
 	inline int getOffset() const {
 		return offset;
@@ -132,7 +132,7 @@ public:
 	}
 
 	/**
-	 * @return is looping
+	 * @returns is looping
 	 */
 	inline bool isLooping() const {
 		return looping;
@@ -147,7 +147,7 @@ public:
 	}
 
 	/**
-	 * @return fixed
+	 * @returns fixed
 	 */
 	inline bool isFixed() const {
 		return fixed;

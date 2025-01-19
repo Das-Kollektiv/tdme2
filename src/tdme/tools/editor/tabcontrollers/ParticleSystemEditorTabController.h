@@ -208,21 +208,21 @@ public:
 	virtual ~ParticleSystemEditorTabController();
 
 	/**
-	 * @return display sub screen controller
+	 * @returns display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
 		return prototypeDisplaySubController.get();
 	}
 
 	/**
-	 * @return pyhsics sub screen controller
+	 * @returns pyhsics sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
 		return prototypePhysicsSubController.get();
 	}
 
 	/**
-	 * @return prototype sounds sub screen controller
+	 * @returns prototype sounds sub screen controller
 	 */
 	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
 		return prototypeSoundsSubController.get();
@@ -230,7 +230,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline ParticleSystemEditorTabView* getView() {
 		return view;

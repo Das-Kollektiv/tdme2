@@ -22,7 +22,7 @@ struct tdme::engine::logics::NewClientLogic {
 	 * Handle new client
 	 * @param clientId client id
 	 * @param hostName host name
-	 * @return success
+	 * @returns success
 	 */
 	virtual bool handleNewClient(const string& clientId, const string& hostName) = 0;
 

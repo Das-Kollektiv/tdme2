@@ -41,7 +41,7 @@ public:
 	/**
 	 * Returns specific atlas texture index within atlas
 	 * @param texture texture
-	 * @return atlas texture id
+	 * @returns atlas texture id
 	 */
 	inline int getTextureIdx(Texture* texture) {
 		auto it = textureToAtlasTextureIdxMapping.find(texture);
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Add texture
 	 * @param texture texture
-	 * @return atlas texture id
+	 * @returns atlas texture id
 	 */
 	int addTexture(Texture* texture);
 
@@ -70,14 +70,14 @@ public:
 	void update();
 
 	/**
-	 * @return is requiring update
+	 * @returns is requiring update
 	 */
 	inline bool isRequiringUpdate() {
 		return requiresUpdate;
 	}
 
 	/**
-	 * @return atlas texture
+	 * @returns atlas texture
 	 */
 	inline Texture* getAtlasTexture() {
 		return atlasTexture;

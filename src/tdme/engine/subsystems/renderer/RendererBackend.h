@@ -209,7 +209,7 @@ public:
 	virtual ~RendererBackend();
 
 	/**
-	 * @return renderer backend type
+	 * @returns renderer backend type
 	 */
 	inline RendererType getRendererType() {
 		return rendererType;
@@ -243,95 +243,95 @@ public:
 	virtual void finishFrame() = 0;
 
 	/**
-	 * @return vendor
+	 * @returns vendor
 	 */
 	virtual const string getVendor() = 0;
 
 	/**
-	 * @return renderer
+	 * @returns renderer
 	 */
 	virtual const string getRenderer() = 0;
 
 	/**
-	 * @return shader version e.g. gl2, gl3 or gles2
+	 * @returns shader version e.g. gl2, gl3 or gles2
 	 */
 	virtual const string getShaderVersion() = 0;
 
 	/**
-	 * @return if renderer backend is supporting multi threaded rendering
+	 * @returns if renderer backend is supporting multi threaded rendering
 	 */
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
 	/**
-	 * @return returns if texture compression is available
+	 * @returns returns if texture compression is available
 	 */
 	virtual bool isTextureCompressionAvailable() = 0;
 
 	/**
-	 * @return requires program attribute location
+	 * @returns requires program attribute location
 	 */
 	virtual bool isUsingProgramAttributeLocation() = 0;
 
 	/**
-	 * @return is supporting integer program attributes
+	 * @returns is supporting integer program attributes
 	 */
 	virtual bool isSupportingIntegerProgramAttributes() = 0;
 
 	/**
-	 * @return if specular mapping is supported
+	 * @returns if specular mapping is supported
 	 */
 	virtual bool isSpecularMappingAvailable() = 0;
 
 	/**
-	 * @return if normal mapping is supported
+	 * @returns if normal mapping is supported
 	 */
 	virtual bool isNormalMappingAvailable() = 0;
 
 	/**
 	 * Checks if instanced rendering is available
-	 * @return instance rendering availability
+	 * @returns instance rendering availability
 	 */
 	virtual bool isInstancedRenderingAvailable() = 0;
 
 	/**
-	 * @return if PBR lighting is supported
+	 * @returns if PBR lighting is supported
 	 */
 	virtual bool isPBRAvailable() = 0;
 
 	/**
-	 * @return if compute shaders are available
+	 * @returns if compute shaders are available
 	 */
 	virtual bool isComputeShaderAvailable() = 0;
 
 	/**
-	 * @return if OpenGL+CL is available
+	 * @returns if OpenGL+CL is available
 	 */
 	virtual bool isGLCLAvailable() = 0;
 
 	/**
-	 * @return Returns if renderer backend is using short indices, otherwise it uses int indices
+	 * @returns Returns if renderer backend is using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
 
 	/**
-	 * @return If deferred shading is available
+	 * @returns If deferred shading is available
 	 */
 	virtual bool isDeferredShadingAvailable() = 0;
 
 	/**
-	 * @return number of texture units
+	 * @returns number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;
 
 	/**
-	 * @return viewport width
+	 * @returns viewport width
 	 */
 	inline int32_t getViewPortWidth() {
 		return viewPortWidth;
 	}
 
 	/**
-	 * @return viewport height
+	 * @returns viewport height
 	 */
 	inline int32_t getViewPortHeight() {
 		return viewPortHeight;
@@ -344,7 +344,7 @@ public:
 	 * @param fileName file name
 	 * @param definitions preprocessor definitions
 	 * @param functions included functions
-	 * @return shader handle
+	 * @returns shader handle
 	 */
 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
 
@@ -358,7 +358,7 @@ public:
 	/**
 	 * Creates a shader program
 	 * @param type type
-	 * @return int
+	 * @returns int
 	 */
 	virtual int32_t createProgram(int type) = 0;
 
@@ -372,7 +372,7 @@ public:
 	/**
 	 * Links attached shaders to a program
 	 * @param programId program id
-	 * @return success
+	 * @returns success
 	 */
 	virtual bool linkProgram(int32_t programId) = 0;
 
@@ -380,7 +380,7 @@ public:
 	 * Returns location of given uniform variable
 	 * @param programId program id
 	 * @param name uniform name
-	 * @return
+	 * @returns
 	 */
 	virtual int32_t getProgramUniformLocation(int32_t programId, const string& name) = 0;
 
@@ -459,7 +459,7 @@ public:
 
 	/**
 	 * Get effect pass
-	 * @return effect pass
+	 * @returns effect pass
 	 */
 	inline int32_t getEffectPass() {
 		return effectPass;
@@ -475,7 +475,7 @@ public:
 
 	/**
 	 * Get shader prefix
-	 * @return shader prefix
+	 * @returns shader prefix
 	 */
 	inline const string& getShaderPrefix() {
 		return shaderPrefix;
@@ -492,7 +492,7 @@ public:
 	/**
 	 * Get current lighting model
 	 * @param contextIdx context index
-	 * @return lighting, see LIGHTING_*
+	 * @returns lighting, see LIGHTING_*
 	 */
 	inline int32_t getLighting(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -510,7 +510,7 @@ public:
 	}
 
 	/**
-	 * @return camera position
+	 * @returns camera position
 	 */
 	inline Vector3& getCameraPosition() {
 		return cameraPosition;
@@ -529,7 +529,7 @@ public:
 	virtual void updateViewPort() = 0;
 
 	/**
-	 * @return projection matrix
+	 * @returns projection matrix
 	 */
 	inline Matrix4x4& getProjectionMatrix() {
 		return projectionMatrix;
@@ -542,7 +542,7 @@ public:
 	virtual void onUpdateProjectionMatrix(int contextIdx) = 0;
 
 	/**
-	 * @return camera matrix
+	 * @returns camera matrix
 	 */
 	inline Matrix4x4& getCameraMatrix() {
 		return cameraMatrix;
@@ -555,7 +555,7 @@ public:
 	virtual void onUpdateCameraMatrix(int contextIdx) = 0;
 
 	/**
-	 * @return model view matrix or in some cases the model matrix
+	 * @returns model view matrix or in some cases the model matrix
 	 */
 	inline Matrix4x4& getModelViewMatrix() {
 		return modelViewMatrix;
@@ -568,7 +568,7 @@ public:
 	virtual void onUpdateModelViewMatrix(int contextIdx) = 0;
 
 	/**
-	 * @return view port matrix
+	 * @returns view port matrix
 	 */
 	inline Matrix4x4& getViewportMatrix() {
 		return viewportMatrix;
@@ -577,7 +577,7 @@ public:
 	/**
 	 * Get texture matrix
 	 * @param contextIdx context index
-	 * @return texture matrix
+	 * @returns texture matrix
 	 */
 	inline Matrix3x3& getTextureMatrix(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -682,7 +682,7 @@ public:
 
 	/**
 	 * Creates a texture
-	 * @return texture id
+	 * @returns texture id
 	 */
 	virtual int32_t createTexture() = 0;
 
@@ -692,7 +692,7 @@ public:
 	 * @param height height
 	 * @oaram cubeMapTextureId cube map texture id
 	 * @param cubeMapTextureIndex cube map texture index
-	 * @return depth texture id
+	 * @returns depth texture id
 	 */
 	virtual int32_t createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) = 0;
 
@@ -702,7 +702,7 @@ public:
 	 * @param height height
 	 * @oaram cubeMapTextureId cube map texture id
 	 * @param cubeMapTextureIndex cube map texture index
-	 * @return color buffer texture id
+	 * @returns color buffer texture id
 	 */
 	virtual int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) = 0;
 
@@ -710,7 +710,7 @@ public:
 	 * Creates a geometry buffer geometry texture
 	 * @param width width
 	 * @param height height
-	 * @return geometry buffer geometry texture id
+	 * @returns geometry buffer geometry texture id
 	 */
 	virtual int32_t createGBufferGeometryTexture(int32_t width, int32_t height) = 0;
 
@@ -718,7 +718,7 @@ public:
 	 * Creates a geometry buffer color RGBA texture
 	 * @param width width
 	 * @param height height
-	 * @return geometry buffer color RGBA texture id
+	 * @returns geometry buffer color RGBA texture id
 	 */
 	virtual int32_t createGBufferColorTexture(int32_t width, int32_t height) = 0;
 
@@ -746,7 +746,7 @@ public:
 	 * @param contextIdx context index
 	 * @param width width
 	 * @param height height
-	 * @return texture id
+	 * @returns texture id
 	 */
 	virtual int32_t createCubeMapTexture(int contextIdx, int32_t width, int32_t height) = 0;
 
@@ -771,7 +771,7 @@ public:
 	 * @param textureId texture id
 	 * @param width width
 	 * @param height height
-	 * @return geometry buffer geometry texture id
+	 * @returns geometry buffer geometry texture id
 	 */
 	virtual void resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) = 0;
 
@@ -780,7 +780,7 @@ public:
 	 * @param textureId texture id
 	 * @param width width
 	 * @param height height
-	 * @return geometry buffer color RGBA texture id
+	 * @returns geometry buffer color RGBA texture id
 	 */
 	virtual void resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) = 0;
 
@@ -817,7 +817,7 @@ public:
 	 * @param colorBufferTextureId color buffer texture id
 	 * @param cubeMapTextureId cube map texture id
 	 * @param cubeMapTextureIndex cube map texture index
-	 * @return frame buffer object id
+	 * @returns frame buffer object id
 	 */
 	virtual int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) = 0;
 
@@ -832,7 +832,7 @@ public:
 	 * @param colorBufferTextureId3 color buffer texture id 3
 	 * @param colorBufferTextureId4 color buffer texture id 4
 	 * @param colorBufferTextureId5 color buffer texture id 5
-	 * @return frame buffer object id
+	 * @returns frame buffer object id
 	 */
 	virtual int32_t createGeometryBufferObject(
 		int32_t depthBufferTextureId,
@@ -863,7 +863,7 @@ public:
 	 * @param buffers buffers
 	 * @param useGPUMemory use GPU memory
 	 * @param shared shared between different threads
-	 * @return ids
+	 * @returns ids
 	 */
 	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) = 0;
 
@@ -1097,7 +1097,7 @@ public:
 	/**
 	 * Get texture unit
 	 * @param contextIdx context index
-	 * @return active texture unit
+	 * @returns active texture unit
 	 */
 	virtual int32_t getTextureUnit(int contextIdx) = 0;
 
@@ -1112,7 +1112,7 @@ public:
 	 * Get light
 	 * @param contextIdx context index
 	 * @param lightId light id
-	 * @return light
+	 * @returns light
 	 */
 	inline Renderer_Light& getLight(int contextIdx, int32_t lightIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1129,7 +1129,7 @@ public:
 	/**
 	 * Get effect color mul
 	 * @param context
-	 * @return effect color mul
+	 * @returns effect color mul
 	 */
 	inline array<float, 4>& getEffectColorMul(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1139,7 +1139,7 @@ public:
 	/**
 	 * Get effect color add
 	 * @param context
-	 * @return effect color add
+	 * @returns effect color add
 	 */
 	inline array<float, 4>& getEffectColorAdd(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1155,7 +1155,7 @@ public:
 	/**
 	 * Get specular material
 	 * @param contextIdx context index
-	 * @return material
+	 * @returns material
 	 */
 	inline Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1165,7 +1165,7 @@ public:
 	/**
 	 * Get PBR material
 	 * @param contextIdx context index
-	 * @return material
+	 * @returns material
 	 */
 	inline Renderer_PBRMaterial& getPBRMaterial(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1207,7 +1207,7 @@ public:
 	/**
 	 * Get shader parameters
 	 * @param contextIdx context index
-	 * @return shader parameters
+	 * @returns shader parameters
 	 */
 	inline const EntityShaderParameters& getShaderParameters(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1234,7 +1234,7 @@ public:
 	 * Reads a pixel depth
 	 * @param x x
 	 * @param y y
-	 * @return depth 0.0f..1.0f
+	 * @returns depth 0.0f..1.0f
 	 */
 	virtual float readPixelDepth(int32_t x, int32_t y) = 0;
 
@@ -1244,7 +1244,7 @@ public:
 	 * @param y y
 	 * @param width width
 	 * @param height height
-	 * @return byte buffer
+	 * @returns byte buffer
 	 */
 	virtual ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
 
@@ -1338,7 +1338,7 @@ public:
 
 	/**
 	 * Get mask max value
-	 * @return mask max value
+	 * @returns mask max value
 	 */
 	inline float getMaskMaxValue(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1358,7 +1358,7 @@ public:
 	/**
 	 * Get environment mapping cube map position
 	 * @param contextIdx context index
-	 * @return environment mapping position
+	 * @returns environment mapping position
 	 */
 	inline array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
@@ -1392,7 +1392,7 @@ public:
 	virtual void setVSync(bool vSync) = 0;
 
 	/**
-	 * @return renderer backend statistics
+	 * @returns renderer backend statistics
 	 */
 	virtual const Renderer_Statistics getStatistics() = 0;
 

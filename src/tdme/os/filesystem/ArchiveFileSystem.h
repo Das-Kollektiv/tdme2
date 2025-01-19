@@ -64,7 +64,7 @@ public:
 	virtual ~ArchiveFileSystem();
 
 	/**
-	 * @return Returns underlying TDME2 archive file name
+	 * @returns Returns underlying TDME2 archive file name
 	 */
 	const string& getArchiveFileName();
 

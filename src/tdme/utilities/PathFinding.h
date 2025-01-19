@@ -97,7 +97,7 @@ public:
 	}
 
 	/**
-	 * @return step size
+	 * @returns step size
 	 */
 	inline float getStepSize() {
 		return stepSize;
@@ -116,7 +116,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @return path finding node id of given x, y, z position components
+	 * @returns path finding node id of given x, y, z position components
 	 */
 	inline const tuple<int, int, int> toId(float x, float y, float z) {
 		return toId(x, y, z, stepSize);
@@ -128,7 +128,7 @@ public:
 	 * @param y y
 	 * @param z z
 	 * @param stepSize step size
-	 * @return path finding node id of given x, y, z position components
+	 * @returns path finding node id of given x, y, z position components
 	 */
 	inline static const tuple<int, int, int> toId(float x, float y, float z, float stepSize) {
 		return tuple<int, int, int> {
@@ -159,7 +159,7 @@ public:
 	 * Returns integer position component
 	 * @param value value
 	 * @param stepSize step size
-	 * @return integer position component
+	 * @returns integer position component
 	 */
 	inline static int getIntegerPositionComponent(float value, float stepSize) {
 		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
@@ -168,7 +168,7 @@ public:
 	/**
 	 * Returns integer position component
 	 * @param value value
-	 * @return integer position component
+	 * @returns integer position component
 	 */
 	inline int getIntegerPositionComponent(float value) {
 		return getIntegerPositionComponent(value, stepSize);
@@ -179,7 +179,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @return string representation
+	 * @returns string representation
 	 */
 	inline static const tuple<int, int, int> toIdInt(int x, int y, int z) {
 		return tuple<int, int, int> {
@@ -198,7 +198,7 @@ public:
 	 * @param alternativeEndSteps alternative end steps
 	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
-	 * @return success
+	 * @returns success
 	 */
 	inline bool findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr) {
 		return findPathCustom(startPosition, endPosition, stepSize, 1.0f, collisionTypeIds, path, alternativeEndSteps, maxTriesOverride, customTest);
@@ -214,7 +214,7 @@ public:
 	 * @param alternativeEndSteps alternative end steps
 	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
-	 * @return success
+	 * @returns success
 	 */
 	inline bool findFlowMapPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr) {
 		return findPathCustom(startPosition, endPosition, flowMapStepSize, flowMapScaleActorBoundingVolumes, collisionTypeIds, path, alternativeEndSteps, maxTriesOverride, customTest);
@@ -231,7 +231,7 @@ public:
 	 * @param alternativeEndSteps alternative end steps
 	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
-	 * @return success
+	 * @returns success
 	 */
 	bool findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr);
 
@@ -246,7 +246,7 @@ public:
 	 * @param flowMapRequest flow map request
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @param ignoreStepUpMax ignore step up max
-	 * @return if cell is walkable
+	 * @returns if cell is walkable
 	 */
 	bool isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
@@ -260,7 +260,7 @@ public:
 	 * @param path path to test along
 	 * @param complete complete
 	 * @param customTest custom test
-	 * @return flow map
+	 * @returns flow map
 	 */
 	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), bool complete = true, PathFindingCustomTest* customTest = nullptr);
 
@@ -268,7 +268,7 @@ public:
 	 * Generate direct path from start to end
 	 * @param start start
 	 * @param end end
-	 * @return path nodes
+	 * @returns path nodes
 	 */
 	const vector<Vector3> generateDirectPath(const Vector3& start, const Vector3& end);
 private:
@@ -374,7 +374,7 @@ private:
 	 * Computes non square rooted distance between a and b
 	 * @param a node a
 	 * @param b node b
-	 * @return non square rooted distance
+	 * @returns non square rooted distance
 	 */
 	inline float computeDistance(const PathFindingNode* a, const PathFindingNode* b) {
 		return a->position.clone().sub(b->position).computeLengthSquared();
@@ -383,7 +383,7 @@ private:
 	/**
 	 * Computes minimal non square rooted distance between node and end point
 	 * @param node node
-	 * @return non square rooted distance
+	 * @returns non square rooted distance
 	 */
 	inline float computeDistanceToEnd(const PathFindingNode* node) {
 		return node->position.clone().sub(end.position).computeLengthSquared();
@@ -395,7 +395,7 @@ private:
 	 * @param bX b x coordinate
 	 * @param bY b y coordinate
 	 * @param bZ b z coordinate
-	 * @return if node a == node b
+	 * @returns if node a == node b
 	 */
 	inline bool equals(const PathFindingNode* a, float bX, float bY, float bZ) {
 		return a->position.clone().sub(Vector3(bX, bY, bZ)).computeLengthSquared() < Math::square(0.1f);
@@ -405,7 +405,7 @@ private:
 	 * Returns if nodes are equals for (last node test)
 	 * @param a a
 	 * @param lastNode b
-	 * @return if node a == node b
+	 * @returns if node a == node b
 	 */
 	inline bool equalsLastNode(const PathFindingNode* a, const PathFindingNode* b) {
 		return a->position.clone().sub(b->position).setY(0.0f).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f;
@@ -423,7 +423,7 @@ private:
 	 * @param customTest custom test
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @param ignoreStepUpMax ignore step up max
-	 * @return if cell is walkable
+	 * @returns if cell is walkable
 	 */
 	bool isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
@@ -439,7 +439,7 @@ private:
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
 	 * @param customTest custom test
 	 * @param collisionTypeIds collision type ids or 0 for default
-	 * @return if cell is walkable
+	 * @returns if cell is walkable
 	 */
 	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr, uint16_t collisionTypeIds = 0);
 
@@ -451,7 +451,7 @@ private:
 	 * @param nodesToTest nodes to test or nullptr, applies to flow cost map generation
 	 * @param flowMapRequest flow map request
 	 * @param customTest custom test
-	 * @return step status
+	 * @returns step status
 	 */
 	void step(PathFindingNode* node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash>* nodesToTest, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr);
 

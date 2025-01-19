@@ -26,7 +26,7 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	virtual ~PostProcessingShaderImplementation() {}
 
 	/**
-	 * @return initialized and ready to be used
+	 * @returns initialized and ready to be used
 	 */
 	virtual bool isInitialized() = 0;
 

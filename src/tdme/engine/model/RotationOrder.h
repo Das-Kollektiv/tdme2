@@ -55,70 +55,70 @@ public:
 	RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int axis0VectorIndex, int axis1VectorIndex, int axis2VectorIndex, int axisXIndex, int axisYIndex, int axisZIndex);
 
 	/**
-	 * @return axis 0
+	 * @returns axis 0
 	 */
 	inline const Vector3& getAxis0() const {
 		return axis0;
 	}
 
 	/**
-	 * @return axis 1
+	 * @returns axis 1
 	 */
 	inline const Vector3& getAxis1() const {
 		return axis1;
 	}
 
 	/**
-	 * @return axis 2
+	 * @returns axis 2
 	 */
 	inline const Vector3& getAxis2() const {
 		return axis2;
 	}
 
 	/**
-	 * @return axis 0 vector index
+	 * @returns axis 0 vector index
 	 */
 	inline int getAxis0VectorIndex() const {
 		return axis0VectorIndex;
 	}
 
 	/**
-	 * @return axis 1 vector index
+	 * @returns axis 1 vector index
 	 */
 	inline int getAxis1VectorIndex() const {
 		return axis1VectorIndex;
 	}
 
 	/**
-	 * @return axis 2 vector index
+	 * @returns axis 2 vector index
 	 */
 	inline int getAxis2VectorIndex() const {
 		return axis2VectorIndex;
 	}
 
 	/**
-	 * @return axis x index
+	 * @returns axis x index
 	 */
 	inline int getAxisXIndex() const {
 		return axisXIndex;
 	}
 
 	/**
-	 * @return axis y index
+	 * @returns axis y index
 	 */
 	inline int getAxisYIndex() const {
 		return axisYIndex;
 	}
 
 	/**
-	 * @return axis z index
+	 * @returns axis z index
 	 */
 	inline int getAxisZIndex() const {
 		return axisZIndex;
 	}
 
 	/**
-	 * @return rotation order by string
+	 * @returns rotation order by string
 	 */
 	static RotationOrder* valueOf(const string& a0);
 

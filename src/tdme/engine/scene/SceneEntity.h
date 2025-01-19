@@ -45,7 +45,7 @@ public:
 	~SceneEntity();
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return name;
@@ -60,7 +60,7 @@ public:
 	}
 
 	/**
-	 * @return description
+	 * @returns description
 	 */
 	inline const string& getDescription() {
 		return description;
@@ -75,14 +75,14 @@ public:
 	}
 
 	/**
-	 * @return transform
+	 * @returns transform
 	 */
 	inline Transform& getTransform() {
 		return transform;
 	}
 
 	/**
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototype() {
 		return prototype;
@@ -97,21 +97,21 @@ public:
 	}
 
 	/**
-	 * @return reflection environment mapping id
+	 * @returns reflection environment mapping id
 	 */
 	inline const string& getReflectionEnvironmentMappingId() {
 		return reflectionEnvironmentMappingId;
 	}
 
 	/**
-	 * @return reflection environment mapping id
+	 * @returns reflection environment mapping id
 	 */
 	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
 	}
 
 	/**
-	 * @return merged properties from entity and object
+	 * @returns merged properties from entity and object
 	 */
 	const BaseProperties* getTotalProperties();
 

@@ -61,7 +61,7 @@ public:
 	~ScenePropertyPresets();
 
 	/**
-	 * @return scene property presets instance
+	 * @returns scene property presets instance
 	 */
 	static ScenePropertyPresets* getInstance();
 
@@ -72,21 +72,21 @@ public:
 	void setDefaultSceneProperties(Scene* scene);
 
 	/**
-	 * @return scene properties preset
+	 * @returns scene properties preset
 	 */
 	inline const vector<BaseProperty*>& getScenePropertiesPreset() const {
 		return scenePropertiesPreset;
 	}
 
 	/**
-	 * @return entity property presets
+	 * @returns entity property presets
 	 */
 	inline const map<string, vector<BaseProperty*>>& getEntityPropertiesPresets() const {
 		return entityPropertiesPresetsMap;
 	}
 
 	/**
-	 * @return light presets
+	 * @returns light presets
 	 */
 	inline const map<string, SceneLight*>& getLightPresets() const {
 		return lightPresetsMap;
@@ -98,7 +98,7 @@ private:
 	 * Returns immediate children by tagnames of parent
 	 * @param parent parent
 	 * @param name name
-	 * @return children with given name
+	 * @returns children with given name
 	 */
 	const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 

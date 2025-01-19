@@ -88,7 +88,7 @@ protected:
 public:
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* getModel() {
 		return model;
@@ -111,7 +111,7 @@ public:
 	}
 
 	/**
-	 * @return node count
+	 * @returns node count
 	 */
 	int getNodeCount() const;
 
@@ -123,14 +123,14 @@ public:
 	void getTriangles(vector<Triangle>& triangles, int nodeIdx = -1);
 
 	/**
-	 * @return transformed faces iterator
+	 * @returns transformed faces iterator
 	 */
 	ObjectBase_TransformedFacesIterator* getTransformedFacesIterator();
 
 	/**
 	 * Returns object node mesh object
 	 * @param nodeId node id
-	 * @return object node mesh object
+	 * @returns object node mesh object
 	 */
 	ObjectNodeMesh* getMesh(const string& nodeId);
 
@@ -145,14 +145,14 @@ public:
 	virtual void dispose();
 
 	/**
-	 * @return maximum of instances
+	 * @returns maximum of instances
 	 */
 	inline int getInstances() {
 		return instances;
 	}
 
 	/**
-	 * @return current instance
+	 * @returns current instance
 	 */
 	inline int getCurrentInstance() {
 		return currentInstance;
@@ -167,7 +167,7 @@ public:
 	}
 
 	/**
-	 * @return current instance enabled
+	 * @returns current instance enabled
 	 */
 	inline bool getInstanceEnabled() {
 		return instanceEnabled[currentInstance];
@@ -229,7 +229,7 @@ public:
 	}
 
 	/**
-	 * @return active animation setup id
+	 * @returns active animation setup id
 	 */
 	inline const string getAnimation() {
 		return instanceAnimations[currentInstance]->getAnimation();
@@ -237,7 +237,7 @@ public:
 
 	/**
 	 * Returns current base animation time
-	 * @return 0.0 <= time <= 1.0
+	 * @returns 0.0 <= time <= 1.0
 	 */
 	inline float getAnimationTime() {
 		return instanceAnimations[currentInstance]->getAnimationTime();
@@ -246,7 +246,7 @@ public:
 	/**
 	 * Returns if there is currently running a overlay animation with given id
 	 * @param id id
-	 * @return animation is running
+	 * @returns animation is running
 	 */
 	inline bool hasOverlayAnimation(const string& id) {
 		return instanceAnimations[currentInstance]->hasOverlayAnimation(id);
@@ -255,7 +255,7 @@ public:
 	/**
 	 * Returns current overlay animation time
 	 * @param id id
-	 * @return 0.0 <= time <= 1.0
+	 * @returns 0.0 <= time <= 1.0
 	 */
 	inline float getOverlayAnimationTime(const string& id) {
 		return instanceAnimations[currentInstance]->getOverlayAnimationTime(id);
@@ -264,7 +264,7 @@ public:
 	/**
 	 * Returns transform matrix for given node
 	 * @param id node id
-	 * @return transform matrix or identity matrix if not found
+	 * @returns transform matrix or identity matrix if not found
 	 */
 	inline const Matrix4x4 getNodeTransformMatrix(const string& id) {
 		return instanceAnimations[currentInstance]->getNodeTransformMatrix(id);
@@ -288,7 +288,7 @@ public:
 	}
 
 	/**
-	 * @return this transform matrix
+	 * @returns this transform matrix
 	 */
 	inline const Matrix4x4& getTransformMatrix() const {
 		return currentTransformMatrix.set((parentTransform * instanceTransform[currentInstance]).getTransformMatrix());

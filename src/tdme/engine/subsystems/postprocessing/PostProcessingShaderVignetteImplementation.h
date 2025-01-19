@@ -23,7 +23,7 @@ public:
 	/**
 	 * Returns if shader is supported in given renderer backend
 	 * @param rendererBackend renderer backend
-	 * @return if shader is supported
+	 * @returns if shader is supported
 	 */
 	static bool isSupported(RendererBackend* rendererBackend);
 

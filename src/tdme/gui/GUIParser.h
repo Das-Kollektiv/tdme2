@@ -53,14 +53,14 @@ private:
 public:
 
 	/**
-	 * @return engine theme properties
+	 * @returns engine theme properties
 	 */
 	inline static const Properties* getEngineThemeProperties() {
 		return &engineThemeProperties;
 	}
 
 	/**
-	 * @return project theme properties
+	 * @returns project theme properties
 	 */
 	inline static const Properties* getProjectThemeProperties() {
 		return &projectThemeProperties;
@@ -90,7 +90,7 @@ public:
 	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
 	 * @param context application logic context
-	 * @return GUI screen node
+	 * @returns GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
@@ -105,7 +105,7 @@ public:
 	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
 	 * @param context application logic context
-	 * @return GUI screen node
+	 * @returns GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
@@ -163,14 +163,14 @@ private:
 	 * Returns immediate children tags
 	 * @param parent parent
 	 * @param name name
-	 * @return children of parent node with given name
+	 * @returns children of parent node with given name
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/**
 	 * Get inner XML
 	 * @param node node
-	 * @return string
+	 * @returns string
 	 */
 	static const string getInnerXml(TiXmlElement* node);
 
@@ -200,7 +200,7 @@ private:
 	 * Parse factor
 	 * @param guiParentNode gui parent node
 	 * @param factor factor
-	 * @return factor
+	 * @returns factor
 	 */
 	static int parseFactor(GUIParentNode* guiParentNode, const string& factor);
 
@@ -208,7 +208,7 @@ private:
 	 * Parse integer
 	 * @param value value
 	 * @param defaultValue default value
-	 * @return size
+	 * @returns size
 	 */
 	static int parseInteger(const string& value, int defaultValue);
 
@@ -217,28 +217,28 @@ public:
 	 * Parse template attributes
 	 * @param templateXML template xml
 	 * @param guiElement GUI element
-	 * @return parsed template attributes
+	 * @returns parsed template attributes
 	 */
 	static unordered_map<string, string> parseTemplateAttributes(const string& templateXML);
 
 	/**
 	 * Get inner XML from XML string
 	 * @param xml xml
-	 * @return string
+	 * @returns string
 	 */
 	static const string getInnerXml(const string& xml);
 
 	/**
 	 * Unescape quotes and other special html characters
 	 * @param str string
-	 * @return string with unescaped quotes
+	 * @returns string with unescaped quotes
 	 */
 	static const string unescape(const string& str);
 
 	/**
 	 * Escape quotes and other special html characters
 	 * @param str string
-	 * @return string with escaped quotes
+	 * @returns string with escaped quotes
 	 */
 	static const string escape(const string& str);
 

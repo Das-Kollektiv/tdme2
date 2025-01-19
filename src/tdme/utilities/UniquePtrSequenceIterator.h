@@ -41,22 +41,22 @@ struct UniquePtrSequenceIterator {
 		inline Iterator(IT* ptr) : ptr(ptr) {}
 
 		/**
-		 * @return access iterator '*'
+		 * @returns access iterator '*'
 		 */
 		inline reference operator*() { return ptr->get(); }
 
 		/**
-		 * @return access iterator '->'
+		 * @returns access iterator '->'
 		 */
 		inline pointer operator->() { return ptr->get(); }
 
 		/**
-		 * @return prefix incremented iterator
+		 * @returns prefix incremented iterator
 		 */
 		inline Iterator<IT, IV>& operator++() { ptr++; return *this; }
 
 		/**
-		 * @return postfix incremented iterator
+		 * @returns postfix incremented iterator
 		 */
 		inline Iterator<IT, IV> operator++(int) { auto tmp = *this; ++(*this); return tmp; }
 
@@ -86,12 +86,12 @@ struct UniquePtrSequenceIterator {
 	inline UniquePtrSequenceIterator(unique_ptr<T>* sequenceBegin, unique_ptr<T>* sequenceEnd): sequenceBegin(sequenceBegin), sequenceEnd(sequenceEnd) {}
 
 	/**
-	 * @return begin iterator
+	 * @returns begin iterator
 	 */
 	inline Iterator<unique_ptr<T>, T> begin() { return Iterator<unique_ptr<T>, T>(sequenceBegin); }
 
 	/**
-	 * @return end iterator
+	 * @returns end iterator
 	 */
 	inline Iterator<unique_ptr<T>, T> end() { return Iterator<unique_ptr<T>, T>(sequenceEnd); }
 
@@ -128,22 +128,22 @@ struct ConstUniquePtrSequenceIterator {
 		inline Iterator(const IT* ptr) : ptr(ptr) {}
 
 		/**
-		 * @return access iterator '*'
+		 * @returns access iterator '*'
 		 */
 		inline reference operator*() const { return ptr->get(); }
 
 		/**
-		 * @return access iterator '->'
+		 * @returns access iterator '->'
 		 */
 		inline pointer operator->() const { return ptr->get(); }
 
 		/**
-		 * @return prefix incremented iterator
+		 * @returns prefix incremented iterator
 		 */
 		inline Iterator<IT, IV>& operator++() { ptr++; return *this; }
 
 		/**
-		 * @return postfix incremented iterator
+		 * @returns postfix incremented iterator
 		 */
 		inline Iterator<IT, IV> operator++(int) { auto tmp = *this; ++(*this); return tmp; }
 
@@ -173,12 +173,12 @@ struct ConstUniquePtrSequenceIterator {
 	inline ConstUniquePtrSequenceIterator(const unique_ptr<T>* sequenceBegin, const unique_ptr<T>* sequenceEnd): sequenceBegin(sequenceBegin), sequenceEnd(sequenceEnd) {}
 
 	/**
-	 * @return begin iterator
+	 * @returns begin iterator
 	 */
 	inline Iterator<const unique_ptr<T>, const T> begin() { return Iterator<const unique_ptr<T>, const T>(sequenceBegin); }
 
 	/**
-	 * @return end iterator
+	 * @returns end iterator
 	 */
 	inline Iterator<const unique_ptr<T>, const T> end() { return Iterator<const unique_ptr<T>, const T>(sequenceEnd); }
 

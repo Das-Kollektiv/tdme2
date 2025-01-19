@@ -18,7 +18,7 @@ struct tdme::tools::editor::controllers::ScreenController
 	virtual ~ScreenController() {}
 
 	/**
-	 * @return screen node
+	 * @returns screen node
 	 */
 	virtual GUIScreenNode* getScreenNode() = 0;
 

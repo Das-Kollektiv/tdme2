@@ -24,7 +24,7 @@ public:
 	 * @param model model
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return generated billboard model
+	 * @returns generated billboard model
 	 */
 	static Model* generate(
 		Model* model,

@@ -19,18 +19,18 @@ using tdme::math::Vector3;
 struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 {
 	/**
-	 * @return center
+	 * @returns center
 	 */
 	virtual const Vector3& getCenter() const = 0;
 
 
 	/**
-	 * @return number of particles to emit in one second
+	 * @returns number of particles to emit in one second
 	 */
 	virtual int32_t getCount() const = 0;
 
 	/**
-	 * @return color start
+	 * @returns color start
 	 */
 	virtual const Color4& getColorStart() const = 0;
 
@@ -41,7 +41,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	virtual void setColorStart(const Color4& colorStart) = 0;
 
 	/**
-	 * @return color end
+	 * @returns color end
 	 */
 	virtual const Color4& getColorEnd() const = 0;
 

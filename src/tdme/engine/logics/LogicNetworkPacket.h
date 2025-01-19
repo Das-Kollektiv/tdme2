@@ -73,14 +73,14 @@ public:
 	}
 
 	/**
-	 * @return time in milliseconds
+	 * @returns time in milliseconds
 	 */
 	inline int64_t getTime() {
 		return time;
 	}
 
 	/**
-	 * @return if packet has been processed
+	 * @returns if packet has been processed
 	 */
 	inline bool isProcessed() {
 		return processed;
@@ -96,7 +96,7 @@ public:
 
 
 	/**
-	 * @return if reinjected
+	 * @returns if reinjected
 	 */
 	inline bool isReinjected() const {
 		return reinjected;
@@ -110,14 +110,14 @@ public:
 	}
 
 	/**
-	 * @return if message is safe message
+	 * @returns if message is safe message
 	 */
 	inline bool getSafe() {
 		return safe;
 	}
 
 	/**
-	 * @return logic type id
+	 * @returns logic type id
 	 */
 	inline uint32_t getLogicTypeId() {
 		return logicTypeId;
@@ -140,14 +140,14 @@ public:
 	}
 
 	/**
-	 * @return recipients
+	 * @returns recipients
 	 */
 	inline set<string>& getRecipients() {
 		return recipients;
 	}
 
 	/**
-	 * @return sender
+	 * @returns sender
 	 */
 	inline const string& getSender() {
 		return sender;
@@ -162,7 +162,7 @@ public:
 	}
 
 	/**
-	 * @return message id
+	 * @returns message id
 	 */
 	inline uint32_t getMessageId() {
 		return messageId;
@@ -191,7 +191,7 @@ public:
 
 	/**
 	 * Get a byte from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline uint8_t getByte() {
 		if (position == 255) {
@@ -204,7 +204,7 @@ public:
 	/**
 	 * Puts a byte into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putByte(uint8_t value) {
 		if (position == 255) {
@@ -217,7 +217,7 @@ public:
 
 	/**
 	 * Get a bool from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline bool getBool() {
 		return getByte() == 1;
@@ -226,7 +226,7 @@ public:
 	/**
 	 * Puts a bool into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putBool(bool value) {
 		putByte(value == true?1:0);
@@ -235,7 +235,7 @@ public:
 
 	/**
 	 * Get a int16 from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline uint16_t getInt16() {
 		uint16_t value = 0;
@@ -247,7 +247,7 @@ public:
 	/**
 	 * Puts a int16 into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putInt16(uint16_t value) {
 		putByte((value) & 0xFF);
@@ -257,7 +257,7 @@ public:
 
 	/**
 	 * Get a int from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline uint32_t getInt() {
 		uint32_t value = 0;
@@ -271,7 +271,7 @@ public:
 	/**
 	 * Puts a int into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putInt(uint32_t value) {
 		putByte((value) & 0xFF);
@@ -283,7 +283,7 @@ public:
 
 	/**
 	 * Get a small int from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline uint16_t getSmallInt() {
 		uint16_t value = 0;
@@ -295,7 +295,7 @@ public:
 	/**
 	 * Puts a small int into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putSmallInt(uint16_t value) {
 		putByte((value) & 0xFF);
@@ -305,7 +305,7 @@ public:
 
 	/**
 	 * Get a float from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline float getFloat() {
 		uint32_t floatAsInt = getInt();
@@ -315,7 +315,7 @@ public:
 	/**
 	 * Puts a float into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putFloat(float value) {
 		uint32_t* floatAsInt = ((uint32_t*)&value);
@@ -325,7 +325,7 @@ public:
 
 	/**
 	 * Get a string value
-	 * @return value
+	 * @returns value
 	 */
 	inline string getString() {
 		string value;
@@ -337,7 +337,7 @@ public:
 	/**
 	 * Puts a string into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putString(const string& value) {
 		putByte(value.size());
@@ -349,7 +349,7 @@ public:
 
 	/**
 	 * Get a vector3 from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline Vector3 getVector3() {
 		Vector3 value;
@@ -362,7 +362,7 @@ public:
 	/**
 	 * Puts a vector3 into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putVector3(const Vector3& value) {
 		putFloat(value.getX());
@@ -373,7 +373,7 @@ public:
 
 	/**
 	 * Get a quaternion from packet
-	 * @return value
+	 * @returns value
 	 */
 	inline Quaternion getQuaternion() {
 		Quaternion value;
@@ -387,7 +387,7 @@ public:
 	/**
 	 * Puts a quaternion into packet
 	 * @param value value
-	 * @return this
+	 * @returns this
 	 */
 	inline LogicNetworkPacket& putQuaternion(const Quaternion& value) {
 		putFloat(value.getX());

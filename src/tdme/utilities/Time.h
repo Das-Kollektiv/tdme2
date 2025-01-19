@@ -22,7 +22,7 @@ public:
 
 	/**
 	 * Retrieve current time in milliseconds
-	 * @return int64_t
+	 * @returns int64_t
 	 */
 	inline static int64_t getCurrentMillis() {
 		return high_resolution_clock::now().time_since_epoch() / milliseconds(1);
@@ -31,7 +31,7 @@ public:
 	/**
 	 * Get date/time as string
 	 * @param format format, see strftime
-	 * @return date/time as string
+	 * @returns date/time as string
 	 */
 	inline static string getAsString(const string& format = "%Y-%m-%d %H:%M:%S") {
 		// see: https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string

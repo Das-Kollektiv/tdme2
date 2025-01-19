@@ -169,14 +169,14 @@ private:
 	 * Returns immediate children tags by tag name
 	 * @param parent parent
 	 * @param name name
-	 * @return matching elements
+	 * @returns matching elements
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/**
 	 * Returns immediate children tags
 	 * @param parent parent
-	 * @return elements
+	 * @returns elements
 	 */
 	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
 
@@ -197,7 +197,7 @@ public:
 	};
 
 	/**
-	 * @return instance
+	 * @returns instance
 	 */
 	inline static TextFormatter* getInstance() {
 		if (instance == nullptr) {

@@ -26,12 +26,12 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplement
 	virtual ~ShadowMapCreationShaderImplementation() {}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	virtual const string getId() = 0;
 
 	/**
-	 * @return if initialized and ready to use
+	 * @returns if initialized and ready to use
 	 */
 	virtual bool isInitialized() = 0;
 

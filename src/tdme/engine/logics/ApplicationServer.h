@@ -54,7 +54,7 @@ protected:
 
 	/**
 	 * Create context
-	 * @return context
+	 * @returns context
 	 */
 	virtual Context* createContext();
 

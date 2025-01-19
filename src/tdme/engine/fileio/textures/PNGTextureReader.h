@@ -33,7 +33,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param bytes per pixel
-	 * @return success
+	 * @returns success
 	 */
 	static bool readHeader(const vector<uint8_t>& pngData, int& width, int& height, uint8_t& bytesPerPixel);
 
@@ -41,7 +41,7 @@ public:
 	 * Read PNG from memory into texture byte buffer
 	 * @param pngData png vector data to read PNG from
 	 * @param textureByteBuffer texture byte buffer
-	 * @return success
+	 * @returns success
 	 */
 	static bool read(const vector<uint8_t>& pngData, ByteBuffer& textureByteBuffer);
 

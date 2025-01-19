@@ -45,7 +45,7 @@ public:
 	~Texture2DRenderShader();
 
 	/**
-	 * @return if initialized and ready to use
+	 * @returns if initialized and ready to use
 	 */
 	bool isInitialized();
 

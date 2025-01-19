@@ -49,7 +49,7 @@ public:
 	~LightingShader();
 
 	/**
-	 * @return initialized and ready to be used
+	 * @returns initialized and ready to be used
 	 */
 	bool isInitialized();
 
@@ -128,7 +128,7 @@ public:
 	/**
 	 * Returns if shader with given shader id does exist
 	 * @param shaderId shader id
-	 * @return if shader exists
+	 * @returns if shader exists
 	 */
 	bool hasShader(const string& shaderId) {
 		return shaders.find(shaderId) != shaders.end();
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Returns shader for given shader id
 	 * @param shaderId shader id
-	 * @return if shader exists
+	 * @returns if shader exists
 	 */
 	LightingShaderImplementation* getShader(const string& shaderId) {
 		auto shaderIt = shaders.find(shaderId);

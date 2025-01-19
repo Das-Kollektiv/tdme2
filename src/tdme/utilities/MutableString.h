@@ -53,14 +53,14 @@ public:
 	}
 
 	/**
-	 * @return binary size
+	 * @returns binary size
 	 */
 	inline int size() const {
 		return data.size();
 	}
 
 	/**
-	 * @return character count
+	 * @returns character count
 	 */
 	inline int length() const {
 		if (utf8Length != -1) return utf8Length;
@@ -73,7 +73,7 @@ public:
 	/**
 	 * Get char at given binary index
 	 * @param idx idx
-	 * @return char
+	 * @returns char
 	 */
 	inline char getCharAt(int32_t idx) const {
 		if (idx < 0 || idx >= data.size()) return 0;
@@ -81,7 +81,7 @@ public:
 	}
 
 	/**
-	 * @return utf 8 character at given character index
+	 * @returns utf 8 character at given character index
 	 */
 	inline int getUTF8CharAt(int32_t idx) const {
 		auto u8It = getUTF8CharacterIterator();
@@ -102,7 +102,7 @@ public:
 	/**
 	 * Set character
 	 * @param c char
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& set(char c) {
 		reset();
@@ -113,7 +113,7 @@ public:
 	/**
 	 * Append character
 	 * @param c char
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& append(char c) {
 		data.push_back(c);
@@ -124,7 +124,7 @@ public:
 	 * Insert character c at idx
 	 * @param idx index
 	 * @param c char
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, char c) {
 		auto binaryIdx = getUtf8BinaryIndex(idx);
@@ -136,7 +136,7 @@ public:
 	/**
 	 * Set string
 	 * @param s s
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& set(const string& s) {
 		reset();
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Append string
 	 * @param s s
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& append(const string& s) {
 		data+= s;
@@ -158,7 +158,7 @@ public:
 	 * Insert string at idx
 	 * @param idx index
 	 * @param s string
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const string& s) {
 		auto binaryIdx = getUtf8BinaryIndex(idx);
@@ -170,7 +170,7 @@ public:
 	/**
 	 * Set mutable string
 	 * @param s s
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& set(const MutableString& s) {
 		reset();
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Append mutable string
 	 * @param s s
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& append(const MutableString& s) {
 		data+= s.data;
@@ -192,7 +192,7 @@ public:
 	 * Insert mutable string at idx
 	 * @param idx index
 	 * @param s string
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const MutableString& s) {
 		auto binaryIdx = getUtf8BinaryIndex(idx);
@@ -204,7 +204,7 @@ public:
 	/**
 	 * Set integer
 	 * @param i i
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& set(int32_t i) {
 		reset();
@@ -215,7 +215,7 @@ public:
 	/**
 	 * Append integer
 	 * @param i i
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& append(int32_t i) {
 		data+= to_string(i);
@@ -226,7 +226,7 @@ public:
 	 * Insert integer at idx
 	 * @param idx index
 	 * @param i i
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, int32_t i) {
 		// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
@@ -253,7 +253,7 @@ public:
 	 * Set float
 	 * @param f f
 	 * @param decimals decimals
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& set(float f, int32_t decimals = 3) {
 		reset();
@@ -265,7 +265,7 @@ public:
 	 * Append float with given decimals
 	 * @param f f
 	 * @param decimals decimals
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& append(float f, int32_t decimals = 3) {
 		insert(data.size(), f, decimals);
@@ -277,7 +277,7 @@ public:
 	 * @param idx index
 	 * @param f float
 	 * @param decimals decimals
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, float f, int32_t decimals = 3) {
 		// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
@@ -297,7 +297,7 @@ public:
 	 * @param idx idx
 	 * @param count length
 	 * @param binaryCount count of binary bytes that have been removed
-	 * @return this mutable string
+	 * @returns this mutable string
 	 */
 	inline MutableString& remove(int32_t idx, int32_t count, int* binaryCount = nullptr) {
 
@@ -318,7 +318,7 @@ public:
 	 * Returns the character index where string s have been found or -1 if not found
 	 * @param s string
 	 * @param idx index
-	 * @return index where string has been found or -1
+	 * @returns index where string has been found or -1
 	 */
 	inline int32_t indexOf(const MutableString& s, int32_t idx) const {
 		return data.find(s.data, getUtf8BinaryIndex(idx));
@@ -327,7 +327,7 @@ public:
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
 	 * @param s string
-	 * @return index where string has been found or -1
+	 * @returns index where string has been found or -1
 	 */
 	inline int32_t indexOf(const MutableString& s) const {
 		return indexOf(s, 0);
@@ -353,7 +353,7 @@ public:
 	}
 
 	/**
-	 * @return if mutable string is empty
+	 * @returns if mutable string is empty
 	 */
 	inline bool empty() const {
 		return data.empty();
@@ -362,7 +362,7 @@ public:
 	/**
 	 * Equals
 	 * @param s2 string 2
-	 * @return string 2 equals this string
+	 * @returns string 2 equals this string
 	 */
 	inline bool equals(const string& s2) const {
 		return data == s2;
@@ -371,30 +371,30 @@ public:
 	/**
 	 * Equals
 	 * @param s2 string 2
-	 * @return string 2 equals this string
+	 * @returns string 2 equals this string
 	 */
 	inline bool equals(const MutableString& s2) const {
 		return data == s2.data;
 	}
 
 	/**
-	 * @return string
+	 * @returns string
 	 */
 	inline const string& getString() const {
 		return data;
 	}
 
 	/**
-	 * @return UTF8 character iterator
+	 * @returns UTF8 character iterator
 	 */
 	const UTF8CharacterIterator getUTF8CharacterIterator() const {
 		return UTF8CharacterIterator(data, &cache);
 	}
 
 	/**
-	 * @return Get utf8 binary index
+	 * @returns Get utf8 binary index
 	 * @param idx character index
-	 * @return utf8 binary index
+	 * @returns utf8 binary index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
 		auto u8It = getUTF8CharacterIterator();
@@ -403,9 +403,9 @@ public:
 	}
 
 	/**
-	 * @return Get utf8 character index
+	 * @returns Get utf8 character index
 	 * @param idx binary index
-	 * @return utf8 character index
+	 * @returns utf8 character index
 	 */
 	int getUtf8CharacterIndex(int idx) const {
 		auto u8It = getUTF8CharacterIterator();

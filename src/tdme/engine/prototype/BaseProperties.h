@@ -50,7 +50,7 @@ public:
 	virtual ~BaseProperties();
 
 	/**
-	 * @return name
+	 * @returns name
 	 */
 	inline const string& getName() {
 		return name;
@@ -65,7 +65,7 @@ public:
 	}
 
 	/**
-	 * @return description
+	 * @returns description
 	 */
 	inline const string& getDescription() {
 		return description;
@@ -87,47 +87,47 @@ public:
 	/**
 	 * Retrieve property by name
 	 * @param name name
-	 * @return property or null
+	 * @returns property or null
 	 */
 	const BaseProperty* getProperty(const string& name) const;
 
 	/**
 	 * Retrieve property by name
 	 * @param name name
-	 * @return property or null
+	 * @returns property or null
 	 */
 	BaseProperty* getProperty(const string& name);
 
 	/**
 	 * Get property index
 	 * @param name name
-	 * @return index or -1 if not found
+	 * @returns index or -1 if not found
 	 */
 	const int getPropertyIndex(const string& name) const;
 
 	/**
 	 * Get property index
 	 * @param name name
-	 * @return index or -1 if not found
+	 * @returns index or -1 if not found
 	 */
 	int getPropertyIndex(const string& name);
 
 	/**
-	 * @return Const properties iterator
+	 * @returns Const properties iterator
 	 */
 	inline ConstUniquePtrSequenceIterator<BaseProperty> getProperties() const {
 		return ConstUniquePtrSequenceIterator<BaseProperty>(&(*properties.begin()), &(*properties.end()));
 	}
 
 	/**
-	 * @return Properties iterator
+	 * @returns Properties iterator
 	 */
 	inline UniquePtrSequenceIterator<BaseProperty> getProperties() {
 		return UniquePtrSequenceIterator<BaseProperty>(&(*properties.begin()), &(*properties.end()));
 	}
 
 	/**
-	 * @return property count
+	 * @returns property count
 	 */
 	inline int getPropertyCount() {
 		return properties.size();
@@ -136,7 +136,7 @@ public:
 	/**
 	 * Get property by index
 	 * @param idx idx
-	 * @return property or null
+	 * @returns property or null
 	 */
 	inline const BaseProperty* getPropertyAt(int idx) const {
 		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
@@ -145,7 +145,7 @@ public:
 	/**
 	 * Get property by index
 	 * @param idx idx
-	 * @return property or null
+	 * @returns property or null
 	 */
 	inline BaseProperty* getPropertyAt(int idx) {
 		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
@@ -162,7 +162,7 @@ public:
 	 * Rename a property
 	 * @param oldName old name
 	 * @param name name
-	 * @return success
+	 * @returns success
 	 */
 	bool renameProperty(const string& oldName, const string& name);
 
@@ -171,7 +171,7 @@ public:
 	 * @param oldName old name
 	 * @param name name
 	 * @param value value
-	 * @return success
+	 * @returns success
 	 */
 	bool updateProperty(const string& oldName, const string& name, const string& value);
 

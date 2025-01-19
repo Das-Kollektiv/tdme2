@@ -78,14 +78,14 @@ public:
 	virtual ~ObjectInternal();
 
 	/**
-	 * @return object id
+	 * @returns object id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
 	/**
-	 * @return true if enabled to be rendered
+	 * @returns true if enabled to be rendered
 	 */
 	inline bool isEnabled() {
 		return enabled;
@@ -100,7 +100,7 @@ public:
 	}
 
 	/**
-	 * @return if object is pickable
+	 * @returns if object is pickable
 	 */
 	inline bool isPickable() {
 		return pickable;
@@ -115,7 +115,7 @@ public:
 	}
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
 		return contributesShadows;
@@ -130,7 +130,7 @@ public:
 	}
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	inline bool isReceivesShadows() {
 		return receivesShadows;
@@ -146,7 +146,7 @@ public:
 
 	/**
 	 * The effect color will be multiplied with fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	inline const Color4& getEffectColorMul() const {
 		return effectColorMul;
@@ -162,7 +162,7 @@ public:
 
 	/**
 	 * The effect color will be added to fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	inline const Color4& getEffectColorAdd() const {
 		return effectColorAdd;
@@ -170,14 +170,14 @@ public:
 
 	/**
 	 * The effect color will be added to fragment color
-	 * @return effect color
+	 * @returns effect color
 	 */
 	inline void setEffectColorAdd(const Color4& effectColorAdd) {
 		this->effectColorAdd = effectColorAdd;
 	}
 
 	/**
-	 * @return bounding box
+	 * @returns bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
@@ -185,7 +185,7 @@ public:
 
 	/**
 	 * Retrieves world bounding box
-	 * @return world bounding box
+	 * @returns world bounding box
 	 */
 	inline BoundingBox* getWorldBoundingBox() {
 		return &worldBoundingBox;

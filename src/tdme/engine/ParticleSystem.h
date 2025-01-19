@@ -25,17 +25,17 @@ struct tdme::engine::ParticleSystem: public Entity
 	virtual ~ParticleSystem() {}
 
 	/**
-	 * @return particle emitter
+	 * @returns particle emitter
 	 */
 	virtual ParticleEmitter* getEmitter() = 0;
 
 	/**
-	 * @return true if active / particles available
+	 * @returns true if active / particles available
 	 */
 	virtual bool isActive() = 0;
 
 	/**
-	 * @return if auto emit is enabled
+	 * @returns if auto emit is enabled
 	 */
 	virtual bool isAutoEmit() = 0;
 
@@ -56,7 +56,7 @@ struct tdme::engine::ParticleSystem: public Entity
 	virtual int emitParticles() = 0;
 
 	/**
-	 * @return local transform
+	 * @returns local transform
 	 */
 	virtual const Transform& getLocalTransform() = 0;
 

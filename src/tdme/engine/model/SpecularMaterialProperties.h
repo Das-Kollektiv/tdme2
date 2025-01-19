@@ -65,7 +65,7 @@ public:
 	~SpecularMaterialProperties();
 
 	/**
-	 * @return ambient color
+	 * @returns ambient color
 	 */
 	inline const Color4& getAmbientColor() const {
 		return ambientColor;
@@ -80,7 +80,7 @@ public:
 	}
 
 	/**
-	 * @return diffuse color
+	 * @returns diffuse color
 	 */
 	inline const Color4& getDiffuseColor() const {
 		return diffuseColor;
@@ -95,7 +95,7 @@ public:
 	}
 
 	/**
-	 * @return specular color
+	 * @returns specular color
 	 */
 	inline const Color4& getSpecularColor() const {
 		return specularColor;
@@ -110,7 +110,7 @@ public:
 	}
 
 	/**
-	 * @return emission color
+	 * @returns emission color
 	 */
 	inline const Color4& getEmissionColor() const {
 		return emissionColor;
@@ -125,7 +125,7 @@ public:
 	}
 
 	/**
-	 * @return shininess
+	 * @returns shininess
 	 */
 	inline float getShininess() const {
 		return shininess;
@@ -140,7 +140,7 @@ public:
 	}
 
 	/**
-	 * @return reflection
+	 * @returns reflection
 	 */
 	inline float getReflection() const {
 		return reflection;
@@ -155,7 +155,7 @@ public:
 	}
 
 	/**
-	 * @return texture atlas size
+	 * @returns texture atlas size
 	 */
 	inline int32_t getTextureAtlasSize() const {
 		return textureAtlasSize;
@@ -170,7 +170,7 @@ public:
 	}
 
 	/**
-	 * @return diffuse texture path name
+	 * @returns diffuse texture path name
 	 */
 	inline const string& getDiffuseTexturePathName() const {
 		return diffuseTexturePathName;
@@ -185,7 +185,7 @@ public:
 	}
 
 	/**
-	 * @return diffuse texture file name
+	 * @returns diffuse texture file name
 	 */
 	inline const string& getDiffuseTextureFileName() const {
 		return diffuseTextureFileName;
@@ -193,21 +193,21 @@ public:
 
 	/**
 	 * Set diffuse texture file name
-	 * @return diffuseTextureFileName diffuse texture file name
+	 * @returns diffuseTextureFileName diffuse texture file name
 	 */
 	inline void setDiffuseTextureFileName(const string& diffuseTextureFileName) {
 		this->diffuseTextureFileName = diffuseTextureFileName;
 	}
 
 	/**
-	 * @return diffuse transparency texture path name
+	 * @returns diffuse transparency texture path name
 	 */
 	inline const string& getDiffuseTransparencyTexturePathName() const {
 		return diffuseTransparencyTexturePathName;
 	}
 
 	/**
-	 * @return diffuse transparency texture file name
+	 * @returns diffuse transparency texture file name
 	 */
 	inline const string& getDiffuseTransparencyTextureFileName() const {
 		return diffuseTransparencyTextureFileName;
@@ -229,28 +229,28 @@ public:
 	void setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName = string(), const string& transparencyFileName = string());
 
 	/**
-	 * @return if material has a diffuse texture
+	 * @returns if material has a diffuse texture
 	 */
 	inline bool hasDiffuseTexture() const {
 		return diffuseTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's diffuse texture
+	 * @returns the material's diffuse texture
 	 */
 	inline Texture* getDiffuseTexture() const {
 		return diffuseTexture;
 	}
 
 	/**
-	 * @return diffuse texture has transparent pixels
+	 * @returns diffuse texture has transparent pixels
 	 */
 	inline bool hasDiffuseTextureTransparency() const {
 		return diffuseTextureTransparency;
 	}
 
 	/**
-	 * @return diffuse texture has masked transparency, means pixel are eighter opaque or not visible
+	 * @returns diffuse texture has masked transparency, means pixel are eighter opaque or not visible
 	 */
 	inline bool hasDiffuseTextureMaskedTransparency() const {
 		return diffuseTextureMaskedTransparency;
@@ -265,7 +265,7 @@ public:
 	}
 
 	/**
-	 * @return diffuse masked transparency threshold
+	 * @returns diffuse masked transparency threshold
 	 */
 	inline float getDiffuseTextureMaskedTransparencyThreshold() const {
 		return diffuseTextureMaskedTransparencyThreshold;
@@ -280,7 +280,7 @@ public:
 	}
 
 	/**
-	 * @return specular texture path name
+	 * @returns specular texture path name
 	 */
 	inline const string& getSpecularTexturePathName() const {
 		return specularTexturePathName;
@@ -295,7 +295,7 @@ public:
 	}
 
 	/**
-	 * @return specular texture file name
+	 * @returns specular texture file name
 	 */
 	inline const string& getSpecularTextureFileName() const {
 		return specularTextureFileName;
@@ -303,7 +303,7 @@ public:
 
 	/**
 	 * Set specular texture file name
-	 * @return specularTextureFileName specular texture file name
+	 * @returns specularTextureFileName specular texture file name
 	 */
 	inline void setSpecularTextureFileName(const string& specularTextureFileName) {
 		this->specularTextureFileName = specularTextureFileName;
@@ -323,21 +323,21 @@ public:
 	void setSpecularTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a specular texture
+	 * @returns if material has a specular texture
 	 */
 	inline bool hasSpecularTexture() const {
 		return specularTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's specular texture
+	 * @returns the material's specular texture
 	 */
 	inline Texture* getSpecularTexture() const {
 		return specularTexture;
 	}
 
 	/**
-	 * @return normal texture path name
+	 * @returns normal texture path name
 	 */
 	inline const string& getNormalTexturePathName() const {
 		return normalTexturePathName;
@@ -352,7 +352,7 @@ public:
 	}
 
 	/**
-	 * @return normal texture file name
+	 * @returns normal texture file name
 	 */
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
@@ -360,7 +360,7 @@ public:
 
 	/**
 	 * Set normal texture file name
-	 * @return normalTextureFileName normal texture file name
+	 * @returns normalTextureFileName normal texture file name
 	 */
 	inline void setNormalTextureFileName(const string& normalTextureFileName) {
 		this->normalTextureFileName = specularTextureFileName;
@@ -380,28 +380,28 @@ public:
 	void setNormalTexture(const string& pathName, const string& fileName);
 
 	/**
-	 * @return if material has a normal texture
+	 * @returns if material has a normal texture
 	 */
 	inline bool hasNormalTexture() const {
 		return normalTexture != nullptr;
 	}
 
 	/**
-	 * @return the material's normal texture
+	 * @returns the material's normal texture
 	 */
 	inline Texture* getNormalTexture() const {
 		return normalTexture;
 	}
 
 	/**
-	 * @return if color is transparent
+	 * @returns if color is transparent
 	 */
 	inline bool hasColorTransparency() const {
 		return diffuseColor.getAlpha() < 1.0f - Math::EPSILON;
 	}
 
 	/**
-	 * @return diffuse texture has transparency
+	 * @returns diffuse texture has transparency
 	 */
 	inline bool getDiffuseTextureTransparency() {
 		return diffuseTextureTransparency;
@@ -416,14 +416,14 @@ public:
 	}
 
 	/**
-	 * @return if texture has transparency with masked transparency disabled
+	 * @returns if texture has transparency with masked transparency disabled
 	 */
 	inline bool hasTextureTransparency() const {
 		return diffuseTextureTransparency == true && diffuseTextureMaskedTransparency == false;
 	}
 
 	/**
-	 * @return texture matrix
+	 * @returns texture matrix
 	 */
 	const Matrix3x3& getTextureMatrix() const {
 		return textureMatrix;

@@ -42,7 +42,7 @@ public:
 	 ~PrototypeDisplaySubView();
 
 	/**
-	 * @return display ground plate
+	 * @returns display ground plate
 	 */
 	inline bool isDisplayGroundPlate() {
 		return this->displayGroundPlate;
@@ -57,7 +57,7 @@ public:
 	}
 
 	/**
-	 * @return display shadowing
+	 * @returns display shadowing
 	 */
 	inline bool isDisplayShadowing() {
 		return displayShadowing;

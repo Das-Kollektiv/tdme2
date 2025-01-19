@@ -54,7 +54,7 @@ public:
 	~PrototypeLODLevel();
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline LODObject::LODLevelType getType() const {
 		return type;
@@ -69,7 +69,7 @@ public:
 	}
 
 	/**
-	 * @return file name
+	 * @returns file name
 	 */
 	inline const string& getFileName() {
 		return fileName;
@@ -84,7 +84,7 @@ public:
 	}
 
 	/**
-	 * @return model
+	 * @returns model
 	 */
 	inline Model* getModel() {
 		return model.get();
@@ -99,7 +99,7 @@ public:
 	}
 
 	/**
-	 * @return min distance
+	 * @returns min distance
 	 */
 	inline float getMinDistance() const {
 		return minDistance;
@@ -114,7 +114,7 @@ public:
 	}
 
 	/**
-	 * @return color add
+	 * @returns color add
 	 */
 	inline const Color4& getColorAdd() const {
 		return colorAdd;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return color mul
+	 * @returns color mul
 	 */
 	inline const Color4& getColorMul() const {
 		return colorMul;

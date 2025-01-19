@@ -62,7 +62,7 @@ public:
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline float getWidth() const {
 		return width;
@@ -77,7 +77,7 @@ public:
 	}
 
 	/**
-	 * @return depth
+	 * @returns depth
 	 */
 	inline float getDepth() const {
 		return depth;
@@ -92,21 +92,21 @@ public:
 	}
 
 	/**
-	 * @return terrain height vector
+	 * @returns terrain height vector
 	 */
 	inline vector<float>& getHeightVector() {
 		return terrainHeightVector;
 	}
 
 	/**
-	 * @return water position maps height
+	 * @returns water position maps height
 	 */
 	inline unordered_map<int, float>& getWaterPositionMapsHeight() {
 		return waterPositionMapsHeight;
 	}
 
 	/**
-	 * @return water position maps
+	 * @returns water position maps
 	 */
 	inline unordered_map<int, unordered_map<int, unordered_set<int>>>& getWaterPositionMaps() {
 		return waterPositionMaps;
@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * Get water position maps indices
-	 * @return water position maps indices
+	 * @returns water position maps indices
 	 */
 	inline vector<int> getWaterPositionMapsIndices() {
 		vector<int> waterPositionMapsIndices;
@@ -123,7 +123,7 @@ public:
 	}
 
 	/**
-	 * @return allocated water position map idx
+	 * @returns allocated water position map idx
 	 */
 	inline int allocateWaterPositionMapIdx() {
 		return waterPositionMapIdx++;
@@ -132,7 +132,7 @@ public:
 	/**
 	 * Get water position map height at given water position map index
 	 * @param idx water position map index
-	 * @return water position map height at given water position map index
+	 * @returns water position map height at given water position map index
 	 */
 	inline float getWaterPositionMapHeight(int idx) {
 		return waterPositionMapsHeight[idx];
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Get water position map at given index
 	 * @param idx index
-	 * @return water position map
+	 * @returns water position map
 	 */
 	inline unordered_map<int, unordered_set<int>>& getWaterPositionMap(int idx) {
 		return waterPositionMaps[idx];
@@ -168,7 +168,7 @@ public:
 	/**
 	 * Get or allocate a foliage prototype index
 	 * @param prototype prototype
-	 * @return prototype index
+	 * @returns prototype index
 	 */
 	inline int getFoliagePrototypeIndex(Prototype* prototype) {
 		auto maxFoliagePrototypeMapIdx = 0;
@@ -183,7 +183,7 @@ public:
 
 	/**
 	 * Get foliage prototype indices
-	 * @return foliage prototype indices
+	 * @returns foliage prototype indices
 	 */
 	inline vector<int> getFoliagePrototypeIndices() {
 		vector<int> foliagePrototypeIndices;
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Get foliage prototype by given index
 	 * @param idx protoype index
-	 * @return prototype or nullptr
+	 * @returns prototype or nullptr
 	 */
 	inline Prototype* getFoliagePrototype(int prototypeIdx) {
 		auto foliageFoliagePrototypeIt = foliageFoliagePrototypeMap.find(prototypeIdx);
@@ -207,7 +207,7 @@ public:
 	}
 
 	/**
-	 * @return foliage maps
+	 * @returns foliage maps
 	 */
 	inline vector<unordered_map<int, vector<Transform>>>& getFoliageMaps() {
 		return foliageMaps;
@@ -216,7 +216,7 @@ public:
 	/**
 	 * Get foliage prototype entity ids
 	 * @param prototypeIdx prototype index
-	 * @return entity ids
+	 * @returns entity ids
 	 */
 	inline const vector<string> getFoliagePrototypeEntityIds(int prototypeIdx) {
 		vector<string> foliagePrototypeEntityIds;
@@ -239,7 +239,7 @@ public:
 	/**
 	 * Get foliage prototype entity transform indexed by entity id
 	 * @param prototypeIdx prototype index
-	 * @return transform indexed by entity id
+	 * @returns transform indexed by entity id
 	 */
 	inline const map<string, Transform> getFoliagePrototypeEntityTransform(int prototypeIdx) {
 		map<string, Transform> foliagePrototypeEntityTransform;
@@ -260,7 +260,7 @@ public:
 	}
 
 	/**
-	 * @return prototype terrain brushes
+	 * @returns prototype terrain brushes
 	 */
 	inline UniquePtrSequenceIterator<PrototypeTerrainBrush> getBrushes() {
 		return UniquePtrSequenceIterator<PrototypeTerrainBrush>(&(*brushes.begin()), &(*brushes.end()));
@@ -268,7 +268,7 @@ public:
 
 	/**
 	 * Get prototype terrain brush count
-	 * @return prototype terrain brush count
+	 * @returns prototype terrain brush count
 	 */
 	inline int getBrushCount() {
 		return brushes.size();
@@ -277,7 +277,7 @@ public:
 	/**
 	 * Get prototype terrain brush
 	 * @param idx index
-	 * @return prototype terrain brush prototype
+	 * @returns prototype terrain brush prototype
 	 */
 	inline PrototypeTerrainBrush* getBrush(int idx) {
 		if (idx < 0 || idx >= brushes.size()) return nullptr;

@@ -63,7 +63,7 @@ private:
 	void bindDepthBufferTexture(int contextIdx);
 
 	/**
-	 * @return light camera
+	 * @returns light camera
 	 */
 	Camera* getCamera();
 
@@ -104,21 +104,21 @@ public:
 	~ShadowMap();
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return frameBuffer->getWidth();
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return frameBuffer->getWidth();
 	}
 
 	/**
-	 * @return frame buffer
+	 * @returns frame buffer
 	 */
 	inline FrameBuffer* getFrameBuffer() {
 		return frameBuffer.get();

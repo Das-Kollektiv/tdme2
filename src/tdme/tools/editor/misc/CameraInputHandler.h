@@ -74,7 +74,7 @@ public:
 	~CameraInputHandler();
 
 	/**
-	 * @return scene center
+	 * @returns scene center
 	 */
 	inline const Vector3& getSceneCenter() {
 		return sceneCenter;

@@ -78,12 +78,12 @@ public:
 	~OrientedBoundingBox();
 
 	/**
-	 * @return 3 axes
+	 * @returns 3 axes
 	 */
 	const array<Vector3, 3>& getAxes() const;
 
 	/**
-	 * @return half extension
+	 * @returns half extension
 	 */
 	const Vector3& getHalfExtension() const;
 
@@ -97,12 +97,12 @@ public:
 	BoundingVolume* clone() const override;
 
 	/**
-	 * @return oriented bounding box vertices
+	 * @returns oriented bounding box vertices
 	 */
 	const array<Vector3, 8> getVertices() const;
 
 	/**
-	 * @return faces vertices indexes
+	 * @returns faces vertices indexes
 	 */
 	static const array<array<int32_t,3>,12>& getFacesVerticesIndexes();
 

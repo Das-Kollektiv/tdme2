@@ -122,7 +122,7 @@ private:
 	bool typedChars { false };
 
 	/**
-	 * @return must show cursor
+	 * @returns must show cursor
 	 */
 	inline bool isShowCursor() {
 		return true;
@@ -134,7 +134,7 @@ private:
 	void resetCursorMode();
 
 	/**
-	 * @return cursor mode
+	 * @returns cursor mode
 	 */
 	CursorMode getCursorMode();
 
@@ -170,7 +170,7 @@ protected:
 
 public:
 	/**
-	 * @return index
+	 * @returns index
 	 */
 	inline int getIndex() {
 		return index;
@@ -185,7 +185,7 @@ public:
 	}
 
 	/**
-	 * @return selection index
+	 * @returns selection index
 	 */
 	inline int getSelectionIndex() {
 		return selectionIndex;

@@ -28,7 +28,7 @@ private:
 public:
 
 	/**
-	 * @return default material
+	 * @returns default material
 	 */
 	inline static Material* getDefaultMaterial() {
 		return defaultMaterial.get();
@@ -52,35 +52,35 @@ public:
 	Material(const string& id);
 
 	/**
-	 * @return material id
+	 * @returns material id
 	 */
 	inline const string& getId() const {
 		return id;
 	}
 
 	/**
-	 * @return specular material properties
+	 * @returns specular material properties
 	 */
 	inline const SpecularMaterialProperties* getSpecularMaterialProperties() const {
 		return specularMaterialProperties.get();
 	}
 
 	/**
-	 * @return specular material properties
+	 * @returns specular material properties
 	 */
 	inline SpecularMaterialProperties* getSpecularMaterialProperties() {
 		return specularMaterialProperties.get();
 	}
 
 	/**
-	 * @return PBR material properties
+	 * @returns PBR material properties
 	 */
 	inline const PBRMaterialProperties* getPBRMaterialProperties() const {
 		return pbrMaterialProperties.get();
 	}
 
 	/**
-	 * @return PBR material properties
+	 * @returns PBR material properties
 	 */
 	inline PBRMaterialProperties* getPBRMaterialProperties() {
 		return pbrMaterialProperties.get();
@@ -99,7 +99,7 @@ public:
 	void setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProperties);
 
 	/**
-	 * @return is double sided
+	 * @returns is double sided
 	 */
 	inline bool isDoubleSided() const {
 		return doubleSided;
@@ -114,7 +114,7 @@ public:
 	}
 
 	/**
-	 * @return texture matrix
+	 * @returns texture matrix
 	 */
 	inline const Matrix3x3& getTextureMatrix() const {
 		return textureMatrix;

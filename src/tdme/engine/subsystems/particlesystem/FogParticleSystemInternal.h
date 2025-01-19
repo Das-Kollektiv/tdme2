@@ -182,7 +182,7 @@ public:
 	}
 
 	/**
-	 * @return if entity contributes to shadows
+	 * @returns if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
 		return false;
@@ -197,7 +197,7 @@ public:
 	}
 
 	/**
-	 * @return if entity receives shadows
+	 * @returns if entity receives shadows
 	 */
 	inline bool isReceivesShadows() {
 		return false;
@@ -212,28 +212,28 @@ public:
 	}
 
 	/**
-	 * @return point size
+	 * @returns point size
 	 */
 	inline float getPointSize() {
 		return pointSize * pointSizeScale;
 	}
 
 	/**
-	 * @return texture
+	 * @returns texture
 	 */
 	inline Texture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return texture horizontal sprites
+	 * @returns texture horizontal sprites
 	 */
 	inline int32_t getTextureHorizontalSprites(){
 		return textureHorizontalSprites;
 	}
 
 	/**
-	 * @return texture vertical sprites
+	 * @returns texture vertical sprites
 	 */
 	inline int32_t getTextureVerticalSprites(){
 		return textureVerticalSprites;
@@ -266,7 +266,7 @@ public:
 	}
 
 	/**
-	 * @return render points pool
+	 * @returns render points pool
 	 */
 	inline TransparentRenderPointsPool* getRenderPointsPool() {
 		return pointsRenderPool.get();

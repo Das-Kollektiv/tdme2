@@ -32,7 +32,7 @@ public:
 	 * Creates a bounding box from given model
 	 * @param model model
 	 * @param overriddenNodeTransformMatrices overridden node transform matrices
-	 * @return axis aligned bounding box
+	 * @returns axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBox(Model* model, const unordered_map<string, Matrix4x4*> overriddenNodeTransformMatrices = unordered_map<string, Matrix4x4*>());
 
@@ -60,7 +60,7 @@ public:
 	 * Compute if model 1 equals model 2
 	 * @param model1 model 1
 	 * @param model2 model 2
-	 * @return model1 equals model2
+	 * @returns model1 equals model2
 	 */
 	static bool equals(Model* model1, Model* model2);
 
@@ -68,7 +68,7 @@ public:
 	 * Compute if model 1 equals model 2
 	 * @param objectModel1Internal model 1
 	 * @param objectModel2Internal model 2
-	 * @return model1 equals model2
+	 * @returns model1 equals model2
 	 */
 	static bool equals(ObjectModelInternal* objectModel1Internal, ObjectModelInternal* objectModel2Internal);
 
@@ -76,14 +76,14 @@ private:
 	/**
 	 * Creates a bounding box from given object model
 	 * @param objectModelInternal model
-	 * @return axis aligned bounding box
+	 * @returns axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBox(ObjectModelInternal* objectModelInternal);
 
 	/**
 	 * Creates a bounding box from given object model without mesh
 	 * @param objectModelInternal model
-	 * @return boundingBox axis aligned bounding box
+	 * @returns boundingBox axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBoxNoMesh(ObjectModelInternal* objectModelInternal);
 

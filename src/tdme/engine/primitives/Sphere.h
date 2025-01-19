@@ -47,7 +47,7 @@ public:
 	~Sphere();
 
 	/**
-	 * @return float radius
+	 * @returns float radius
 	 */
 	float getRadius() const;
 

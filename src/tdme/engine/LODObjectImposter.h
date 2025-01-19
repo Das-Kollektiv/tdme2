@@ -124,21 +124,21 @@ public:
 	}
 
 	/**
-	 * @return LOD object 1
+	 * @returns LOD object 1
 	 */
 	inline Object* getLOD1Object() {
 		return objectLOD1.get();
 	}
 
 	/**
-	 * @return LOD object 2
+	 * @returns LOD object 2
 	 */
 	inline ImposterObject* getLOD2Object() {
 		return objectLOD2.get();
 	}
 
 	/**
-	 * @return LOD object
+	 * @returns LOD object
 	 */
 	inline Object* getLODObject() {
 		return objectLOD;
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Get current lod object
 	 * @param camera camera
-	 * @return LOD object to render
+	 * @returns LOD object to render
 	 */
 	inline Object* determineLODObject(Camera* camera) {
 		// determine LOD object and level type
@@ -169,7 +169,7 @@ public:
 	}
 
 	/**
-	 * @return effect color add for LOD2 level
+	 * @returns effect color add for LOD2 level
 	 */
 	inline const Color4& getEffectColorAddLOD2() const {
 		return effectColorAddLOD2;
@@ -184,7 +184,7 @@ public:
 	}
 
 	/**
-	 * @return effect color mul for LOD2 level
+	 * @returns effect color mul for LOD2 level
 	 */
 	inline const Color4& getEffectColorMulLOD2() const {
 		return effectColorMulLOD2;
@@ -350,7 +350,7 @@ public:
 	}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -371,7 +371,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& parameterName) {
 		return shaderParameters.getShaderParameter(parameterName);

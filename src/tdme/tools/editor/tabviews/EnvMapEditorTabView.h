@@ -67,28 +67,28 @@ public:
 	~EnvMapEditorTabView();
 
 	/**
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototype() {
 		return prototype.get();
 	}
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return envMapEditorTabController.get();
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
@@ -110,7 +110,7 @@ public:
 	inline bool hasFixedSize() override{ return false; };
 
 	/**
-	 * @return environment map translation
+	 * @returns environment map translation
 	 */
 	const Vector3& getEnvironmentMapTranslation();
 
@@ -121,7 +121,7 @@ public:
 	void setEnvironmentMapTranslation(const Vector3& translation);
 
 	/**
-	 * @return environment map render passes
+	 * @returns environment map render passes
 	 */
 	int32_t getEnvironmentMapRenderPassMask();
 
@@ -132,7 +132,7 @@ public:
 	void setEnvironmentMapRenderPassMask(int32_t renderPassMask);
 
 	/**
-	 * @return environment map frequency
+	 * @returns environment map frequency
 	 */
 	int64_t getEnvironmentMapFrequency();
 

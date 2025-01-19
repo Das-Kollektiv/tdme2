@@ -47,7 +47,7 @@ public:
 	}
 
 	/**
-	 * @return prototype file name
+	 * @returns prototype file name
 	 */
 	const string& getFileName() const {
 		return fileName;
@@ -62,7 +62,7 @@ public:
 	}
 
 	/**
-	 * @return count
+	 * @returns count
 	 */
 	float getCount() const {
 		return count;
@@ -77,7 +77,7 @@ public:
 	}
 
 	/**
-	 * @return align to normal
+	 * @returns align to normal
 	 */
 	bool isNormalAlign() const {
 		return normalAlign;
@@ -92,7 +92,7 @@ public:
 	}
 
 	/**
-	 * @return rotation x min
+	 * @returns rotation x min
 	 */
 	float getRotationXMin() const {
 		return rotationXMin;
@@ -107,7 +107,7 @@ public:
 	}
 
 	/**
-	 * @return rotation x max
+	 * @returns rotation x max
 	 */
 	float getRotationXMax() const {
 		return rotationXMax;
@@ -122,7 +122,7 @@ public:
 	}
 
 	/**
-	 * @return rotation y min
+	 * @returns rotation y min
 	 */
 	float getRotationYMin() const {
 		return rotationYMin;
@@ -137,7 +137,7 @@ public:
 	}
 
 	/**
-	 * @return rotation y max
+	 * @returns rotation y max
 	 */
 	float getRotationYMax() const {
 		return rotationYMax;
@@ -152,7 +152,7 @@ public:
 	}
 
 	/**
-	 * @return rotation z min
+	 * @returns rotation z min
 	 */
 	float getRotationZMin() const {
 		return rotationZMin;
@@ -167,7 +167,7 @@ public:
 	}
 
 	/**
-	 * @return rotation z max
+	 * @returns rotation z max
 	 */
 	float getRotationZMax() const {
 		return rotationZMax;
@@ -182,7 +182,7 @@ public:
 	}
 
 	/**
-	 * @return scale min
+	 * @returns scale min
 	 */
 	float getScaleMin() const {
 		return scaleMin;
@@ -197,7 +197,7 @@ public:
 	}
 
 	/**
-	 * @return scale max
+	 * @returns scale max
 	 */
 	float getScaleMax() const {
 		return scaleMax;
@@ -212,7 +212,7 @@ public:
 	}
 
 	/**
-	 * @return height min
+	 * @returns height min
 	 */
 	float getHeightMin() const {
 		return heightMin;
@@ -227,7 +227,7 @@ public:
 	}
 
 	/**
-	 * @return height max
+	 * @returns height max
 	 */
 	float getHeightMax() const {
 		return heightMax;
@@ -242,7 +242,7 @@ public:
 	}
 
 	/**
-	 * @return slope min
+	 * @returns slope min
 	 */
 	float getSlopeMin() const {
 		return slopeMin;
@@ -257,7 +257,7 @@ public:
 	}
 
 	/**
-	 * @return slope max
+	 * @returns slope max
 	 */
 	float getSlopeMax() const {
 		return slopeMax;

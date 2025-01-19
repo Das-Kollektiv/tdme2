@@ -99,7 +99,7 @@ private:
 	 * @param description description
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return prototype
+	 * @returns prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName);
@@ -126,21 +126,21 @@ public:
 	~ModelEditorTabView();
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototype() {
 		return prototype.get();
@@ -168,12 +168,12 @@ public:
 	void reimportPrototype();
 
 	/**
-	 * @return current model file name
+	 * @returns current model file name
 	 */
 	const string& getFileName();
 
 	/**
-	 * @return LOD level
+	 * @returns LOD level
 	 */
 	int getLODLevel() const;
 

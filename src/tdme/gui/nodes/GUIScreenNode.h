@@ -190,28 +190,28 @@ private:
 
 public:
 	/**
-	 * @return screen filename or complete file path
+	 * @returns screen filename or complete file path
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * @return application root path name
+	 * @returns application root path name
 	 */
 	inline const string& getApplicationRootPathName() {
 		return applicationRootPathName;
 	}
 
 	/**
-	 * @return application sub path path name
+	 * @returns application sub path path name
 	 */
 	inline const string& getApplicationSubPathName() {
 		return applicationSubPathName;
 	}
 
 	/**
-	 * @return GUI
+	 * @returns GUI
 	 */
 	GUI* getGUI();
 
@@ -222,21 +222,21 @@ public:
 	void setGUI(GUI* gui);
 
 	/**
-	 * @return screen width
+	 * @returns screen width
 	 */
 	inline int getScreenWidth() {
 		return screenWidth;
 	}
 
 	/**
-	 * @return screen height
+	 * @returns screen height
 	 */
 	inline int getScreenHeight() {
 		return screenHeight;
 	}
 
 	/**
-	 * @return is enabled
+	 * @returns is enabled
 	 */
 	inline bool isEnabled() {
 		return enabled;
@@ -249,7 +249,7 @@ public:
 	void setEnabled(bool enabled);
 
 	/**
-	 * @return is pop up
+	 * @returns is pop up
 	 */
 	inline bool isPopUp() {
 		return popUp;
@@ -262,7 +262,7 @@ public:
 	void setPopUp(bool popUp);
 
 	/**
-	 * @return floating nodes
+	 * @returns floating nodes
 	 */
 	const vector<GUINode*>& getFloatingNodes();
 
@@ -306,14 +306,14 @@ private:
 	/**
 	 * Add node
 	 * @param node node
-	 * @return success
+	 * @returns success
 	 */
 	bool addNode(GUINode* node);
 
 	/**
 	 * Add node
 	 * @param node node
-	 * @return success
+	 * @returns success
 	 */
 	bool removeNode(GUINode* node);
 
@@ -402,12 +402,12 @@ public:
 	~GUIScreenNode();
 
 	/**
-	 * @return content width
+	 * @returns content width
 	 */
 	int getContentWidth() override;
 
 	/**
-	 * @return content height
+	 * @returns content height
 	 */
 	int getContentHeight() override;
 
@@ -419,7 +419,7 @@ public:
 	/**
 	 * Mark a node to be invalidated regarding layout
 	 * @param node node
-	 * @return first node that requires a layout in tree
+	 * @returns first node that requires a layout in tree
 	 */
 	inline void invalidateLayout(GUINode* node) {
 		invalidateLayoutNodeIds.insert(node->getId());
@@ -428,7 +428,7 @@ public:
 	/**
 	 * Actually do the invalidate layout
 	 * @param node node
-	 * @return (parent)node thats need a layout
+	 * @returns (parent)node thats need a layout
 	 */
 	GUINode* forceInvalidateLayout(GUINode* node);
 
@@ -459,7 +459,7 @@ public:
 	/**
 	 * Get GUI node by id
 	 * @param nodeId nodeId
-	 * @return GUI node or null
+	 * @returns GUI node or null
 	 */
 	inline GUINode* getNodeById(const string& nodeId) {
 		auto nodesByIdIt = nodesById.find(nodeId);
@@ -479,7 +479,7 @@ public:
 	/**
 	 * Get inner GUI node by id
 	 * @param nodeId nodeId
-	 * @return GUI node or null
+	 * @returns GUI node or null
 	 */
 	inline GUINode* getInnerNodeById(const string& nodeId) {
 		return getNodeById(nodeId + "_inner");
@@ -487,7 +487,7 @@ public:
 
 	/**
 	 * Allocate node id
-	 * @return node id
+	 * @returns node id
 	 */
 	inline const string allocateNodeId() {
 		return "<" + to_string(nodeCounter++) + ">";
@@ -528,7 +528,7 @@ public:
 	void removeActionListener(GUIActionListener* listener);
 
 	/**
-	 * @return input event handler
+	 * @returns input event handler
 	 */
 	GUIInputEventHandler* getInputEventHandler();
 
@@ -640,7 +640,7 @@ public:
 	/**
 	 * Returns if move is accepted by move listener
 	 * @param node node
-	 * @return move is accepted
+	 * @returns move is accepted
 	 */
 	bool isMoveAccepted(GUINode* node);
 
@@ -704,7 +704,7 @@ public:
 	void forwardDragRequest(GUIElementNode* node, int mouseX, int mouseY);
 
 	/**
-	 * @return if haveing given node registered as tick node
+	 * @returns if haveing given node registered as tick node
 	 */
 	inline bool hasTickNode(GUINode* node) {
 		return tickNodesById.find(node->getId()) != tickNodesById.end();
@@ -739,7 +739,7 @@ public:
 	void setValues(const unordered_map<string, MutableString>& values);
 
 	/**
-	 * @return size constraints
+	 * @returns size constraints
 	 */
 	inline GUIScreenNode_SizeConstraints& getSizeConstraints() {
 		return sizeConstraints;
@@ -777,7 +777,7 @@ public:
 	 * @param fileName file name
 	 * @param size size
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return font
+	 * @returns font
 	 */
 	GUIFont* getFont(const string& fileName, int size);
 
@@ -785,26 +785,26 @@ public:
 	 * Get image
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return texture
+	 * @returns texture
 	 */
 	Texture* getImage(const string& fileName);
 
 	/**
-	 * @return foccussed border color
+	 * @returns foccussed border color
 	 */
 	inline const GUIColor& getFoccussedBorderColor() {
 		return foccussedBorderColor;
 	}
 
 	/**
-	 * @return mini script script attached to this screen
+	 * @returns mini script script attached to this screen
 	 */
 	inline GUIMinitScript* getMinitScript() {
 		return script.get();
 	}
 
 	/**
-	 * @return application logic context
+	 * @returns application logic context
 	 */
 	inline Context* getContext() {
 		return context;

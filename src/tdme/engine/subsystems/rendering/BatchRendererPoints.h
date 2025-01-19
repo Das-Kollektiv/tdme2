@@ -128,7 +128,7 @@ public:
 	}
 
 	/**
-	 * @return has points
+	 * @returns has points
 	 */
 	inline bool hasPoints() {
 		return fbVertices.getPosition() > 0;
@@ -139,7 +139,7 @@ public:
 	}
 
 	/**
-	 * @return acquired
+	 * @returns acquired
 	 */
 	inline bool isAcquired() {
 		return acquired;

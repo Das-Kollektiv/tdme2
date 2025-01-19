@@ -75,7 +75,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline UIEditorTabView* getView() {
 		return view;

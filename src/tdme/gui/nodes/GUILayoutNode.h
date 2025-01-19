@@ -92,7 +92,7 @@ public:
 	/**
 	 * Create alignment
 	 * @param alignment alignment
-	 * @return alignment
+	 * @returns alignment
 	 */
 	static GUILayoutNode_Alignment* createAlignment(const string& alignment);
 

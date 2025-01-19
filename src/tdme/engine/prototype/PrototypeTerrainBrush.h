@@ -47,7 +47,7 @@ public:
 	}
 
 	/**
-	 * @return size
+	 * @returns size
 	 */
 	inline float getSize() const {
 		return size;
@@ -62,7 +62,7 @@ public:
 	}
 
 	/**
-	 * @return density
+	 * @returns density
 	 */
 	inline float getDensity() const {
 		return density;
@@ -77,7 +77,7 @@ public:
 	}
 
 	/**
-	 * @return texture file name
+	 * @returns texture file name
 	 */
 	inline const string& getFileName() const {
 		return fileName;
@@ -92,7 +92,7 @@ public:
 	}
 
 	/**
-	 * @return Prototypes iterator
+	 * @returns Prototypes iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeTerrainBrushPrototype> getPrototypes() {
 		return UniquePtrSequenceIterator<PrototypeTerrainBrushPrototype>(&(*prototypes.begin()), &(*prototypes.end()));
@@ -100,7 +100,7 @@ public:
 
 	/**
 	 * Get prototype count
-	 * @return prototype count
+	 * @returns prototype count
 	 */
 	inline int getPrototypeCount() {
 		return prototypes.size();
@@ -109,7 +109,7 @@ public:
 	/**
 	 * Get prototype terrain brush prototype
 	 * @param idx index
-	 * @return prototype terrain brush prototype
+	 * @returns prototype terrain brush prototype
 	 */
 	inline PrototypeTerrainBrushPrototype* getPrototype(int idx) {
 		if (idx < 0 || idx >= prototypes.size()) return nullptr;

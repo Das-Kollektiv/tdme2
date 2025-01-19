@@ -27,7 +27,7 @@ public:
 	 * @param selection only find in selection
 	 * @param firstSearch first search
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	static bool find(GUIStyledTextNode* textNode, const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
 
@@ -50,7 +50,7 @@ public:
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	static bool replace(GUIStyledTextNode* textNode, const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
 
@@ -62,7 +62,7 @@ public:
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
-	 * @return success
+	 * @returns success
 	 */
 	static bool replaceAll(GUIStyledTextNode* textNode, const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
 

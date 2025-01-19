@@ -104,7 +104,7 @@ private:
 	 * @param elementNode element node to work with
 	 * @param function function to be called
 	 * @param arguments function arguments
-	 * @return condition met
+	 * @returns condition met
 	 */
 	bool cfCall(GUIElementNode* elementNode, const string& function, const vector<string>& arguments);
 
@@ -121,7 +121,7 @@ private:
 	 * @param arguments arguments
 	 * 	Argument should look like 'test', "test", '', "", 123, 0, 123.4, 0.0 for now
 	 *	Arguments or OR connected
-	 * @return if 1 argument has not been empty
+	 * @returns if 1 argument has not been empty
 	 */
 	bool cfEmpty(const vector<string>& arguments);
 
@@ -131,7 +131,7 @@ private:
 	 * @param arguments arguments
 	 *	Format of arguments: [elementid.]condition
 	 *	Arguments or OR connected
-	 * @return if 1 condition has been met
+	 * @returns if 1 condition has been met
 	 */
 	bool cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments);
 
@@ -218,7 +218,7 @@ protected:
 	virtual ~GUINode();
 
 	/**
-	 * @return is content node
+	 * @returns is content node
 	 */
 	virtual bool isContentNode() = 0;
 
@@ -250,7 +250,7 @@ protected:
 	 * @param autoValue auto value
 	 * @param parentValue parent value
 	 * @param value value
-	 * @return pixel
+	 * @returns pixel
 	 */
 	int layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value);
 
@@ -258,7 +258,7 @@ protected:
 	 * Get requested constraints type
 	 * @param constraint constraint
 	 * @param defaultConstraintsType default constraints type
-	 * @return requested constraints type
+	 * @returns requested constraints type
 	 */
 	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const string& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
 
@@ -266,7 +266,7 @@ protected:
 	 * Get requested constraints value
 	 * @param constraint constraint
 	 * @param defaultConstraintsValue default constraints value
-	 * @return requested constraints value
+	 * @returns requested constraints value
 	 */
 	static int getRequestedConstraintsValue(const string& constraint, int defaultConstraintsValue);
 
@@ -274,13 +274,13 @@ protected:
 	 * Get requested pixel value
 	 * @param value value
 	 * @param defaultValue default value
-	 * @return value
+	 * @returns value
 	 */
 	static int getRequestedPixelValue(const string& value, int defaultValue);
 
 	/**
 	 * Check if conditions are met
-	 * @return conditions met
+	 * @returns conditions met
 	 */
 	bool checkConditions();
 
@@ -297,7 +297,7 @@ protected:
 
 	/**
 	 * Returns if to render
-	 * @return if node will be rendered
+	 * @returns if node will be rendered
 	 */
 	inline bool shouldRender() {
 		return conditionsMet == true || haveActiveOutEffect() == true;
@@ -320,28 +320,28 @@ public:
 	static constexpr int DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP { 1 };
 
 	/**
-	 * @return scren node
+	 * @returns scren node
 	 */
 	inline GUIScreenNode* getScreenNode() {
 		return screenNode;
 	}
 
 	/**
-	 * @return parent node
+	 * @returns parent node
 	 */
 	inline GUIParentNode* getParentNode() {
 		return parentNode;
 	}
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
 	/**
-	 * @return tooltip
+	 * @returns tooltip
 	 */
 	inline const string& getToolTip() {
 		return tooltip;
@@ -356,65 +356,65 @@ public:
 	}
 
 	/**
-	 * @return hierarchical id
+	 * @returns hierarchical id
 	 */
 	const string getHierarchicalId();
 
 	/**
-	 * @return node type
+	 * @returns node type
 	 */
 	virtual const string getNodeType() = 0;
 
 	/**
-	 * @return content width including border, margin
+	 * @returns content width including border, margin
 	 */
 	virtual int getContentWidth() = 0;
 
 	/**
-	 * @return content height including border, margin
+	 * @returns content height including border, margin
 	 */
 	virtual int getContentHeight() = 0;
 
 	/**
-	 * @return auto width if auto width requested or content width
+	 * @returns auto width if auto width requested or content width
 	 */
 	virtual int getAutoWidth();
 
 	/**
-	 * @return auto height if auto height requested or content height
+	 * @returns auto height if auto height requested or content height
 	 */
 	virtual int getAutoHeight();
 
 	/**
-	 * @return border
+	 * @returns border
 	 */
 	inline GUINode_Border& getBorder() {
 		return border;
 	}
 
 	/**
-	 * @return padding
+	 * @returns padding
 	 */
 	inline GUINode_Padding& getPadding() {
 		return padding;
 	}
 
 	/**
-	 * @return requested constraints
+	 * @returns requested constraints
 	 */
 	inline GUINode_RequestedConstraints& getRequestsConstraints() {
 		return requestedConstraints;
 	}
 
 	/**
-	 * @return computed constraints
+	 * @returns computed constraints
 	 */
 	inline GUINode_ComputedConstraints& getComputedConstraints() {
 		return computedConstraints;
 	}
 
 	/**
-	 * @return background color
+	 * @returns background color
 	 */
 	inline GUIColor& getBackgroundColor() {
 		return backgroundColor;
@@ -424,7 +424,7 @@ public:
 	 * Create alignments
 	 * @param horizontal horizontal
 	 * @param vertical vertical
-	 * @return alignments
+	 * @returns alignments
 	 */
 	static GUINode_Alignments createAlignments(const string& horizontal, const string& vertical);
 
@@ -435,7 +435,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param factor factor
-	 * @return requested constraints
+	 * @returns requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
@@ -444,14 +444,14 @@ public:
 	 * @param color color
 	 * @param defaultColor default color
 	 * @throws tdme::gui::GUIParserException
-	 * @return value
+	 * @returns value
 	 */
 	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor);
 
 	/**
 	 * Create flow
 	 * @param flow flow
-	 * @return flow
+	 * @returns flow
 	 */
 	static GUINode_Flow* createFlow(const string& flow);
 
@@ -467,7 +467,7 @@ public:
 	 * @param topColor top color
 	 * @param rightColor right color
 	 * @param bottomColor bottom color
-	 * @return border
+	 * @returns border
 	 */
 	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor);
 
@@ -478,7 +478,7 @@ public:
 	 * @param top top
 	 * @param right right
 	 * @param bottom bottom
-	 * @return padding
+	 * @returns padding
 	 */
 	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom);
 
@@ -489,7 +489,7 @@ public:
 	 * @param top top
 	 * @param right right
 	 * @param bottom bottom
-	 * @return scale 9 grid
+	 * @returns scale 9 grid
 	 */
 	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom);
 
@@ -506,7 +506,7 @@ public:
 
 	/**
 	 * Returns if conditions are set
-	 * @return if conditions are set
+	 * @returns if conditions are set
 	 */
 	inline bool isConditionsMet() {
 		return conditionsMet;
@@ -519,7 +519,7 @@ public:
 
 	/**
 	 * Returns if layouted
-	 * @return if layouted
+	 * @returns if layouted
 	 */
 	inline bool isLayouted() {
 		return layouted;
@@ -531,7 +531,7 @@ public:
 	virtual void layoutOnDemand();
 
 	/**
-	 * @return if node has effects
+	 * @returns if node has effects
 	 */
 	inline bool hasEffects() {
 		return effects.empty() == false;
@@ -557,12 +557,12 @@ public:
 	virtual void render(GUIRenderer* guiRenderer);
 
 	/**
-	 * @return compute parent children render offset X total
+	 * @returns compute parent children render offset X total
 	 */
 	float computeParentChildrenRenderOffsetXTotal();
 
 	/**
-	 * @return compute children render offset Y total
+	 * @returns compute children render offset Y total
 	 */
 	float computeParentChildrenRenderOffsetYTotal();
 
@@ -570,7 +570,7 @@ public:
 	 * Is coordinate belonging to node
 	 * @param coordinate coordinate
 	 * @param nodeCoordinate node coordinate
-	 * @return boolean
+	 * @returns boolean
 	 */
 	inline bool isCoordinateBelongingToNode(const Vector2& coordinate, Vector2& nodeCoordinate) {
 		auto x = coordinate[0] + computeParentChildrenRenderOffsetXTotal();
@@ -588,7 +588,7 @@ public:
 	/**
 	 * Is coordinate belonging to node
 	 * @param coordinate coordinate
-	 * @return boolean
+	 * @returns boolean
 	 */
 	inline bool isCoordinateBelongingToNode(const Vector2& coordinate) {
 		Vector2 nodeCoordinate;
@@ -599,7 +599,7 @@ public:
 	 * Is event belonging to node
 	 * @param event event
 	 * @param nodeCoordinate node coordinate
-	 * @return boolean
+	 * @returns boolean
 	 */
 	inline bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& nodeCoordinate) {
 		return isCoordinateBelongingToNode(Vector2(event->getX(), event->getY()), nodeCoordinate);
@@ -608,7 +608,7 @@ public:
 	/**
 	 * Is event belonging to node
 	 * @param event event
-	 * @return boolean
+	 * @returns boolean
 	 */
 	inline bool isEventBelongingToNode(GUIMouseEvent* event) {
 		Vector2 nodeCoordinate;
@@ -620,7 +620,7 @@ public:
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
 	 * @param position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
-	 * @return void
+	 * @returns void
 	 */
 	void getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position);
 
@@ -629,12 +629,12 @@ public:
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
 	 * @param position position in node coordinate space clamped to node constraints
-	 * @return void
+	 * @returns void
 	 */
 	void getEventNodePosition(GUIMouseEvent* event, Vector2& position);
 
 	/**
-	 * @return first parent node in tree with controller node attached
+	 * @returns first parent node in tree with controller node attached
 	 */
 	GUIParentNode* getParentControllerNode();
 
@@ -656,7 +656,7 @@ public:
 	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE);
 
 	/**
-	 * @return controller
+	 * @returns controller
 	 */
 	inline GUINodeController* getController() {
 		return controller.get();
@@ -687,7 +687,7 @@ public:
 	void setBackgroundImage(const string& backgroundImage);
 
 	/**
-	 * @return GUI effect offset X
+	 * @returns GUI effect offset X
 	 */
 	inline int getGUIEffectOffsetX() {
 		return guiEffectOffsetX;
@@ -702,7 +702,7 @@ public:
 	}
 
 	/**
-	 * @return GUI effect offset Y
+	 * @returns GUI effect offset Y
 	 */
 	inline int getGUIEffectOffsetY() {
 		return guiEffectOffsetY;
@@ -717,7 +717,7 @@ public:
 	}
 
 	/**
-	 * @return effect state
+	 * @returns effect state
 	 */
 	inline GUIEffectState* getEffectState() {
 		return effectState.get();
@@ -726,7 +726,7 @@ public:
 	/**
 	 * Get effect
 	 * @param id id
-	 * @return effect or null
+	 * @returns effect or null
 	 */
 	GUIEffect* getEffect(const string& id);
 

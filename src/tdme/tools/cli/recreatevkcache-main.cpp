@@ -51,7 +51,7 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
-	 * @return exit code
+	 * @returns exit code
 	 */
 	inline static int main(int argc, char** argv) {
 		auto recreateVKCacheApplication = new RecreateVKCacheApplication();

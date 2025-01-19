@@ -74,7 +74,7 @@ public:
 
 	/**
 	 * Get view
-	 * @return view
+	 * @returns view
 	 */
 	inline TriggerEditorTabView* getView() {
 		return view;
@@ -86,14 +86,14 @@ public:
 	}
 
 	/**
-	 * @return prototype display sub screen controller
+	 * @returns prototype display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
 		return prototypeDisplaySubController.get();
 	}
 
 	/**
-	 * @return prototype physics sub screen controller
+	 * @returns prototype physics sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
 		return prototypePhysicsSubController.get();

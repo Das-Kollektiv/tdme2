@@ -36,28 +36,28 @@ public:
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return underlying texture, the format is currently RGBA
+	 * @returns underlying texture, the format is currently RGBA
 	 */
 	inline Texture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return underlying texture byte buffer, the format is currently RGBA
+	 * @returns underlying texture byte buffer, the format is currently RGBA
 	 */
 	inline ByteBuffer* getByteBuffer() {
 		return texture->getTextureData();

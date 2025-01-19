@@ -33,7 +33,7 @@ struct tdme::utilities::PathFindingCustomTest
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @return is walkable
+	 * @returns is walkable
 	 */
 	virtual bool isWalkable(PathFinding* pathFinding, float x, float y, float z) = 0;
 

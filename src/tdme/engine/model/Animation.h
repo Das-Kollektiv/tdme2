@@ -30,7 +30,7 @@ public:
 	Animation();
 
 	/**
-	 * @return number of frames
+	 * @returns number of frames
 	 */
 	inline int getFrames() const {
 		return transformMatrices.size();
@@ -38,7 +38,7 @@ public:
 
 	/**
 	 * Returns transform matrices
-	 * @return transform matrices
+	 * @returns transform matrices
 	 */
 	inline const vector<Matrix4x4>& getTransformMatrices() const {
 		return transformMatrices;
@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Set transform matrices
-	 * @return transformMatrices transform matrices
+	 * @returns transformMatrices transform matrices
 	 */
 	inline void setTransformMatrices(const vector<Matrix4x4>& transformMatrices) {
 		this->transformMatrices = transformMatrices;

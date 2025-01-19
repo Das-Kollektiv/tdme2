@@ -42,84 +42,84 @@ public:
 	GeometryBuffer(int32_t width, int32_t height);
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return frame buffer id
+	 * @returns frame buffer id
 	 */
 	inline int32_t getId() {
 		return frameBufferId;
 	}
 
 	/**
-	 * @return depth buffer texture
+	 * @returns depth buffer texture
 	 */
 	inline int32_t getDepthBufferTextureId() {
 		return depthBufferTextureId;
 	}
 
 	/**
-	 * @return geometry buffer texture 1
+	 * @returns geometry buffer texture 1
 	 */
 	inline int32_t getGeometryBufferTextureId1() {
 		return geometryBufferTextureId1;
 	}
 
 	/**
-	 * @return geometry buffer texture 2
+	 * @returns geometry buffer texture 2
 	 */
 	inline int32_t getGeometryBufferTextureId2() {
 		return geometryBufferTextureId2;
 	}
 
 	/**
-	 * @return geometry buffer texture 2
+	 * @returns geometry buffer texture 2
 	 */
 	inline int32_t getGeometryBufferTextureId3() {
 		return geometryBufferTextureId3;
 	}
 
 	/**
-	 * @return color buffer texture 1
+	 * @returns color buffer texture 1
 	 */
 	inline int32_t getColorBufferTextureId1() {
 		return colorBufferTextureId1;
 	}
 
 	/**
-	 * @return color buffer texture 2
+	 * @returns color buffer texture 2
 	 */
 	inline int32_t getColorBufferTextureId2() {
 		return colorBufferTextureId2;
 	}
 
 	/**
-	 * @return color buffer texture 3
+	 * @returns color buffer texture 3
 	 */
 	inline int32_t getColorBufferTextureId3() {
 		return colorBufferTextureId3;
 	}
 
 	/**
-	 * @return color buffer texture 4
+	 * @returns color buffer texture 4
 	 */
 	inline int32_t getColorBufferTextureId4() {
 		return colorBufferTextureId4;
 	}
 
 	/**
-	 * @return color buffer texture 5
+	 * @returns color buffer texture 5
 	 */
 	inline int32_t getColorBufferTextureId5() {
 		return colorBufferTextureId5;

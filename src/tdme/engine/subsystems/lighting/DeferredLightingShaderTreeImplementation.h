@@ -30,7 +30,7 @@ public:
 	DeferredLightingShaderTreeImplementation(RendererBackend* rendererBackend);
 
 	/**
-	 * @return if supported by rendererBackend
+	 * @returns if supported by renderer backend
 	 * @param rendererBackend renderer backend
 	 */
 	static bool isSupported(RendererBackend* rendererBackend);

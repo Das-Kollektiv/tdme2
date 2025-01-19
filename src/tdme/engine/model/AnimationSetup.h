@@ -44,28 +44,28 @@ public:
 	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromNodeId, float speed = 1.0);
 
 	/**
-	 * @return model this animation belongs to
+	 * @returns model this animation belongs to
 	 */
 	inline Model* getModel() {
 		return model;
 	}
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
 	/**
-	 * @return if animation set up is a overlay animation setup
+	 * @returns if animation set up is a overlay animation setup
 	 */
 	inline bool isOverlayAnimationSetup() {
 		return overlayFromNodeId.empty() == false;
 	}
 
 	/**
-	 * @return start frame
+	 * @returns start frame
 	 */
 	inline int32_t getStartFrame() {
 		return startFrame;
@@ -78,7 +78,7 @@ public:
 	void setStartFrame(int32_t startFrame);
 
 	/**
-	 * @return end frame
+	 * @returns end frame
 	 */
 	inline int32_t getEndFrame() {
 		return endFrame;
@@ -91,14 +91,14 @@ public:
 	void setEndFrame(int32_t endFrame);
 
 	/**
-	 * @return frames
+	 * @returns frames
 	 */
 	inline int32_t getFrames() {
 		return frames;
 	}
 
 	/**
-	 * @return looping enabled
+	 * @returns looping enabled
 	 */
 	inline bool isLoop() {
 		return loop;
@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * If this is a overlay animation this returns a node id from which node the animation will start in the hierarchy
-	 * @return node id from which the animation will start in the hierarchy
+	 * @returns node id from which the animation will start in the hierarchy
 	 */
 	inline const string& getOverlayFromNodeId() {
 		return overlayFromNodeId;
@@ -129,7 +129,7 @@ public:
 	}
 
 	/**
-	 * @return animation duration in milliseconds
+	 * @returns animation duration in milliseconds
 	 */
 	int64_t computeDuration();
 
@@ -137,12 +137,12 @@ public:
 	 * Compute animation duration
 	 * @param startFrame start frame
 	 * @param endFrame end frame
-	 * @return animation duration in milliseconds
+	 * @returns animation duration in milliseconds
 	 */
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);
 
 	/**
-	 * @return speed whereas 1.0 is default speed
+	 * @returns speed whereas 1.0 is default speed
 	 */
 	inline float getSpeed() {
 		return speed;

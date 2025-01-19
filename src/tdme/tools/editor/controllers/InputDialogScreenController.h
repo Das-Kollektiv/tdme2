@@ -68,7 +68,7 @@ public:
 	GUIScreenNode* getScreenNode() override;
 
 	/**
-	 * @return input text
+	 * @returns input text
 	 */
 	const string getInputText();
 

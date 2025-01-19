@@ -61,7 +61,7 @@ public:
 
 	/**
 	 * Get data
-	 * @return data
+	 * @returns data
 	 */
 	inline vector<uint8_t>* getData() {
 		return data;

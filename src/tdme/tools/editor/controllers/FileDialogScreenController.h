@@ -75,7 +75,7 @@ private:
 
 	/**
 	 * Set up files
-	 * @return success
+	 * @returns success
 	 */
 	bool setupFiles();
 
@@ -102,7 +102,7 @@ private:
 	void setupDrives();
 
 	/**
-	 * @return extension hash
+	 * @returns extension hash
 	 */
 	inline const string getExtensionHash() {
 		string extensionHash = "|";
@@ -132,7 +132,7 @@ public:
 	}
 
 	/**
-	 * @return default current working directory
+	 * @returns default current working directory
 	 */
 	inline const string& getDefaultCWD() {
 		return defaultCwd;
@@ -147,14 +147,14 @@ public:
 	}
 
 	/**
-	 * @return path name
+	 * @returns path name
 	 */
 	inline const string& getPathName() {
 		return cwd;
 	}
 
 	/**
-	 * @return file name
+	 * @returns file name
 	 */
 	const string getFileName();
 
@@ -201,7 +201,7 @@ public:
 	/**
 	 * Get file image name
 	 * @param fileName file name
-	 * @return file image name
+	 * @returns file image name
 	 */
 	static const string getFileImageName(const string& fileName);
 

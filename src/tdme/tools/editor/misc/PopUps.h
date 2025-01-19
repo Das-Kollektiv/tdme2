@@ -56,84 +56,84 @@ public:
 	~PopUps();
 
 	/**
-	 * @return file dialog screen controller
+	 * @returns file dialog screen controller
 	 */
 	inline FileDialogScreenController* getFileDialogScreenController() {
 		return fileDialogScreenController.get();
 	}
 
 	/**
-	 * @return input dialog screen controller
+	 * @returns input dialog screen controller
 	 */
 	inline InputDialogScreenController* getInputDialogScreenController() {
 		return inputDialogScreenController.get();
 	}
 
 	/**
-	 * @return info dialog screen controller
+	 * @returns info dialog screen controller
 	 */
 	inline InfoDialogScreenController* getInfoDialogScreenController() {
 		return infoDialogScreenController.get();
 	}
 
 	/**
-	 * @return progress bar screen controller
+	 * @returns progress bar screen controller
 	 */
 	inline ProgressBarScreenController* getProgressBarScreenController() {
 		return progressBarScreenController.get();
 	}
 
 	/**
-	 * @return color picker screen controller
+	 * @returns color picker screen controller
 	 */
 	inline ColorPickerScreenController* getColorPickerScreenController() {
 		return colorPickerScreenController.get();
 	}
 
 	/**
- 	 * @return context menu screen controller
+ 	 * @returns context menu screen controller
 	 */
 	inline ContextMenuScreenController* getContextMenuScreenController() {
 		return contextMenuScreenController.get();
 	}
 
 	/**
- 	 * @return about dialog screen controller
+ 	 * @returns about dialog screen controller
 	 */
 	inline AboutDialogScreenController* getAboutDialogScreenController() {
 		return aboutDialogScreenController.get();
 	}
 
 	/**
-	 * @return find replace dialog screen controller
+	 * @returns find replace dialog screen controller
 	 */
 	inline FindReplaceDialogScreenController* getFindReplaceDialogScreenController() {
 		return findReplaceDialogScreenController.get();
 	}
 
 	/**
-	 * @return import dialog screen controller
+	 * @returns import dialog screen controller
 	 */
 	inline ImportDialogScreenController* getImportDialogScreenController() {
 		return importDialogScreenController.get();
 	}
 
 	/**
-	 * @return selector dialog screen controller
+	 * @returns selector dialog screen controller
 	 */
 	inline SelectorDialogScreenController* getSelectorDialogScreenController() {
 		return selectorDialogScreenController.get();
 	}
 
 	/**
-	 * @return tooltip screen controller
+	 * @returns tooltip screen controller
 	 */
 	inline TooltipScreenController* getTooltipScreenController() {
 		return tooltipScreenController.get();
 	}
 
 	/**
-	 * @return dragging screen controller
+	 * @returns dragging screen controller
 	 */
 	inline DraggingScreenController* getDraggingScreenController() {
 		return draggingScreenController.get();

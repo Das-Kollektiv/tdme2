@@ -108,14 +108,14 @@ public:
 	}
 
 	/**
-	 * @return billboard objects
+	 * @returns billboard objects
 	 */
 	inline const vector<Object*> getBillboardObjects() {
 		return billboardObjects;
 	}
 
 	/**
-	 * @return billboard object
+	 * @returns billboard object
 	 */
 	inline Object* getBillboardObject() {
 		//
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Get current billboard object
 	 * @param camera camera
-	 * @return LOD object to render
+	 * @returns LOD object to render
 	 */
 	inline Object* determineBillboardObject(Camera* camera) {
 		Vector3 cameraForwardVector = getWorldBoundingBox()->getCenter().clone().sub(camera->getLookFrom()).setY(0.0f).normalize();
@@ -287,7 +287,7 @@ public:
 	}
 
 	/**
-	 * @return shader id
+	 * @returns shader id
 	 */
 	inline const string& getShader() {
 		return shaderId;
@@ -307,7 +307,7 @@ public:
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter
+	 * @returns shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& parameterName) {
 		return shaderParameters.getShaderParameter(parameterName);

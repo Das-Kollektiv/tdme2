@@ -84,7 +84,7 @@ private:
 	 * @param frame frame
 	 * @param nodeId node id
 	 * @param transformMatrix transform matrix
-	 * @return target node transform
+	 * @returns target node transform
 	 */
 	bool computeTransformMatrix(const unordered_map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix);
 
@@ -109,35 +109,35 @@ public:
 	~Model();
 
 	/**
-	 * @return authoring tool
+	 * @returns authoring tool
 	 */
 	inline AuthoringTool getAuthoringTool() {
 		return authoringTool;
 	}
 
 	/**
-	 * @return unique model id
+	 * @returns unique model id
 	 */
 	inline uint32_t getUniqueId() {
 		return uniqueId;
 	}
 
 	/**
-	 * @return model id
+	 * @returns model id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
 	/**
-	 * @return model name
+	 * @returns model name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
 	/**
-	 * @return up vector
+	 * @returns up vector
 	 */
 	inline UpVector* getUpVector() {
 		return upVector;
@@ -152,14 +152,14 @@ public:
 	}
 
 	/**
-	 * @return rotation order
+	 * @returns rotation order
 	 */
 	inline RotationOrder* getRotationOrder() {
 		return rotationOrder;
 	}
 
 	/**
-	 * @return preferred shader model
+	 * @returns preferred shader model
 	 */
 	inline ShaderModel* getShaderModel() {
 		return shaderModel;
@@ -174,13 +174,13 @@ public:
 	}
 
 	/**
-	 * @return material ids
+	 * @returns material ids
 	 */
 	const vector<string> getMaterialIds();
 
 	/**
 	 * Returns all object materials
-	 * @return materials
+	 * @returns materials
 	 */
 	inline unordered_map<string, Material*>& getMaterials() {
 		return materials;
@@ -188,13 +188,13 @@ public:
 
 	/**
 	 * Returns all object's node ids
-	 * @return all node ids
+	 * @returns all node ids
 	 */
 	const vector<string> getNodeIds();
 
 	/**
 	 * Returns all object's nodes
-	 * @return all nodes
+	 * @returns all nodes
 	 */
 	inline unordered_map<string, Node*>& getNodes() {
 		return nodes;
@@ -203,7 +203,7 @@ public:
 	/**
 	 * Returns a node by given name or null
 	 * @param id id
-	 * @return
+	 * @returns
 	 */
 	inline Node* getNodeById(const string& id) {
 		auto nodeIt = nodes.find(id);
@@ -215,7 +215,7 @@ public:
 
 	/**
 	 * Returns object's sub nodes
-	 * @return sub nodes
+	 * @returns sub nodes
 	 */
 	inline unordered_map<string, Node*>& getSubNodes() {
 		return subNodes;
@@ -224,7 +224,7 @@ public:
 	/**
 	 * Returns a sub node by given name or null
 	 * @param id id
-	 * @return
+	 * @returns
 	 */
 	inline Node* getSubNodeById(const string& id) {
 		auto nodeIt = subNodes.find(id);
@@ -235,14 +235,14 @@ public:
 	}
 
 	/**
-	 * @return has skinning
+	 * @returns has skinning
 	 */
 	inline bool hasSkinning() {
 		return skinning;
 	}
 
 	/**
-	 * @return frames per seconds
+	 * @returns frames per seconds
 	 */
 	inline float getFPS() {
 		return fps;
@@ -257,19 +257,19 @@ public:
 	}
 
 	/**
-	 * @return animation setups
+	 * @returns animation setups
 	 */
 	inline const unordered_map<string, AnimationSetup*>& getAnimationSetups() {
 		return animationSetups;
 	}
 
 	/**
-	 * @return animation setup ids
+	 * @returns animation setup ids
 	 */
 	const vector<string> getAnimationSetupIds();
 
 	/**
-	 * @return animation setup for given id or nullptr
+	 * @returns animation setup for given id or nullptr
 	 */
 	inline AnimationSetup* getAnimationSetup(const string& id) {
 		auto animationSetupIt = animationSetups.find(id);
@@ -286,7 +286,7 @@ public:
 	 * @param endFrame end frame
 	 * @param loop loop
 	 * @param speed speed whereas 1.0 is default speed
-	 * @return animation setup
+	 * @returns animation setup
 	 */
 	AnimationSetup* addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
@@ -298,7 +298,7 @@ public:
 	 * @param endFrame end frame
 	 * @param loop loop
 	 * @param speed speed whereas 1.0 is default speed
-	 * @return animation setup
+	 * @returns animation setup
 	 */
 	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
@@ -306,14 +306,14 @@ public:
 	 * Rename animation set up
 	 * @param id id
 	 * @param newId new id
-	 * @return success
+	 * @returns success
 	 */
 	bool renameAnimationSetup(const string& id, const string& newId);
 
 	/**
 	 * Remove animation setup
 	 * @param id id
-	 * @return success
+	 * @returns success
 	 */
 	bool removeAnimationSetup(const string& id);
 
@@ -323,7 +323,7 @@ public:
 	void clearAnimationSetups();
 
 	/**
-	 * @return if model has animations
+	 * @returns if model has animations
 	 */
 	inline bool hasAnimations() {
 		// no registered animation
@@ -335,7 +335,7 @@ public:
 	}
 
 	/**
-	 * @return import transform matrix like converting Z-UP to Y-UP
+	 * @returns import transform matrix like converting Z-UP to Y-UP
 	 */
 	inline const Matrix4x4& getImportTransformMatrix() {
 		return importTransformMatrix;
@@ -350,7 +350,7 @@ public:
 	}
 
 	/**
-	 * @return bounding box
+	 * @returns bounding box
 	 */
 	BoundingBox* getBoundingBox();
 
@@ -381,7 +381,7 @@ public:
 	}
 
 	/**
-	 * @return if vertices have been updated
+	 * @returns if vertices have been updated
 	 */
 	inline bool hasBoundingBoxUpdate() {
 		auto updated = boundingBoxUpdated;
@@ -390,7 +390,7 @@ public:
 	}
 
 	/**
-	 * @return if specular textures will be embedded in model files
+	 * @returns if specular textures will be embedded in model files
 	 */
 	inline bool hasEmbeddedSpecularTextures() const {
 		return embedSpecularTextures;
@@ -405,7 +405,7 @@ public:
 	}
 
 	/**
-	 * @return if PBR textures will be embedded in model files
+	 * @returns if PBR textures will be embedded in model files
 	 */
 	inline bool hasEmbeddedPBRTextures() const {
 		return embedPBRTextures;

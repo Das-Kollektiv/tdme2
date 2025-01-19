@@ -122,7 +122,7 @@ public:
 	);
 
 	/**
-	 * @return effect passes
+	 * @returns effect passes
 	 */
 	inline const vector<PostProcessingProgramEffectPass>& getEffectPasses() const {
 		return effectPasses;
@@ -145,14 +145,14 @@ public:
 	);
 
 	/**
-	 * @return render pass
+	 * @returns render pass
 	 */
 	inline const RenderPass getRenderPass() const {
 		return renderPass;
 	}
 
 	/**
-	 * @return steps
+	 * @returns steps
 	 */
 	inline const vector<PostProcessingProgramStep>& getPostProcessingSteps() const {
 		return steps;
@@ -160,7 +160,7 @@ public:
 
 	/**
 	 * Checks if program is supported
-	 * @return if program is supported
+	 * @returns if program is supported
 	 */
 	bool isSupported();
 

@@ -75,14 +75,14 @@ public:
 	}
 
 	/**
-	 * @return objects
+	 * @returns objects
 	 */
 	inline const vector<Object*>& getObjects() {
 		return objects;
 	}
 
 	/**
-	 * @return enabled objects
+	 * @returns enabled objects
 	 */
 	inline const vector<Object*>& getEnabledObjects() {
 		return enabledObjects;

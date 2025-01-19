@@ -123,35 +123,35 @@ public:
 	~UIEditorTabView();
 
 	/**
-	 * @return filename of opened file
+	 * @returns filename of opened file
 	 */
 	inline const string& getFileName() {
 		return screenFileName;
 	}
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return uiTabController.get();
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return UI screen nodes
+	 * @returns UI screen nodes
 	 */
 	inline vector<UIScreenNode>& getUIScreenNodes() {
 		return uiScreenNodes;
@@ -192,7 +192,7 @@ public:
 	void reAddScreens();
 
 	/**
-	 * @return prototype
+	 * @returns prototype
 	 */
 	Prototype* getPrototype();
 
@@ -202,7 +202,7 @@ public:
 	 * @param fileName file name
 	 * @param modelMeshNode model mesh node
 	 * @param modelMeshAnimation model mesh animation
-	 * @return model
+	 * @returns model
 	 */
 	Prototype* loadPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation);
 
@@ -224,7 +224,7 @@ public:
 	void removePrototype();
 
 	/**
-	 * @return current screen index
+	 * @returns current screen index
 	 */
 	inline int getScreenIdx() {
 		return screenIdx;
@@ -272,7 +272,7 @@ public:
 	void updateRendering() override;
 
 	/**
-	 * @return text index
+	 * @returns text index
 	 */
 	int getTextIndex();
 
@@ -284,7 +284,7 @@ public:
 	 * @param selection only find in selection
 	 * @param firstSearch first search
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
 
@@ -305,7 +305,7 @@ public:
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
 	 * @param index index
-	 * @return success
+	 * @returns success
 	 */
 	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
 
@@ -316,7 +316,7 @@ public:
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
-	 * @return success
+	 * @returns success
 	 */
 	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
 

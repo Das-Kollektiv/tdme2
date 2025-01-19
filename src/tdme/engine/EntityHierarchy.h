@@ -103,7 +103,7 @@ private:
 	 * Retrieve entity hierarchy level by given entity id or nullptr if not found
 	 * @param entityHierarchyLevel entity hierarchy level
 	 * @param id entity id
-	 * @return entity hierarchy level by given entity id or nullptr if not found
+	 * @returns entity hierarchy level by given entity id or nullptr if not found
 	 */
 	inline EntityHierarchyLevel* getEntityHierarchyLevel(EntityHierarchyLevel* entityHierarchyLevel, const string& id) {
 		if (id == entityHierarchyLevel->id) return entityHierarchyLevel;
@@ -151,7 +151,7 @@ public:
 	}
 
 	/**
-	 * @return entity from hierarchy by given unique id
+	 * @returns entity from hierarchy by given unique id
 	 */
 	inline Entity* getEntity(const string& id) {
 		auto entityHierarchyLevel = getEntityHierarchyLevel(id);
@@ -174,12 +174,12 @@ public:
 	/**
 	 * Query sub entities of parent entity
 	 * @param parentId parent entity id
-	 * @return entities
+	 * @returns entities
 	 */
 	const vector<Entity*> query(const string& parentId = string());
 
 	/**
-	 * @return entities
+	 * @returns entities
 	 */
 	inline const vector<Entity*>& getEntities() {
 		return entities;
@@ -188,7 +188,7 @@ public:
 	/**
 	 * Returns first found entity with given entity type
 	 * @param entityType entity type
-	 * @return entity
+	 * @returns entity
 	 */
 	inline Entity* getEntityByType(EntityType entityType) {
 		for (auto entity: entities) {
@@ -202,7 +202,7 @@ public:
 	/**
 	 * Return entities with given entity type
 	 * @param entityType entity type
-	 * @return entities by type
+	 * @returns entities by type
 	 */
 	inline vector<Entity*> getEntitiesByType(EntityType entityType) {
 		vector<Entity*> entitiesByType;

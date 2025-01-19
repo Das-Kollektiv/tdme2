@@ -103,28 +103,28 @@ public:
 	~ParticleSystemEditorTabView();
 
 	/**
-	 * @return editor view
+	 * @returns editor view
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
 	}
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	inline TabController* getTabController() override {
 		return particleSystemEditorTabController.get();
 	}
 
 	/**
-	 * @return pop up views
+	 * @returns pop up views
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
 	}
 
 	/**
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototype() {
 		return prototype.get();
@@ -160,7 +160,7 @@ public:
 	void uninitParticleSystem();
 
 	/**
-	 * @return particle system index
+	 * @returns particle system index
 	 */
 	int getParticleSystemIndex();
 

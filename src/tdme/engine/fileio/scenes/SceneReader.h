@@ -45,7 +45,7 @@ public:
 	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return scene
+	 * @returns scene
 	 */
 	static Scene* read(const string& pathName, const string& fileName, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
@@ -58,7 +58,7 @@ public:
 	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return scene
+	 * @returns scene
 	 */
 	static Scene* read(const string& pathName, const string& fileName, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
@@ -69,7 +69,7 @@ public:
 	 * @param progressCallback progress callback
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return scene
+	 * @returns scene
 	 */
 	static Scene* readFromModel(const string& pathName, const string& fileName, ProgressCallback* progressCallback = nullptr);
 

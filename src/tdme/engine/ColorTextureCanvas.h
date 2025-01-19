@@ -42,7 +42,7 @@ public:
 	}
 
 	/**
-	 * @return underlying texture, the format is currently RGBA
+	 * @returns underlying texture, the format is currently RGBA
 	 */
 	inline Texture* getTexture() {
 		return texture;

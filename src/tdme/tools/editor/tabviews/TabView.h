@@ -33,7 +33,7 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	};
 
 	/**
-	 * @return tab id
+	 * @returns tab id
 	 */
 	virtual const string& getTabId() = 0;
 
@@ -63,12 +63,12 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void deactivate() = 0;
 
 	/**
-	 * @return engine
+	 * @returns engine
 	 */
 	virtual Engine* getEngine() = 0;
 
 	/**
-	 * @return associated tab controller
+	 * @returns associated tab controller
 	 */
 	virtual TabController* getTabController() = 0;
 

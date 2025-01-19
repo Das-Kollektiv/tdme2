@@ -56,7 +56,7 @@ public:
 
 	/**
 	 * Allocata a unique prototype index
-	 * @return index
+	 * @returns index
 	 */
 	inline int allocatePrototypeId() {
 		return prototypeIdx++;
@@ -68,14 +68,14 @@ public:
 	void clear();
 
 	/**
-	 * @return prototypes iterator
+	 * @returns prototypes iterator
 	 */
 	inline UniquePtrSequenceIterator<Prototype> getPrototypes() {
 		return UniquePtrSequenceIterator<Prototype>(&(*prototypes.begin()), &(*prototypes.end()));
 	}
 
 	/**
-	 * @return prototype count
+	 * @returns prototype count
 	 */
 	inline int getPrototypeCount() {
 		return prototypes.size();
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Get prototype at given index
 	 * @param idx index
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototypeAt(int idx) {
 		return prototypes[idx].get();
@@ -93,7 +93,7 @@ public:
 	/**
 	 * Get a prototype by given id
 	 * @param id id
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototype(int id) {
 		auto prototypeByIdIt = prototypesById.find(id);
@@ -106,7 +106,7 @@ public:
 	/**
 	 * Get a prototype by given name
 	 * @param name name
-	 * @return prototype
+	 * @returns prototype
 	 */
 	inline Prototype* getPrototypeByName(const string& name) {
 		for (const auto& prototype: prototypes) {
@@ -117,7 +117,7 @@ public:
 
 	/**
 	 * Get a terrain prototype
-	 * @return terrain prototype
+	 * @returns terrain prototype
 	 */
 	inline Prototype* getTerrainPrototype() {
 		for (const auto& prototype: prototypes) {

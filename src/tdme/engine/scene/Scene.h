@@ -68,12 +68,12 @@ private:
 
 	/**
 	 * Computes scene bounding box
-	 * @return dimension
+	 * @returns dimension
 	 */
 	void computeBoundingBox();
 
 	/**
-	 * @return scene center
+	 * @returns scene center
 	 */
 	void computeCenter();
 
@@ -91,7 +91,7 @@ public:
 	virtual ~Scene();
 
 	/**
-	 * @return application root path name
+	 * @returns application root path name
 	 */
 	inline const string& getApplicationRootPathName() {
 		return applicationRootPathName;
@@ -106,7 +106,7 @@ public:
 	}
 
 	/**
-	 * @return scene file name including relative path
+	 * @returns scene file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
@@ -121,7 +121,7 @@ public:
 	}
 
 	/**
-	 * @return rotation order
+	 * @returns rotation order
 	 */
 	inline RotationOrder* getRotationOrder() {
 		return rotationOrder;
@@ -136,14 +136,14 @@ public:
 	}
 
 	/**
-	 * @return Lights iterator
+	 * @returns Lights iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneLight> getLights() {
 		return UniquePtrSequenceIterator<SceneLight>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**
-	 * @return number of lights
+	 * @returns number of lights
 	 */
 	inline int getLightCount() {
 		return lights.size();
@@ -152,7 +152,7 @@ public:
 	/**
 	 * Get light at given index
 	 * @param i index
-	 * @return light
+	 * @returns light
 	 */
 	inline SceneLight* getLightAt(int i) {
 		if (i < 0 || i >= lights.size()) return nullptr;
@@ -161,7 +161,7 @@ public:
 
 	/**
 	 * Add light
-	 * @return light
+	 * @returns light
 	 */
 	inline SceneLight* addLight() {
 		lights.push_back(make_unique<SceneLight>(static_cast<int>(lights.size())));
@@ -171,7 +171,7 @@ public:
 	/**
 	 * Remove light at given index i
 	 * @param i index
-	 * @return success
+	 * @returns success
 	 */
 	bool removeLightAt(int i) {
 		if (i < 0 || i >= lights.size()) return false;
@@ -180,42 +180,42 @@ public:
 	}
 
 	/**
-	 * @return scene prototype library
+	 * @returns scene prototype library
 	 */
 	inline SceneLibrary* getLibrary() {
 		return library.get();
 	}
 
 	/**
-	 * @return dimension
+	 * @returns dimension
 	 */
 	inline const Vector3& getDimension() {
 		return dimension;
 	}
 
 	/**
-	 * @return scene bounding box
+	 * @returns scene bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
 	/**
-	 * @return scene center
+	 * @returns scene center
 	 */
 	inline const Vector3& getCenter() {
 		return center;
 	}
 
 	/**
-	 * @return new entity id
+	 * @returns new entity id
 	 */
 	inline int allocateEntityId() {
 		return entityIdx++;
 	}
 
 	/**
-	 * @return entity idx
+	 * @returns entity idx
 	 */
 	inline int getEntityIdx() {
 		return entityIdx;
@@ -255,21 +255,21 @@ public:
 	void replacePrototypeByIds(int searchPrototypeId, int newPrototypeId);
 
 	/**
-	 * @return environment mapping object ids
+	 * @returns environment mapping object ids
 	 */
 	inline set<string> getEnvironmentMappingIds() {
 		return environmentMappingIds;
 	}
 
 	/**
-	 * @return Entities iterator
+	 * @returns Entities iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneEntity> getEntities() {
 		return UniquePtrSequenceIterator<SceneEntity>(&(*entities.begin()), &(*entities.end()));
 	}
 
 	/**
-	 * @return number of entities
+	 * @returns number of entities
 	 */
 	inline int getEntityCount() {
 		return entities.size();
@@ -278,7 +278,7 @@ public:
 	/**
 	 * Returns entity at given index
 	 * @param idx index
-	 * @return scene entity
+	 * @returns scene entity
 	 */
 	inline SceneEntity* getEntityAt(int idx) {
 		if (idx < 0 || idx >= entities.size()) return nullptr;
@@ -288,7 +288,7 @@ public:
 	/**
 	 * Returns scene entity by id
 	 * @param id id
-	 * @return scene entity
+	 * @returns scene entity
 	 */
 	SceneEntity* getEntity(const string& id);
 
@@ -301,7 +301,7 @@ public:
 	/**
 	 * Removes an entity from scene
 	 * @param id id
-	 * @return success
+	 * @returns success
 	 */
 	bool removeEntity(const string& id);
 
@@ -309,13 +309,13 @@ public:
 	 * Rename an entity from scene
 	 * @param id id
 	 * @param newId new id
-	 * @return success
+	 * @returns success
 	 */
 	bool renameEntity(const string& id, const string& newId);
 
 	/**
 	 * Get sky shader parameters
-	 * @return shader parameters
+	 * @returns shader parameters
 	 */
 	inline const EntityShaderParameters& getSkyShaderParameters() {
 		return skyShaderParameters;
@@ -331,7 +331,7 @@ public:
 
 	/**
 	 * Return enabled processing shader
-	 * @return enabled post processing shader
+	 * @returns enabled post processing shader
 	 */
 	inline unordered_set<string> getEnabledPostProcessingShader() {
 		return enabledPostProcessingShaders;
@@ -340,7 +340,7 @@ public:
 	/**
 	 * Is post processing shader enabled
 	 * @param shaderId shader id
-	 * @return processing shader enabled
+	 * @returns processing shader enabled
 	 */
 	inline bool isPostProcessingShaderEnabled(const string& shaderId) {
 		return enabledPostProcessingShaders.contains(shaderId);
@@ -365,7 +365,7 @@ public:
 	/**
 	 * Get post processing shader parameters
 	 * @param shaderId shader id
-	 * @return shader parameters
+	 * @returns shader parameters
 	 */
 	inline const EntityShaderParameters* getPostProcessingShaderParameters(const string& shaderId) {
 		auto postProcessingShaderParametersIt = postProcessingShaderParameters.find(shaderId);
@@ -382,7 +382,7 @@ public:
 	}
 
 	/**
-	 * @return Scene GUI file name including relative path
+	 * @returns Scene GUI file name including relative path
 	 */
 	inline const string& getGUIFileName() {
 		return guiFileName;

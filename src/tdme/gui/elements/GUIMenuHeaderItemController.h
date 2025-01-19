@@ -57,12 +57,12 @@ private:
 	GUIMenuHeaderItemController(GUINode* node);
 
 	/**
-	 * @return menu open state
+	 * @returns menu open state
 	 */
 	bool isOpen();
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	bool isSelected();
 

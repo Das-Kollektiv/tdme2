@@ -54,21 +54,21 @@ public:
 	virtual ~DraggingScreenController();
 
 	/**
-	 * @return current payload
+	 * @returns current payload
 	 */
 	inline const string& getPayload() {
 		return payload;
 	}
 
 	/**
-	 * @return unscaled drag release mouse X position
+	 * @returns unscaled drag release mouse X position
 	 */
 	inline int getDragReleaseMouseX() {
 		return dragReleaseMouseX;
 	}
 
 	/**
-	 * @return unscaled drag release mouse Y position
+	 * @returns unscaled drag release mouse Y position
 	 */
 	inline int getDragReleaseMouseY() {
 		return dragReleaseMouseY;

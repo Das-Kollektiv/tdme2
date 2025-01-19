@@ -54,13 +54,13 @@ private:
 
 	/**
 	 * Determine id player completed current step in path for X axis
-	 * @return completed
+	 * @returns completed
 	 */
 	bool determinePlayerCompletedStepX();
 
 	/**
 	 * Determine id player completed current step in path for Z axis
-	 * @return completed
+	 * @returns completed
 	 */
 	bool determinePlayerCompletedStepZ();
 
@@ -75,7 +75,7 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
-	 * @return exit code
+	 * @returns exit code
 	 */
 	static int main(int argc, char** argv);
 

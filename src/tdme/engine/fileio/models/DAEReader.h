@@ -52,7 +52,7 @@ public:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return model instance
+	 * @returns model instance
 	 */
 	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
@@ -61,14 +61,14 @@ private:
 	/**
 	 * Get authoring tool
 	 * @param xmlRoot xml root
-	 * @return authoring tool
+	 * @returns authoring tool
 	 */
 	static Model::AuthoringTool getAuthoringTool(TiXmlElement* xmlRoot);
 
 	/**
 	 * Get Up vector
 	 * @param xmlRoot xml root
-	 * @return up vector
+	 * @returns up vector
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static UpVector* getUpVector(TiXmlElement* xmlRoot);
@@ -96,7 +96,7 @@ private:
 	 * @param xmlNode xml root
 	 * @param fps frames per second
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return node
+	 * @returns node
 	 */
 	static Node* readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression);
 
@@ -110,7 +110,7 @@ private:
 	 * @param fps frames per seconds
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return node
+	 * @returns node
 	 */
 	static Node* readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression);
 
@@ -123,7 +123,7 @@ private:
 	 * @param xmlNode xml node
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return Node
+	 * @returns Node
 	 * @throws tdme::utilities::Exception
 	 */
 	static Node* readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, bool useBC7TextureCompression);
@@ -148,14 +148,14 @@ private:
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
 	 * @param useBC7TextureCompression use BC7 texture compression
-	 * @return material
+	 * @returns material
 	 */
 	static Material* readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId, bool useBC7TextureCompression);
 
 	/**
 	 * Make file name relative
 	 * @param fileName file name
-	 * @return file name
+	 * @returns file name
 	 */
 	static const string makeFileNameRelative(const string& fileName);
 
@@ -163,7 +163,7 @@ private:
 	 * Get texture file name by id
 	 * @param xmlRoot xml root
 	 * @param xmlTextureId xml texture id
-	 * @return xml texture file name
+	 * @returns xml texture file name
 	 */
 	static const string getTextureFileNameById(TiXmlElement* xmlRoot, const string& xmlTextureId);
 
@@ -173,14 +173,14 @@ public:
 	 * Returns immediate children tags by tag name
 	 * @param parent parent
 	 * @param name name
-	 * @return matching elements
+	 * @returns matching elements
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/**
 	 * Returns immediate children tags
 	 * @param parent parent
-	 * @return elements
+	 * @returns elements
 	 */
 	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
 };

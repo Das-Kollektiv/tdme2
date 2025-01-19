@@ -66,7 +66,7 @@ public:
 	~ShadowMapping();
 
 	/**
-	 * @return engine
+	 * @returns engine
 	 */
 	inline Engine* getEngine() {
 		return engine;
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Get shadow map
 	 * @param idx index
-	 * @return shadow map
+	 * @returns shadow map
 	 */
 	inline ShadowMap* getShadowMap(int idx) {
 		return shadowMaps[idx].get();

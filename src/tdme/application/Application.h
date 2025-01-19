@@ -60,28 +60,28 @@ public:
 	static constexpr int64_t JOYSTICK_BUTTON_TIME_REPEAT { 150LL };
 
 	/**
-	 * @return renderer backend
+	 * @returns renderer backend
 	 */
 	inline static RendererBackend* getRendererBackend() {
 		return rendererBackend;
 	}
 
 	/**
-	 * @return if having a GL/Vulkan window and context
+	 * @returns if having a GL/Vulkan window and context
 	 */
 	inline static bool hasApplication() {
 		return application != nullptr;
 	}
 
 	/**
-	 * @return application
+	 * @returns application
 	 */
 	inline static Application* getApplication() {
 		return application;
 	}
 
 	/**
-	 * @return if FPS should be limited to 60 frames per seconds
+	 * @returns if FPS should be limited to 60 frames per seconds
 	 */
 	inline static bool isLimitFPS() {
 		return limitFPS;
@@ -102,12 +102,12 @@ public:
 	static void setVSyncEnabled(bool vSync);
 
 	/**
-	 * @return Operating system the application is running on
+	 * @returns Operating system the application is running on
 	 */
 	static string getOSName();
 
 	/**
-	 * @return CPU the application is running on
+	 * @returns CPU the application is running on
 	 */
 	static string getCPUName();
 
@@ -128,21 +128,21 @@ public:
 	virtual ~Application();
 
 	/**
-	 * @return title
+	 * @returns title
 	 */
 	inline const string& getTitle() {
 		return title;
 	}
 
 	/**
-	 * @return executable file name
+	 * @returns executable file name
 	 */
 	inline const string& getExecutableFileName() {
 		return executableFileName;
 	}
 
 	/**
-	 * @return debugging enabled
+	 * @returns debugging enabled
 	 */
 	inline bool isDebuggingEnabled() {
 		return debuggingEnabled;
@@ -158,7 +158,7 @@ public:
 	 * Execute a command and wait until it finished running
 	 * @param command command to execute
 	 * @throws std::runtime_error
-	 * @return application output
+	 * @returns application output
 	 */
 	static string execute(const string& command);
 
@@ -186,12 +186,12 @@ public:
 	static void exit(int exitCode);
 
 	/**
-	 * @return If window is active on Win32, on other platforms it currently always return true
+	 * @returns If window is active on Win32, on other platforms it currently always return true
 	 */
 	static bool isActive();
 
 	/**
-	 * @return window X position
+	 * @returns window X position
 	 */
 	int getWindowXPosition();
 
@@ -202,7 +202,7 @@ public:
 	void setWindowXPosition(int windowXPosition);
 
 	/**
-	 * @return window Y position
+	 * @returns window Y position
 	 */
 	int getWindowYPosition();
 
@@ -213,7 +213,7 @@ public:
 	void setWindowYPosition(int windowYPosition);
 
 	/**
-	 * @return window width
+	 * @returns window width
 	 */
 	int getWindowWidth() const;
 
@@ -224,7 +224,7 @@ public:
 	void setWindowWidth(int windowWidth);
 
 	/**
-	 * @return window height
+	 * @returns window height
 	 */
 	int getWindowHeight() const;
 
@@ -235,7 +235,7 @@ public:
 	void setWindowHeight(int windowHeight);
 
 	/**
-	 * @return is full screen
+	 * @returns is full screen
 	 */
 	bool isFullScreen() const;
 
@@ -251,7 +251,7 @@ public:
 	static void installExceptionHandler();
 
 	/**
-	 * @return mouse cursor
+	 * @returns mouse cursor
 	 */
 	inline static int getMouseCursor() {
 		return mouseCursor;
@@ -264,12 +264,12 @@ public:
 	static void setMouseCursor(int mouseCursor);
 
 	/**
-	 * @return get mouse X position
+	 * @returns get mouse X position
 	 */
 	static int getMousePositionX();
 
 	/**
-	 * @return get mouse Y position
+	 * @returns get mouse Y position
 	 */
 	static int getMousePositionY();
 
@@ -286,7 +286,7 @@ public:
 	static void swapBuffers();
 
 	/**
-	 * @return clipboard content as utf8 string
+	 * @returns clipboard content as utf8 string
 	 */
 	string getClipboardContent();
 
@@ -303,7 +303,7 @@ public:
 	 * @param title title
 	 * @param inputEventHandler application input event handler
 	 * @param windowHints window hints
-	 * @return exit code
+	 * @returns exit code
 	 */
 	int run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
