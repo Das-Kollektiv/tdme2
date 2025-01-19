@@ -23,7 +23,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * Batch rendererBackend for points
+ * Batch renderer for points
  * @author andreas.drewke
  */
 class tdme::engine::subsystems::rendering::BatchRendererPoints final
@@ -62,6 +62,8 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param rendererBackend renderer backend
+	 * @param id id
 	 */
 	BatchRendererPoints(RendererBackend* rendererBackend, int32_t id);
 
