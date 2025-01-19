@@ -197,7 +197,7 @@ public:
 
 	/**
 	 * Draw character
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 * @param character character
 	 * @param x x
 	 * @param y y
@@ -207,7 +207,7 @@ public:
 
 	/**
 	 * Draw background
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 * @param character character
 	 * @param x x
 	 * @param y y
@@ -218,7 +218,7 @@ public:
 
 	/**
 	 * Draw string
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 * @param x x
 	 * @param y y
 	 * @param text text

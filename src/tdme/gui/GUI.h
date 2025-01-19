@@ -160,7 +160,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param engine engine
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 */
 	GUI(Engine* engine, GUIRenderer* guiRenderer);
 

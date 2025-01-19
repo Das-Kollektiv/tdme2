@@ -164,7 +164,7 @@ public:
 
 	/**
 	 * Updates the effect to GUI rendererBackend and updates time
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 * @return if action should be called
 	 */
 	virtual bool update(GUIRenderer* guiRenderer);

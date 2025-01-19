@@ -495,13 +495,13 @@ public:
 
 	/**
 	 * Render screen
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 */
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
 	 * Render floating nodes
-	 * @param guiRenderer gui rendererBackend
+	 * @param guiRenderer GUI renderer
 	 */
 	void renderFloatingNodes(GUIRenderer* guiRenderer);
 
