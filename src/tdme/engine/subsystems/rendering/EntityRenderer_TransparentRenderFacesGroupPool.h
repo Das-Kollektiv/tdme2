@@ -10,7 +10,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::utilities::Pool;
 
 /**
- * Entity rendererBackend transparent render faces node pool
+ * Entity renderer transparent render faces node pool
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup>
