@@ -45,7 +45,7 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 	friend class EntityRenderer_TransparentRenderFacesGroupPool;
 
 private:
-	EntityRenderer* objectRenderer { nullptr };
+	EntityRenderer* entityRenderer { nullptr };
 	vector<BatchRendererTriangles*> batchRenderers;
 	Model* model { nullptr };
 	ObjectNode* objectNode { nullptr };
@@ -69,7 +69,7 @@ private:
 
 	/**
 	 * Set transparent render faces group
-	 * @param objectRenderer object rendererBackend
+	 * @param entityRenderer entity renderer
 	 * @param model model
 	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
@@ -79,7 +79,7 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(EntityRenderer* objectRenderer, Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	void set(EntityRenderer* entityRenderer, Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
 	 * Creates a key for given transparent render faces group attributes
@@ -122,7 +122,7 @@ private:
 		// check if we have a batch renderer already?
 		if (batchRenderers.size() == 0) {
 			// nope, add first one
-			auto batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
+			auto batchRendererTriangles = entityRenderer->acquireTrianglesBatchRenderer();
 			if (batchRendererTriangles == nullptr) {
 				Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch rendererBackend"));
 				return;
@@ -134,7 +134,7 @@ private:
 		if (batchRendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 			return;
 		// failed, acquire additionally one
-		batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
+		batchRendererTriangles = entityRenderer->acquireTrianglesBatchRenderer();
 		if (batchRendererTriangles == nullptr) {
 			Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch rendererBackend"));
 			return;

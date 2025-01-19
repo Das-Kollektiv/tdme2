@@ -29,7 +29,7 @@ using tdme::utilities::Console;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 {
-	this->objectRenderer = nullptr;
+	this->entityRenderer = nullptr;
 	this->model = nullptr;
 	this->objectNode = nullptr;
 	this->facesEntityIdx = -1;
@@ -37,9 +37,9 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(EntityRenderer* objectRenderer, Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(EntityRenderer* entityRenderer, Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
-	this->objectRenderer = objectRenderer;
+	this->entityRenderer = entityRenderer;
 	this->batchRenderers.clear();
 	this->model = model;
 	this->objectNode = objectNode;
@@ -75,7 +75,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, RendererBackend* render
 	rendererBackend->onUpdateEffect(contextIdx);
 	// material
 	string materialKey;
-	objectRenderer->setupMaterial(contextIdx, objectNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
+	entityRenderer->setupMaterial(contextIdx, objectNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	rendererBackend->getModelViewMatrix().identity();
 	rendererBackend->onUpdateModelViewMatrix(contextIdx);
