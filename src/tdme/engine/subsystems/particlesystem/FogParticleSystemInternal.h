@@ -122,7 +122,7 @@ public:
 	}
 
 	/**
-	 * Set rendererBackend
+	 * Set renderer backend
 	 * @param rendererBackend renderer backend
 	 */
 	inline void setRenderer(RendererBackend* rendererBackend) {

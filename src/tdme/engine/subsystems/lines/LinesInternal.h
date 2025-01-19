@@ -75,7 +75,7 @@ protected:
 		//
 		updateBoundingBox();
 	}
-/**
+	/**
 	 * Update bounding volume
 	 */
 	inline void updateBoundingBox() {
@@ -113,7 +113,7 @@ public:
 	}
 
 	/**
-	 * Set rendererBackend
+	 * Set renderer backend
 	 * @param rendererBackend renderer backend
 	 */
 	inline void setRenderer(RendererBackend* rendererBackend) {
