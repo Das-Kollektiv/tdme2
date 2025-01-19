@@ -112,6 +112,7 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param rendererBackend renderer backend
 	 */
 	VBOManager(RendererBackend* rendererBackend);
 
