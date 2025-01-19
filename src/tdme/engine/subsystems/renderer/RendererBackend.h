@@ -209,31 +209,31 @@ public:
 	virtual ~RendererBackend();
 
 	/**
-	 * @returns renderer backend type
+	 * @returns renderer type
 	 */
 	inline RendererType getRendererType() {
 		return rendererType;
 	}
 
 	/**
-	 * Prepare window system renderer backend context
+	 * Prepare window system renderer context
 	 * @param tryIdx try index
 	 */
 	virtual bool prepareWindowSystemRendererContext(int tryIdx) = 0;
 
 	/**
-	 * Initialize window system renderer backend context
+	 * Initialize window system renderer context
 	 * @param glfwWindow GLFL window
 	 */
 	virtual bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) = 0;
 
 	/**
-	 * Initialize renderer backend
+	 * Initialize
 	 */
 	virtual void initialize() = 0;
 
 	/**
-	 * Pre Frame Initialization
+	 * Pre frame initialization
 	 */
 	virtual void initializeFrame() = 0;
 
@@ -258,7 +258,7 @@ public:
 	virtual const string getShaderVersion() = 0;
 
 	/**
-	 * @returns if renderer backend is supporting multi threaded rendering
+	 * @returns is supporting multi threaded rendering
 	 */
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
@@ -309,7 +309,7 @@ public:
 	virtual bool isGLCLAvailable() = 0;
 
 	/**
-	 * @returns Returns if renderer backend is using short indices, otherwise it uses int indices
+	 * @returns if using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
 
@@ -666,7 +666,7 @@ public:
 	virtual void setDepthFunction(int32_t depthFunction) = 0;
 
 	/**
-	 * Set up GL rendering colormask
+	 * Set up rendering colormask
 	 * @param red red
 	 * @param green green
 	 * @param blue blue
