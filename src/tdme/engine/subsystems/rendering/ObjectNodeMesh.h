@@ -84,7 +84,7 @@ private:
 
 	/**
 	 * Creates a object node mesh from node
-	 * @param objectNodeRenderer object node rendererBackend
+	 * @param objectNodeRenderer object node renderer
 	 * @param animationProcessingTarget animation processing target
 	 * @param node node
 	 * @param transformMatrices instances transformm matrices
