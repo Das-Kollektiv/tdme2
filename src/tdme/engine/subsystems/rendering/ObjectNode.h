@@ -77,7 +77,7 @@ private:
 	/**
 	 * Creates object nodes from given object base object
 	 * @param object object base
-	 * @param useManagers use mesh and object rendererBackend node managers
+	 * @param useManagers use mesh manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param objectNodes object nodes array
 	 * @return object node
@@ -105,7 +105,7 @@ private:
 	 * @param object object base
 	 * @param nodes nodes
 	 * @param animated animated
-	 * @param useManagers use mesh and object render node managers
+	 * @param useManagers use mesh manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param objectNodes object nodes
 	 */
