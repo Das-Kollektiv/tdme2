@@ -26,7 +26,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * OpenGL ES2 rendererBackend
+ * OpenGL ES2 renderer backend
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::GLES2Renderer: public RendererBackend

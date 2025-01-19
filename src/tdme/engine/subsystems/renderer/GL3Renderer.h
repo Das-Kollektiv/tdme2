@@ -29,7 +29,7 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * OpenGL 3 rendererBackend
+ * OpenGL 3 renderer backend
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::GL3Renderer: public RendererBackend

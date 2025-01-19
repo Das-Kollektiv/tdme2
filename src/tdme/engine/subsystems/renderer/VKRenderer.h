@@ -70,7 +70,7 @@ struct TextureDescriptorSet_Hash {
 };
 
 /**
- * Vulkan rendererBackend
+ * Vulkan renderer backend
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::VKRenderer

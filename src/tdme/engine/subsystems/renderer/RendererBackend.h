@@ -49,7 +49,7 @@ public:
 	enum RendererType { RENDERERTYPE_NONE, RENDERERTYPE_OPENGLES, RENDERERTYPE_OPENGL, RENDERERTYPE_VULKAN };
 
 	/**
-	 * Bean holding light properties
+	 * Struct containing light properties
 	 */
 	struct Renderer_Light
 	{
@@ -68,7 +68,7 @@ public:
 	};
 
 	/**
-	 * Bean holding PBR material properties
+	 * Struct containing PBR material properties
 	 */
 	struct Renderer_PBRMaterial
 	{
@@ -83,7 +83,7 @@ public:
 	};
 
 	/**
-	 *  Bean holding specular material properties
+	 * Struct containing specular material properties
 	 */
 	struct Renderer_SpecularMaterial
 	{
@@ -99,6 +99,9 @@ public:
 		array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
 	};
 
+	/**
+	 * Struct containing renderer contexts
+	 */
 	struct Renderer_Context {
 		array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 		array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
@@ -114,7 +117,7 @@ public:
 	};
 
 	/**
-	 * Bean holding light properties
+	 * Struct containing light properties
 	 */
 	struct Renderer_Statistics
 	{
@@ -206,26 +209,26 @@ public:
 	virtual ~RendererBackend();
 
 	/**
-	 * @return rendererBackend type
+	 * @return renderer backend type
 	 */
 	inline RendererType getRendererType() {
 		return rendererType;
 	}
 
 	/**
-	 * Prepare window system rendererBackend context
+	 * Prepare window system renderer backend context
 	 * @param tryIdx try index
 	 */
 	virtual bool prepareWindowSystemRendererContext(int tryIdx) = 0;
 
 	/**
-	 * Initialize window system rendererBackend context
+	 * Initialize window system renderer backend context
 	 * @param glfwWindow GLFL window
 	 */
 	virtual bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) = 0;
 
 	/**
-	 * Initialize rendererBackend
+	 * Initialize renderer backend
 	 */
 	virtual void initialize() = 0;
 
@@ -245,7 +248,7 @@ public:
 	virtual const string getVendor() = 0;
 
 	/**
-	 * @return rendererBackend
+	 * @return renderer
 	 */
 	virtual const string getRenderer() = 0;
 
@@ -255,7 +258,7 @@ public:
 	virtual const string getShaderVersion() = 0;
 
 	/**
-	 * @return if rendererBackend is supporting multi threaded rendering
+	 * @return if renderer backend is supporting multi threaded rendering
 	 */
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
@@ -306,7 +309,7 @@ public:
 	virtual bool isGLCLAvailable() = 0;
 
 	/**
-	 * @return Returns if rendererBackend is using short indices, otherwise it uses int indices
+	 * @return Returns if renderer backend is using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
 
@@ -1373,12 +1376,12 @@ public:
 	}
 
 	/**
-	 * Set up rendererBackend for GUI rendering
+	 * Set up renderer backend for GUI rendering
 	 */
 	virtual void initGUIMode() = 0;
 
 	/**
-	 * Set up rendererBackend for 3d rendering
+	 * Set up renderer backend for 3d rendering
 	 */
 	virtual void doneGUIMode() = 0;
 
@@ -1389,7 +1392,7 @@ public:
 	virtual void setVSync(bool vSync) = 0;
 
 	/**
-	 * @return rendererBackend statistics
+	 * @return renderer backend statistics
 	 */
 	virtual const Renderer_Statistics getStatistics() = 0;
 

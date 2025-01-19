@@ -8,14 +8,14 @@
 using std::string;
 
 /**
- * RendererBackend plugin base class
+ * Renderer backend plugin base class
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::renderer::RendererPlugin
+class tdme::engine::subsystems::renderer::RendererBackendPlugin
 {
 public:
 	/**
-	 * @return rendererBackend version
+	 * @return renderer version
 	 */
 	inline static const string getRendererVersion() {
 		return "1.9.200";

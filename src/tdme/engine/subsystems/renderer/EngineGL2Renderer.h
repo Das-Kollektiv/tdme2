@@ -13,19 +13,19 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
-#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
+#include <tdme/engine/subsystems/renderer/RendererBackendPlugin.h>
 
 using std::string;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using tdme::engine::subsystems::renderer::RendererPlugin;
+using tdme::engine::subsystems::renderer::RendererBackendPlugin;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of GL2 rendererBackend to other engine functionality
+ * Engine connector of GL2 renderer backend to other engine functionality
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::renderer::EngineGL2Renderer: public GL2Renderer, public RendererPlugin
+class tdme::engine::subsystems::renderer::EngineGL2Renderer: public GL2Renderer, public RendererBackendPlugin
 {
 public:
 	// forbid class copy

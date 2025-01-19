@@ -13,19 +13,19 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
-#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
+#include <tdme/engine/subsystems/renderer/RendererBackendPlugin.h>
 
 using std::string;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
-using tdme::engine::subsystems::renderer::RendererPlugin;
+using tdme::engine::subsystems::renderer::RendererBackendPlugin;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of GL3 rendererBackend to other engine functionality
+ * Engine connector of GL3 renderer backend to other engine functionality
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::renderer::EngineGL3Renderer: public GL3Renderer, public RendererPlugin
+class tdme::engine::subsystems::renderer::EngineGL3Renderer: public GL3Renderer, public RendererBackendPlugin
 {
 public:
 	// forbid class copy
