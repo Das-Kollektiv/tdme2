@@ -15,7 +15,6 @@
 #include <tdme/audio/decoder/VorbisDecoder.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager.h>
-#include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -32,7 +31,6 @@ using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;
-using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;

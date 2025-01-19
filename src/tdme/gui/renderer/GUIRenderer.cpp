@@ -5,7 +5,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -25,7 +24,6 @@ using std::array;
 using std::unique_ptr;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;

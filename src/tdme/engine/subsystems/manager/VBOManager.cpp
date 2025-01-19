@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/Console.h>
@@ -13,7 +12,6 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Console;
@@ -28,12 +26,12 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared, bool& created) {
+VBOManager::ManagedVBO* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared, bool& created) {
 	rwLock.writeLock();
 	// check if we already manage this vbo
-	auto vboManagedIt = vbos.find(vboId);
-	if (vboManagedIt != vbos.end()) {
-		auto vboManaged = vboManagedIt->second;
+	auto managedVBOIt = vbos.find(vboId);
+	if (managedVBOIt != vbos.end()) {
+		auto vboManaged = managedVBOIt->second;
 		vboManaged->incrementReferenceCounter();
 		rwLock.unlock();
 		// yep, return vbo managed
@@ -43,23 +41,23 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool
 	// create vertex buffer objects
 	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory, shared);
 	// create managed texture
-	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
+	auto managedVBO = new ManagedVBO(vboId, vboIds);
 	// add it to our textures
-	vboManaged->incrementReferenceCounter();
-	vbos[vboManaged->getId()] = vboManaged;
+	managedVBO->incrementReferenceCounter();
+	vbos[managedVBO->getId()] = managedVBO;
 	rwLock.unlock();
 	created = true;
 
 	// return vbo managed
-	return vboManaged;
+	return managedVBO;
 }
 
-VBOManager_VBOManaged* VBOManager::getVBO(const string& vboId) {
+VBOManager::ManagedVBO* VBOManager::getVBO(const string& vboId) {
 	rwLock.readLock();
 	// check if we already manage this vbo
-	auto vboManagedIt = vbos.find(vboId);
-	if (vboManagedIt != vbos.end()) {
-		auto vboManaged = vboManagedIt->second;
+	auto managedVBOIt = vbos.find(vboId);
+	if (managedVBOIt != vbos.end()) {
+		auto vboManaged = managedVBOIt->second;
 		vboManaged->incrementReferenceCounter();
 		rwLock.unlock();
 		// yep, return vbo managed
@@ -72,15 +70,15 @@ VBOManager_VBOManaged* VBOManager::getVBO(const string& vboId) {
 
 void VBOManager::removeVBO(const string& vboId) {
 	rwLock.writeLock();
-	auto vboManagedIt = vbos.find(vboId);
-	if (vboManagedIt != vbos.end()) {
-		auto vboManaged = vboManagedIt->second;
+	auto managedVBOIt = vbos.find(vboId);
+	if (managedVBOIt != vbos.end()) {
+		auto vboManaged = managedVBOIt->second;
 		if (vboManaged->decrementReferenceCounter()) {
 			auto vboIds = vboManaged->getVBOIds();
 			// delete vbos from renderer
 			renderer->disposeBufferObjects(*vboIds);
 			// remove from our list
-			vbos.erase(vboManagedIt);
+			vbos.erase(managedVBOIt);
 			delete vboManaged;
 		}
 		rwLock.unlock();

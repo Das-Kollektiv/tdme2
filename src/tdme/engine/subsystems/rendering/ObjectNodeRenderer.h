@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
+#include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
@@ -13,7 +13,7 @@
 
 using std::vector;
 
-using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
+using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -32,10 +32,10 @@ class tdme::engine::subsystems::rendering::ObjectNodeRenderer final
 
 private:
 	ObjectNode* objectNode { nullptr };
-	VBOManager_VBOManaged* vboManagedBase { nullptr };
-	VBOManager_VBOManaged* vboManagedNormalMapping { nullptr };
-	VBOManager_VBOManaged* vboManagedOrigins { nullptr };
-	VBOManager_VBOManaged* vboManagedLods { nullptr };
+	VBOManager::ManagedVBO* vboManagedBase { nullptr };
+	VBOManager::ManagedVBO* vboManagedNormalMapping { nullptr };
+	VBOManager::ManagedVBO* vboManagedOrigins { nullptr };
+	VBOManager::ManagedVBO* vboManagedLods { nullptr };
 	vector<int32_t>* vboBaseIds { nullptr };
 	vector<int32_t>* vboNormalMappingIds { nullptr  };
 	vector<int32_t>* vboOrigins { nullptr };

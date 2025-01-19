@@ -5,7 +5,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Console.h>
@@ -15,7 +14,6 @@ using std::unordered_map;
 
 using tdme::engine::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::Mutex;
 using tdme::utilities::Console;;
@@ -28,7 +26,7 @@ TextureManager::~TextureManager() {
 	for (const auto& [textureManagedId, textureManaged]: textures) delete textureManaged;
 }
 
-TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool& created)
+TextureManager::ManagedTexture* TextureManager::addTexture(const string& id, bool& created)
 {
 	// check if we already manage this texture
 	mutex.lock();
@@ -45,15 +43,15 @@ TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool
 	// create texture
 	auto textureId = renderer->createTexture();
 	// create managed texture
-	auto textureManaged = new TextureManager_TextureManaged(id, textureId);
+	auto managedTexture = new ManagedTexture(id, textureId);
 	// add it to our textures
-	textureManaged->incrementReferenceCounter();
-	textures[id] = textureManaged;
+	managedTexture->incrementReferenceCounter();
+	textures[id] = managedTexture;
 	//
 	mutex.unlock();
 	//
 	created = true;
-	return textureManaged;
+	return managedTexture;
 }
 
 int32_t TextureManager::addTexture(Texture* texture, int contextIdx)

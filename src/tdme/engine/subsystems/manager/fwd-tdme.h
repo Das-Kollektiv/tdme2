@@ -6,12 +6,9 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace manager {
-				class MeshManager;
-				class MeshManager_MeshManaged;
-				class TextureManager;
-				class TextureManager_TextureManaged;
-				class VBOManager;
-				class VBOManager_VBOManaged;
+	class MeshManager;
+	class TextureManager;
+	class VBOManager;
 }  // namespace manager
 }  // namespace subsystems
 }  // namespace engine

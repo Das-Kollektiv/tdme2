@@ -5,7 +5,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/Engine.h>
@@ -21,7 +20,6 @@ using tdme::engine::subsystems::rendering::BatchRendererPoints;
 
 using tdme::engine::Color4;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::Engine;

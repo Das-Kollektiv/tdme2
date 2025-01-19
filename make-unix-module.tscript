@@ -2,12 +2,23 @@ module
 
 use: make-module.tscript
 
+function: createCommandUnix($command)
+	$commandPrefix = ""
+	$commandSuffix = ""
+	if ($$.application::OS == "Windows-MINGW")
+		# TODO: works only for standard installation
+		$commandPrefix = "C:\\msys64\\usr\\bin\\bash -c \"export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig && "
+		$commandSuffix = "\""
+	end
+	return ($commandPrefix + $command + $commandSuffix)
+end
+
 function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$librariesLdFlags, $optional)
 	$librariesIncludesArray = []
 	$librariesLdFlagsArray = []
 	forEach($library in $libraries)
 		# includes
-		$command = "pkgconf --cflags " + $library
+		$command = createCommandUnix("pkgconf --cflags " + $library)
 		# execute
 		$exitCode = $$.application::EXITCODE_SUCCESS
 		$error = null
@@ -30,7 +41,7 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 		end
 
 		# ld flags
-		$command = "pkgconf --libs " + $library
+		$command = createCommandUnix("pkgconf --libs " + $library)
 		# execute
 		$exitCode = $$.application::EXITCODE_SUCCESS
 		$error = null
@@ -156,34 +167,38 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 			$command = null
 			if ($file->endsWith(".c") == true)
 				$command =
-					$cxx +
-					" " +
-					"-x c" +
-					" " +
-					$cFlags +
-					" " +
-					$librariesIncludes +
-					" " +
-					$includes +
-					" " +
-					" -c -o " +
-					$compilationUnit +
-					" " +
-					$file
+					createCommandUnix(
+						$cxx +
+						" " +
+						"-x c" +
+						" " +
+						$cFlags +
+						" " +
+						$librariesIncludes +
+						" " +
+						$includes +
+						" " +
+						" -c -o " +
+						$compilationUnit +
+						" " +
+						$file
+					)
 			elseif ($file->endsWith(".cpp") == true)
 				$command =
-					$cxx +
-					" " +
-					$cxxFlags +
-					" " +
-					$librariesIncludes +
-					" " +
-					$includes +
-					" " +
-					" -c -o " +
-					$compilationUnit +
-					" " +
-					$file
+					createCommandUnix(
+						$cxx +
+						" " +
+						$cxxFlags +
+						" " +
+						$librariesIncludes +
+						" " +
+						$includes +
+						" " +
+						" -c -o " +
+						$compilationUnit +
+						" " +
+						$file
+					)
 			else
 				console.printLine("Dont know how to build: " + $file)
 			end
@@ -206,20 +221,29 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 				application.exit($$.application::EXITCODE_FAILURE)
 			end
 		else
+			$mingwLinkSuffix = ""
+			if ($$.application::OS == "Windows-MINGW")
+				$mingwLinkSuffix = "-Wl,--out-implib," + $libraryPath + "/" + $name + $libraryExtension + ".a" + " " + "-limagehlp"
+			end
+
 			# link
 			$command =
-				$cxx +
-				" " +
-				"-shared" +
-				" " +
-				$compilationUnits +
-				" " +
-				"-o " +
-				$libraryPath + "/" + $name + $libraryExtension +
-				" " +
-				$librariesLdFlags +
-				" " +
-				$ldFlags
+				createCommandUnix(
+					$cxx +
+					" " +
+					"-shared" +
+					" " +
+					$compilationUnits +
+					" " +
+					"-o " +
+					$libraryPath + "/" + $name + $libraryExtension +
+					" " +
+					$librariesLdFlags +
+					" " +
+					$ldFlags +
+					" " +
+					$mingwLinkSuffix
+				)
 			console.printLine($command)
 
 			# execute
@@ -320,23 +344,24 @@ function: buildExecutablesUnix($libraries, $definitions, $includes, $ldFlags, $f
 
 			# compile and link
 			$command =
-				$cxx +
-				" " +
-				$cxxFlags +
-				" " +
-				$librariesIncludes +
-				" " +
-				$includes +
-				" " +
-				"-o " +
-				$executableFile +
-				" " +
-				$sourceFile +
-				" " +
-				$librariesLdFlags +
-				" " +
-				$ldFlags
-			console.printLine($command)
+				createCommandUnix(
+					$cxx +
+					" " +
+					$cxxFlags +
+					" " +
+					$librariesIncludes +
+					" " +
+					$includes +
+					" " +
+					"-o " +
+					$executableFile +
+					" " +
+					$sourceFile +
+					" " +
+					$librariesLdFlags +
+					" " +
+					$ldFlags
+				)
 
 			#
 			$commands[] = $command

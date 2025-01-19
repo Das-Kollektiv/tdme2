@@ -13,7 +13,6 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::Mutex;
 
@@ -23,14 +22,88 @@ using tdme::os::threading::Mutex;
  */
 class tdme::engine::subsystems::manager::TextureManager final
 {
-	friend class TextureManager_TextureManaged;
-
-private:
-	Renderer* renderer { nullptr };
-	unordered_map<string, TextureManager_TextureManaged*> textures;
-	Mutex mutex;
-
 public:
+	/**
+	 * Managed texture entity
+	 * @author Andreas Drewke
+	 */
+	class ManagedTexture
+	{
+		friend class TextureManager;
+
+	private:
+		string id;
+		int32_t rendererId;
+		int32_t referenceCounter { 0 };
+		volatile bool uploaded { false };
+
+		// forbid class copy
+		FORBID_CLASS_COPY(ManagedTexture)
+
+		/**
+		 * Protected constructor
+		 * @param id id
+		 * @param rendererId renderer id
+		 */
+		ManagedTexture(const string& id, int32_t rendererId): id(id), rendererId(rendererId) {
+			//
+		}
+
+	public:
+		/**
+		 * @return texture id
+		 */
+		inline const string& getId() {
+			return id;
+		}
+
+		/**
+		 * @return reference counter
+		 */
+		inline int32_t getReferenceCounter() {
+			return referenceCounter;
+		}
+
+		/**
+		 * @return texture renderer id
+		 */
+		inline int32_t getRendererId() {
+			return rendererId;
+		}
+
+		/**
+		 * Set uploaded
+		 * @param uploaded uploaded
+		 */
+		inline void setUploaded(bool uploaded) {
+			this->uploaded = uploaded;
+		}
+
+		/**
+		 * @return if texture has been uploaded
+		 */
+		inline bool isUploaded() {
+			return uploaded;
+		}
+
+	private:
+		/**
+		 * decrement reference counter
+		 * @return if reference counter = 0
+		 */
+		inline bool decrementReferenceCounter() {
+			referenceCounter--;
+			return referenceCounter == 0;
+		}
+
+		/**
+		 * increment reference counter
+		 */
+		inline void incrementReferenceCounter() {
+			referenceCounter++;
+		}
+	};
+
 	// forbid class copy
 	FORBID_CLASS_COPY(TextureManager)
 
@@ -51,7 +124,7 @@ public:
 	 * @param created if managed texture has just been created
 	 * @returns texture manager entity
 	 */
-	TextureManager_TextureManaged* addTexture(const string& id, bool& created);
+	ManagedTexture* addTexture(const string& id, bool& created);
 
 	/**
 	 * Adds a texture to manager
@@ -88,5 +161,10 @@ public:
 	 * @param textureId texture id
 	 */
 	void removeTexture(const string& textureId);
+
+private:
+	Renderer* renderer { nullptr };
+	unordered_map<string, ManagedTexture*> textures;
+	Mutex mutex;
 
 };
