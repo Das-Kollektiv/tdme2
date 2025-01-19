@@ -29,7 +29,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.h>
@@ -116,7 +116,7 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::ObjectBase_TransformedFacesIterator;
@@ -170,7 +170,7 @@ using tdme::utilities::Float;
 using tdme::utilities::TextureAtlas;
 
 Engine* Engine::instance = nullptr;
-Renderer* Engine::renderer = nullptr;
+RendererBackend* Engine::rendererBackend = nullptr;
 unique_ptr<TextureManager> Engine::textureManager;
 unique_ptr<VBOManager> Engine::vboManager;
 unique_ptr<MeshManager> Engine::meshManager;
@@ -306,14 +306,14 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create GUI
 	offScreenEngine->gui = make_unique<GUI>(offScreenEngine, guiRenderer.get());
 	// create entity renderer
-	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, renderer);
+	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, rendererBackend);
 	offScreenEngine->entityRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = make_unique<FrameBuffer>(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
-	offScreenEngine->camera = make_unique<Camera>(renderer);
-	offScreenEngine->gizmoCamera = make_unique<Camera>(renderer);
+	offScreenEngine->camera = make_unique<Camera>(rendererBackend);
+	offScreenEngine->gizmoCamera = make_unique<Camera>(rendererBackend);
 	offScreenEngine->gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	offScreenEngine->gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	offScreenEngine->gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -324,15 +324,15 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->partition = make_unique<OctTreePartition>();
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
-		offScreenEngine->lights[i] = make_unique<Light>(renderer, i);
+		offScreenEngine->lights[i] = make_unique<Light>(rendererBackend, i);
 		offScreenEngine->lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
-		offScreenEngine->shadowMapping = make_unique<ShadowMapping>(offScreenEngine, renderer, offScreenEngine->entityRenderer.get());
+		offScreenEngine->shadowMapping = make_unique<ShadowMapping>(offScreenEngine, rendererBackend, offScreenEngine->entityRenderer.get());
 	}
 	// geometry buffer
-	if (renderer->isDeferredShadingAvailable() == true && enableGeometryBuffer == true) {
+	if (rendererBackend->isDeferredShadingAvailable() == true && enableGeometryBuffer == true) {
 		offScreenEngine->geometryBuffer = make_unique<GeometryBuffer>(width, height);
 		offScreenEngine->geometryBuffer->initialize();
 	}
@@ -342,11 +342,11 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 }
 
 const string Engine::getGraphicsVendor() {
-	return renderer->getVendor();
+	return rendererBackend->getVendor();
 }
 
 const string Engine::getGraphicsRenderer() {
-	return renderer->getRenderer();
+	return rendererBackend->getRenderer();
 }
 
 void Engine::setPartition(Partition* partition)
@@ -371,7 +371,7 @@ void Engine::addEntity(Entity* entity)
 
 	// init entity
 	entity->setEngine(this);
-	entity->setRenderer(renderer);
+	entity->setRenderer(rendererBackend);
 	entity->initialize();
 	entitiesById[entity->getId()] = entity;
 
@@ -473,7 +473,7 @@ void Engine::registerEntity(Entity* entity) {
 	};
 	for (auto& objects: objectsArray) {
 		for (auto object: *objects) {
-			object->preRender(renderer->CONTEXTINDEX_DEFAULT);
+			object->preRender(rendererBackend->CONTEXTINDEX_DEFAULT);
 			if (object->isRequiringPreRender() == true) requirePreRenderEntities.insert(object);
 			if (object->isRequiringAnimationComputation() == true) requireComputeAnimationEntities.insert(object);
 			if (object->getUniqueModelId() == UNIQUEMODELID_NONE) object->setUniqueModelId(registerModel(object->getModel()));
@@ -740,10 +740,10 @@ void Engine::initialize()
 		return;
 
 	//
-	renderer = Application::getRenderer();
-	if (renderer == nullptr) {
+	rendererBackend = Application::getRendererBackend();
+	if (rendererBackend == nullptr) {
 		initialized = false;
-		Console::printLine("No renderer: Exiting!");
+		Console::printLine("No renderer backend: Exiting!");
 		Application::exit(0);
 		return;
 	}
@@ -754,14 +754,14 @@ void Engine::initialize()
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
 	}
-	animationProcessingTarget = renderer->isGLCLAvailable() == true || renderer->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
+	animationProcessingTarget = rendererBackend->isGLCLAvailable() == true || rendererBackend->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
 	// determine if we have the skinning compute shader or OpenCL program
-	skinningShaderEnabled = renderer->isComputeShaderAvailable() == true || renderer->isGLCLAvailable() == true;
+	skinningShaderEnabled = rendererBackend->isComputeShaderAvailable() == true || rendererBackend->isGLCLAvailable() == true;
 	animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
 	// engine thread count
-	if (renderer->isSupportingMultithreadedRendering() == true) {
+	if (rendererBackend->isSupportingMultithreadedRendering() == true) {
 		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?3:Thread::getHardwareThreadCount() / 2, 2, 3);
 	} else {
 		threadCount = 1;
@@ -773,33 +773,33 @@ void Engine::initialize()
 	ObjectBuffer::initialize();
 
 	// create manager
-	textureManager = make_unique<TextureManager>(renderer);
-	vboManager = make_unique<VBOManager>(renderer);
+	textureManager = make_unique<TextureManager>(rendererBackend);
+	vboManager = make_unique<VBOManager>(rendererBackend);
 	meshManager = make_unique<MeshManager>();
 
 	// init
 	initialized = true;
-	renderer->initialize();
-	renderer->initializeFrame();
+	rendererBackend->initialize();
+	rendererBackend->initializeFrame();
 
 	// graphics device
-	Console::printLine(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
-	Console::printLine(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
+	Console::printLine(string("TDME2::Renderer::Graphics Vendor: ") + rendererBackend->getVendor());
+	Console::printLine(string("TDME2::Renderer::Graphics Renderer: ") + rendererBackend->getRenderer());
 
 	// create entity renderer
-	entityRenderer = make_unique<EntityRenderer>(this, renderer);
+	entityRenderer = make_unique<EntityRenderer>(this, rendererBackend);
 	entityRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
-	guiRenderer = make_unique<GUIRenderer>(renderer);
+	guiRenderer = make_unique<GUIRenderer>(rendererBackend);
 	guiRenderer->initialize();
 	gui = make_unique<GUI>(this, guiRenderer.get());
 	gui->initialize();
 
 	// create camera
-	camera = make_unique<Camera>(renderer);
-	gizmoCamera = make_unique<Camera>(renderer);
+	camera = make_unique<Camera>(rendererBackend);
+	gizmoCamera = make_unique<Camera>(rendererBackend);
 	gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -810,7 +810,7 @@ void Engine::initialize()
 
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
-		lights[i] = make_unique<Light>(renderer, i);
+		lights[i] = make_unique<Light>(rendererBackend, i);
 		lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 
@@ -818,55 +818,55 @@ void Engine::initialize()
 	partition = make_unique<OctTreePartition>();
 
 	// create frame buffer render shader
-	frameBufferRenderShader = make_unique<FrameBufferRenderShader>(renderer);
+	frameBufferRenderShader = make_unique<FrameBufferRenderShader>(rendererBackend);
 	frameBufferRenderShader->initialize();
 
 	// pbr brdf lut
-	if (renderer->isPBRAvailable() == true) {
+	if (rendererBackend->isPBRAvailable() == true) {
 		// brdf lut render shader
-		brdfLUTShader = make_unique<BRDFLUTShader>(renderer);
+		brdfLUTShader = make_unique<BRDFLUTShader>(rendererBackend);
 		brdfLUTShader->initialize();
 	}
 
 	// deferred lighting render shader
-	if (renderer->isDeferredShadingAvailable() == true) {
-		deferredLightingRenderShader = make_unique<DeferredLightingRenderShader>(renderer);
+	if (rendererBackend->isDeferredShadingAvailable() == true) {
+		deferredLightingRenderShader = make_unique<DeferredLightingRenderShader>(rendererBackend);
 		deferredLightingRenderShader->initialize();
 	}
 
 	// create frame buffer render shader
-	skyRenderShader = make_unique<SkyRenderShader>(renderer);
+	skyRenderShader = make_unique<SkyRenderShader>(rendererBackend);
 	skyRenderShader->initialize();
 
 	// create lighting shader
-	lightingShader = make_unique<LightingShader>(renderer);
+	lightingShader = make_unique<LightingShader>(rendererBackend);
 	lightingShader->initialize();
 
 	// create particles shader
-	particlesShader = make_unique<ParticlesShader>(this, renderer);
+	particlesShader = make_unique<ParticlesShader>(this, rendererBackend);
 	particlesShader->initialize();
 
 	// create particles shader
-	linesShader = make_unique<LinesShader>(this, renderer);
+	linesShader = make_unique<LinesShader>(this, rendererBackend);
 	linesShader->initialize();
 
 	// create gui shader
-	guiShader = make_unique<GUIShader>(renderer);
+	guiShader = make_unique<GUIShader>(rendererBackend);
 	guiShader->initialize();
 
 	// create post processing shader
-	postProcessingShader = make_unique<PostProcessingShader>(renderer);
+	postProcessingShader = make_unique<PostProcessingShader>(rendererBackend);
 	postProcessingShader->initialize();
 
 	// create post processing
 	postProcessing = make_unique<PostProcessing>();
 
 	// create post processing shader
-	texture2DRenderShader = make_unique<Texture2DRenderShader>(renderer);
+	texture2DRenderShader = make_unique<Texture2DRenderShader>(rendererBackend);
 	texture2DRenderShader->initialize();
 
 	// check if texture compression is available
-	if (renderer->isTextureCompressionAvailable() == true) {
+	if (rendererBackend->isTextureCompressionAvailable() == true) {
 		Console::printLine("TDME2::BC7 texture compression is available.");
 	} else {
 		Console::printLine("TDME2::BC7 texture compression is not available.");
@@ -875,11 +875,11 @@ void Engine::initialize()
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::printLine("TDME2::Using shadow mapping");
-		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(renderer);
+		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(rendererBackend);
 		shadowMappingShaderPre->initialize();
-		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(renderer);
+		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(rendererBackend);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = make_unique<ShadowMapping>(this, renderer, entityRenderer.get());
+		shadowMapping = make_unique<ShadowMapping>(this, rendererBackend, entityRenderer.get());
 	} else {
 		Console::printLine("TDME2::Not using shadow mapping");
 	}
@@ -887,7 +887,7 @@ void Engine::initialize()
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
 		Console::printLine("TDME2::Using skinning compute shader");
-		skinningShader = make_unique<SkinningShader>(renderer);
+		skinningShader = make_unique<SkinningShader>(rendererBackend);
 		skinningShader->initialize();
 	} else {
 		Console::printLine("TDME2::Not using skinning compute shader");
@@ -928,7 +928,7 @@ void Engine::initialize()
 	initialized &= texture2DRenderShader->isInitialized();
 
 	// deferred shading
-	if (renderer->isDeferredShadingAvailable() == true) {
+	if (rendererBackend->isDeferredShadingAvailable() == true) {
 		Console::printLine("TDME2::Using deferred shading");
 	} else {
 		Console::printLine("TDME2::Not using deferred shading");
@@ -945,7 +945,7 @@ void Engine::initialize()
 	}
 
 	// pbr
-	if (renderer->isPBRAvailable() == true) {
+	if (rendererBackend->isPBRAvailable() == true) {
 		Console::printLine("TDME2::PBR shaders are enabled");
 		Console::printLine("TDME2::Generating brdf LUT texture");
 		// brdf lut render shader
@@ -953,7 +953,7 @@ void Engine::initialize()
 	}
 
 	//
-	if (renderer->isSupportingMultithreadedRendering() == true) {
+	if (rendererBackend->isSupportingMultithreadedRendering() == true) {
 		engineThreadsQueue = make_unique<Queue<Engine::EngineThreadQueueElement>>(0);
 		engineThreads.resize(threadCount - 1);
 		for (auto i = 0; i < threadCount - 1; i++) {
@@ -1014,7 +1014,7 @@ void Engine::reshape(int32_t width, int32_t height)
 	}
 
 	// create geometry buffer if available
-	if (renderer->isDeferredShadingAvailable() == true) {
+	if (rendererBackend->isDeferredShadingAvailable() == true) {
 		if (geometryBuffer == nullptr) {
 			geometryBuffer = make_unique<GeometryBuffer>(_width, _height);
 			geometryBuffer->initialize();
@@ -1105,7 +1105,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				} else
 				if (object->isRequiringForwardShading() == true &&
 					(object->getRenderPass() == Entity::RENDERPASS_TERRAIN || object->getRenderPass() == Entity::RENDERPASS_STANDARD) &&
-					renderer->isDeferredShadingAvailable() == true) {
+					rendererBackend->isDeferredShadingAvailable() == true) {
 					decomposedEntities.objectsForwardShading.push_back(object);
 				} else
 				if (object->getRenderPass() == Entity::RENDERPASS_GIZMO) {
@@ -1291,7 +1291,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 
 	//
 	if (skinningShaderEnabled == true) skinningShader->useProgram();
-	if (renderer->isSupportingMultithreadedRendering() == false) {
+	if (rendererBackend->isSupportingMultithreadedRendering() == false) {
 		//
 		preRenderFunction(decomposedEntities.requirePreRenderEntities, 0);
 		computeAnimationsFunction(decomposedEntities.requireComputeAnimationEntities, 0);
@@ -1376,10 +1376,10 @@ void Engine::display()
 	}
 
 	// finish last frame
-	if (this == Engine::instance) Engine::getRenderer()->finishFrame();
+	if (this == Engine::instance) Engine::getRendererBackend()->finishFrame();
 
 	// init frame
-	if (this == Engine::instance) Engine::getRenderer()->initializeFrame();
+	if (this == Engine::instance) Engine::getRendererBackend()->initializeFrame();
 
 	//
 	initRendering();
@@ -1389,7 +1389,7 @@ void Engine::display()
 	auto _height = scaledHeight != -1?scaledHeight:height;
 
 	// camera
-	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	camera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 	// frustum
 	camera->getFrustum()->update();
 
@@ -1400,7 +1400,7 @@ void Engine::display()
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
 
 	// camera
-	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	camera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
@@ -1429,15 +1429,15 @@ void Engine::display()
 			// enable
 			effectPassFrameBuffers[frameBufferIdx]->enableFrameBuffer();
 			// clear
-			Engine::getRenderer()->setClearColor(
+			Engine::getRendererBackend()->setClearColor(
 				effectPass.clearColor.getRed(),
 				effectPass.clearColor.getGreen(),
 				effectPass.clearColor.getBlue(),
 				effectPass.clearColor.getAlpha()
 			);
-			renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT);
+			rendererBackend->clear(rendererBackend->CLEAR_COLOR_BUFFER_BIT);
 			// camera
-			camera->update(renderer->CONTEXTINDEX_DEFAULT, frameBufferWidth, frameBufferHeight);
+			camera->update(rendererBackend->CONTEXTINDEX_DEFAULT, frameBufferWidth, frameBufferHeight);
 			//
 			auto lightSourceVisible = false;
 			if (effectPass.renderLightSources == true) {
@@ -1510,15 +1510,15 @@ void Engine::display()
 	}
 
 	// camera
-	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	camera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// clear previous frame values
 	if (skyShaderEnabled == true) {
-		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+		rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT);
 		skyRenderShader->render(this, false);
 	} else {
-		Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+		Engine::getRendererBackend()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+		rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT | rendererBackend->CLEAR_COLOR_BUFFER_BIT);
 	}
 
 	// do rendering
@@ -1558,7 +1558,7 @@ void Engine::display()
 	}
 
 	// camera
-	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	camera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 }
 
 Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera)
@@ -1595,7 +1595,7 @@ Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mo
 	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
 
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
-	auto z = renderer->readPixelDepth(mouseX * scaleFactorWidth, (height  - mouseY) * scaleFactorHeight);
+	auto z = rendererBackend->readPixelDepth(mouseX * scaleFactorWidth, (height  - mouseY) * scaleFactorHeight);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr)
@@ -2071,7 +2071,7 @@ bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 void Engine::dispose()
 {
 	// finish last frame
-	if (this == Engine::instance) Engine::getRenderer()->finishFrame();
+	if (this == Engine::instance) Engine::getRendererBackend()->finishFrame();
 
 	// remove entities
 	vector<string> entitiesToRemove;
@@ -2109,7 +2109,7 @@ void Engine::dispose()
 
 	// dispose object buffer if main engine
 	if (this == Engine::instance) {
-		if (renderer->isSupportingMultithreadedRendering() == true) {
+		if (rendererBackend->isSupportingMultithreadedRendering() == true) {
 			engineThreadsQueue->stop();
 			for (const auto& engineThread: engineThreads) engineThread->stop();
 			for (const auto& engineThread: engineThreads) engineThread->join();
@@ -2136,12 +2136,12 @@ void Engine::initGUIMode()
 		frameBuffer->disableFrameBuffer();
 	}
 
-	renderer->initGuiMode();
+	rendererBackend->initGUIMode();
 }
 
 void Engine::doneGUIMode()
 {
-	renderer->doneGuiMode();
+	rendererBackend->doneGUIMode();
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr)
@@ -2154,7 +2154,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
 
 	// fetch pixel
-	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
+	auto pixels = unique_ptr<ByteBuffer>(rendererBackend->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
 		Console::printLine("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
@@ -2194,7 +2194,7 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
 
 	// fetch pixel
-	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
+	auto pixels = unique_ptr<ByteBuffer>(rendererBackend->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
 		Console::printLine("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
@@ -2303,8 +2303,8 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 
 void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes, bool skyShaderEnabled) {
 	//
-	Engine::getRenderer()->setEffectPass(effectPass);
-	Engine::getRenderer()->setShaderPrefix(shaderPrefix);
+	Engine::getRendererBackend()->setEffectPass(effectPass);
+	Engine::getRendererBackend()->setShaderPrefix(shaderPrefix);
 
 	// use lighting shader
 	if (visibleDecomposedEntities.objects.empty() == false || visibleDecomposedEntities.objectsForwardShading.empty() == false) {
@@ -2319,13 +2319,13 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 					if (renderGeometryBuffer != nullptr) {
 						if (lightingShader != nullptr) lightingShader->unUseProgram();
 						renderGeometryBuffer->enableGeometryBuffer();
-						renderer->setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-						renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
-						Engine::getRenderer()->setShaderPrefix("defer_");
+						rendererBackend->setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+						rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT | rendererBackend->CLEAR_COLOR_BUFFER_BIT);
+						Engine::getRendererBackend()->setShaderPrefix("defer_");
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 					}
 				} else
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objects,
@@ -2344,15 +2344,15 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 					if (renderGeometryBuffer != nullptr) {
 						if (lightingShader != nullptr) lightingShader->unUseProgram();
 						renderGeometryBuffer->disableGeometryBuffer();
-						Engine::getRenderer()->setShaderPrefix(shaderPrefix);
+						Engine::getRendererBackend()->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
 						// clear previous frame values
 						if (skyShaderEnabled == true) {
-							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+							rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT);
 							skyRenderShader->render(this, false, rendererCamera);
 						} else {
-							Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+							Engine::getRendererBackend()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+							rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT | rendererBackend->CLEAR_COLOR_BUFFER_BIT);
 						}
 						//
 						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalEntities);
@@ -2392,7 +2392,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						}
 					}
 				} else
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->disableBlending();
 			}
 		}
 
@@ -2421,7 +2421,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	// render lines entities
 	if (visibleDecomposedEntities.linesEntities.size() > 0) {
 		// use lines shader
-		if (linesShader != nullptr) linesShader->useProgram(renderer->CONTEXTINDEX_DEFAULT);
+		if (linesShader != nullptr) linesShader->useProgram(rendererBackend->CONTEXTINDEX_DEFAULT);
 
 		// render lines entities
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
@@ -2430,13 +2430,13 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 
 		// unuse lines shader
-		if (linesShader != nullptr) linesShader->unUseProgram(renderer->CONTEXTINDEX_DEFAULT);
+		if (linesShader != nullptr) linesShader->unUseProgram(rendererBackend->CONTEXTINDEX_DEFAULT);
 	}
 
 	// render point particle systems
 	if (doRenderParticleSystems == true && visibleDecomposedEntities.ppses.size() > 0) {
 		// use particle shader
-		if (particlesShader != nullptr) particlesShader->useProgram(renderer->CONTEXTINDEX_DEFAULT);
+		if (particlesShader != nullptr) particlesShader->useProgram(rendererBackend->CONTEXTINDEX_DEFAULT);
 
 		// render points based particle systems
 		if (visibleDecomposedEntities.ppses.size() > 0) {
@@ -2447,7 +2447,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 
 		// unuse particle shader
-		if (particlesShader != nullptr) particlesShader->unUseProgram(renderer->CONTEXTINDEX_DEFAULT);
+		if (particlesShader != nullptr) particlesShader->unUseProgram(rendererBackend->CONTEXTINDEX_DEFAULT);
 	}
 
 	// render objects and particles together
@@ -2468,7 +2468,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objectsPostPostProcessing,
@@ -2483,7 +2483,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->disableBlending();
 			}
 		}
 
@@ -2507,13 +2507,13 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 
 		//
-		renderer->disableDepthBufferTest();
+		rendererBackend->disableDepthBufferTest();
 
 		// render post processing objects
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objectsNoDepthTest,
@@ -2528,7 +2528,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
-				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
+				if (renderPass == Entity::RENDERPASS_WATER) rendererBackend->disableBlending();
 			}
 		}
 
@@ -2536,7 +2536,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		entityRenderer->renderTransparentFaces();
 
 		//
-		renderer->enableDepthBufferTest();
+		rendererBackend->enableDepthBufferTest();
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
@@ -2564,11 +2564,11 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 
 		//
 		gizmoCamera->setLookFrom(rendererCamera->getLookFrom());
-		gizmoCamera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+		gizmoCamera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 
 		//
 		gizmoFrameBuffer->enableFrameBuffer();
-		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+		rendererBackend->clear(rendererBackend->CLEAR_DEPTH_BUFFER_BIT);
 
 		// use lighting shader
 		if (lightingShader != nullptr) {
@@ -2605,7 +2605,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		//
-		rendererCamera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+		rendererCamera->update(rendererBackend->CONTEXTINDEX_DEFAULT, _width, _height);
 	}
 
 	// light sources
@@ -2617,8 +2617,8 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	}
 
 	//
-	Engine::getRenderer()->setShaderPrefix(string());
-	Engine::getRenderer()->setEffectPass(0);
+	Engine::getRendererBackend()->setShaderPrefix(string());
+	Engine::getRendererBackend()->setEffectPass(0);
 }
 
 bool Engine::renderLightSources(int width, int height) {

@@ -397,7 +397,7 @@ void ObjectRenderGroup::setEngine(Engine* engine)
 	if (combinedEntity != nullptr) combinedEntity->setEngine(engine);
 }
 
-void ObjectRenderGroup::setRenderer(Renderer* renderer)
+void ObjectRenderGroup::setRenderer(RendererBackend* rendererBackend)
 {
 }
 

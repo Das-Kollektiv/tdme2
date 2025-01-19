@@ -172,11 +172,11 @@ void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 		Engine::currentEngine->shadowMapping->updateShaderParameters(contextIdx);
 }
 
-// end point for engine to create renderer
+// end point for engine to create renderer backend
 extern "C" EngineGLES2Renderer* createInstance()
 {
 	if (EngineGLES2Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::printLine("EngineGL2Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineGL2Renderer::createInstance(): Engine and rendererBackend version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
 	Console::printLine("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");

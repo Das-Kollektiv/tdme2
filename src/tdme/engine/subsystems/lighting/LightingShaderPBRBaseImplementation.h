@@ -16,7 +16,7 @@ using std::array;
 
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
@@ -71,7 +71,7 @@ protected:
 	array<Texture*, 6> envSpecularTextures;
 
 	bool initialized { false };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 public:
 	// forbid class copy
@@ -79,22 +79,22 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	LightingShaderPBRBaseImplementation(Renderer* renderer);
+	LightingShaderPBRBaseImplementation(RendererBackend* rendererBackend);
 
 	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, int contextIdx) override;
 	virtual void unUseProgram(int contextIdx) override;
-	virtual void updateEffect(Renderer* renderer, int contextIdx) override;
-	virtual void updateMaterial(Renderer* renderer, int contextIdx) override;
-	virtual void updateLight(Renderer* renderer, int contextIdx, int32_t lightId) override;
-	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
-	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) override;
-	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
-	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
+	virtual void updateEffect(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateMaterial(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateLight(RendererBackend* rendererBackend, int contextIdx, int32_t lightId) override;
+	virtual void updateMatrices(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateTextureMatrix(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void bindTexture(RendererBackend* rendererBackend, int contextIdx, int32_t textureId) override;
+	virtual void updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) override = 0;
 	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 

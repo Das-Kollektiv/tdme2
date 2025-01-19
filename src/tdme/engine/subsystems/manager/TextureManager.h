@@ -13,7 +13,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::os::threading::Mutex;
 
 /**
@@ -65,7 +65,7 @@ public:
 		}
 
 		/**
-		 * @return texture renderer id
+		 * @return texture rendererBackend id
 		 */
 		inline int32_t getRendererId() {
 			return rendererId;
@@ -109,9 +109,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	TextureManager(Renderer* renderer);
+	TextureManager(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor
@@ -163,7 +163,7 @@ public:
 	void removeTexture(const string& textureId);
 
 private:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	unordered_map<string, ManagedTexture*> textures;
 	Mutex mutex;
 

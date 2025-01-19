@@ -11,7 +11,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
@@ -23,7 +23,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation: public ShadowMapCreationShaderImplementation
 {
 protected:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t geometryShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
@@ -48,9 +48,9 @@ public:
 
 	/**
 	 * Constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	ShadowMapCreationShaderBaseImplementation(Renderer* renderer);
+	ShadowMapCreationShaderBaseImplementation(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor
@@ -63,10 +63,10 @@ public:
 	virtual void useProgram(Engine* engine, int contextIdx) override;
 	virtual void unUseProgram(int contextIdx) override;
 	virtual void updateMatrices(int contextIdx) override;
-	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) override;
-	virtual void updateMaterial(Renderer* renderer, int contextIdx) override;
-	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
-	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
+	virtual void updateTextureMatrix(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateMaterial(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) override = 0;
+	virtual void bindTexture(RendererBackend* rendererBackend, int contextIdx, int32_t textureId) override;
 	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 

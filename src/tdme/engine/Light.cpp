@@ -4,7 +4,7 @@
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -13,7 +13,7 @@
 using tdme::engine::Texture;
 using tdme::engine::Color4;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::math::Matrix4x4;
@@ -22,7 +22,7 @@ using tdme::math::Vector4;
 
 Light::Light()
 {
-	this->renderer = nullptr;
+	this->rendererBackend = nullptr;
 	this->id = -1;
 	enabled = false;
 	ambient.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -40,9 +40,9 @@ Light::Light()
 	lightSourceTextureId = 0;
 }
 
-Light::Light(Renderer* renderer, int32_t id)
+Light::Light(RendererBackend* rendererBackend, int32_t id)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	this->id = id;
 	enabled = false;
 	ambient.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -57,7 +57,7 @@ Light::Light(Renderer* renderer, int32_t id)
 	quadraticAttenuation = 0.0f;
 	renderSource = false;
 	sourceSize = 0.25f;
-	lightSourceTextureId = renderer->ID_NONE;
+	lightSourceTextureId = rendererBackend->ID_NONE;
 }
 
 void Light::setSourceTexture(Texture* texture) {
@@ -65,10 +65,10 @@ void Light::setSourceTexture(Texture* texture) {
 	if (lightSourceTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(lightSourceTexture);
 		lightSourceTexture->releaseReference();
-		lightSourceTextureId = renderer->ID_NONE;
+		lightSourceTextureId = rendererBackend->ID_NONE;
 	}
 	lightSourceTexture = texture;
-	lightSourceTextureId = texture == nullptr?renderer->ID_NONE:Engine::getInstance()->getTextureManager()->addTexture(lightSourceTexture);
+	lightSourceTextureId = texture == nullptr?rendererBackend->ID_NONE:Engine::getInstance()->getTextureManager()->addTexture(lightSourceTexture);
 }
 
 void Light::dispose() {
@@ -79,7 +79,7 @@ void Light::dispose() {
 
 void Light::update(int contextIdx) {
 	if (enabled == true) {
-		auto& light = renderer->getLight(contextIdx, id);
+		auto& light = rendererBackend->getLight(contextIdx, id);
 		light.enabled = 1;
 		light.ambient = ambient.getArray();
 		light.diffuse = diffuse.getArray();
@@ -91,10 +91,10 @@ void Light::update(int contextIdx) {
 		light.linearAttenuation = linearAttenuation;
 		light.quadraticAttenuation = quadraticAttenuation;
 		light.radius = getRadius();
-		renderer->onUpdateLight(contextIdx, id);
+		rendererBackend->onUpdateLight(contextIdx, id);
 	} else {
-		auto& light = renderer->getLight(contextIdx, id);
+		auto& light = rendererBackend->getLight(contextIdx, id);
 		light.enabled = 0;
-		renderer->onUpdateLight(contextIdx, id);
+		rendererBackend->onUpdateLight(contextIdx, id);
 	}
 }

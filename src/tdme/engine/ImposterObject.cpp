@@ -58,7 +58,7 @@ void ImposterObject::setEngine(Engine* engine)
 	for (auto billboardObject: billboardObjects) billboardObject->setEngine(engine);
 }
 
-void ImposterObject::setRenderer(Renderer* renderer)
+void ImposterObject::setRenderer(RendererBackend* rendererBackend)
 {
 }
 

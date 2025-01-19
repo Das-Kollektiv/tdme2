@@ -539,19 +539,19 @@ public:
 
 	/**
 	 * Apply effects
-	 * @param guiRenderer gui renderer
+	 * @param guiRenderer gui rendererBackend
 	 */
 	virtual void applyEffects(GUIRenderer* guiRenderer);
 
 	/**
 	 * Undo effects
-	 * @param guiRenderer gui renderer
+	 * @param guiRenderer gui rendererBackend
 	 */
 	virtual void undoEffects(GUIRenderer* guiRenderer);
 
 	/**
 	 * Render
-	 * @param guiRenderer gui renderer
+	 * @param guiRenderer gui rendererBackend
 	 * @param floatingNodes floating nodes
 	 */
 	virtual void render(GUIRenderer* guiRenderer);

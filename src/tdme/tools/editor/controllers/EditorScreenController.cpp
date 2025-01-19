@@ -27,7 +27,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/elements/GUIScrollAreaController.h>
@@ -116,7 +116,7 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::elements::GUISelectBoxController;
@@ -2196,7 +2196,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		tabView->initialize();
 		//
 		// TODO: move me into GUIFrameBufferNode
-		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+		if (Engine::getInstance()->getGraphicsRendererBackendType() != RendererBackend::RENDERERTYPE_VULKAN) {
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
 			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)));
 		}

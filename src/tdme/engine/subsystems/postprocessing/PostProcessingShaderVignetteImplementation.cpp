@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
@@ -12,27 +12,27 @@
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderVignetteImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 
-bool PostProcessingShaderVignetteImplementation::isSupported(Renderer* renderer) {
-	return renderer->getShaderVersion() == "gl3";
+bool PostProcessingShaderVignetteImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->getShaderVersion() == "gl3";
 }
 
-PostProcessingShaderVignetteImplementation::PostProcessingShaderVignetteImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderVignetteImplementation::PostProcessingShaderVignetteImplementation(RendererBackend* rendererBackend): PostProcessingShaderBaseImplementation(rendererBackend)
 {
 }
 
 void PostProcessingShaderVignetteImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"vignette_fragmentshader.frag",
 		Engine::is4K() == true?"#define HAVE_4K":""
@@ -40,24 +40,24 @@ void PostProcessingShaderVignetteImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"vignette_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
 
 	// uniforms
-	uniformIntensity = renderer->getProgramUniformLocation(programId, "intensity");
-	uniformBorderColor = renderer->getProgramUniformLocation(programId, "borderColor");
+	uniformIntensity = rendererBackend->getProgramUniformLocation(programId, "intensity");
+	uniformBorderColor = rendererBackend->getProgramUniformLocation(programId, "borderColor");
 
 	//
 	if (initialized == false) return;
@@ -74,6 +74,6 @@ void PostProcessingShaderVignetteImplementation::initialize()
 }
 
 void PostProcessingShaderVignetteImplementation::setShaderParameters(int contextIdx, Engine* engine) {
-	if (uniformIntensity != -1) renderer->setProgramUniformFloat(contextIdx, uniformIntensity, engine->getShaderParameter("vignette", "intensity").getFloatValue());
-	if (uniformBorderColor != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformBorderColor, engine->getShaderParameter("vignette", "borderColor").getColor3ValueArray());
+	if (uniformIntensity != -1) rendererBackend->setProgramUniformFloat(contextIdx, uniformIntensity, engine->getShaderParameter("vignette", "intensity").getFloatValue());
+	if (uniformBorderColor != -1) rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformBorderColor, engine->getShaderParameter("vignette", "borderColor").getColor3ValueArray());
 }

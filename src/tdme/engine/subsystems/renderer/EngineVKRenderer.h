@@ -22,7 +22,7 @@ using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of VK renderer to other engine functionality
+ * Engine connector of VK rendererBackend to other engine functionality
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::EngineVKRenderer: public VKRenderer, public RendererPlugin

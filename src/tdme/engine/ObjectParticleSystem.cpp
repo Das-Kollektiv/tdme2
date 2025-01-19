@@ -112,8 +112,8 @@ void ObjectParticleSystem::setEngine(Engine* engine)
 	ObjectParticleSystemInternal::setEngine(engine);
 }
 
-void ObjectParticleSystem::setRenderer(Renderer* renderer)
+void ObjectParticleSystem::setRenderer(RendererBackend* rendererBackend)
 {
-	ObjectParticleSystemInternal::setRenderer(renderer);
+	ObjectParticleSystemInternal::setRenderer(rendererBackend);
 }
 

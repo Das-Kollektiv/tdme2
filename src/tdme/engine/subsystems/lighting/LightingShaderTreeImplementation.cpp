@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -14,17 +14,17 @@ using std::to_string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderTreeImplementation::isSupported(Renderer* renderer) {
+bool LightingShaderTreeImplementation::isSupported(RendererBackend* rendererBackend) {
 	return true;
 }
 
-LightingShaderTreeImplementation::LightingShaderTreeImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderTreeImplementation::LightingShaderTreeImplementation(RendererBackend* rendererBackend): LightingShaderBaseImplementation(rendererBackend)
 {
 }
 
@@ -34,12 +34,12 @@ const string LightingShaderTreeImplementation::getId() {
 
 void LightingShaderTreeImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_TREE\n#define HAVE_DEPTH_FOG",
@@ -61,8 +61,8 @@ void LightingShaderTreeImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_DEPTH_FOG",
@@ -74,9 +74,9 @@ void LightingShaderTreeImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -85,7 +85,7 @@ void LightingShaderTreeImplementation::initialize()
 	if (initialized == false) return;
 
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformSpeed = rendererBackend->getProgramUniformLocation(programId, "speed");
 }
 
 void LightingShaderTreeImplementation::registerShader() {
@@ -98,7 +98,7 @@ void LightingShaderTreeImplementation::registerShader() {
 	);
 }
 
-void LightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
-	const auto& shaderParameters = renderer->getShaderParameters(contextIdx);
-	if (uniformSpeed != -1) renderer->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+void LightingShaderTreeImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
+	const auto& shaderParameters = rendererBackend->getShaderParameters(contextIdx);
+	if (uniformSpeed != -1) rendererBackend->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
 }

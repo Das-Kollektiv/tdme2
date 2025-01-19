@@ -14,7 +14,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
@@ -32,7 +32,7 @@ private:
 	unordered_map<string, ShadowMapCreationShaderImplementation*> shaders;
 	bool running { false };
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<ShadowMapCreationShaderContext> contexts;
 
 public:
@@ -41,9 +41,9 @@ public:
 
 	/**
 	 * Constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	ShadowMapCreationShader(Renderer* renderer);
+	ShadowMapCreationShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor

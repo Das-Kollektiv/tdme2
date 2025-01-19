@@ -23,7 +23,7 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Node;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -70,14 +70,14 @@ private:
 	vector<int32_t> pbrMaterialMetallicRoughnessTextureIdsByEntities;
 	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
 	vector<int32_t> pbrMaterialEmissiveTextureIdsByEntities;
-	unique_ptr<ObjectNodeRenderer> renderer;
+	unique_ptr<ObjectNodeRenderer> rendererBackend;
 	ObjectNodeMesh* mesh { nullptr };
 	Matrix4x4* nodeTransformMatrix { nullptr };
 
 	/**
 	 * Creates object nodes from given object base object
 	 * @param object object base
-	 * @param useManagers use mesh and object renderer node managers
+	 * @param useManagers use mesh and object rendererBackend node managers
 	 * @param animationProcessingTarget animation processing target
 	 * @param objectNodes object nodes array
 	 * @return object node
@@ -93,12 +93,12 @@ private:
 
 	/**
 	 * Set up textures for given object node and faces entity
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 */
-	static void setupTextures(Renderer* renderer, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx);
+	static void setupTextures(RendererBackend* rendererBackend, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx);
 
 	/**
 	 * Creates a object nodes recursively for given node and it sub nodes

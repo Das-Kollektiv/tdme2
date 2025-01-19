@@ -24,7 +24,7 @@ using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;
@@ -96,7 +96,7 @@ public:
 
 	void setEngine(Engine* engine) override;
 
-	inline void setRenderer(Renderer* renderer) override {
+	inline void setRenderer(RendererBackend* rendererBackend) override {
 	}
 
 	inline void initialize() override;

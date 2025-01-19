@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -14,16 +14,16 @@ using std::to_string;
 
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool DeferredLightingShaderPBRDefaultImplementation::isSupported(Renderer* renderer) {
-	return renderer->isPBRAvailable() == true && renderer->isDeferredShadingAvailable() == true;
+bool DeferredLightingShaderPBRDefaultImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->isPBRAvailable() == true && rendererBackend->isDeferredShadingAvailable() == true;
 }
 
-DeferredLightingShaderPBRDefaultImplementation::DeferredLightingShaderPBRDefaultImplementation(Renderer* renderer): LightingShaderPBRBaseImplementation(renderer)
+DeferredLightingShaderPBRDefaultImplementation::DeferredLightingShaderPBRDefaultImplementation(RendererBackend* rendererBackend): LightingShaderPBRBaseImplementation(rendererBackend)
 {
 }
 
@@ -33,12 +33,12 @@ const string DeferredLightingShaderPBRDefaultImplementation::getId() {
 
 void DeferredLightingShaderPBRDefaultImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
@@ -46,8 +46,8 @@ void DeferredLightingShaderPBRDefaultImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"defer_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
@@ -75,9 +75,9 @@ void DeferredLightingShaderPBRDefaultImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderPBRBaseImplementation::initialize();
@@ -86,5 +86,5 @@ void DeferredLightingShaderPBRDefaultImplementation::initialize()
 void DeferredLightingShaderPBRDefaultImplementation::registerShader() {
 }
 
-void DeferredLightingShaderPBRDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+void DeferredLightingShaderPBRDefaultImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
 }

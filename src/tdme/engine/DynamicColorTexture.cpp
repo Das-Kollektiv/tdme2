@@ -4,12 +4,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::utilities::ByteBuffer;
@@ -18,7 +18,7 @@ uint32_t DynamicColorTexture::counter = 0;
 
 void DynamicColorTexture::initialize()
 {
-	colorBufferTextureId = Engine::getRenderer()->createColorBufferTexture(width, height, Engine::getRenderer()->ID_NONE, Engine::getRenderer()->ID_NONE);
+	colorBufferTextureId = Engine::getRendererBackend()->createColorBufferTexture(width, height, Engine::getRendererBackend()->ID_NONE, Engine::getRendererBackend()->ID_NONE);
 	texture = new Texture(
 		"dynamic-color-texture:" + to_string(DynamicColorTexture::counter++),
 		Texture::TEXTUREDEPTH_RGBA,
@@ -50,20 +50,20 @@ void DynamicColorTexture::reshape(int32_t width, int32_t height)
 	texture->setUseCompression(false);
 	texture->setUseMipMap(false);
 	texture->setRepeat(false);
-	Engine::getRenderer()->resizeColorBufferTexture(colorBufferTextureId, width, height);
+	Engine::getRendererBackend()->resizeColorBufferTexture(colorBufferTextureId, width, height);
 	this->width = width;
 	this->height = height;
 }
 
 void DynamicColorTexture::dispose()
 {
-	Engine::getRenderer()->disposeTexture(colorBufferTextureId);
+	Engine::getRendererBackend()->disposeTexture(colorBufferTextureId);
 	texture->releaseReference();
 }
 
 void DynamicColorTexture::update()
 {
-	Engine::getRenderer()->bindTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, colorBufferTextureId);
-	Engine::getRenderer()->uploadTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, texture);
-	Engine::getRenderer()->bindTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, Engine::getRenderer()->ID_NONE);
+	Engine::getRendererBackend()->bindTexture(Engine::getRendererBackend()->CONTEXTINDEX_DEFAULT, colorBufferTextureId);
+	Engine::getRendererBackend()->uploadTexture(Engine::getRendererBackend()->CONTEXTINDEX_DEFAULT, texture);
+	Engine::getRendererBackend()->bindTexture(Engine::getRendererBackend()->CONTEXTINDEX_DEFAULT, Engine::getRendererBackend()->ID_NONE);
 }

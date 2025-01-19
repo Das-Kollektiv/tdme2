@@ -166,11 +166,11 @@ void EngineVKRenderer::onUpdateShaderParameters(int contextIdx) {
 		Engine::currentEngine->shadowMapping->updateShaderParameters(contextIdx);
 }
 
-// end point for engine to create renderer
+// end point for engine to create renderer backend
 extern "C" EngineVKRenderer* createInstance()
 {
 	if (EngineVKRenderer::getRendererVersion() != Version::getVersion()) {
-		Console::printLine("EngineVKRenderer::createInstance(): Engine and renderer version do not match: '" + EngineVKRenderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineVKRenderer::createInstance(): Engine and rendererBackend version do not match: '" + EngineVKRenderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
 	Console::printLine("EngineVKRenderer::createInstance(): Creating EngineVKRenderer instance!");

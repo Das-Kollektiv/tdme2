@@ -16,14 +16,14 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Color4;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * Batch renderer for points
+ * Batch rendererBackend for points
  * @author andreas.drewke
  */
 class tdme::engine::subsystems::rendering::BatchRendererPoints final
@@ -32,7 +32,7 @@ class tdme::engine::subsystems::rendering::BatchRendererPoints final
 
 private:
 	static constexpr int32_t POINT_COUNT { 65535 };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<int32_t>* vboIds { nullptr };
 	int32_t id;
 	bool acquired;
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	BatchRendererPoints(Renderer* renderer, int32_t id);
+	BatchRendererPoints(RendererBackend* rendererBackend, int32_t id);
 
 	/**
 	 * Destructor
@@ -77,7 +77,7 @@ public:
 	void render(int contextIdx);
 
 	/**
-	 * Clears this batch vbo renderer
+	 * Clears this batch vbo rendererBackend
 	 */
 	void clear();
 

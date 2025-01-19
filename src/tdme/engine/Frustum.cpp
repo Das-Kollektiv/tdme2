@@ -6,7 +6,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Plane.h>
 #include <tdme/engine/primitives/Sphere.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -16,22 +16,22 @@ using std::array;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Frustum;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Frustum::Frustum(Renderer* renderer)
+Frustum::Frustum(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 }
 
 void Frustum::update()
 {
 	// see: http://www.crownandcutlass.com/features/technicaldetails/frustum.html
-	projectionMatrixTransposed.set(renderer->getProjectionMatrix()).transpose();
-	modelViewMatrixTransposed.set(renderer->getModelViewMatrix()).transpose();
+	projectionMatrixTransposed.set(rendererBackend->getProjectionMatrix()).transpose();
+	modelViewMatrixTransposed.set(rendererBackend->getModelViewMatrix()).transpose();
 	frustumMatrix.set(projectionMatrixTransposed).multiply(modelViewMatrixTransposed);
 	float x, y, z, d, t;
 

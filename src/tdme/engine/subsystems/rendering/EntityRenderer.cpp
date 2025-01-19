@@ -28,7 +28,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererPoints.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
@@ -94,7 +94,7 @@ using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
@@ -133,16 +133,16 @@ using tdme::utilities::Pool;
 constexpr int32_t EntityRenderer::BATCHRENDERER_MAX;
 constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
-EntityRenderer::EntityRenderer(Engine* engine, Renderer* renderer) {
+EntityRenderer::EntityRenderer(Engine* engine, RendererBackend* rendererBackend) {
 	this->engine = engine;
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	transparentRenderFacesGroupPool = make_unique<EntityRenderer_TransparentRenderFacesGroupPool>();
 	transparentRenderFacesPool = make_unique<TransparentRenderFacesPool>();
 	renderTransparentRenderPointsPool = make_unique<RenderTransparentRenderPointsPool>(65535);
-	psePointBatchRenderer = make_unique<BatchRendererPoints>(renderer, 0);
-	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	psePointBatchRenderer = make_unique<BatchRendererPoints>(rendererBackend, 0);
+	threadCount = rendererBackend->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
-	if (this->renderer->isInstancedRenderingAvailable() == true) {
+	if (this->rendererBackend->isInstancedRenderingAvailable() == true) {
 		for (auto& contextIdx: contexts) {
 			contextIdx.bbEffectColorMuls = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
 			contextIdx.bbEffectColorAdds = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
@@ -188,7 +188,7 @@ BatchRendererTriangles* EntityRenderer::acquireTrianglesBatchRenderer()
 	}
 	// try to add one
 	if (i < BATCHRENDERER_MAX) {
-		trianglesBatchRenderers.push_back(make_unique<BatchRendererTriangles>(renderer, i));
+		trianglesBatchRenderers.push_back(make_unique<BatchRendererTriangles>(rendererBackend, i));
 		const auto& batchRenderer = trianglesBatchRenderers[trianglesBatchRenderers.size() - 1];
 		batchRenderer->initialize();
 		if (batchRenderer->acquire()) return batchRenderer.get();
@@ -205,7 +205,7 @@ void EntityRenderer::reset()
 
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
-	if (renderer->isSupportingMultithreadedRendering() == false) {
+	if (rendererBackend->isSupportingMultithreadedRendering() == false) {
 		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool.get());
 	} else {
 		auto elementsIssued = 0;
@@ -257,7 +257,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 
 void EntityRenderer::renderTransparentFaces() {
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 	// render transparent render faces if any exist
 	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
 	if (transparentRenderFaces.size() > 0) {
@@ -272,21 +272,21 @@ void EntityRenderer::renderTransparentFaces() {
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
-		//renderer->disableDepthBufferWriting();  // TODO: a.drewke, verify that this works ok in all cases?
-		renderer->disableCulling(contextIdx);
-		renderer->enableBlending();
+		//rendererBackend->disableDepthBufferWriting();  // TODO: a.drewke, verify that this works ok in all cases?
+		rendererBackend->disableCulling(contextIdx);
+		rendererBackend->enableBlending();
 		// disable foliage animation
 		// reset shader
 		// TODO: shader parameters
-		renderer->setShader(contextIdx, string());
-		renderer->onUpdateShader(contextIdx);
+		rendererBackend->setShader(contextIdx, string());
+		rendererBackend->onUpdateShader(contextIdx);
 		// have identity texture matrix
-		renderer->getTextureMatrix(contextIdx).identity();
-		renderer->onUpdateTextureMatrix(contextIdx);
+		rendererBackend->getTextureMatrix(contextIdx).identity();
+		rendererBackend->onUpdateTextureMatrix(contextIdx);
 		// actually this should not make any difference as culling is disabled
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
-		renderer->setFrontFace(contextIdx, renderer->FRONTFACE_CCW);
+		rendererBackend->setFrontFace(contextIdx, rendererBackend->FRONTFACE_CCW);
 		for (auto transparentRenderFace: transparentRenderFaces) {
 			// do we have any faces yet?
 			if (nodeTransparentRenderFaces.size() == 0) {
@@ -317,9 +317,9 @@ void EntityRenderer::renderTransparentFaces() {
 		// render transparent faces nodes
 		renderTransparentFacesGroups(contextIdx);
 		//	no blending, but culling and depth buffer
-		renderer->disableBlending();
-		renderer->enableCulling(contextIdx);
-		//renderer->enableDepthBufferWriting(); // TODO: a.drewke, verify that this works ok in all cases?
+		rendererBackend->disableBlending();
+		rendererBackend->enableCulling(contextIdx);
+		//rendererBackend->enableDepthBufferWriting(); // TODO: a.drewke, verify that this works ok in all cases?
 		// done!
 	}
 
@@ -391,7 +391,7 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 
 void EntityRenderer::renderTransparentFacesGroups(int contextIdx) {
 	for (const auto& [id, transparentRenderFacesGroup]: transparentRenderFacesGroups) {
-		transparentRenderFacesGroup->render(engine, renderer, contextIdx);
+		transparentRenderFacesGroup->render(engine, rendererBackend, contextIdx);
 	}
 }
 
@@ -409,13 +409,13 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 
 	// use default context
 	auto& objectRenderContext = contexts[0];
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
 	Matrix4x4 cameraMatrix;
-	cameraMatrix.set(renderer->getModelViewMatrix());
+	cameraMatrix.set(rendererBackend->getModelViewMatrix());
 	// render faces entities
 	auto currentFrontFace = -1;
 	string shaderParametersHash;
@@ -448,7 +448,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				if (specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true) transparentFacesEntity = true;
 				if (material->isDoubleSided() == true ||
 					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
-					renderer->disableCulling(contextIdx);
+					rendererBackend->disableCulling(contextIdx);
 				}
 			}
 			// skip, if requested
@@ -459,7 +459,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					auto object = objects[objectIdx];
 					auto _objectNode = object->objectNodes[objectNodeIdx];
 					// set up textures
-					ObjectNode::setupTextures(renderer, contextIdx, objectNode, faceEntityIdx);
+					ObjectNode::setupTextures(rendererBackend, contextIdx, objectNode, faceEntityIdx);
 					// set up transparent render faces
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
@@ -505,9 +505,9 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 
 				// shader
 				// TODO: shader parameters
-				if (renderer->getShader(contextIdx) != object->getShader()) {
-					renderer->setShader(contextIdx, object->getShader());
-					renderer->onUpdateShader(contextIdx);
+				if (rendererBackend->getShader(contextIdx) != object->getShader()) {
+					rendererBackend->setShader(contextIdx, object->getShader());
+					rendererBackend->onUpdateShader(contextIdx);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j]->update(contextIdx);
 					materialUpdateOnly = false;
@@ -520,29 +520,29 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					materialUpdateOnly = true;
 				}
 				// shader parameters
-				if (shaderParametersHash.empty() == true || shaderParametersHash != renderer->getShaderParameters(contextIdx).getShaderParametersHash()) {
-					renderer->setShaderParameters(contextIdx, object->shaderParameters);
-					renderer->onUpdateShaderParameters(contextIdx);
-					shaderParametersHash = renderer->getShaderParameters(contextIdx).getShaderParametersHash();
+				if (shaderParametersHash.empty() == true || shaderParametersHash != rendererBackend->getShaderParameters(contextIdx).getShaderParametersHash()) {
+					rendererBackend->setShaderParameters(contextIdx, object->shaderParameters);
+					rendererBackend->onUpdateShaderParameters(contextIdx);
+					shaderParametersHash = rendererBackend->getShaderParameters(contextIdx).getShaderParametersHash();
 				}
 				// bind buffer base objects if not bound yet
-				auto currentVBOBaseIds = _objectNode->renderer->vboBaseIds;
+				auto currentVBOBaseIds = _objectNode->rendererBackend->vboBaseIds;
 				if (boundVBOBaseIds != currentVBOBaseIds) {
 					boundVBOBaseIds = currentVBOBaseIds;
 					//	texture coordinates
 					if (isTextureCoordinatesAvailable == true &&
 						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && specularMaterialProperties != nullptr && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true))) {
-						renderer->bindTextureCoordinatesBufferObject(contextIdx, (*currentVBOBaseIds)[3]);
+						rendererBackend->bindTextureCoordinatesBufferObject(contextIdx, (*currentVBOBaseIds)[3]);
 					}
 					// 	indices
-					renderer->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
+					rendererBackend->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
 					// 	vertices
-					renderer->bindVerticesBufferObject(contextIdx, (*currentVBOBaseIds)[1]);
+					rendererBackend->bindVerticesBufferObject(contextIdx, (*currentVBOBaseIds)[1]);
 					// 	normals
-					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(contextIdx, (*currentVBOBaseIds)[2]);
+					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) rendererBackend->bindNormalsBufferObject(contextIdx, (*currentVBOBaseIds)[2]);
 				}
-				auto currentVBOLods = _objectNode->renderer->vboLods;
+				auto currentVBOLods = _objectNode->rendererBackend->vboLods;
 				if (currentVBOLods != nullptr) {
 					auto distanceSquared = objectCamFromAxis.set(object->getWorldBoundingBox()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 					// index buffer
@@ -557,9 +557,9 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 						lodLevel = 1;
 					}
 					if (lodLevel == 0) {
-						renderer->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
+						rendererBackend->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
 					} else {
-						renderer->bindIndicesBufferObject(contextIdx, (*currentVBOLods)[lodLevel - 1]);
+						rendererBackend->bindIndicesBufferObject(contextIdx, (*currentVBOLods)[lodLevel - 1]);
 						switch(lodLevel) {
 							case 3:
 								faces = (_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->instances;
@@ -579,37 +579,37 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					currentLODLevel = lodLevel;
 				}
 				// bind tangent, bitangend buffers if not yet bound
-				auto currentVBONormalMappingIds = _objectNode->renderer->vboNormalMappingIds;
+				auto currentVBONormalMappingIds = _objectNode->rendererBackend->vboNormalMappingIds;
 				if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
-					renderer->isNormalMappingAvailable() && currentVBONormalMappingIds != nullptr && currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
+					rendererBackend->isNormalMappingAvailable() && currentVBONormalMappingIds != nullptr && currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
 					// tangent
-					renderer->bindTangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[0]);
+					rendererBackend->bindTangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[0]);
 					// bitangent
-					renderer->bindBitangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[1]);
+					rendererBackend->bindBitangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[1]);
 				}
 				// bind render node object origins
-				auto currentVBOOrigins = _objectNode->renderer->vboOrigins;
+				auto currentVBOOrigins = _objectNode->rendererBackend->vboOrigins;
 				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
-					renderer->bindOriginsBufferObject(contextIdx, (*currentVBOOrigins)[0]);
+					rendererBackend->bindOriginsBufferObject(contextIdx, (*currentVBOOrigins)[0]);
 				}
 				// set up local -> world transform matrix
-				renderer->getModelViewMatrix().set(
+				rendererBackend->getModelViewMatrix().set(
 					_objectNode->mesh->skinning == true?
 						modelViewMatrix.identity():
 						modelViewMatrix.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 				);
-				renderer->onUpdateModelViewMatrix(contextIdx);
+				rendererBackend->onUpdateModelViewMatrix(contextIdx);
 				// set up front face
-				auto objectFrontFace = objectRenderContext.rightHandedMatrix.isRightHanded(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				auto objectFrontFace = objectRenderContext.rightHandedMatrix.isRightHanded(rendererBackend->getModelViewMatrix()) == false ? rendererBackend->FRONTFACE_CCW : rendererBackend->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
-					renderer->setFrontFace(contextIdx, objectFrontFace);
+					rendererBackend->setFrontFace(contextIdx, objectFrontFace);
 					currentFrontFace = objectFrontFace;
 				}
 				// set up effect color
 				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-					renderer->getEffectColorMul(contextIdx) = object->effectColorMul.getArray();
-					renderer->getEffectColorAdd(contextIdx) = object->effectColorAdd.getArray();
-					renderer->onUpdateEffect(contextIdx);
+					rendererBackend->getEffectColorMul(contextIdx) = object->effectColorMul.getArray();
+					rendererBackend->getEffectColorAdd(contextIdx) = object->effectColorAdd.getArray();
+					rendererBackend->onUpdateEffect(contextIdx);
 				}
 				// do transform start to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
@@ -625,8 +625,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				//	TODO: check if texture is in use
 				if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-					renderer->getTextureMatrix(contextIdx).set(_objectNode->textureMatricesByEntities[faceEntityIdx]);
-					renderer->onUpdateTextureMatrix(contextIdx);
+					rendererBackend->getTextureMatrix(contextIdx).set(_objectNode->textureMatricesByEntities[faceEntityIdx]);
+					rendererBackend->onUpdateTextureMatrix(contextIdx);
 				}
 				EnvironmentMapping* environmentMappingEntity = nullptr;
 				// reflection source
@@ -649,21 +649,21 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 						if (environmentMappingCubeMapTextureId != boundEnvironmentMappingCubeMapTextureId || environmentMappingCubeMapPosition.equals(boundEnvironmentMappingCubeMapPosition) == false) {
 							boundEnvironmentMappingCubeMapTextureId = environmentMappingCubeMapTextureId;
 							boundEnvironmentMappingCubeMapPosition = environmentMappingCubeMapPosition;
-							renderer->setEnvironmentMappingCubeMapPosition(contextIdx, environmentMappingCubeMapPosition.getArray());
-							renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-							renderer->bindCubeMapTexture(contextIdx, environmentMappingCubeMapTextureId);
-							renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+							rendererBackend->setEnvironmentMappingCubeMapPosition(contextIdx, environmentMappingCubeMapPosition.getArray());
+							rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+							rendererBackend->bindCubeMapTexture(contextIdx, environmentMappingCubeMapTextureId);
+							rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 						}
 					}
 				}
 				if (environmentMappingEntity == nullptr && boundEnvironmentMappingCubeMapTextureId != -1) {
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-					renderer->bindCubeMapTexture(contextIdx, renderer->ID_NONE);
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+					rendererBackend->bindCubeMapTexture(contextIdx, rendererBackend->ID_NONE);
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 					boundEnvironmentMappingCubeMapTextureId = -1;
 				}
 				// draw
-				renderer->drawIndexedTrianglesFromBufferObjects(contextIdx, facesToRender, faceIdx);
+				rendererBackend->drawIndexedTrianglesFromBufferObjects(contextIdx, facesToRender, faceIdx);
 				// do transform end to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
@@ -675,15 +675,15 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 			if (specularMaterialProperties != nullptr) {
 				if (material->isDoubleSided() == true ||
 					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
-					renderer->enableCulling(contextIdx);
+					rendererBackend->enableCulling(contextIdx);
 				}
 			}
 		}
 	}
 	// unbind buffers
-	renderer->unbindBufferObjects(contextIdx);
+	rendererBackend->unbindBufferObjects(contextIdx);
 	// restore model view matrix / view matrix
-	renderer->getModelViewMatrix().set(cameraMatrix);
+	rendererBackend->getModelViewMatrix().set(cameraMatrix);
 }
 
 void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool)
@@ -696,7 +696,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	RightHandedMatrix4x4 rightHandedMatrix;
 
 	//
-	auto cameraMatrix = renderer->getCameraMatrix();
+	auto cameraMatrix = rendererBackend->getCameraMatrix();
 	Vector3 objectCamFromAxis;
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
@@ -738,7 +738,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						auto object = objects[objectIdx];
 						auto _objectNode = object->objectNodes[objectNodeIdx];
 						// set up textures
-						ObjectNode::setupTextures(renderer, contextIdx, objectNode, faceEntityIdx);
+						ObjectNode::setupTextures(rendererBackend, contextIdx, objectNode, faceEntityIdx);
 						// set up transparent render faces
 						if (collectTransparentFaces == true) {
 							transparentRenderFacesPool->createTransparentRenderFaces(
@@ -761,18 +761,18 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				if (material->isDoubleSided() == true ||
 					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					if (cullingMode != 0) {
-						renderer->disableCulling(contextIdx);
+						rendererBackend->disableCulling(contextIdx);
 						cullingMode = 0;
 					}
 				} else {
 					if (cullingMode != 1) {
-						renderer->enableCulling(contextIdx);
+						rendererBackend->enableCulling(contextIdx);
 						cullingMode = 1;
 					}
 				}
 			} else {
 				if (cullingMode != 1) {
-					renderer->enableCulling(contextIdx);
+					rendererBackend->enableCulling(contextIdx);
 					cullingMode = 1;
 				}
 			}
@@ -843,18 +843,18 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// shader
 					if (hadShaderSetup == false) {
-						if (object->getShader() != renderer->getShader(contextIdx)) {
-							renderer->setShader(contextIdx, object->getShader());
-							renderer->onUpdateShader(contextIdx);
+						if (object->getShader() != rendererBackend->getShader(contextIdx)) {
+							rendererBackend->setShader(contextIdx, object->getShader());
+							rendererBackend->onUpdateShader(contextIdx);
 							for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j]->update(contextIdx);
 							// issue upload matrices
-							renderer->onUpdateCameraMatrix(contextIdx);
-							renderer->onUpdateProjectionMatrix(contextIdx);
-							renderer->onUpdateTextureMatrix(contextIdx);
+							rendererBackend->onUpdateCameraMatrix(contextIdx);
+							rendererBackend->onUpdateProjectionMatrix(contextIdx);
+							rendererBackend->onUpdateTextureMatrix(contextIdx);
 						}
 						hadShaderSetup = true;
 					} else
-					if (object->getShader() != renderer->getShader(contextIdx)) {
+					if (object->getShader() != rendererBackend->getShader(contextIdx)) {
 						objectRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -878,31 +878,31 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// shader parameters
 					if (shaderParametersHash.empty() == true) {
-						renderer->setShaderParameters(contextIdx, object->shaderParameters);
-						renderer->onUpdateShaderParameters(contextIdx);
-						shaderParametersHash = renderer->getShaderParameters(contextIdx).getShaderParametersHash();
+						rendererBackend->setShaderParameters(contextIdx, object->shaderParameters);
+						rendererBackend->onUpdateShaderParameters(contextIdx);
+						shaderParametersHash = rendererBackend->getShaderParameters(contextIdx).getShaderParametersHash();
 					} else
-					if (shaderParametersHash != renderer->getShaderParameters(contextIdx).getShaderParametersHash()) {
+					if (shaderParametersHash != rendererBackend->getShaderParameters(contextIdx).getShaderParametersHash()) {
 						objectRenderContext.objectsNotRendered.push_back(object);
 					}
 
 					// bind buffer base objects if not bound yet
-					auto currentVBOBaseIds = _objectNode->renderer->vboBaseIds;
+					auto currentVBOBaseIds = _objectNode->rendererBackend->vboBaseIds;
 					if (boundVBOBaseIds == nullptr) {
 						boundVBOBaseIds = currentVBOBaseIds;
 						//	texture coordinates
 						if (isTextureCoordinatesAvailable == true &&
 							(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 							((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && specularMaterialProperties != nullptr && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true))) {
-							renderer->bindTextureCoordinatesBufferObject(contextIdx, (*currentVBOBaseIds)[3]);
+							rendererBackend->bindTextureCoordinatesBufferObject(contextIdx, (*currentVBOBaseIds)[3]);
 						}
 						// 	indices
-						renderer->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
+						rendererBackend->bindIndicesBufferObject(contextIdx, (*currentVBOBaseIds)[0]);
 						// 	vertices
-						renderer->bindVerticesBufferObject(contextIdx, (*currentVBOBaseIds)[1]);
+						rendererBackend->bindVerticesBufferObject(contextIdx, (*currentVBOBaseIds)[1]);
 						// 	normals
 						if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) {
-							renderer->bindNormalsBufferObject(contextIdx, (*currentVBOBaseIds)[2]);
+							rendererBackend->bindNormalsBufferObject(contextIdx, (*currentVBOBaseIds)[2]);
 						}
 					} else
 					// check if buffers did change, then skip and render in next step
@@ -910,7 +910,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						objectRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
-					auto currentVBOLods = _objectNode->renderer->vboLods;
+					auto currentVBOLods = _objectNode->rendererBackend->vboLods;
 					if (currentVBOLods != nullptr) {
 						auto distanceSquared = objectCamFromAxis.set(object->getWorldBoundingBox()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 						// index buffer
@@ -929,7 +929,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 							continue;
 						}
 						if (lodLevel > 0) {
-							renderer->bindIndicesBufferObject(contextIdx, (*currentVBOLods)[lodLevel - 1]);
+							rendererBackend->bindIndicesBufferObject(contextIdx, (*currentVBOLods)[lodLevel - 1]);
 							switch(lodLevel) {
 								case 3:
 									faces = (_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->instances;
@@ -949,15 +949,15 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						currentLODLevel = lodLevel;
 					}
 					// bind tangent, bitangend buffers
-					auto currentVBONormalMappingIds = _objectNode->renderer->vboNormalMappingIds;
+					auto currentVBONormalMappingIds = _objectNode->rendererBackend->vboNormalMappingIds;
 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
-						renderer->isNormalMappingAvailable() == true && currentVBONormalMappingIds != nullptr) {
+						rendererBackend->isNormalMappingAvailable() == true && currentVBONormalMappingIds != nullptr) {
 						// bind tangent, bitangend buffers if not yet done
 						if (boundVBOTangentBitangentIds == nullptr) {
 							// tangent
-							renderer->bindTangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[0]);
+							rendererBackend->bindTangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[0]);
 							// bitangent
-							renderer->bindBitangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[1]);
+							rendererBackend->bindBitangentsBufferObject(contextIdx, (*currentVBONormalMappingIds)[1]);
 							//
 							boundVBOTangentBitangentIds = currentVBONormalMappingIds;
 						} else
@@ -969,11 +969,11 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					}
 
 					// bind render node object origins
-					auto currentVBOOrigins = _objectNode->renderer->vboOrigins;
+					auto currentVBOOrigins = _objectNode->rendererBackend->vboOrigins;
 					if (currentVBOOrigins != nullptr) {
 						// bind render node object origins if not yet done
 						if (boundVBOOrigins == nullptr) {
-							renderer->bindOriginsBufferObject(contextIdx, (*currentVBOOrigins)[0]);
+							rendererBackend->bindOriginsBufferObject(contextIdx, (*currentVBOOrigins)[0]);
 							//
 							boundVBOOrigins = currentVBOOrigins;
 						} else
@@ -993,14 +993,14 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					);
 
 					// set up front face
-					auto objectFrontFace = rightHandedMatrix.isRightHanded(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+					auto objectFrontFace = rightHandedMatrix.isRightHanded(modelViewMatrix) == false ? rendererBackend->FRONTFACE_CCW : rendererBackend->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
 						if (hadFrontFaceSetup == false) {
 							hadFrontFaceSetup = true;
 							if (objectFrontFace != frontFace) {
 								frontFace = objectFrontFace;
-								renderer->setFrontFace(contextIdx, frontFace);
+								rendererBackend->setFrontFace(contextIdx, frontFace);
 							}
 						} else
 						if (objectFrontFace != frontFace) {
@@ -1032,10 +1032,10 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 							if (boundEnvironmentMappingCubeMapTextureId == -1) {
 								boundEnvironmentMappingCubeMapTextureId = environmentMappingCubeMapTextureId;
 								boundEnvironmentMappingCubeMapPosition = environmentMappingCubeMapPosition;
-								renderer->setEnvironmentMappingCubeMapPosition(contextIdx, environmentMappingCubeMapPosition.getArray());
-								renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-								renderer->bindCubeMapTexture(contextIdx, environmentMappingCubeMapTextureId);
-								renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+								rendererBackend->setEnvironmentMappingCubeMapPosition(contextIdx, environmentMappingCubeMapPosition.getArray());
+								rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+								rendererBackend->bindCubeMapTexture(contextIdx, environmentMappingCubeMapTextureId);
+								rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 							} else
 							if (boundEnvironmentMappingCubeMapTextureId != environmentMappingCubeMapTextureId || environmentMappingCubeMapPosition.equals(boundEnvironmentMappingCubeMapPosition) == false) {
 								objectRenderContext.objectsNotRendered.push_back(object);
@@ -1062,29 +1062,29 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				if (objectsToRenderIssue > 0) {
 					// upload model view matrices
 					{
-						renderer->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-						renderer->bindModelMatricesBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[0]);
+						rendererBackend->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+						rendererBackend->bindModelMatricesBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[0]);
 					}
 
 					// upload effects
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 						// upload effect color mul
-						renderer->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-						renderer->bindEffectColorMulsBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[1], 1);
-						renderer->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-						renderer->bindEffectColorAddsBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[2], 1);
+						rendererBackend->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+						rendererBackend->bindEffectColorMulsBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[1], 1);
+						rendererBackend->uploadBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+						rendererBackend->bindEffectColorAddsBufferObject(contextIdx, (*objectRenderContext.vboInstancedRenderingIds)[2], 1);
 					}
 
 					// set up texture matrix
 					//	TODO: check if texture is in use
 					if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 						(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-						renderer->getTextureMatrix(contextIdx).set(textureMatrix);
-						renderer->onUpdateTextureMatrix(contextIdx);
+						rendererBackend->getTextureMatrix(contextIdx).set(textureMatrix);
+						rendererBackend->onUpdateTextureMatrix(contextIdx);
 					}
 
 					// draw
-					renderer->drawInstancedIndexedTrianglesFromBufferObjects(contextIdx, facesToRender, faceIdx, objectsToRenderIssue);
+					rendererBackend->drawInstancedIndexedTrianglesFromBufferObjects(contextIdx, facesToRender, faceIdx, objectsToRenderIssue);
 				}
 
 				// clear list of objects we did not render
@@ -1093,9 +1093,9 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 				// TODO: improve me!
 				if (boundEnvironmentMappingCubeMapTextureId != -1) {
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-					renderer->bindCubeMapTexture(contextIdx, renderer->ID_NONE);
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+					rendererBackend->bindCubeMapTexture(contextIdx, rendererBackend->ID_NONE);
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 				}
 			} while (objectRenderContext.objectsToRender.size() > 0);
 
@@ -1106,12 +1106,12 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 	//
 	if (cullingMode != 1) {
-		renderer->enableCulling(contextIdx);
+		rendererBackend->enableCulling(contextIdx);
 		cullingMode = 1;
 	}
 
 	// unbind buffers
-	renderer->unbindBufferObjects(contextIdx);
+	rendererBackend->unbindBufferObjects(contextIdx);
 
 	// reset objects to render
 	objectRenderContext.objectsToRender.clear();
@@ -1131,14 +1131,14 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 	materialKey = material->getId();
 
 	// setup textures
-	ObjectNode::setupTextures(renderer, contextIdx, objectNode, facesEntityIdx);
+	ObjectNode::setupTextures(rendererBackend, contextIdx, objectNode, facesEntityIdx);
 
 	//
 	if (updateOnly == false) {
-		if (renderer->getLighting(contextIdx) == renderer->LIGHTING_SPECULAR) {
+		if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_SPECULAR) {
 			// apply materials
 			if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-				auto& rendererMaterial = renderer->getSpecularMaterial(contextIdx);
+				auto& rendererMaterial = rendererBackend->getSpecularMaterial(contextIdx);
 				rendererMaterial.ambient = specularMaterialProperties->getAmbientColor().getArray();
 				rendererMaterial.diffuse = specularMaterialProperties->getDiffuseColor().getArray();
 				rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
@@ -1147,27 +1147,27 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 				rendererMaterial.reflection = specularMaterialProperties->getReflection();
 				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 				rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
-				renderer->onUpdateMaterial(contextIdx);
+				rendererBackend->onUpdateMaterial(contextIdx);
 			}
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 				// bind specular texture
-				if (renderer->isSpecularMappingAvailable() == true) {
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
-					renderer->bindTexture(contextIdx, objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
+				if (rendererBackend->isSpecularMappingAvailable() == true) {
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+					rendererBackend->bindTexture(contextIdx, objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
 				}
 				// bind normal texture
-				if (renderer->isNormalMappingAvailable() == true) {
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
-					renderer->bindTexture(contextIdx, objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+				if (rendererBackend->isNormalMappingAvailable() == true) {
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+					rendererBackend->bindTexture(contextIdx, objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
 				}
 				// switch back texture unit to diffuse unit
-				renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+				rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 			}
 		} else
-		if (renderer->getLighting(contextIdx) == renderer->LIGHTING_PBR) {
+		if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_PBR) {
 			// apply materials
 			if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-				auto& rendererMaterial = renderer->getPBRMaterial(contextIdx);
+				auto& rendererMaterial = rendererBackend->getPBRMaterial(contextIdx);
 				if (pbrMaterialProperties == nullptr) {
 					rendererMaterial.baseColorFactor = {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 					rendererMaterial.metallicFactor = 1.0f;
@@ -1192,20 +1192,20 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 					rendererMaterial.baseColorTextureMaskedTransparency = pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?1:0;
 					rendererMaterial.baseColorTextureMaskedTransparencyThreshold = pbrMaterialProperties->getBaseColorTextureMaskedTransparencyThreshold();
 				}
-				renderer->onUpdateMaterial(contextIdx);
+				rendererBackend->onUpdateMaterial(contextIdx);
 			}
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 				// bind metallic roughness texture
-				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
-				renderer->bindTexture(contextIdx, objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx]);
+				rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+				rendererBackend->bindTexture(contextIdx, objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx]);
 				// bind normal texture
-				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
-				renderer->bindTexture(contextIdx, objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+				rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+				rendererBackend->bindTexture(contextIdx, objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx]);
 				// bind emissive texture
-				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
-				renderer->bindTexture(contextIdx, objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx]);
+				rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
+				rendererBackend->bindTexture(contextIdx, objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx]);
 				// switch back texture unit to base color unit
-				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+				rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 			}
 		}
 	}
@@ -1213,8 +1213,8 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 	// bind diffuse/base color texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
-		if (renderer->getLighting(contextIdx) == renderer->LIGHTING_SPECULAR) {
-			auto& rendererMaterial = renderer->getSpecularMaterial(contextIdx);
+		if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_SPECULAR) {
+			auto& rendererMaterial = rendererBackend->getSpecularMaterial(contextIdx);
 			auto diffuseTexture = specularMaterialProperties->getDiffuseTexture();
 			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
@@ -1224,7 +1224,7 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 				rendererMaterial.textureAtlasPixelDimension[0] = 1.0f / diffuseTexture->getTextureWidth();
 				rendererMaterial.textureAtlasPixelDimension[1] = 1.0f / diffuseTexture->getTextureHeight();
 			}
-			renderer->onUpdateMaterial(contextIdx);
+			rendererBackend->onUpdateMaterial(contextIdx);
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 				specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 				auto diffuseTextureId =
@@ -1234,13 +1234,13 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 				materialKey+= ",";
 				materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
 				if (updateOnly == false || currentMaterialKey.empty() == true) {
-					renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-					renderer->bindTexture(contextIdx, diffuseTextureId);
+					rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+					rendererBackend->bindTexture(contextIdx, diffuseTextureId);
 				}
 			}
 		} else
-		if (renderer->getLighting(contextIdx) == renderer->LIGHTING_PBR) {
-			auto& rendererMaterial = renderer->getPBRMaterial(contextIdx);
+		if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_PBR) {
+			auto& rendererMaterial = rendererBackend->getPBRMaterial(contextIdx);
 			if (pbrMaterialProperties == nullptr) {
 				rendererMaterial.baseColorTextureMaskedTransparency = 0;
 				rendererMaterial.baseColorTextureMaskedTransparencyThreshold = 0.0f;
@@ -1248,9 +1248,9 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 				rendererMaterial.baseColorTextureMaskedTransparency = pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?1:0;
 				rendererMaterial.baseColorTextureMaskedTransparencyThreshold = pbrMaterialProperties->getBaseColorTextureMaskedTransparencyThreshold();
 			}
-			renderer->onUpdateMaterial(contextIdx);
-			renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-			renderer->bindTexture(contextIdx, objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx]);
+			rendererBackend->onUpdateMaterial(contextIdx);
+			rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+			rendererBackend->bindTexture(contextIdx, objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx]);
 		}
 	}
 }
@@ -1258,38 +1258,38 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 void EntityRenderer::clearMaterial(int contextIdx)
 {
 	// TODO: optimize me! We do not need always to clear material
-	if (renderer->getLighting(contextIdx) == renderer->LIGHTING_SPECULAR) {
+	if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_SPECULAR) {
 		// unbind diffuse texture
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		// unbind specular texture
-		if (renderer->isSpecularMappingAvailable() == true) {
-			renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
-			renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		if (rendererBackend->isSpecularMappingAvailable() == true) {
+			rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+			rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		}
 		// unbind normal texture
-		if (renderer->isNormalMappingAvailable()) {
-			renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
-			renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		if (rendererBackend->isNormalMappingAvailable()) {
+			rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+			rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		}
 		// set diffuse texture unit
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	} else
-	if (renderer->getLighting(contextIdx) == renderer->LIGHTING_PBR) {
+	if (rendererBackend->getLighting(contextIdx) == rendererBackend->LIGHTING_PBR) {
 		// unbind base color texture
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		// unbind metallic roughness texture
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		// unbind normal texture
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		// unbind emissive texture
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		// set diffuse texture unit
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+		rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 	}
 }
 
@@ -1310,23 +1310,23 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	unordered_map<void*, PseParameters> rendererPseParameters;
 
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
-	modelViewMatrix.set(renderer->getModelViewMatrix());
+	modelViewMatrix.set(rendererBackend->getModelViewMatrix());
 
 	// set up renderer state
-	renderer->enableBlending();
+	rendererBackend->enableBlending();
 	// 	model view matrix
-	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix(contextIdx);
+	rendererBackend->getModelViewMatrix().identity();
+	rendererBackend->onUpdateModelViewMatrix(contextIdx);
 
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
-	renderer->setTextureUnit(contextIdx, 0);
+	rendererBackend->setTextureUnit(contextIdx, 0);
 
 	// merge pses, transform them into camera space and sort them
-	const auto& cameraMatrix = renderer->getCameraMatrix();
+	const auto& cameraMatrix = rendererBackend->getCameraMatrix();
 	for (auto entity: pses) {
 		if (entity->getRenderPass() != renderPass) continue;
 		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);
@@ -1365,7 +1365,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 		auto points =  renderTransparentRenderPointsPool->getTransparentRenderPoints();
 		auto pseParameters = &rendererPseParameters.find(points[0]->particleSystem)->second;
 		auto currentPpse = static_cast<void*>(points[0]->particleSystem);
-		if (renderer->isSupportingIntegerProgramAttributes() == true) {
+		if (rendererBackend->isSupportingIntegerProgramAttributes() == true) {
 			for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
 				auto point = points[i];
 				if (point->particleSystem != (void*)currentPpse) {
@@ -1413,10 +1413,10 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	}
 
 	// unset renderer state
-	renderer->disableBlending();
+	rendererBackend->disableBlending();
 	// restore renderer state
-	renderer->unbindBufferObjects(contextIdx);
-	renderer->getModelViewMatrix().set(modelViewMatrix);
+	rendererBackend->unbindBufferObjects(contextIdx);
+	rendererBackend->getModelViewMatrix().set(modelViewMatrix);
 }
 
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>& linesEntities) {
@@ -1425,46 +1425,46 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>&
 	if (linesEntities.size() == 0) return;
 
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
-	renderer->setTextureUnit(contextIdx, 0);
+	rendererBackend->setTextureUnit(contextIdx, 0);
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
-	modelViewMatrix.set(renderer->getModelViewMatrix());
+	modelViewMatrix.set(rendererBackend->getModelViewMatrix());
 
 	// set up renderer state
-	renderer->enableBlending();
+	rendererBackend->enableBlending();
 
 	//
 	for (auto entity: linesEntities) {
 		if (entity->getRenderPass() != renderPass) continue;
 
 		// 	model view matrix
-		renderer->getModelViewMatrix().set(entity->getTransformMatrix()).multiply(renderer->getCameraMatrix());
-		renderer->onUpdateModelViewMatrix(contextIdx);
+		rendererBackend->getModelViewMatrix().set(entity->getTransformMatrix()).multiply(rendererBackend->getCameraMatrix());
+		rendererBackend->onUpdateModelViewMatrix(contextIdx);
 
 		// render
 		// issue rendering
-		renderer->getEffectColorAdd(contextIdx) = entity->getEffectColorAdd().getArray();
-		renderer->getEffectColorMul(contextIdx) = entity->getEffectColorMul().getArray();
-		renderer->onUpdateEffect(contextIdx);
+		rendererBackend->getEffectColorAdd(contextIdx) = entity->getEffectColorAdd().getArray();
+		rendererBackend->getEffectColorMul(contextIdx) = entity->getEffectColorMul().getArray();
+		rendererBackend->onUpdateEffect(contextIdx);
 
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
 		engine->getLinesShader()->setParameters(contextIdx, entity->getTextureId(), entity->getLineWidth());
 
 		//
-		renderer->bindVerticesBufferObject(contextIdx, (*entity->vboIds)[0]);
-		renderer->bindColorsBufferObject(contextIdx, (*entity->vboIds)[1]);
-		renderer->drawLinesFromBufferObjects(contextIdx, entity->points.size(), 0);
+		rendererBackend->bindVerticesBufferObject(contextIdx, (*entity->vboIds)[0]);
+		rendererBackend->bindColorsBufferObject(contextIdx, (*entity->vboIds)[1]);
+		rendererBackend->drawLinesFromBufferObjects(contextIdx, entity->points.size(), 0);
 	}
 
 	// unbind texture
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 	// unset renderer state
-	renderer->disableBlending();
+	rendererBackend->disableBlending();
 	// restore renderer state
-	renderer->unbindBufferObjects(contextIdx);
-	renderer->getModelViewMatrix().set(modelViewMatrix);
+	rendererBackend->unbindBufferObjects(contextIdx);
+	rendererBackend->getModelViewMatrix().set(modelViewMatrix);
 }

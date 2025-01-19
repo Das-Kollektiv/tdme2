@@ -8,7 +8,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
 
 /**
@@ -19,19 +19,19 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImp
 {
 public:
 	/**
-	 * @return if supported by renderer
-	 * @param renderer renderer
+	 * @return if supported by rendererBackend
+	 * @param rendererBackend renderer backend
 	 */
-	static bool isSupported(Renderer* renderer);
+	static bool isSupported(RendererBackend* rendererBackend);
 
 	// forbid class copy
 	FORBID_CLASS_COPY(ShadowMapCreationShaderDefaultImplementation)
 
 	/**
 	 * Constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	ShadowMapCreationShaderDefaultImplementation(Renderer* renderer);
+	ShadowMapCreationShaderDefaultImplementation(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor
@@ -41,6 +41,6 @@ public:
 	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
-	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
+	virtual void updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) override;
 
 };

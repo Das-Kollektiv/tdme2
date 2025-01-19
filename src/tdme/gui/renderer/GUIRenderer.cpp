@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -24,7 +24,7 @@ using std::array;
 using std::unique_ptr;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
@@ -40,10 +40,10 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::Time;
 
-GUIRenderer::GUIRenderer(Renderer* renderer)
+GUIRenderer::GUIRenderer(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
-	sbIndicesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t))));
+	this->rendererBackend = rendererBackend;
+	sbIndicesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(QUAD_COUNT * 6 * (rendererBackend->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t))));
 	fbVertices = (fbVerticesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float))))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float))))->asFloatBuffer();
 	fbSolidColors = (fbSolidColorsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(QUAD_COUNT * 6 * 1 * sizeof(float))))->asFloatBuffer();
@@ -67,7 +67,7 @@ void GUIRenderer::initialize()
 		auto created = false;
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 5, false, false, created);
 		vboIds = vboManaged->getVBOIds();
-		if (renderer->isUsingShortIndices() == true) {
+		if (rendererBackend->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
 				sbIndices.put(static_cast<uint16_t>((i * 4 + 0)));
@@ -77,7 +77,7 @@ void GUIRenderer::initialize()
 				sbIndices.put(static_cast<uint16_t>((i * 4 + 3)));
 				sbIndices.put(static_cast<uint16_t>((i * 4 + 0)));
 			}
-			renderer->uploadIndicesBufferObject(renderer->CONTEXTINDEX_DEFAULT, (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+			rendererBackend->uploadIndicesBufferObject(rendererBackend->CONTEXTINDEX_DEFAULT, (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {
 			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
@@ -88,7 +88,7 @@ void GUIRenderer::initialize()
 				ibIndices.put(i * 4 + 3);
 				ibIndices.put(i * 4 + 0);
 			}
-			renderer->uploadIndicesBufferObject(renderer->CONTEXTINDEX_DEFAULT, (*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+			rendererBackend->uploadIndicesBufferObject(rendererBackend->CONTEXTINDEX_DEFAULT, (*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
 	}
 }
@@ -108,12 +108,12 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).identity();
+	rendererBackend->getTextureMatrix(rendererBackend->CONTEXTINDEX_DEFAULT).identity();
 }
 
 void GUIRenderer::doneRendering()
 {
-	renderer->unbindBufferObjects(renderer->CONTEXTINDEX_DEFAULT);
+	rendererBackend->unbindBufferObjects(rendererBackend->CONTEXTINDEX_DEFAULT);
 	Engine::getGUIShader()->unUseProgram();
 }
 
@@ -146,23 +146,23 @@ void GUIRenderer::setGUIEffectOffsetY(float guiEffectOffsetY)
 }
 
 void GUIRenderer::setTexureMatrix(const Matrix3x3& textureMatrix) {
-	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).set(textureMatrix);
+	rendererBackend->getTextureMatrix(rendererBackend->CONTEXTINDEX_DEFAULT).set(textureMatrix);
 }
 
 void GUIRenderer::bindTexture(int32_t textureId)
 {
-	renderer->bindTexture(renderer->CONTEXTINDEX_DEFAULT, textureId);
+	rendererBackend->bindTexture(rendererBackend->CONTEXTINDEX_DEFAULT, textureId);
 }
 
 void GUIRenderer::bindMask(int32_t textureId)
 {
-	renderer->setTextureUnit(renderer->CONTEXTINDEX_DEFAULT, 1);
-	renderer->bindTexture(renderer->CONTEXTINDEX_DEFAULT, textureId);
-	renderer->setTextureUnit(renderer->CONTEXTINDEX_DEFAULT, 0);
+	rendererBackend->setTextureUnit(rendererBackend->CONTEXTINDEX_DEFAULT, 1);
+	rendererBackend->bindTexture(rendererBackend->CONTEXTINDEX_DEFAULT, textureId);
+	rendererBackend->setTextureUnit(rendererBackend->CONTEXTINDEX_DEFAULT, 0);
 }
 
 void GUIRenderer::setMaskMaxValue(float maskMaxValue) {
-	renderer->setMaskMaxValue(renderer->CONTEXTINDEX_DEFAULT, maskMaxValue);
+	rendererBackend->setMaskMaxValue(rendererBackend->CONTEXTINDEX_DEFAULT, maskMaxValue);
 }
 
 void GUIRenderer::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
@@ -182,16 +182,16 @@ void GUIRenderer::render()
 		return;
 	}
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbSolidColors.getPosition() * sizeof(float), &fbSolidColors);
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[4], fbColors.getPosition() * sizeof(float), &fbColors);
-	renderer->bindIndicesBufferObject(contextIdx, (*vboIds)[0]);
-	renderer->bindVertices2BufferObject(contextIdx, (*vboIds)[1]);
-	renderer->bindSolidColorsBufferObject(contextIdx, (*vboIds)[2]);
-	renderer->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[3]);
-	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[4]);
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[2], fbSolidColors.getPosition() * sizeof(float), &fbSolidColors);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[4], fbColors.getPosition() * sizeof(float), &fbColors);
+	rendererBackend->bindIndicesBufferObject(contextIdx, (*vboIds)[0]);
+	rendererBackend->bindVertices2BufferObject(contextIdx, (*vboIds)[1]);
+	rendererBackend->bindSolidColorsBufferObject(contextIdx, (*vboIds)[2]);
+	rendererBackend->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[3]);
+	rendererBackend->bindColorsBufferObject(contextIdx, (*vboIds)[4]);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
@@ -200,11 +200,11 @@ void GUIRenderer::render()
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
-	renderer->getEffectColorMul(contextIdx) = effectColorMulFinal;
-	renderer->getEffectColorAdd(contextIdx) = effectColorAddFinal;
-	renderer->onUpdateEffect(contextIdx);
-	renderer->onUpdateTextureMatrix(contextIdx);
-	renderer->drawIndexedTrianglesFromBufferObjects(contextIdx, quadCount * 2, 0);
+	rendererBackend->getEffectColorMul(contextIdx) = effectColorMulFinal;
+	rendererBackend->getEffectColorAdd(contextIdx) = effectColorAddFinal;
+	rendererBackend->onUpdateEffect(contextIdx);
+	rendererBackend->onUpdateTextureMatrix(contextIdx);
+	rendererBackend->drawIndexedTrianglesFromBufferObjects(contextIdx, quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices.clear();
 	fbSolidColors.clear();

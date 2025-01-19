@@ -22,7 +22,7 @@ using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::lines::LinesInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;
@@ -71,8 +71,8 @@ public:
 
 	void setEngine(Engine* engine) override;
 
-	inline void setRenderer(Renderer* renderer) override {
-		LinesInternal::setRenderer(renderer);
+	inline void setRenderer(RendererBackend* rendererBackend) override {
+		LinesInternal::setRenderer(rendererBackend);
 	}
 
 	inline void initialize() override {

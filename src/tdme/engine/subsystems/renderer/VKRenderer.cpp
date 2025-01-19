@@ -1,5 +1,5 @@
 /**
- * Vulkan renderer
+ * Vulkan rendererBackend
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
  * 	https://vulkan-tutorial.com
@@ -44,7 +44,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
@@ -114,7 +114,7 @@ using tdme::application::Application;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::renderer::VKGL3CoreShaderProgram;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
@@ -139,7 +139,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
-	Renderer(),
+	RendererBackend(),
 	queueSpinlock("queue_spinlock"),
 	buffersMutex("buffers_mutex"),
 	texturesMutex("textures_mutex"),
@@ -7568,7 +7568,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	return pixelBuffer;
 }
 
-void VKRenderer::initGuiMode()
+void VKRenderer::initGUIMode()
 {
 	enableBlending();
 	disableCulling(0);
@@ -7576,7 +7576,7 @@ void VKRenderer::initGuiMode()
 	disableDepthBufferWriting();
 }
 
-void VKRenderer::doneGuiMode()
+void VKRenderer::doneGUIMode()
 {
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
@@ -7843,7 +7843,7 @@ void VKRenderer::setVSync(bool vSync) {
 	this->vSync = vSync;
 }
 
-const Renderer::Renderer_Statistics VKRenderer::getStatistics() {
+const RendererBackend::Renderer_Statistics VKRenderer::getStatistics() {
 	array<VmaBudget, VK_MAX_MEMORY_HEAPS> budget;
 	vmaGetBudget(vmaAllocator, budget.data());
 	auto stats = statistics;

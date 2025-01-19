@@ -12,7 +12,7 @@
 
 using std::unique_ptr;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Frustum;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -29,7 +29,7 @@ public:
 
 private:
 	STATIC_DLL_IMPEXT static Vector3 defaultUp;
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	int32_t width;
 	int32_t height;
 	float fovX;
@@ -55,9 +55,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	Camera(Renderer* renderer);
+	Camera(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor

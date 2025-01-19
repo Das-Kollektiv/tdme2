@@ -3,22 +3,22 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::to_string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImplementation;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMapCreationShaderDefaultImplementation::isSupported(Renderer* renderer) {
+bool ShadowMapCreationShaderDefaultImplementation::isSupported(RendererBackend* rendererBackend) {
 	return true;
 }
 
-ShadowMapCreationShaderDefaultImplementation::ShadowMapCreationShaderDefaultImplementation(Renderer* renderer): ShadowMapCreationShaderBaseImplementation(renderer)
+ShadowMapCreationShaderDefaultImplementation::ShadowMapCreationShaderDefaultImplementation(RendererBackend* rendererBackend): ShadowMapCreationShaderBaseImplementation(rendererBackend)
 {
 }
 
@@ -31,30 +31,30 @@ const string ShadowMapCreationShaderDefaultImplementation::getId() {
 
 void ShadowMapCreationShaderDefaultImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// load shadow mapping creation shaders
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"creation_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"creation_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
 	// create shadow map creation program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	ShadowMapCreationShaderBaseImplementation::initialize();
 }
 
-void ShadowMapCreationShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+void ShadowMapCreationShaderDefaultImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
 }

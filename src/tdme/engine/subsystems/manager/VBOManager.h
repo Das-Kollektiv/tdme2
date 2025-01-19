@@ -14,7 +14,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::os::threading::ReadWriteLock;
 
 /**
@@ -113,7 +113,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	VBOManager(Renderer* renderer);
+	VBOManager(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor
@@ -144,7 +144,7 @@ public:
 	void removeVBO(const string& vboId);
 
 private:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	unordered_map<string, ManagedVBO*> vbos;
 	ReadWriteLock rwLock;
 

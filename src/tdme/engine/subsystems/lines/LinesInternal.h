@@ -23,7 +23,7 @@ using tdme::engine::Texture;
 using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
@@ -40,7 +40,7 @@ class tdme::engine::subsystems::lines::LinesInternal
 protected:
 	string id;
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	bool enabled;
 	float lineWidth;
 	Texture* texture { nullptr };
@@ -113,11 +113,11 @@ public:
 	}
 
 	/**
-	 * Set renderer
-	 * @param renderer renderer
+	 * Set rendererBackend
+	 * @param rendererBackend renderer backend
 	 */
-	inline void setRenderer(Renderer* renderer) {
-		this->renderer = renderer;
+	inline void setRenderer(RendererBackend* rendererBackend) {
+		this->rendererBackend = rendererBackend;
 	}
 
 	/**

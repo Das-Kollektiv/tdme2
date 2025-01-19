@@ -8,7 +8,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -22,7 +22,7 @@ using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -30,7 +30,7 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 
 /**
- * Batch renderer for transparent triangles
+ * Batch rendererBackend for transparent triangles
  * @author andreas.drewke
  */
 class tdme::engine::subsystems::rendering::BatchRendererTriangles final
@@ -40,7 +40,7 @@ class tdme::engine::subsystems::rendering::BatchRendererTriangles final
 private:
 	static constexpr int32_t TRIANGLE_COUNT { 1024 };
 	static constexpr int32_t VERTEX_COUNT { TRIANGLE_COUNT * 3 };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<int32_t>* vboIds { nullptr };
 	int32_t id;
 	bool acquired;
@@ -59,7 +59,7 @@ private:
 	FloatBuffer fbTextureCoordinates;
 
 	/**
-	 * Clears this batch vbo renderer
+	 * Clears this batch vbo rendererBackend
 	 */
 	void clear();
 
@@ -95,10 +95,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param id id
 	 */
-	BatchRendererTriangles(Renderer* renderer, int32_t id);
+	BatchRendererTriangles(RendererBackend* rendererBackend, int32_t id);
 
 	/**
 	 * Destructor

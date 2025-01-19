@@ -111,8 +111,8 @@ void PointsParticleSystem::setEngine(Engine* engine)
 	PointsParticleSystemInternal::setEngine(engine);
 }
 
-void PointsParticleSystem::setRenderer(Renderer* renderer)
+void PointsParticleSystem::setRenderer(RendererBackend* rendererBackend)
 {
-	PointsParticleSystemInternal::setRenderer(renderer);
+	PointsParticleSystemInternal::setRenderer(rendererBackend);
 }
 

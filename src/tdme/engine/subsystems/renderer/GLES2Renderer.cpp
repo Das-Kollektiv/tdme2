@@ -82,8 +82,8 @@ const string GLES2Renderer::getVendor() {
 }
 
 const string GLES2Renderer::getRenderer() {
-	auto renderer = (char*)glGetString(GL_RENDERER);
-	return string(renderer) + " [GLES2]";
+	auto rendererBackend = (char*)glGetString(GL_RENDERER);
+	return string(rendererBackend) + " [GLES2]";
 }
 
 const string GLES2Renderer::getShaderVersion()
@@ -1050,7 +1050,7 @@ ByteBuffer* GLES2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32
 	return nullptr;
 }
 
-void GLES2Renderer::initGuiMode()
+void GLES2Renderer::initGUIMode()
 {
 	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
@@ -1061,7 +1061,7 @@ void GLES2Renderer::initGuiMode()
 	glDisable(GL_CULL_FACE);
 }
 
-void GLES2Renderer::doneGuiMode()
+void GLES2Renderer::doneGUIMode()
 {
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	glDisable(GL_BLEND);
@@ -1121,7 +1121,7 @@ void GLES2Renderer::setVSync(bool vSync) {
 	// no op
 }
 
-const Renderer::Renderer_Statistics GLES2Renderer::getStatistics() {
+const RendererBackend::Renderer_Statistics GLES2Renderer::getStatistics() {
 	auto stats = statistics;
 	statistics.time = Time::getCurrentMillis();
 	statistics.memoryUsageGPU = -1LL;

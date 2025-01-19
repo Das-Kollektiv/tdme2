@@ -10,7 +10,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
@@ -61,32 +61,32 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplement
 
 	/**
 	 * Set up program texture matrix
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 */
-	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) = 0;
+	virtual void updateTextureMatrix(RendererBackend* rendererBackend, int contextIdx) = 0;
 
 	/**
 	 * Update material
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 */
-	virtual void updateMaterial(Renderer* renderer, int contextIdx) = 0;
+	virtual void updateMaterial(RendererBackend* rendererBackend, int contextIdx) = 0;
 
 	/**
 	 * Update shader parameters
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 */
-	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) = 0;
+	virtual void updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) = 0;
 
 	/**
 	 * Bind texture
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) = 0;
+	virtual void bindTexture(RendererBackend* rendererBackend, int contextIdx, int32_t textureId) = 0;
 
 	/**
 	 * Unload textures

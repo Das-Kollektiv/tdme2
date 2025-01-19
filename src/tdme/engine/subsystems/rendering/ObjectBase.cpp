@@ -164,7 +164,7 @@ void ObjectBase::initialize()
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer.get(),
+						objectNode->rendererBackend.get(),
 						animationProcessingTarget,
 						objectNode->node,
 						instancesTransformMatrices,
@@ -174,7 +174,7 @@ void ObjectBase::initialize()
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer.get(),
+					objectNode->rendererBackend.get(),
 					animationProcessingTarget,
 					objectNode->node,
 					instancesTransformMatrices,
@@ -193,7 +193,7 @@ void ObjectBase::dispose()
 	for (auto i = 0; i < objectNodes.size(); i++) {
 		auto objectNode = objectNodes[i];
 		// dispose renderer
-		objectNode->renderer->dispose();
+		objectNode->rendererBackend->dispose();
 		// dispose object node
 		objectNode->dispose();
 		// dispose mesh

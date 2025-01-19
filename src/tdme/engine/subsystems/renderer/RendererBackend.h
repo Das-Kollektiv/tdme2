@@ -38,11 +38,11 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * Renderer interface
+ * Renderer backend interface
  * @author Andreas Drewke
  * @ersion $Id$
  */
-class tdme::engine::subsystems::renderer::Renderer
+class tdme::engine::subsystems::renderer::RendererBackend
 {
 public:
 
@@ -193,39 +193,39 @@ protected:
 
 public:
 	// forbid class copy
-	FORBID_CLASS_COPY(Renderer)
+	FORBID_CLASS_COPY(RendererBackend)
 
 	/**
 	 * Public constructor
 	 */
-	Renderer();
+	RendererBackend();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Renderer();
+	virtual ~RendererBackend();
 
 	/**
-	 * @return renderer type
+	 * @return rendererBackend type
 	 */
 	inline RendererType getRendererType() {
 		return rendererType;
 	}
 
 	/**
-	 * Prepare window system renderer context
+	 * Prepare window system rendererBackend context
 	 * @param tryIdx try index
 	 */
 	virtual bool prepareWindowSystemRendererContext(int tryIdx) = 0;
 
 	/**
-	 * Initialize window system renderer context
+	 * Initialize window system rendererBackend context
 	 * @param glfwWindow GLFL window
 	 */
 	virtual bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) = 0;
 
 	/**
-	 * Initialize renderer
+	 * Initialize rendererBackend
 	 */
 	virtual void initialize() = 0;
 
@@ -245,7 +245,7 @@ public:
 	virtual const string getVendor() = 0;
 
 	/**
-	 * @return renderer
+	 * @return rendererBackend
 	 */
 	virtual const string getRenderer() = 0;
 
@@ -255,7 +255,7 @@ public:
 	virtual const string getShaderVersion() = 0;
 
 	/**
-	 * @return if renderer is supporting multi threaded rendering
+	 * @return if rendererBackend is supporting multi threaded rendering
 	 */
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
@@ -306,7 +306,7 @@ public:
 	virtual bool isGLCLAvailable() = 0;
 
 	/**
-	 * @return Returns if renderer is using short indices, otherwise it uses int indices
+	 * @return Returns if rendererBackend is using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
 
@@ -1373,14 +1373,14 @@ public:
 	}
 
 	/**
-	 * Set up renderer for GUI rendering
+	 * Set up rendererBackend for GUI rendering
 	 */
-	virtual void initGuiMode() = 0;
+	virtual void initGUIMode() = 0;
 
 	/**
-	 * Set up renderer for 3d rendering
+	 * Set up rendererBackend for 3d rendering
 	 */
-	virtual void doneGuiMode() = 0;
+	virtual void doneGUIMode() = 0;
 
 	/**
 	 * Enable/Disable v-sync
@@ -1389,7 +1389,7 @@ public:
 	virtual void setVSync(bool vSync) = 0;
 
 	/**
-	 * @return renderer statistics
+	 * @return rendererBackend statistics
 	 */
 	virtual const Renderer_Statistics getStatistics() = 0;
 

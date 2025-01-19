@@ -33,7 +33,7 @@ using std::to_string;
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::ObjectAnimation;
 using tdme::engine::subsystems::rendering::ObjectInternal;
@@ -161,8 +161,8 @@ private:
 	inline void preRender(int contextIdx) {
 		if (model->hasBoundingBoxUpdate() == true) updateBoundingBox();
 		for (auto objectNode: objectNodes) {
-			if (objectNode->renderer->needsPreRender() == true) {
-				objectNode->renderer->preRender(contextIdx);
+			if (objectNode->rendererBackend->needsPreRender() == true) {
+				objectNode->rendererBackend->preRender(contextIdx);
 			}
 		}
 	}
@@ -215,7 +215,7 @@ public:
 	}
 
 	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
+	void setRenderer(RendererBackend* rendererBackend) override;
 	void initialize() override;
 	void dispose() override;
 

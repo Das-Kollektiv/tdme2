@@ -18,7 +18,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
@@ -45,7 +45,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -116,7 +116,7 @@ void ObjectNode::createNodes(ObjectBase* object, const unordered_map<string, Nod
 			objectNode->object = object;
 			objectNode->node = node;
 			objectNode->animated = animated;
-			objectNode->renderer = make_unique<ObjectNodeRenderer>(objectNode);
+			objectNode->rendererBackend = make_unique<ObjectNodeRenderer>(objectNode);
 			vector<unordered_map<string, Matrix4x4*>*> instancesTransformMatrices;
 			vector<unordered_map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: object->instanceAnimations) {
@@ -128,7 +128,7 @@ void ObjectNode::createNodes(ObjectBase* object, const unordered_map<string, Nod
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer.get(),
+						objectNode->rendererBackend.get(),
 						animationProcessingTarget,
 						node,
 						instancesTransformMatrices,
@@ -139,7 +139,7 @@ void ObjectNode::createNodes(ObjectBase* object, const unordered_map<string, Nod
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer.get(),
+					objectNode->rendererBackend.get(),
 					animationProcessingTarget,
 					node,
 					instancesTransformMatrices,
@@ -189,7 +189,7 @@ void ObjectNode::computeAnimation(int contextIdx, vector<ObjectNode*>& objectNod
 	}
 }
 
-void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx)
+void ObjectNode::setupTextures(RendererBackend* rendererBackend, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx)
 {
 	const auto& facesEntities = objectNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
@@ -206,7 +206,7 @@ void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* o
 			}
 		}
 		// load specular specular texture
-		if (renderer->isSpecularMappingAvailable() == true && objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (rendererBackend->isSpecularMappingAvailable() == true && objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getSpecularTexture() != nullptr) {
 				objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), contextIdx);
 			} else {
@@ -214,7 +214,7 @@ void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* o
 			}
 		}
 		// load specular normal texture
-		if (renderer->isNormalMappingAvailable() == true && objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (rendererBackend->isNormalMappingAvailable() == true && objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getNormalTexture() != nullptr) {
 				objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), contextIdx);
 			} else {
@@ -224,7 +224,7 @@ void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* o
 	}
 	// load PBR textures
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
-	if (pbrMaterialProperties != nullptr && renderer->isPBRAvailable() == true) {
+	if (pbrMaterialProperties != nullptr && rendererBackend->isPBRAvailable() == true) {
 		// load PBR base color texture
 		if (objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getBaseColorTexture() != nullptr) {

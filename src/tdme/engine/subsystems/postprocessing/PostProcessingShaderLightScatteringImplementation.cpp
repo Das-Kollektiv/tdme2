@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Math.h>
@@ -11,26 +11,26 @@
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::ShaderParameter;
 using tdme::math::Math;
 
-bool PostProcessingShaderLightScatteringImplementation::isSupported(Renderer* renderer) {
-	return renderer->getShaderVersion() == "gl3";
+bool PostProcessingShaderLightScatteringImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->getShaderVersion() == "gl3";
 }
 
-PostProcessingShaderLightScatteringImplementation::PostProcessingShaderLightScatteringImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderLightScatteringImplementation::PostProcessingShaderLightScatteringImplementation(RendererBackend* rendererBackend): PostProcessingShaderBaseImplementation(rendererBackend)
 {
 }
 
 void PostProcessingShaderLightScatteringImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"light_scattering_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
@@ -38,8 +38,8 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"light_scattering_vertexshader.vert",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
@@ -47,18 +47,18 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].position");
-		uniformLightIntensity[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].intensity");
+		uniformLightEnabled[i] = rendererBackend->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
+		uniformLightPosition[i] = rendererBackend->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].position");
+		uniformLightIntensity[i] = rendererBackend->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].intensity");
 	}
 
 	// register shader
@@ -79,7 +79,7 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(int 
 		//
 		if (light->isEnabled() == false ||
 			(light->isRenderSource() == false && (engine->isSkyShaderEnabled() == false || (i != Engine::LIGHTIDX_SUN && i != Engine::LIGHTIDX_MOON)))) {
-			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
+			rendererBackend->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 			continue;
 		}
 		//
@@ -102,14 +102,14 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(int 
 		if (lightSourcePosition2D.getY() > 0.6f) _intensity = (1.0f - lightSourcePosition2D.getY()) / 0.4f;
 		if (_intensity < intensity) intensity = _intensity;
 		if (intensity < Math::EPSILON) {
-			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
+			rendererBackend->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 		} else {
-			if (renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
+			if (rendererBackend->getRendererType() == RendererBackend::RENDERERTYPE_VULKAN) {
 				lightSourcePosition2D = Vector2(lightSourcePosition2D.getX(), 1.0f - lightSourcePosition2D.getY());
 			}
-			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 1);
-			renderer->setProgramUniformFloatVec2(contextIdx, uniformLightPosition[i], lightSourcePosition2D.getArray());
-			renderer->setProgramUniformFloat(contextIdx, uniformLightIntensity[i], intensity * 0.6f);
+			rendererBackend->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 1);
+			rendererBackend->setProgramUniformFloatVec2(contextIdx, uniformLightPosition[i], lightSourcePosition2D.getArray());
+			rendererBackend->setProgramUniformFloat(contextIdx, uniformLightIntensity[i], intensity * 0.6f);
 		}
 	}
 }

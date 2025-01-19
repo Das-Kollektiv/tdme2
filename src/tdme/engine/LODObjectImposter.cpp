@@ -70,7 +70,7 @@ void LODObjectImposter::setEngine(Engine* engine)
 	objectLOD2->setEngine(engine);
 }
 
-void LODObjectImposter::setRenderer(Renderer* renderer)
+void LODObjectImposter::setRenderer(RendererBackend* rendererBackend)
 {
 }
 

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderImplementation.h>
@@ -19,7 +19,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderFoliageImplementation;
@@ -30,12 +30,12 @@ using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::utilities::StringTools;
 
-ShadowMapRenderShader::ShadowMapRenderShader(Renderer* renderer): renderer(renderer)
+ShadowMapRenderShader::ShadowMapRenderShader(RendererBackend* rendererBackend): rendererBackend(rendererBackend)
 {
-	if (ShadowMapRenderShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new ShadowMapRenderShaderDefaultImplementation(renderer);
-	if (ShadowMapRenderShaderFoliageImplementation::isSupported(renderer) == true) shaders["foliage"] = new ShadowMapRenderShaderFoliageImplementation(renderer);
-	if (ShadowMapRenderShaderTreeImplementation::isSupported(renderer) == true) shaders["tree"] = new ShadowMapRenderShaderTreeImplementation(renderer);
-	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	if (ShadowMapRenderShaderDefaultImplementation::isSupported(rendererBackend) == true) shaders["default"] = new ShadowMapRenderShaderDefaultImplementation(rendererBackend);
+	if (ShadowMapRenderShaderFoliageImplementation::isSupported(rendererBackend) == true) shaders["foliage"] = new ShadowMapRenderShaderFoliageImplementation(rendererBackend);
+	if (ShadowMapRenderShaderTreeImplementation::isSupported(rendererBackend) == true) shaders["tree"] = new ShadowMapRenderShaderTreeImplementation(rendererBackend);
+	auto threadCount = rendererBackend->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
@@ -93,33 +93,33 @@ void ShadowMapRenderShader::updateMatrices(int contextIdx)
 void ShadowMapRenderShader::updateTextureMatrix(int contextIdx) {
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->updateTextureMatrix(renderer, contextIdx);
+	shadowMappingShaderRenderContext.implementation->updateTextureMatrix(rendererBackend, contextIdx);
 }
 
 void ShadowMapRenderShader::updateMaterial(int contextIdx)
 {
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->updateMaterial(renderer, contextIdx);
+	shadowMappingShaderRenderContext.implementation->updateMaterial(rendererBackend, contextIdx);
 }
 
 void ShadowMapRenderShader::updateLight(int contextIdx, int32_t lightId) {
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->updateLight(renderer, contextIdx, lightId);
+	shadowMappingShaderRenderContext.implementation->updateLight(rendererBackend, contextIdx, lightId);
 }
 
 void ShadowMapRenderShader::updateShaderParameters(int contextIdx) {
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->updateShaderParameters(renderer, contextIdx);
+	shadowMappingShaderRenderContext.implementation->updateShaderParameters(rendererBackend, contextIdx);
 }
 
 void ShadowMapRenderShader::bindTexture(int contextIdx, int32_t textureId)
 {
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->bindTexture(renderer, contextIdx, textureId);
+	shadowMappingShaderRenderContext.implementation->bindTexture(rendererBackend, contextIdx, textureId);
 }
 
 void ShadowMapRenderShader::setDepthBiasMVPMatrix(int contextIdx, const Matrix4x4& depthBiasMVPMatrix)

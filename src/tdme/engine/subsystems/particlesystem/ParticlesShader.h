@@ -8,7 +8,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::utilities::TextureAtlas;
@@ -39,7 +39,7 @@ private:
 	bool isRunning;
 	bool initialized;
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 public:
 	// forbid class copy
@@ -48,9 +48,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param engine engine
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	ParticlesShader(Engine* engine, Renderer* renderer);
+	ParticlesShader(Engine* engine, RendererBackend* rendererBackend);
 
 	/**
 	 * @return initialized and ready to be used
@@ -58,7 +58,7 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Initialize renderer
+	 * Initialize rendererBackend
 	 */
 	void initialize();
 

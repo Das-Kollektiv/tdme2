@@ -15,7 +15,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Camera;
 using tdme::engine::Decal;
 using tdme::engine::Engine;
@@ -31,7 +31,7 @@ class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader final
 private:
 	static constexpr int DECAL_COUNT { 80 };
 
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
@@ -104,9 +104,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	DeferredLightingRenderShader(Renderer* renderer);
+	DeferredLightingRenderShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Public destructor

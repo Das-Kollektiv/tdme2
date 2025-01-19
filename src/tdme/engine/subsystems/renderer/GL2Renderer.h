@@ -8,7 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -18,7 +18,7 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
@@ -26,10 +26,10 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * OpenGL 2 renderer
+ * OpenGL 2 rendererBackend
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::renderer::GL2Renderer: public Renderer
+class tdme::engine::subsystems::renderer::GL2Renderer: public RendererBackend
 {
 private:
 	unordered_map<uint32_t, int32_t> vbosUsage;
@@ -160,8 +160,8 @@ public:
 	void setTextureUnit(int contextIdx, int32_t textureUnit) override;
 	float readPixelDepth(int32_t x, int32_t y) override;
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
-	void initGuiMode() override;
-	void doneGuiMode() override;
+	void initGUIMode() override;
+	void doneGUIMode() override;
 
 	// overridden methods for skinning on GPU via compute shader
 	void dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;

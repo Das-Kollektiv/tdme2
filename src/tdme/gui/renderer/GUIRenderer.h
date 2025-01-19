@@ -25,7 +25,7 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
@@ -72,7 +72,7 @@ private:
 	};
 
 	GUI* gui { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<int32_t>* vboIds { nullptr };
 	int quadCount { 0 };
 	unique_ptr<ByteBuffer> sbIndicesByteBuffer;
@@ -108,8 +108,9 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param rendererBackend renderer backend
 	 */
-	GUIRenderer(Renderer* renderer);
+	GUIRenderer(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor

@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -13,7 +13,7 @@
 using std::make_unique;
 using std::unique_ptr;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Camera;
 using tdme::engine::Frustum;
 using tdme::math::Math;
@@ -21,9 +21,9 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-Camera::Camera(Renderer* renderer)
+Camera::Camera(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	width = 0;
 	height = 0;
 	fovX = 45.0f;
@@ -37,7 +37,7 @@ Camera::Camera(Renderer* renderer)
 	sideVector.set(1.0f, 0.0f, 0.0f);
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
-	frustum = make_unique<Frustum>(renderer);
+	frustum = make_unique<Frustum>(rendererBackend);
 }
 
 Camera::~Camera() {
@@ -167,7 +167,7 @@ void Camera::update(int contextIdx, int32_t width, int32_t height)
 
 		this->width = _width;
 		this->height = _height;
-		renderer->getViewportMatrix().set(
+		rendererBackend->getViewportMatrix().set(
 			_width / 2.0f,
 			0.0f,
 			0.0f,
@@ -188,19 +188,19 @@ void Camera::update(int contextIdx, int32_t width, int32_t height)
 	}
 
 	// setup projection and model view matrices and such
-	renderer->getCameraPosition().set(lookFrom);
-	renderer->getProjectionMatrix().set(computeProjectionMatrix());
-	renderer->onUpdateProjectionMatrix(contextIdx);
-	renderer->getModelViewMatrix().set(computeModelViewMatrix());
-	renderer->onUpdateModelViewMatrix(contextIdx);
-	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
-	renderer->onUpdateCameraMatrix(contextIdx);
+	rendererBackend->getCameraPosition().set(lookFrom);
+	rendererBackend->getProjectionMatrix().set(computeProjectionMatrix());
+	rendererBackend->onUpdateProjectionMatrix(contextIdx);
+	rendererBackend->getModelViewMatrix().set(computeModelViewMatrix());
+	rendererBackend->onUpdateModelViewMatrix(contextIdx);
+	rendererBackend->getCameraMatrix().set(rendererBackend->getModelViewMatrix());
+	rendererBackend->onUpdateCameraMatrix(contextIdx);
 
 	//
 	mvpInvertedMatrix.set(cameraMatrix).multiply(projectionMatrix).invert();
 	mvpMatrix.set(cameraMatrix).multiply(projectionMatrix);
 
 	// viewport
-	renderer->setViewPort(width, height);
-	renderer->updateViewPort();
+	rendererBackend->setViewPort(width, height);
+	rendererBackend->updateViewPort();
 }

@@ -10,7 +10,7 @@
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 
 /**
  * Lighting shader implementation
@@ -24,15 +24,15 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	LightingShaderTerrainImplementation(Renderer* renderer);
+	LightingShaderTerrainImplementation(RendererBackend* rendererBackend);
 
 	/**
-	 * @return if supported by renderer
-	 * @param renderer renderer
+	 * @return if supported by rendererBackend
+	 * @param rendererBackend renderer backend
 	 */
-	static bool isSupported(Renderer* renderer);
+	static bool isSupported(RendererBackend* rendererBackend);
 
 	// overridden methods
 	virtual const string getId() override;
@@ -40,8 +40,8 @@ public:
 	virtual void registerShader() override;
 	virtual void useProgram(Engine* engine, int contextIdx) override;
 	virtual void unUseProgram(int contextIdx) override;
-	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
-	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
+	virtual void updateMatrices(RendererBackend* rendererBackend, int contextIdx) override;
+	virtual void updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) override;
 	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 

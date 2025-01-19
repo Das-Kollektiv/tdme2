@@ -95,11 +95,11 @@ void ObjectParticleSystemInternal::setEngine(Engine* engine)
 	}
 }
 
-void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
+void ObjectParticleSystemInternal::setRenderer(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	for (auto i = 0; i < objects.size(); i++) {
-		objects[i]->setRenderer(renderer);
+		objects[i]->setRenderer(rendererBackend);
 	}
 }
 

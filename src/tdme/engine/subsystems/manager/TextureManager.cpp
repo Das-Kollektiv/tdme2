@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Console.h>
 
@@ -14,12 +14,12 @@ using std::unordered_map;
 
 using tdme::engine::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::os::threading::Mutex;
 using tdme::utilities::Console;;
 
-TextureManager::TextureManager(Renderer* renderer): mutex("texturemanager-mutex") {
-	this->renderer = renderer;
+TextureManager::TextureManager(RendererBackend* rendererBackend): mutex("texturemanager-mutex") {
+	this->rendererBackend = rendererBackend;
 }
 
 TextureManager::~TextureManager() {
@@ -36,12 +36,12 @@ TextureManager::ManagedTexture* TextureManager::addTexture(const string& id, boo
 		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
 		mutex.unlock();
-		// yep, return renderer texture id
+		// yep, return renderer backend texture id
 		created = false;
 		return textureManaged;
 	}
 	// create texture
-	auto textureId = renderer->createTexture();
+	auto textureId = rendererBackend->createTexture();
 	// create managed texture
 	auto managedTexture = new ManagedTexture(id, textureId);
 	// add it to our textures
@@ -63,11 +63,11 @@ int32_t TextureManager::addTexture(Texture* texture, int contextIdx)
 	// upload if it was created
 	if (created == true) {
 		// bind texture
-		renderer->bindTexture(contextIdx, rendererId);
+		rendererBackend->bindTexture(contextIdx, rendererId);
 		// upload texture
-		renderer->uploadTexture(contextIdx, texture);
+		rendererBackend->uploadTexture(contextIdx, texture);
 		// unbind texture
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 		//
 		textureManaged->setUploaded(true);
 	}
@@ -85,11 +85,11 @@ int32_t TextureManager::addCubeMapTexture(const string& id, Texture* textureLeft
 	// upload if it was created
 	if (created == true) {
 		// bind texture
-		renderer->bindCubeMapTexture(contextIdx, rendererId);
+		rendererBackend->bindCubeMapTexture(contextIdx, rendererId);
 		// upload texture
-		renderer->uploadCubeMapTexture(contextIdx, textureLeft, textureRight, textureTop, textureBottom, textureFront, textureBack);
+		rendererBackend->uploadCubeMapTexture(contextIdx, textureLeft, textureRight, textureTop, textureBottom, textureFront, textureBack);
 		// unbind texture
-		renderer->bindCubeMapTexture(contextIdx, renderer->ID_NONE);
+		rendererBackend->bindCubeMapTexture(contextIdx, rendererBackend->ID_NONE);
 		//
 		textureManaged->setUploaded(true);
 	}
@@ -112,7 +112,7 @@ void TextureManager::removeTexture(const string& textureId)
 			//
 			mutex.unlock();
 			// remove from renderer
-			renderer->disposeTexture(textureRendererId);
+			rendererBackend->disposeTexture(textureRendererId);
 			delete textureManaged;
 			//
 			return;

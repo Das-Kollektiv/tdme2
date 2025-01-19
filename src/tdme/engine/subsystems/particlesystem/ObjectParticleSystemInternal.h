@@ -32,7 +32,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
@@ -52,7 +52,7 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 {
 protected:
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	string id;
 	bool enabled;
 	Model* model { nullptr };
@@ -121,7 +121,7 @@ public:
 
 	const string& getId() override;
 	void setEngine(Engine* engine);
-	void setRenderer(Renderer* renderer);
+	void setRenderer(RendererBackend* rendererBackend);
 	inline bool isEnabled() override {
 		return enabled;
 	}

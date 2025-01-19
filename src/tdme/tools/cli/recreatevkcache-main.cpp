@@ -2,7 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -11,7 +11,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::application::Application;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
@@ -69,7 +69,7 @@ public:
 
 	void initialize() override {
 		Engine::getInstance()->initialize();
-		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+		if (Engine::getInstance()->getGraphicsRendererBackendType() != RendererBackend::RENDERERTYPE_VULKAN) {
 			Console::printLine("Note: recreatevkcache does not run with --vulkan, Vulkan shader cache can not get created. Exiting.");
 			Application::exit(0);
 		}

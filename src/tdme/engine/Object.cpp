@@ -43,7 +43,7 @@ void Object::setEngine(Engine* engine)
 	if (engine != nullptr) engine->registerEntity(this);
 }
 
-void Object::setRenderer(Renderer* renderer)
+void Object::setRenderer(RendererBackend* rendererBackend)
 {
 }
 

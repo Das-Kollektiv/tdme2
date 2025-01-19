@@ -17,7 +17,7 @@ using std::array;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -28,7 +28,7 @@ using tdme::math::Vector3;
 class tdme::engine::Frustum final
 {
 private:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 	Matrix4x4 projectionMatrixTransposed;
 	Matrix4x4 modelViewMatrixTransposed;
@@ -50,8 +50,9 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param rendererBackend renderer backend
 	 */
-	Frustum(Renderer* renderer);
+	Frustum(RendererBackend* rendererBackend);
 
 	/**
 	 * @return planes

@@ -14,7 +14,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
@@ -33,7 +33,7 @@ private:
 	bool running { false };
 	Matrix4x4 depthBiasMVPMatrix;
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<ShadowMapRenderShaderContext> contexts;
 	int32_t lightId { -1 };
 
@@ -43,9 +43,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	ShadowMapRenderShader(Renderer* renderer);
+	ShadowMapRenderShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor

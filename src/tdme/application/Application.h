@@ -31,7 +31,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::application::InputEventHandler;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 
 /**
  * Application base class, please make sure to allocate application on heap to have correct application shutdown working
@@ -58,11 +58,12 @@ public:
 	static constexpr int EXITCODE_FAILURE { EXIT_FAILURE };
 
 	static constexpr int64_t JOYSTICK_BUTTON_TIME_REPEAT { 150LL };
+
 	/**
-	 * @return renderer
+	 * @return renderer backend
 	 */
-	inline static Renderer* getRenderer() {
-		return renderer;
+	inline static RendererBackend* getRendererBackend() {
+		return rendererBackend;
 	}
 
 	/**
@@ -340,7 +341,7 @@ public:
 	virtual void onDrop(const vector<string>& paths);
 
 private:
-	STATIC_DLL_IMPEXT static Renderer* renderer;
+	STATIC_DLL_IMPEXT static RendererBackend* rendererBackend;
 	STATIC_DLL_IMPEXT static Application* application;
 	STATIC_DLL_IMPEXT static InputEventHandler* inputEventHandler;
 	int windowHints { WINDOW_HINT_NONE };

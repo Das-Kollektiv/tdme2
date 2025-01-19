@@ -9,7 +9,7 @@
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Transform.h>
@@ -28,7 +28,7 @@ using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::lines::LinesInternal;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
@@ -94,8 +94,8 @@ void LinesInternal::initialize() {
 	// texture
 	this->textureId =
 		this->texture == nullptr?
-			engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):
-			engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
+			engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), rendererBackend->CONTEXTINDEX_DEFAULT):
+			engine->getTextureManager()->addTexture(this->texture, rendererBackend->CONTEXTINDEX_DEFAULT);
 
 	// initialize if not yet done
 	auto created = false;
@@ -103,13 +103,13 @@ void LinesInternal::initialize() {
 	vboIds = vboManaged->getVBOIds();
 
 	//
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	{
 		// upload points
 		auto fbPoints = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 3 * sizeof(float))->asFloatBuffer();
 		for (const auto& point: points) fbPoints.put(point.getArray());
-		renderer->uploadBufferObject(contextIdx, (*vboIds)[0], fbPoints.getPosition() * sizeof(float), &fbPoints);
+		rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[0], fbPoints.getPosition() * sizeof(float), &fbPoints);
 	}
 
 	{
@@ -120,7 +120,7 @@ void LinesInternal::initialize() {
 		} else {
 			for (const auto& point: points) fbColors.put(color.getArray());
 		}
-		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
+		rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
 	}
 }
 

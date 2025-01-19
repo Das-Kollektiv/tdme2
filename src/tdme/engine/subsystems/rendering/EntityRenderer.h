@@ -12,7 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
@@ -39,7 +39,7 @@ using std::vector;
 using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::ObjectNode;
@@ -118,7 +118,7 @@ private:
 	};
 
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 	vector<unique_ptr<BatchRendererTriangles>> trianglesBatchRenderers;
 	array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
@@ -182,7 +182,7 @@ private:
 	 * @param transparentRenderFacesPool transparent render faces pool
 	 */
 	inline void renderObjectsOfSameType(int threadIdx, const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool) {
-		if (renderer->isInstancedRenderingAvailable() == true) {
+		if (rendererBackend->isInstancedRenderingAvailable() == true) {
 			renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes, transparentRenderFacesPool);
 		} else {
 			renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
@@ -253,8 +253,8 @@ private:
 		//
 		if (objects.empty() == true) return;
 		// reset shader
-		renderer->setShader(threadIdx, string());
-		auto effectPass = renderer->getEffectPass();
+		rendererBackend->setShader(threadIdx, string());
+		auto effectPass = rendererBackend->getEffectPass();
 		// sort objects by model
 		Vector3 objectCamFromAxis;
 		auto camera = engine->getCamera();
@@ -325,9 +325,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param engine engine
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	EntityRenderer(Engine* engine, Renderer* renderer);
+	EntityRenderer(Engine* engine, RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor
@@ -345,12 +345,12 @@ public:
 	void dispose();
 
 	/**
-	 * @return batch renderer for triangles
+	 * @return batch rendererBackend for triangles
 	 */
 	BatchRendererTriangles* acquireTrianglesBatchRenderer();
 
 	/**
-	 * Resets the object renderer
+	 * Resets the object rendererBackend
 	 */
 	void reset();
 

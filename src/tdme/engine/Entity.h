@@ -15,7 +15,7 @@ using std::string;
 
 using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transform;
@@ -112,10 +112,10 @@ public:
 	virtual void setEngine(Engine* engine) = 0;
 
 	/**
-	 * Set up renderer
-	 * @param renderer renderer
+	 * Set up rendererBackend
+	 * @param rendererBackend renderer backend
 	 */
-	virtual void setRenderer(Renderer* renderer) = 0;
+	virtual void setRenderer(RendererBackend* rendererBackend) = 0;
 
 	/**
 	 * @return entity id

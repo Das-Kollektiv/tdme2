@@ -49,10 +49,10 @@ void EntityHierarchy::setEngine(Engine* engine)
 	for (auto entity: entities) entity->setEngine(engine);
 }
 
-void EntityHierarchy::setRenderer(Renderer* renderer)
+void EntityHierarchy::setRenderer(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
-	for (auto entity: entities) entity->setRenderer(renderer);
+	this->rendererBackend = rendererBackend;
+	for (auto entity: entities) entity->setRenderer(rendererBackend);
 }
 
 void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
@@ -68,7 +68,7 @@ void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	// base properties
 	entity->setParentEntity(this);
 	entity->setEngine(engine);
-	entity->setRenderer(renderer);
+	entity->setRenderer(rendererBackend);
 	entity->setPickable(pickable);
 	entity->setContributesShadows(contributesShadows);
 	entity->setReceivesShadows(receivesShadows);

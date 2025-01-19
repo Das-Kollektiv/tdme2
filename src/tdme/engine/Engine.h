@@ -24,7 +24,7 @@
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
@@ -76,7 +76,7 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
@@ -202,7 +202,7 @@ protected:
 
 private:
 	STATIC_DLL_IMPEXT static Engine* instance;
-	STATIC_DLL_IMPEXT static Renderer* renderer;
+	STATIC_DLL_IMPEXT static RendererBackend* rendererBackend;
 
 	STATIC_DLL_IMPEXT static unique_ptr<TextureManager> textureManager;
 	STATIC_DLL_IMPEXT static unique_ptr<VBOManager> vboManager;
@@ -429,10 +429,10 @@ private:
 	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**
-	 * @return engine
+	 * @return renderer backend
 	 */
-	inline static Renderer* getRenderer() {
-		return renderer;
+	inline static RendererBackend* getRendererBackend() {
+		return rendererBackend;
 	}
 
 	/**
@@ -1010,10 +1010,10 @@ public:
 	const string getGraphicsRenderer();
 
 	/**
-	 * @return graphics renderer type
+	 * @return graphics renderer backend type
 	 */
-	inline Renderer::RendererType getGraphicsRendererType() {
-		return renderer->getRendererType();
+	inline RendererBackend::RendererType getGraphicsRendererBackendType() {
+		return rendererBackend->getRendererType();
 	}
 
 	/**
@@ -1376,10 +1376,10 @@ public:
 	void addPostProcessingProgram(const string& programId);
 
 	/**
-	 * @return renderer statistics
+	 * @return renderer backend statistics
 	 */
-	inline Renderer::Renderer_Statistics getRendererStatistics() {
-		return renderer->getStatistics();
+	inline RendererBackend::Renderer_Statistics getRendererStatistics() {
+		return rendererBackend->getStatistics();
 	}
 
 	/**

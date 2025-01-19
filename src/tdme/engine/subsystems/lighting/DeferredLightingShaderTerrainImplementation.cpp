@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -21,17 +21,17 @@ using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplement
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool DeferredLightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
-	return renderer->isDeferredShadingAvailable() == true;
+bool DeferredLightingShaderTerrainImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->isDeferredShadingAvailable() == true;
 }
 
-DeferredLightingShaderTerrainImplementation::DeferredLightingShaderTerrainImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
+DeferredLightingShaderTerrainImplementation::DeferredLightingShaderTerrainImplementation(RendererBackend* rendererBackend): LightingShaderBaseImplementation(rendererBackend)
 {
 }
 
@@ -41,12 +41,12 @@ const string DeferredLightingShaderTerrainImplementation::getId() {
 
 void DeferredLightingShaderTerrainImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG\n" + additionalDefinitions
@@ -54,8 +54,8 @@ void DeferredLightingShaderTerrainImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"defer_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG\n" + additionalDefinitions,
@@ -71,9 +71,9 @@ void DeferredLightingShaderTerrainImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -82,18 +82,18 @@ void DeferredLightingShaderTerrainImplementation::initialize()
 	//
 	initialized = false;
 
-	uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
+	uniformModelMatrix = rendererBackend->getProgramUniformLocation(programId, "modelMatrix");
 
-	uniformGrasTextureUnit = renderer->getProgramUniformLocation(programId, "grasTextureUnit");
+	uniformGrasTextureUnit = rendererBackend->getProgramUniformLocation(programId, "grasTextureUnit");
 	if (uniformGrasTextureUnit == -1) return;
 
-	uniformDirtTextureUnit = renderer->getProgramUniformLocation(programId, "dirtTextureUnit");
+	uniformDirtTextureUnit = rendererBackend->getProgramUniformLocation(programId, "dirtTextureUnit");
 	if (uniformDirtTextureUnit == -1) return;
 
-	uniformSnowTextureUnit = renderer->getProgramUniformLocation(programId, "snowTextureUnit");
+	uniformSnowTextureUnit = rendererBackend->getProgramUniformLocation(programId, "snowTextureUnit");
 	if (uniformSnowTextureUnit == -1) return;
 
-	uniformStoneTextureUnit = renderer->getProgramUniformLocation(programId, "stoneTextureUnit");
+	uniformStoneTextureUnit = rendererBackend->getProgramUniformLocation(programId, "stoneTextureUnit");
 	if (uniformStoneTextureUnit == -1) return;
 
 	//
@@ -110,48 +110,48 @@ void DeferredLightingShaderTerrainImplementation::useProgram(Engine* engine, int
 	LightingShaderBaseImplementation::useProgram(engine, contextIdx);
 
 	//
-	auto currentTextureUnit = renderer->getTextureUnit(contextIdx);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
-	renderer->bindTexture(contextIdx, grasTextureId);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
-	renderer->bindTexture(contextIdx, dirtTextureId);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
-	renderer->bindTexture(contextIdx, snowTextureId);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
-	renderer->bindTexture(contextIdx, stoneTextureId);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
-	renderer->setTextureUnit(contextIdx, currentTextureUnit);
+	auto currentTextureUnit = rendererBackend->getTextureUnit(contextIdx);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
+	rendererBackend->bindTexture(contextIdx, grasTextureId);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
+	rendererBackend->bindTexture(contextIdx, dirtTextureId);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
+	rendererBackend->bindTexture(contextIdx, snowTextureId);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
+	rendererBackend->bindTexture(contextIdx, stoneTextureId);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
+	rendererBackend->setTextureUnit(contextIdx, currentTextureUnit);
 
 	//
-	renderer->setProgramUniformInteger(contextIdx, uniformGrasTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
-	renderer->setProgramUniformInteger(contextIdx, uniformDirtTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
-	renderer->setProgramUniformInteger(contextIdx, uniformSnowTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
-	renderer->setProgramUniformInteger(contextIdx, uniformStoneTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformGrasTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformDirtTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformSnowTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformStoneTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
 }
 
 void DeferredLightingShaderTerrainImplementation::unUseProgram(int contextIdx) {
 	//
-	auto currentTextureUnit = renderer->getTextureUnit(contextIdx);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, currentTextureUnit);
+	auto currentTextureUnit = rendererBackend->getTextureUnit(contextIdx);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, currentTextureUnit);
 
 	//
 	LightingShaderBaseImplementation::unUseProgram(contextIdx);
 }
 
-void DeferredLightingShaderTerrainImplementation::updateMatrices(Renderer* renderer, int contextIdx) {
-	LightingShaderBaseImplementation::updateMatrices(renderer, contextIdx);
-	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
+void DeferredLightingShaderTerrainImplementation::updateMatrices(RendererBackend* rendererBackend, int contextIdx) {
+	LightingShaderBaseImplementation::updateMatrices(rendererBackend, contextIdx);
+	if (uniformModelMatrix != -1) rendererBackend->setProgramUniformFloatMatrix4x4(contextIdx, uniformModelMatrix, rendererBackend->getModelViewMatrix().getArray());
 }
 
-void DeferredLightingShaderTerrainImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+void DeferredLightingShaderTerrainImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
 }
 
 void DeferredLightingShaderTerrainImplementation::unloadTextures() {
@@ -159,32 +159,32 @@ void DeferredLightingShaderTerrainImplementation::unloadTextures() {
 		Engine::getInstance()->getTextureManager()->removeTexture(grasTexture->getId());
 		grasTexture->releaseReference();
 		grasTexture = nullptr;
-		grasTextureId = renderer->ID_NONE;
+		grasTextureId = rendererBackend->ID_NONE;
 	}
 	if (dirtTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(dirtTexture->getId());
 		dirtTexture->releaseReference();
 		dirtTexture = nullptr;
-		dirtTextureId = renderer->ID_NONE;
+		dirtTextureId = rendererBackend->ID_NONE;
 	}
 	if (snowTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(snowTexture->getId());
 		snowTexture->releaseReference();
 		snowTexture = nullptr;
-		snowTextureId = renderer->ID_NONE;
+		snowTextureId = rendererBackend->ID_NONE;
 	}
 	if (stoneTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(stoneTexture->getId());
 		stoneTexture->releaseReference();
 		stoneTexture = nullptr;
-		stoneTextureId = renderer->ID_NONE;
+		stoneTextureId = rendererBackend->ID_NONE;
 	}
 }
 
 void DeferredLightingShaderTerrainImplementation::loadTextures(const string& pathName) {
 	//
-	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(grasTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_gras.png"), renderer->CONTEXTINDEX_DEFAULT);
-	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(dirtTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_dirt.png"), renderer->CONTEXTINDEX_DEFAULT);
-	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(snowTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_snow.png"), renderer->CONTEXTINDEX_DEFAULT);
-	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(stoneTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_stone.png"), renderer->CONTEXTINDEX_DEFAULT);
+	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(grasTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_gras.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(dirtTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_dirt.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(snowTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_snow.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(stoneTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_stone.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
 }

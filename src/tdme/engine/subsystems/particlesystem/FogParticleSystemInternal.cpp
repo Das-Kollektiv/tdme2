@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemInternal.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -36,7 +36,7 @@ using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Timing;

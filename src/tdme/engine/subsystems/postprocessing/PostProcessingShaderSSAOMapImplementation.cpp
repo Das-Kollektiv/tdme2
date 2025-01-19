@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Vector3.h>
 
@@ -19,42 +19,42 @@ using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 
-bool PostProcessingShaderSSAOMapImplementation::isSupported(Renderer* renderer) {
-	return renderer->getShaderVersion() == "gl3";
+bool PostProcessingShaderSSAOMapImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->getShaderVersion() == "gl3";
 }
 
-PostProcessingShaderSSAOMapImplementation::PostProcessingShaderSSAOMapImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderSSAOMapImplementation::PostProcessingShaderSSAOMapImplementation(RendererBackend* rendererBackend): PostProcessingShaderBaseImplementation(rendererBackend)
 {
 }
 
 void PostProcessingShaderSSAOMapImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"ssao_map_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
 		"ssao_map_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
@@ -64,20 +64,20 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 
 	// custom initialization
 	for (auto i = 0; i < uniformSphere.size(); i++) {
-		uniformSphere[i] = renderer->getProgramUniformLocation(programId, "sphere[" + to_string(i) + "]");
+		uniformSphere[i] = rendererBackend->getProgramUniformLocation(programId, "sphere[" + to_string(i) + "]");
 		if (uniformSphere[i] == -1) return;
 	}
-	uniformRandomTextureUnit = renderer->getProgramUniformLocation(programId, "randomTextureUnit");
+	uniformRandomTextureUnit = rendererBackend->getProgramUniformLocation(programId, "randomTextureUnit");
 	if (uniformRandomTextureUnit == -1) return;
-	uniformStrength = renderer->getProgramUniformLocation(programId, "strength");
+	uniformStrength = rendererBackend->getProgramUniformLocation(programId, "strength");
 	if (uniformStrength == -1) return;
-	uniformArea = renderer->getProgramUniformLocation(programId, "area");
+	uniformArea = rendererBackend->getProgramUniformLocation(programId, "area");
 	if (uniformArea == -1) return;
-	uniformFallOff = renderer->getProgramUniformLocation(programId, "falloff");
+	uniformFallOff = rendererBackend->getProgramUniformLocation(programId, "falloff");
 	if (uniformFallOff == -1) return;
-	uniformRadius = renderer->getProgramUniformLocation(programId, "radius");
+	uniformRadius = rendererBackend->getProgramUniformLocation(programId, "radius");
 	if (uniformRadius == -1) return;
-	uniformSamples = renderer->getProgramUniformLocation(programId, "samples");
+	uniformSamples = rendererBackend->getProgramUniformLocation(programId, "samples");
 	if (uniformSamples == -1) return;
 
 	//
@@ -89,38 +89,38 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 
 void PostProcessingShaderSSAOMapImplementation::useProgram(int contextIdx) {
 	PostProcessingShaderBaseImplementation::useProgram(contextIdx);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[0], Vector3( 0.5381f, 0.1856f,-0.4319f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[1], Vector3( 0.1379f, 0.2486f, 0.4430f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[2], Vector3( 0.3371f, 0.5679f,-0.0057f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[3], Vector3(-0.6999f,-0.0451f,-0.0019f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[4], Vector3( 0.0689f,-0.1598f,-0.8547f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[5], Vector3( 0.0560f, 0.0069f,-0.1843f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[6], Vector3(-0.0146f, 0.1402f, 0.0762f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[7], Vector3( 0.0100f,-0.1924f,-0.0344f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[8], Vector3(-0.3577f,-0.5301f,-0.4358f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[9], Vector3(-0.3169f, 0.1063f, 0.0158f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[10], Vector3( 0.0103f,-0.5869f, 0.0046f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[11], Vector3(-0.0897f,-0.4940f, 0.3287f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[12], Vector3( 0.7119f,-0.0154f,-0.0918f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[13], Vector3(-0.0533f, 0.0596f,-0.5411f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[14], Vector3( 0.0352f,-0.0631f, 0.5460f).getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSphere[15], Vector3(-0.4776f, 0.2847f,-0.0271f).getArray());
-	renderer->setTextureUnit(contextIdx, 4);
-	renderer->setProgramUniformInteger(contextIdx, uniformRandomTextureUnit, 4);
-	renderer->bindTexture(contextIdx, randomTextureId);
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[0], Vector3( 0.5381f, 0.1856f,-0.4319f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[1], Vector3( 0.1379f, 0.2486f, 0.4430f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[2], Vector3( 0.3371f, 0.5679f,-0.0057f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[3], Vector3(-0.6999f,-0.0451f,-0.0019f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[4], Vector3( 0.0689f,-0.1598f,-0.8547f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[5], Vector3( 0.0560f, 0.0069f,-0.1843f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[6], Vector3(-0.0146f, 0.1402f, 0.0762f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[7], Vector3( 0.0100f,-0.1924f,-0.0344f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[8], Vector3(-0.3577f,-0.5301f,-0.4358f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[9], Vector3(-0.3169f, 0.1063f, 0.0158f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[10], Vector3( 0.0103f,-0.5869f, 0.0046f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[11], Vector3(-0.0897f,-0.4940f, 0.3287f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[12], Vector3( 0.7119f,-0.0154f,-0.0918f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[13], Vector3(-0.0533f, 0.0596f,-0.5411f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[14], Vector3( 0.0352f,-0.0631f, 0.5460f).getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSphere[15], Vector3(-0.4776f, 0.2847f,-0.0271f).getArray());
+	rendererBackend->setTextureUnit(contextIdx, 4);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformRandomTextureUnit, 4);
+	rendererBackend->bindTexture(contextIdx, randomTextureId);
 }
 
 void PostProcessingShaderSSAOMapImplementation::setShaderParameters(int contextIdx, Engine* engine) {
-	renderer->setProgramUniformFloat(contextIdx, uniformStrength, engine->getShaderParameter("ssao", "strength").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformArea, engine->getShaderParameter("ssao", "area").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformFallOff, engine->getShaderParameter("ssao", "falloff").getFloatValue() / 100000.0f);
-	renderer->setProgramUniformFloat(contextIdx, uniformRadius, engine->getShaderParameter("ssao", "radius").getFloatValue());
-	renderer->setProgramUniformInteger(contextIdx, uniformSamples, engine->getShaderParameter("ssao", "samples").getIntegerValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformStrength, engine->getShaderParameter("ssao", "strength").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformArea, engine->getShaderParameter("ssao", "area").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformFallOff, engine->getShaderParameter("ssao", "falloff").getFloatValue() / 100000.0f);
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformRadius, engine->getShaderParameter("ssao", "radius").getFloatValue());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformSamples, engine->getShaderParameter("ssao", "samples").getIntegerValue());
 }
 
 void PostProcessingShaderSSAOMapImplementation::unloadTextures() {
 	Engine::getInstance()->getTextureManager()->removeTexture(randomTexture);
-	randomTextureId = renderer->ID_NONE;
+	randomTextureId = rendererBackend->ID_NONE;
 	randomTexture->releaseReference();
 	randomTexture = nullptr;
 }
@@ -128,5 +128,5 @@ void PostProcessingShaderSSAOMapImplementation::unloadTextures() {
 void PostProcessingShaderSSAOMapImplementation::loadTextures(const string& pathName) {
 	randomTexture = TextureReader::read(pathName + "/resources/engine/textures", "random.png");
 	randomTexture->setUseMipMap(false);
-	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture, renderer->CONTEXTINDEX_DEFAULT);
+	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture, rendererBackend->CONTEXTINDEX_DEFAULT);
 }

@@ -6,7 +6,7 @@
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
@@ -19,7 +19,7 @@ using std::to_string;
 using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::ObjectNode;
@@ -51,34 +51,34 @@ void TransparentRenderFacesGroup::set(EntityRenderer* objectRenderer, Model* mod
 	this->shader = shader;
 }
 
-void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, int contextIdx)
+void TransparentRenderFacesGroup::render(Engine* engine, RendererBackend* rendererBackend, int contextIdx)
 {
 	//
-	if (renderer->getShader(contextIdx) != shader) {
+	if (rendererBackend->getShader(contextIdx) != shader) {
 		// update sahder
-		renderer->setShader(contextIdx, shader);
-		renderer->onUpdateShader(contextIdx);
+		rendererBackend->setShader(contextIdx, shader);
+		rendererBackend->onUpdateShader(contextIdx);
 		// update lights
 		for (auto j = 0; j < engine->lights.size(); j++) {
 			engine->lights[j]->update(contextIdx);
 		}
 		// have identity texture matrix
-		renderer->getTextureMatrix(contextIdx).identity();
-		renderer->onUpdateTextureMatrix(contextIdx);
+		rendererBackend->getTextureMatrix(contextIdx).identity();
+		rendererBackend->onUpdateTextureMatrix(contextIdx);
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
-	modelViewMatrix.set(renderer->getModelViewMatrix());
+	modelViewMatrix.set(rendererBackend->getModelViewMatrix());
 	// effect
-	renderer->getEffectColorMul(contextIdx) = effectColorMul.getArray();
-	renderer->getEffectColorAdd(contextIdx) = effectColorAdd.getArray();
-	renderer->onUpdateEffect(contextIdx);
+	rendererBackend->getEffectColorMul(contextIdx) = effectColorMul.getArray();
+	rendererBackend->getEffectColorAdd(contextIdx) = effectColorAdd.getArray();
+	rendererBackend->onUpdateEffect(contextIdx);
 	// material
 	string materialKey;
 	objectRenderer->setupMaterial(contextIdx, objectNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
-	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix(contextIdx);
+	rendererBackend->getModelViewMatrix().identity();
+	rendererBackend->onUpdateModelViewMatrix(contextIdx);
 	// render, reset
 	for (auto batchRendererTriangles: batchRenderers) {
 		batchRendererTriangles->render();
@@ -87,7 +87,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, int
 	}
 	batchRenderers.clear();
 	// restore GL state, model view matrix
-	renderer->unbindBufferObjects(contextIdx);
-	renderer->getModelViewMatrix().set(modelViewMatrix);
-	renderer->onUpdateModelViewMatrix(contextIdx);
+	rendererBackend->unbindBufferObjects(contextIdx);
+	rendererBackend->getModelViewMatrix().set(modelViewMatrix);
+	rendererBackend->onUpdateModelViewMatrix(contextIdx);
 }

@@ -108,8 +108,8 @@ void FogParticleSystem::setEngine(Engine* engine)
 	FogParticleSystemInternal::setEngine(engine);
 }
 
-void FogParticleSystem::setRenderer(Renderer* renderer)
+void FogParticleSystem::setRenderer(RendererBackend* rendererBackend)
 {
-	FogParticleSystemInternal::setRenderer(renderer);
+	FogParticleSystemInternal::setRenderer(rendererBackend);
 }
 

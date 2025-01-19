@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
@@ -18,18 +18,18 @@ using std::to_string;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRTreeImplementation;
 
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool DeferredLightingShaderPBRTreeImplementation::isSupported(Renderer* renderer) {
-	return renderer->isDeferredShadingAvailable() == true;
+bool DeferredLightingShaderPBRTreeImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->isDeferredShadingAvailable() == true;
 }
 
-DeferredLightingShaderPBRTreeImplementation::DeferredLightingShaderPBRTreeImplementation(Renderer* renderer): LightingShaderPBRBaseImplementation(renderer)
+DeferredLightingShaderPBRTreeImplementation::DeferredLightingShaderPBRTreeImplementation(RendererBackend* rendererBackend): LightingShaderPBRBaseImplementation(rendererBackend)
 {
 }
 
@@ -39,11 +39,11 @@ const string DeferredLightingShaderPBRTreeImplementation::getId() {
 
 void DeferredLightingShaderPBRTreeImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		string() +
@@ -67,8 +67,8 @@ void DeferredLightingShaderPBRTreeImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"defer_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
@@ -96,9 +96,9 @@ void DeferredLightingShaderPBRTreeImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderPBRBaseImplementation::initialize();
@@ -107,8 +107,8 @@ void DeferredLightingShaderPBRTreeImplementation::initialize()
 	if (initialized == false) return;
 
 	// uniforms
-	uniformTime = renderer->getProgramUniformLocation(programId, "time");
-	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformTime = rendererBackend->getProgramUniformLocation(programId, "time");
+	uniformSpeed = rendererBackend->getProgramUniformLocation(programId, "speed");
 }
 
 void DeferredLightingShaderPBRTreeImplementation::registerShader() {
@@ -119,10 +119,10 @@ void DeferredLightingShaderPBRTreeImplementation::useProgram(Engine* engine, int
 	LightingShaderPBRBaseImplementation::useProgram(engine, contextIdx);
 
 	// time
-	if (uniformTime != -1) renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	if (uniformTime != -1) rendererBackend->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
-void DeferredLightingShaderPBRTreeImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
-	const auto& shaderParameters = renderer->getShaderParameters(contextIdx);
-	if (uniformSpeed != -1) renderer->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+void DeferredLightingShaderPBRTreeImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
+	const auto& shaderParameters = rendererBackend->getShaderParameters(contextIdx);
+	if (uniformSpeed != -1) rendererBackend->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
 }

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
@@ -18,7 +18,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImplementation;
@@ -29,12 +29,12 @@ using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::utilities::StringTools;
 
-ShadowMapCreationShader::ShadowMapCreationShader(Renderer* renderer): renderer(renderer)
+ShadowMapCreationShader::ShadowMapCreationShader(RendererBackend* rendererBackend): rendererBackend(rendererBackend)
 {
-	if (ShadowMapCreationShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new ShadowMapCreationShaderDefaultImplementation(renderer);
-	if (ShadowMapCreationShaderFoliageImplementation::isSupported(renderer) == true) shaders["foliage"] = new ShadowMapCreationShaderFoliageImplementation(renderer);
-	if (ShadowMapCreationShaderTreeImplementation::isSupported(renderer) == true) shaders["tree"] = new ShadowMapCreationShaderTreeImplementation(renderer);
-	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	if (ShadowMapCreationShaderDefaultImplementation::isSupported(rendererBackend) == true) shaders["default"] = new ShadowMapCreationShaderDefaultImplementation(rendererBackend);
+	if (ShadowMapCreationShaderFoliageImplementation::isSupported(rendererBackend) == true) shaders["foliage"] = new ShadowMapCreationShaderFoliageImplementation(rendererBackend);
+	if (ShadowMapCreationShaderTreeImplementation::isSupported(rendererBackend) == true) shaders["tree"] = new ShadowMapCreationShaderTreeImplementation(rendererBackend);
+	auto threadCount = rendererBackend->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
@@ -91,27 +91,27 @@ void ShadowMapCreationShader::updateMatrices(int contextIdx)
 void ShadowMapCreationShader::updateTextureMatrix(int contextIdx) {
 	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, contextIdx);
+	shadowMappingShaderPreContext.implementation->updateTextureMatrix(rendererBackend, contextIdx);
 }
 
 void ShadowMapCreationShader::updateMaterial(int contextIdx)
 {
 	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, contextIdx);
+	shadowMappingShaderPreContext.implementation->updateMaterial(rendererBackend, contextIdx);
 }
 
 void ShadowMapCreationShader::updateShaderParameters(int contextIdx) {
 	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateShaderParameters(renderer, contextIdx);
+	shadowMappingShaderPreContext.implementation->updateShaderParameters(rendererBackend, contextIdx);
 }
 
 void ShadowMapCreationShader::bindTexture(int contextIdx, int32_t textureId)
 {
 	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->bindTexture(renderer, contextIdx, textureId);
+	shadowMappingShaderPreContext.implementation->bindTexture(rendererBackend, contextIdx, textureId);
 }
 
 void ShadowMapCreationShader::setShader(int contextIdx, const string& id) {

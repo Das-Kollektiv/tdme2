@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
@@ -16,12 +16,12 @@ using std::to_string;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 
-LightingShaderTerrainEditorImplementation::LightingShaderTerrainEditorImplementation(Renderer* renderer): LightingShaderTerrainImplementation(renderer)
+LightingShaderTerrainEditorImplementation::LightingShaderTerrainEditorImplementation(RendererBackend* rendererBackend): LightingShaderTerrainImplementation(rendererBackend)
 {
 	additionalDefinitions = "\n#define HAVE_TERRAIN_SHADER_EDITOR";
 }
@@ -39,19 +39,19 @@ void LightingShaderTerrainEditorImplementation::initialize()
 	//
 	initialized = false;
 
-	uniformBrushEnabled = renderer->getProgramUniformLocation(programId, "brushEnabled");
+	uniformBrushEnabled = rendererBackend->getProgramUniformLocation(programId, "brushEnabled");
 	if (uniformBrushEnabled == -1) return;
 
-	uniformBrushTextureMatrix = renderer->getProgramUniformLocation(programId, "brushTextureMatrix");
+	uniformBrushTextureMatrix = rendererBackend->getProgramUniformLocation(programId, "brushTextureMatrix");
 	if (uniformBrushTextureMatrix == -1) return;
 
-	uniformBrushTextureUnit = renderer->getProgramUniformLocation(programId, "brushTextureUnit");
+	uniformBrushTextureUnit = rendererBackend->getProgramUniformLocation(programId, "brushTextureUnit");
 	if (uniformBrushTextureUnit == -1) return;
 
-	uniformBrushPosition = renderer->getProgramUniformLocation(programId, "brushPosition");
+	uniformBrushPosition = rendererBackend->getProgramUniformLocation(programId, "brushPosition");
 	if (uniformBrushPosition == -1) return;
 
-	uniformBrushTextureDimension = renderer->getProgramUniformLocation(programId, "brushTextureDimension");
+	uniformBrushTextureDimension = rendererBackend->getProgramUniformLocation(programId, "brushTextureDimension");
 	if (uniformBrushTextureDimension == -1) return;
 
 	//
@@ -78,10 +78,10 @@ void LightingShaderTerrainEditorImplementation::useProgram(Engine* engine, int c
 	LightingShaderTerrainImplementation::useProgram(engine, contextIdx);
 
 	//
-	auto currentTextureUnit = renderer->getTextureUnit(contextIdx);
-	renderer->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
-	renderer->bindTexture(contextIdx, engine->getShaderParameter(getId(), "brushTexture").getIntegerValue());
-	renderer->setTextureUnit(contextIdx, currentTextureUnit);
+	auto currentTextureUnit = rendererBackend->getTextureUnit(contextIdx);
+	rendererBackend->setTextureUnit(contextIdx, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
+	rendererBackend->bindTexture(contextIdx, engine->getShaderParameter(getId(), "brushTexture").getIntegerValue());
+	rendererBackend->setTextureUnit(contextIdx, currentTextureUnit);
 
 	//
 	Matrix3x3 brushTextureMatrix;
@@ -96,9 +96,9 @@ void LightingShaderTerrainEditorImplementation::useProgram(Engine* engine, int c
 	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(engine->getShaderParameter(getId(), "brushRotation").getFloatValue()));
 
 	//
-	renderer->setProgramUniformInteger(contextIdx, uniformBrushEnabled, engine->getShaderParameter(getId(), "brushEnabled").getBooleanValue() == true?1:0);
-	renderer->setProgramUniformInteger(contextIdx, uniformBrushTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
-	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformBrushTextureMatrix, brushTextureMatrix.getArray());
-	renderer->setProgramUniformFloatVec2(contextIdx, uniformBrushTextureDimension, engine->getShaderParameter(getId(), "brushDimension").getVector2Value().getArray());
-	renderer->setProgramUniformFloatVec2(contextIdx, uniformBrushPosition, engine->getShaderParameter(getId(), "brushPosition").getVector2Value().getArray());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformBrushEnabled, engine->getShaderParameter(getId(), "brushEnabled").getBooleanValue() == true?1:0);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformBrushTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
+	rendererBackend->setProgramUniformFloatMatrix3x3(contextIdx, uniformBrushTextureMatrix, brushTextureMatrix.getArray());
+	rendererBackend->setProgramUniformFloatVec2(contextIdx, uniformBrushTextureDimension, engine->getShaderParameter(getId(), "brushDimension").getVector2Value().getArray());
+	rendererBackend->setProgramUniformFloatVec2(contextIdx, uniformBrushPosition, engine->getShaderParameter(getId(), "brushPosition").getVector2Value().getArray());
 }

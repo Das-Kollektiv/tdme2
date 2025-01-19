@@ -26,7 +26,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
@@ -44,7 +44,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
@@ -70,11 +70,11 @@ struct TextureDescriptorSet_Hash {
 };
 
 /**
- * Vulkan renderer
+ * Vulkan rendererBackend
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::VKRenderer
-	: public Renderer
+	: public RendererBackend
 {
 	friend class VKGL3CoreShaderProgram;
 private:
@@ -699,8 +699,8 @@ public:
 	void disposeBufferObjects(vector<int32_t>& bufferObjectIds) override;
 	float readPixelDepth(int32_t x, int32_t y) override;
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
-	void initGuiMode() override;
-	void doneGuiMode() override;
+	void initGUIMode() override;
+	void doneGUIMode() override;
 
 	// overridden methods for skinning on GPU via compute shader
 	void dispatchCompute(int contextIdx, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) override;

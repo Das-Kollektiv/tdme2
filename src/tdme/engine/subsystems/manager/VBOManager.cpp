@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/Console.h>
 
@@ -12,12 +12,12 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Console;
 
-VBOManager::VBOManager(Renderer* renderer): rwLock("vbomanager-rwlock") {
-	this->renderer = renderer;
+VBOManager::VBOManager(RendererBackend* rendererBackend): rwLock("vbomanager-rwlock") {
+	this->rendererBackend = rendererBackend;
 }
 
 VBOManager::~VBOManager() {
@@ -39,7 +39,7 @@ VBOManager::ManagedVBO* VBOManager::addVBO(const string& vboId, int32_t ids, boo
 		return vboManaged;
 	}
 	// create vertex buffer objects
-	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory, shared);
+	auto vboIds = rendererBackend->createBufferObjects(ids, useGPUMemory, shared);
 	// create managed texture
 	auto managedVBO = new ManagedVBO(vboId, vboIds);
 	// add it to our textures
@@ -76,7 +76,7 @@ void VBOManager::removeVBO(const string& vboId) {
 		if (vboManaged->decrementReferenceCounter()) {
 			auto vboIds = vboManaged->getVBOIds();
 			// delete vbos from renderer
-			renderer->disposeBufferObjects(*vboIds);
+			rendererBackend->disposeBufferObjects(*vboIds);
 			// remove from our list
 			vbos.erase(managedVBOIt);
 			delete vboManaged;

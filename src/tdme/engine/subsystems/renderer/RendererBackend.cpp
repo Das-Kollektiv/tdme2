@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 
 #include <string>
 
@@ -11,14 +11,14 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 
 using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
 
-Renderer::Renderer()
+RendererBackend::RendererBackend()
 {
 	CONTEXTINDEX_DEFAULT = 0;
 	ID_NONE = -1;
@@ -64,5 +64,5 @@ Renderer::Renderer()
 	effectPass = 0;
 }
 
-Renderer::~Renderer() {
+RendererBackend::~RendererBackend() {
 }

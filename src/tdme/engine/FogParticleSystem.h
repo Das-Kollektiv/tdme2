@@ -25,7 +25,7 @@ using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::ParticleSystem;
 using tdme::engine::Transform;
@@ -73,7 +73,7 @@ public:
 		return ENTITYTYPE_FOGPARTICLESYSTEM;
 	}
 	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
+	void setRenderer(RendererBackend* rendererBackend) override;
 	void initialize() override;
 	void dispose() override;
 

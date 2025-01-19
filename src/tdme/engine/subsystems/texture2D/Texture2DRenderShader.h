@@ -6,7 +6,7 @@
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 
 using tdme::engine::Engine;
 using tdme::math::Vector2;
@@ -19,7 +19,7 @@ class tdme::engine::subsystems::texture2D::Texture2DRenderShader final
 {
 
 private:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
@@ -35,9 +35,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	Texture2DRenderShader(Renderer* renderer);
+	Texture2DRenderShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Public destructor

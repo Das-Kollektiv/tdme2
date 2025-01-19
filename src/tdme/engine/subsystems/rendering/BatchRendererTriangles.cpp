@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Vector2.h>
@@ -22,7 +22,7 @@ using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
@@ -33,10 +33,10 @@ using tdme::utilities::FloatBuffer;
 
 constexpr int32_t BatchRendererTriangles::VERTEX_COUNT;
 
-BatchRendererTriangles::BatchRendererTriangles(Renderer* renderer, int32_t id)
+BatchRendererTriangles::BatchRendererTriangles(RendererBackend* rendererBackend, int32_t id)
 {
 	this->id = id;
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	this->acquired = false;
 	this->vertices = 0;
 	this->fbVertices = (fbVerticesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))))->asFloatBuffer();
@@ -88,40 +88,40 @@ void BatchRendererTriangles::render()
 	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0) return;
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 	// determine triangles count
 	auto triangles = fbVertices.getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
 	// upload vertices
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
 	// upload normals
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
 	// upload texture coordinates
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	// bind vertices
-	renderer->bindVerticesBufferObject(contextIdx, (*vboIds)[0]);
+	rendererBackend->bindVerticesBufferObject(contextIdx, (*vboIds)[0]);
 	// bind normals
-	renderer->bindNormalsBufferObject(contextIdx, (*vboIds)[1]);
+	rendererBackend->bindNormalsBufferObject(contextIdx, (*vboIds)[1]);
 	// bind texture coordinates
-	renderer->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[2]);
+	rendererBackend->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[2]);
 	// handle instanced rendering
 	//	TODO: check if to move somewhere else
-	if (renderer->isInstancedRenderingAvailable() == true) {
+	if (rendererBackend->isInstancedRenderingAvailable() == true) {
 		fbEffectColorMuls.clear();
-		fbEffectColorMuls.put(renderer->getEffectColorMul(contextIdx));
+		fbEffectColorMuls.put(rendererBackend->getEffectColorMul(contextIdx));
 		fbEffectColorAdds.clear();
-		fbEffectColorAdds.put(renderer->getEffectColorAdd(contextIdx));
-		renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
-		renderer->bindModelMatricesBufferObject(contextIdx, (*vboIds)[3]);
-		renderer->uploadBufferObject(contextIdx, (*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-		renderer->bindEffectColorMulsBufferObject(contextIdx, (*vboIds)[4], 1);
-		renderer->uploadBufferObject(contextIdx, (*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-		renderer->bindEffectColorAddsBufferObject(contextIdx, (*vboIds)[5], 1);
+		fbEffectColorAdds.put(rendererBackend->getEffectColorAdd(contextIdx));
+		rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
+		rendererBackend->bindModelMatricesBufferObject(contextIdx, (*vboIds)[3]);
+		rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+		rendererBackend->bindEffectColorMulsBufferObject(contextIdx, (*vboIds)[4], 1);
+		rendererBackend->uploadBufferObject(contextIdx, (*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+		rendererBackend->bindEffectColorAddsBufferObject(contextIdx, (*vboIds)[5], 1);
 
 		// draw
-		renderer->drawInstancedTrianglesFromBufferObjects(contextIdx, triangles, 0, 1);
+		rendererBackend->drawInstancedTrianglesFromBufferObjects(contextIdx, triangles, 0, 1);
 	} else {
 		// draw
-		renderer->drawTrianglesFromBufferObjects(contextIdx, triangles, 0);
+		rendererBackend->drawTrianglesFromBufferObjects(contextIdx, triangles, 0);
 	}
 }
 

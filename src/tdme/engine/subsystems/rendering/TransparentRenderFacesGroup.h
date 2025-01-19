@@ -25,7 +25,7 @@ using std::vector;
 using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::ObjectNode;
@@ -69,7 +69,7 @@ private:
 
 	/**
 	 * Set transparent render faces group
-	 * @param objectRenderer object renderer
+	 * @param objectRenderer object rendererBackend
 	 * @param model model
 	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
@@ -124,7 +124,7 @@ private:
 			// nope, add first one
 			auto batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 			if (batchRendererTriangles == nullptr) {
-				Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
+				Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch rendererBackend"));
 				return;
 			}
 			batchRenderers.push_back(batchRendererTriangles);
@@ -136,7 +136,7 @@ private:
 		// failed, acquire additionally one
 		batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 		if (batchRendererTriangles == nullptr) {
-			Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
+			Console::printLine(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch rendererBackend"));
 			return;
 		}
 		// 	add it
@@ -148,9 +148,9 @@ private:
 	/**
 	 * Render this transparent render faces node
 	 * @param engine engine
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param contextIdx context index
 	 */
-	void render(Engine* engine, Renderer* renderer, int contextIdx);
+	void render(Engine* engine, RendererBackend* rendererBackend, int contextIdx);
 
 };

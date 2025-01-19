@@ -9,7 +9,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 
 /**
@@ -20,20 +20,20 @@ class tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplemen
 {
 public:
 	/**
-	 * Returns if shader is supported on given renderer
-	 * @param renderer renderer
+	 * Returns if shader is supported on given rendererBackend
+	 * @param rendererBackend renderer backend
 	 * @return if shader is supported
 	 */
-	static bool isSupported(Renderer* renderer);
+	static bool isSupported(RendererBackend* rendererBackend);
 
 	// forbid class copy
 	FORBID_CLASS_COPY(PostProcessingShaderSSAOImplementation)
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	PostProcessingShaderSSAOImplementation(Renderer* renderer);
+	PostProcessingShaderSSAOImplementation(RendererBackend* rendererBackend);
 
 	// overridden methods
 	virtual void initialize() override;

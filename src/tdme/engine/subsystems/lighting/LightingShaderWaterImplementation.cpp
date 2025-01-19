@@ -6,7 +6,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
@@ -20,7 +20,7 @@ using std::to_string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
@@ -28,11 +28,11 @@ using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderWaterImplementation::isSupported(Renderer* renderer) {
+bool LightingShaderWaterImplementation::isSupported(RendererBackend* rendererBackend) {
 	return true;
 }
 
-LightingShaderWaterImplementation::LightingShaderWaterImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderWaterImplementation::LightingShaderWaterImplementation(RendererBackend* rendererBackend): LightingShaderBaseImplementation(rendererBackend)
 {
 }
 
@@ -42,12 +42,12 @@ const string LightingShaderWaterImplementation::getId() {
 
 void LightingShaderWaterImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
@@ -59,8 +59,8 @@ void LightingShaderWaterImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
@@ -72,9 +72,9 @@ void LightingShaderWaterImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -83,29 +83,29 @@ void LightingShaderWaterImplementation::initialize()
 	initialized = false;
 
 	//
-	uniformWaterHeight = renderer->getProgramUniformLocation(programId, "waterHeight");
+	uniformWaterHeight = rendererBackend->getProgramUniformLocation(programId, "waterHeight");
 	if (uniformWaterHeight == -1) return;
-	uniformTime = renderer->getProgramUniformLocation(programId, "time");
+	uniformTime = rendererBackend->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
-	uniformWaterWaves = renderer->getProgramUniformLocation(programId, "waterWaves");
+	uniformWaterWaves = rendererBackend->getProgramUniformLocation(programId, "waterWaves");
 	if (uniformWaterWaves == -1) return;
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterAmplitude[i] = renderer->getProgramUniformLocation(programId, "waterAmplitude[" + to_string(i) + "]");
+		uniformWaterAmplitude[i] = rendererBackend->getProgramUniformLocation(programId, "waterAmplitude[" + to_string(i) + "]");
 		if (uniformWaterAmplitude[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterWaveLength[i] = renderer->getProgramUniformLocation(programId, "waterWavelength[" + to_string(i) + "]");
+		uniformWaterWaveLength[i] = rendererBackend->getProgramUniformLocation(programId, "waterWavelength[" + to_string(i) + "]");
 		if (uniformWaterWaveLength[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterSpeed[i] = renderer->getProgramUniformLocation(programId, "waterSpeed[" + to_string(i) + "]");
+		uniformWaterSpeed[i] = rendererBackend->getProgramUniformLocation(programId, "waterSpeed[" + to_string(i) + "]");
 		if (uniformWaterSpeed[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterDirection[i] = renderer->getProgramUniformLocation(programId, "waterDirection[" + to_string(i) + "]");
+		uniformWaterDirection[i] = rendererBackend->getProgramUniformLocation(programId, "waterDirection[" + to_string(i) + "]");
 		if (uniformWaterDirection[i] == -1) return;
 	}
-	uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
+	uniformModelMatrix = rendererBackend->getProgramUniformLocation(programId, "modelMatrix");
 
 	//
 	initialized = true;
@@ -128,22 +128,22 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, int contextId
 	LightingShaderBaseImplementation::useProgram(engine, contextIdx);
 
 	//
-	renderer->setProgramUniformFloat(contextIdx, uniformWaterHeight, 0.50f);
-	renderer->setProgramUniformFloat(contextIdx, uniformTime, time);
-	renderer->setProgramUniformInteger(contextIdx, uniformWaterWaves, 4);
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformWaterHeight, 0.50f);
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformTime, time);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformWaterWaves, 4);
 	for (auto i = 0; i < 4; i++) {
-		renderer->setProgramUniformFloat(contextIdx, uniformWaterAmplitude[i], 0.5f / (i + 1));
-		renderer->setProgramUniformFloat(contextIdx, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
-		renderer->setProgramUniformFloat(contextIdx, uniformWaterSpeed[i], 1.0f + 1.0f * i / 2.0f);
-		renderer->setProgramUniformFloatVec2(contextIdx, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
+		rendererBackend->setProgramUniformFloat(contextIdx, uniformWaterAmplitude[i], 0.5f / (i + 1));
+		rendererBackend->setProgramUniformFloat(contextIdx, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
+		rendererBackend->setProgramUniformFloat(contextIdx, uniformWaterSpeed[i], 1.0f + 1.0f * i / 2.0f);
+		rendererBackend->setProgramUniformFloatVec2(contextIdx, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;
 }
 
-void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, int contextIdx) {
-	LightingShaderBaseImplementation::updateMatrices(renderer, contextIdx);
-	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
+void LightingShaderWaterImplementation::updateMatrices(RendererBackend* rendererBackend, int contextIdx) {
+	LightingShaderBaseImplementation::updateMatrices(rendererBackend, contextIdx);
+	if (uniformModelMatrix != -1) rendererBackend->setProgramUniformFloatMatrix4x4(contextIdx, uniformModelMatrix, rendererBackend->getModelViewMatrix().getArray());
 }
 
-void LightingShaderWaterImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+void LightingShaderWaterImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
 }

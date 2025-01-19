@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -14,16 +14,16 @@ using std::to_string;
 
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderPBRDefaultImplementation::isSupported(Renderer* renderer) {
-	return renderer->isPBRAvailable();
+bool LightingShaderPBRDefaultImplementation::isSupported(RendererBackend* rendererBackend) {
+	return rendererBackend->isPBRAvailable();
 }
 
-LightingShaderPBRDefaultImplementation::LightingShaderPBRDefaultImplementation(Renderer* renderer): LightingShaderPBRBaseImplementation(renderer)
+LightingShaderPBRDefaultImplementation::LightingShaderPBRDefaultImplementation(RendererBackend* rendererBackend): LightingShaderPBRBaseImplementation(rendererBackend)
 {
 }
 
@@ -33,12 +33,12 @@ const string LightingShaderPBRDefaultImplementation::getId() {
 
 void LightingShaderPBRDefaultImplementation::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	// lighting
 	//	vertex shader
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		string() +
@@ -47,8 +47,8 @@ void LightingShaderPBRDefaultImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_fragmentshader.frag",
 		string() +
@@ -77,9 +77,9 @@ void LightingShaderPBRDefaultImplementation::initialize()
 	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderPBRBaseImplementation::initialize();
@@ -89,5 +89,5 @@ void LightingShaderPBRDefaultImplementation::registerShader() {
 	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT, getId());
 }
 
-void LightingShaderPBRDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+void LightingShaderPBRDefaultImplementation::updateShaderParameters(RendererBackend* rendererBackend, int contextIdx) {
 }

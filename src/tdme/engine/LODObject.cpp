@@ -91,7 +91,7 @@ void LODObject::setEngine(Engine* engine)
 	if (objectLOD3 != nullptr) objectLOD3->setEngine(engine);
 }
 
-void LODObject::setRenderer(Renderer* renderer)
+void LODObject::setRenderer(RendererBackend* rendererBackend)
 {
 }
 

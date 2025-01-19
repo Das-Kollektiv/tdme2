@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/framebuffer/SkyRenderShader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
@@ -34,7 +34,7 @@ using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::framebuffer::SkyRenderShader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -59,9 +59,9 @@ EnvironmentMappingRenderer::EnvironmentMappingRenderer(Engine* engine, int32_t w
 	this->engine = engine;
 	this->width = width;
 	this->height = height;
-	camera = make_unique<Camera>(engine->getRenderer());
+	camera = make_unique<Camera>(engine->getRendererBackend());
 	camera->setCameraMode(Camera::CAMERAMODE_NONE);
-	if (engine->getRenderer()->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
+	if (engine->getRendererBackend()->getRendererType() == RendererBackend::RENDERERTYPE_VULKAN) {
 		forwardVectors = {{
 			{{ 1.0f, 0.0f, 0.0f }}, // left
 			{{ -1.0f, 0.0f, 0.0f }}, // right
@@ -105,14 +105,14 @@ void EnvironmentMappingRenderer::initialize()
 {
 	//
 	for (auto i = 0; i < frameBuffers.size(); i++) {
-		cubeMapTextureIds[i] = engine->getRenderer()->createCubeMapTexture(engine->getRenderer()->CONTEXTINDEX_DEFAULT, width, height);
+		cubeMapTextureIds[i] = engine->getRendererBackend()->createCubeMapTexture(engine->getRendererBackend()->CONTEXTINDEX_DEFAULT, width, height);
 		for (auto j = 0; j < frameBuffers[i].size(); j++) {
 			frameBuffers[i][j] = make_unique<FrameBuffer>(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureIds[i], j + 1);
 			frameBuffers[i][j]->initialize();
 		}
 	}
 	// deferred shading
-	if (engine->getRenderer()->isDeferredShadingAvailable() == true && geometryBuffer == nullptr) {
+	if (engine->getRendererBackend()->isDeferredShadingAvailable() == true && geometryBuffer == nullptr) {
 		geometryBuffer = make_unique<GeometryBuffer>(width, height);
 		geometryBuffer->initialize();
 	} else
@@ -134,7 +134,7 @@ void EnvironmentMappingRenderer::dispose()
 		for (auto j = 0; j < frameBuffers[i].size(); j++) {
 			frameBuffers[i][j]->dispose();
 		}
-		engine->getRenderer()->disposeTexture(cubeMapTextureIds[i]);
+		engine->getRendererBackend()->disposeTexture(cubeMapTextureIds[i]);
 	}
 }
 
@@ -166,13 +166,13 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 			camera->setForwardVector(forwardVectors[i]);
 			camera->setSideVector(sideVectors[i]);
 			camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
-			camera->update(engine->getRenderer()->CONTEXTINDEX_DEFAULT, width, height);
+			camera->update(engine->getRendererBackend()->CONTEXTINDEX_DEFAULT, width, height);
 			camera->getFrustum()->update();
 
 			// TODO: if we dont use a geometry buffer, we need to clear frame buffer
 			if (geometryBuffer == nullptr) {
 				// set up clear color
-				Engine::getRenderer()->setClearColor(
+				Engine::getRendererBackend()->setClearColor(
 					engine->sceneColor.getRed(),
 					engine->sceneColor.getGreen(),
 					engine->sceneColor.getBlue(),
@@ -180,7 +180,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 				);
 
 				// clear previous frame values
-				Engine::getRenderer()->clear(engine->getRenderer()->CLEAR_DEPTH_BUFFER_BIT | engine->getRenderer()->CLEAR_COLOR_BUFFER_BIT);
+				Engine::getRendererBackend()->clear(engine->getRendererBackend()->CLEAR_DEPTH_BUFFER_BIT | engine->getRendererBackend()->CLEAR_COLOR_BUFFER_BIT);
 			}
 
 			//

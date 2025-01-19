@@ -15,7 +15,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::math::Matrix4x4;
@@ -45,7 +45,7 @@ private:
 	int32_t uniformInstanceCount { -1 };
 	bool isRunning;
 	bool initialized;
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	vector<SkinningContext> contexts;
 	map<string, ModelSkinningCache> cache;
 	Mutex mutex;
@@ -56,9 +56,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	SkinningShader(Renderer* renderer);
+	SkinningShader(RendererBackend* rendererBackend);
 
 	/**
 	 * @return initialized and ready to be used
@@ -66,7 +66,7 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Initialize renderer
+	 * Initialize rendererBackend
 	 */
 	void initialize();
 

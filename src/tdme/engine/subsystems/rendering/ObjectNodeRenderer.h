@@ -20,7 +20,7 @@ using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /**
- * Object node VBO renderer
+ * Object node VBO rendererBackend
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::ObjectNodeRenderer final

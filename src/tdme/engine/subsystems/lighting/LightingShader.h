@@ -14,7 +14,7 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 
 /**
@@ -28,7 +28,7 @@ private:
 		LightingShaderImplementation* implementation { nullptr };
 	};
 	unordered_map<string, LightingShaderImplementation*> shaders;
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	Engine* engine { nullptr };
 	bool running { false };
 	vector<LightingShaderContext> contexts;
@@ -39,9 +39,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	LightingShader(Renderer* renderer);
+	LightingShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Destructor

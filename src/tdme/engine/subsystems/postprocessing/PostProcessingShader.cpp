@@ -12,7 +12,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 
 using std::string;
@@ -27,18 +27,18 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatter
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderVignetteImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 
-PostProcessingShader::PostProcessingShader(Renderer* renderer)
+PostProcessingShader::PostProcessingShader(RendererBackend* rendererBackend)
 {
-	if (PostProcessingShaderDepthBlurImplementation::isSupported(renderer) == true) shaders["depth_blur"] = new PostProcessingShaderDepthBlurImplementation(renderer);
-	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new PostProcessingShaderDefaultImplementation(renderer);
-	if (PostProcessingShaderDesaturationImplementation::isSupported(renderer) == true) shaders["desaturation"] = new PostProcessingShaderDesaturationImplementation(renderer);
-	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shaders["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);
-	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shaders["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
-	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shaders["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
-	if (PostProcessingShaderVignetteImplementation::isSupported(renderer) == true) shaders["vignette"] = new PostProcessingShaderVignetteImplementation(renderer);
+	if (PostProcessingShaderDepthBlurImplementation::isSupported(rendererBackend) == true) shaders["depth_blur"] = new PostProcessingShaderDepthBlurImplementation(rendererBackend);
+	if (PostProcessingShaderDefaultImplementation::isSupported(rendererBackend) == true) shaders["default"] = new PostProcessingShaderDefaultImplementation(rendererBackend);
+	if (PostProcessingShaderDesaturationImplementation::isSupported(rendererBackend) == true) shaders["desaturation"] = new PostProcessingShaderDesaturationImplementation(rendererBackend);
+	if (PostProcessingShaderLightScatteringImplementation::isSupported(rendererBackend) == true) shaders["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(rendererBackend);
+	if (PostProcessingShaderSSAOMapImplementation::isSupported(rendererBackend) == true) shaders["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(rendererBackend);
+	if (PostProcessingShaderSSAOImplementation::isSupported(rendererBackend) == true) shaders["ssao"] = new PostProcessingShaderSSAOImplementation(rendererBackend);
+	if (PostProcessingShaderVignetteImplementation::isSupported(rendererBackend) == true) shaders["vignette"] = new PostProcessingShaderVignetteImplementation(rendererBackend);
 	implementation = nullptr;
 }
 

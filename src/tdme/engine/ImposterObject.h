@@ -27,7 +27,7 @@ using std::vector;
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -138,7 +138,7 @@ public:
 
 	// overridden methods
 	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
+	void setRenderer(RendererBackend* rendererBackend) override;
 	void initialize() override;
 	void dispose() override;
 

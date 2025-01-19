@@ -5,7 +5,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/ColorTexture.h>
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::ColorTexture;
 
 /**
@@ -19,7 +19,7 @@ private:
 	static constexpr int BRDFLUT_WIDTH { 1024 };
 	static constexpr int BRDFLUT_HEIGHT { 1024 };
 
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
@@ -33,9 +33,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	BRDFLUTShader(Renderer* renderer);
+	BRDFLUTShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Public destructor

@@ -18,7 +18,7 @@ using std::to_string;
 
 using tdme::engine::Texture;
 using tdme::engine::Color4;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -48,7 +48,7 @@ private:
 	float sourceSize;
 	Texture* lightSourceTexture { nullptr };
 	int32_t lightSourceTextureId;
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 public:
 	// forbid class copy
@@ -61,10 +61,10 @@ public:
 
 	/**
 	 * Public default constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param id id
 	 */
-	Light(Renderer* renderer, int32_t id);
+	Light(RendererBackend* rendererBackend, int32_t id);
 
 	/**
 	 * @return light id

@@ -32,7 +32,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
@@ -52,7 +52,7 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 protected:
 	string id;
 	Engine* engine { nullptr };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	bool autoEmit;
 	bool enabled;
 	bool active;
@@ -129,8 +129,8 @@ public:
 	inline const string& getId() override {
 		return id;
 	}
-	inline void setRenderer(Renderer* renderer) {
-		this->renderer = renderer;
+	inline void setRenderer(RendererBackend* rendererBackend) {
+		this->rendererBackend = rendererBackend;
 	}
 	inline void setEngine(Engine* engine) {
 		this->engine = engine;

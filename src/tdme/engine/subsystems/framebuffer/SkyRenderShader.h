@@ -9,7 +9,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Texture;
@@ -22,7 +22,7 @@ class tdme::engine::subsystems::framebuffer::SkyRenderShader final
 {
 
 private:
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
@@ -94,9 +94,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	SkyRenderShader(Renderer* renderer);
+	SkyRenderShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Public destructor

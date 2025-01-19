@@ -10,7 +10,7 @@
 using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 
 /**
  * Lighting shader implementation
@@ -24,9 +24,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	LightingShaderTerrainEditorImplementation(Renderer* renderer);
+	LightingShaderTerrainEditorImplementation(RendererBackend* rendererBackend);
 
 	// overridden methods
 	virtual const string getId() override;

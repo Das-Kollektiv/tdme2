@@ -20,7 +20,7 @@ using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalInternal;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;
@@ -69,8 +69,8 @@ public:
 
 	void setEngine(Engine* engine) override;
 
-	inline void setRenderer(Renderer* renderer) override {
-		DecalInternal::setRenderer(renderer);
+	inline void setRenderer(RendererBackend* rendererBackend) override {
+		DecalInternal::setRenderer(rendererBackend);
 	}
 
 	inline void initialize() override {

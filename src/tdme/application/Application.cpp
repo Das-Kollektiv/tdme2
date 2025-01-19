@@ -41,7 +41,7 @@
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -66,7 +66,7 @@ using tdme::application::InputEventHandler;
 using tdme::audio::Audio;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -81,7 +81,7 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
-Renderer* Application::renderer = nullptr;
+RendererBackend* Application::rendererBackend = nullptr;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
@@ -349,8 +349,8 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	Engine::getRenderer()->setVSync(vSync);
-	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+	Engine::getRendererBackend()->setVSync(vSync);
+	if (Engine::getRendererBackend()->getRendererType() != RendererBackend::RENDERERTYPE_VULKAN) {
 		glfwSwapInterval(vSync == true?1:0);
 	}
 }
@@ -526,7 +526,7 @@ void Application::setMousePosition(int x, int y) {
 }
 
 void Application::swapBuffers() {
-	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+	if (Engine::getRendererBackend()->getRendererType() != RendererBackend::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 }
 
 string Application::getClipboardContent() {
@@ -542,22 +542,22 @@ static void glfwErrorCallback(int error, const char* description) {
 }
 
 int Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
-	string rendererLibrary = "libopengl3corerenderer";
+	string rendererBackendLibrary = "libopengl3corerenderer";
 	for (auto i = 1; i < argc; i++) {
 		auto argValue = string(argv[i]);
 		if (argValue == "--debug") debuggingEnabled = true; else
-		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer"; else
-		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer"; else
-		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer"; else
-		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer";
+		if (argValue == "--gles2") rendererBackendLibrary = "libopengles2renderer"; else
+		if (argValue == "--gl2") rendererBackendLibrary = "libopengl2renderer"; else
+		if (argValue == "--gl3core") rendererBackendLibrary = "libopengl3corerenderer"; else
+		if (argValue == "--vulkan") rendererBackendLibrary = "libvulkanrenderer";
 	}
 
 	#if defined(_WIN32)
-		rendererLibrary = rendererLibrary + ".dll";
+		rendererBackendLibrary = rendererBackendLibrary + ".dll";
 	#elif defined(__APPLE__)
-		rendererLibrary = rendererLibrary + ".dylib";
+		rendererBackendLibrary = rendererBackendLibrary + ".dylib";
 	#else
-		rendererLibrary = rendererLibrary + ".so";
+		rendererBackendLibrary = rendererBackendLibrary + ".so";
 	#endif
 
 	//
@@ -592,56 +592,56 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	}
 
 	//
-	Console::printLine("Application::run(): Opening renderer library: " + rendererLibrary);
+	Console::printLine("Application::run(): Opening renderer backend library: " + rendererBackendLibrary);
 
-	// load renderer library
+	// load renderer backend library
 	#if defined(_MSC_VER)
 		//
-		auto rendererLibraryHandle = LoadLibrary(rendererLibrary.c_str());
-		if (rendererLibraryHandle == nullptr) {
-			Console::printLine("Application::run(): Could not open renderer library");
+		auto rendererBackendLibraryHandle = LoadLibrary(rendererBackendLibrary.c_str());
+		if (rendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open renderer backend library");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
-		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
+		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())GetProcAddress(rendererBackendLibraryHandle, "createInstance");
 		//
-		if (rendererCreateInstance == nullptr) {
-			Console::printLine("Application::run(): Could not find renderer library createInstance() entry point");
+		if (rendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
-		renderer = (Renderer*)rendererCreateInstance();
-		if (renderer == nullptr) {
-			Console::printLine("Application::run(): Could not create renderer");
+		rendererBackend = (RendererBackend*)rendererBackendCreateInstance();
+		if (rendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create renderer backend");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 	#else
 		//
 		#if defined(__HAIKU__)
-			auto rendererLibraryHandle = dlopen(("lib/" + rendererLibrary).c_str(), RTLD_NOW);
+			auto rendererBackendLibraryHandle = dlopen(("lib/" + rendererBackendLibrary).c_str(), RTLD_NOW);
 		#else
-			auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
+			auto rendererBackendLibraryHandle = dlopen(rendererBackendLibrary.c_str(), RTLD_NOW);
 		#endif
-		if (rendererLibraryHandle == nullptr) {
-			Console::printLine("Application::run(): Could not open renderer library");
+		if (rendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open renderer backend library");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
-		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
+		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())dlsym(rendererBackendLibraryHandle, "createInstance");
 		//
-		if (rendererCreateInstance == nullptr) {
-			Console::printLine("Application::run(): Could not find renderer library createInstance() entry point");
+		if (rendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
 		//
-		renderer = (Renderer*)rendererCreateInstance();
-		if (renderer == nullptr) {
-			Console::printLine("Application::run(): Could not create renderer");
+		rendererBackend = (RendererBackend*)rendererBackendCreateInstance();
+		if (rendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create renderer backend");
 			glfwTerminate();
 			return EXITCODE_FAILURE;
 		}
@@ -654,7 +654,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 	//
-	for (auto i = 0; renderer->prepareWindowSystemRendererContext(i) == true; i++) {
+	for (auto i = 0; rendererBackend->prepareWindowSystemRendererContext(i) == true; i++) {
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (glfwWindow != nullptr) break;
 	}
@@ -667,8 +667,8 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	}
 
 	//
-	if (renderer->initializeWindowSystemRendererContext(glfwWindow) == false) {
-		Console::printLine("glfwCreateWindow(): Could not initialize window system renderer context");
+	if (rendererBackend->initializeWindowSystemRendererContext(glfwWindow) == false) {
+		Console::printLine("glfwCreateWindow(): Could not initialize window system rendererBackend context");
 		glfwTerminate();
 		return EXITCODE_FAILURE;
 	}
@@ -720,7 +720,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	//
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
-		if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+		if (Engine::getRendererBackend()->getRendererType() != RendererBackend::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 		//
 		glfwPollEvents();
 		//
@@ -735,8 +735,8 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		Application::application->dispose();
 		Engine::shutdown();
 		Audio::shutdown();
-		delete Application::renderer;
-		Application::renderer = nullptr;
+		delete Application::rendererBackend;
+		Application::rendererBackend = nullptr;
 		Console::shutdown();
 		//
 		delete Application::application;

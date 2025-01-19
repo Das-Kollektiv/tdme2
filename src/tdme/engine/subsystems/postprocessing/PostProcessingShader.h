@@ -11,7 +11,7 @@
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 
@@ -33,9 +33,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	PostProcessingShader(Renderer* renderer);
+	PostProcessingShader(RendererBackend* rendererBackend);
 
 	/**
 	 * Public destructor

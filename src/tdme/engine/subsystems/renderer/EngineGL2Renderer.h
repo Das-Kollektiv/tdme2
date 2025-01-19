@@ -22,7 +22,7 @@ using tdme::engine::subsystems::renderer::RendererPlugin;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of GL2 renderer to other engine functionality
+ * Engine connector of GL2 rendererBackend to other engine functionality
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::renderer::EngineGL2Renderer: public GL2Renderer, public RendererPlugin

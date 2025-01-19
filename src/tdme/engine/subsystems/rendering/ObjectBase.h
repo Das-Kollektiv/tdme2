@@ -74,7 +74,7 @@ protected:
 	/**
 	 * Private constructor
 	 * @param model model
-	 * @param useManagers use mesh and object node renderer model manager
+	 * @param useManagers use mesh and object node rendererBackend model manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param instances instances to compute and render by duplication
 	 */

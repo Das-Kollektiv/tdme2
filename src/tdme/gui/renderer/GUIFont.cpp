@@ -10,7 +10,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/renderer/GUICharacter.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -33,7 +33,7 @@ using std::vector;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
@@ -173,16 +173,16 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 
 void GUIFont::updateFontInternal() {
 	textureAtlas.update();
-	auto renderer = Engine::getInstance()->getRenderer();
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto rendererBackend = Engine::getInstance()->getRendererBackend();
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 	if (textureAtlas.getAtlasTexture() != nullptr) {
-		if (textureId == renderer->ID_NONE) textureId = renderer->createTexture();
-		renderer->bindTexture(contextIdx, textureId);
-		renderer->uploadTexture(contextIdx, textureAtlas.getAtlasTexture());
+		if (textureId == rendererBackend->ID_NONE) textureId = rendererBackend->createTexture();
+		rendererBackend->bindTexture(contextIdx, textureId);
+		rendererBackend->uploadTexture(contextIdx, textureAtlas.getAtlasTexture());
 	} else
-	if (textureId != renderer->ID_NONE) {
-		renderer->disposeTexture(textureId);
-		textureId = renderer->ID_NONE;
+	if (textureId != rendererBackend->ID_NONE) {
+		rendererBackend->disposeTexture(textureId);
+		textureId = rendererBackend->ID_NONE;
 	}
 	for (auto i = 0;; i++) {
 		auto atlasTexture = textureAtlas.getAtlasTexture(i);

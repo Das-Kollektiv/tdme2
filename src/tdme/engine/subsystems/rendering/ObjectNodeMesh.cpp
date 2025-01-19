@@ -12,7 +12,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
@@ -37,7 +37,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -345,9 +345,9 @@ bool ObjectNodeMesh::getRecreatedBuffers()
 	}
 }
 
-void ObjectNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, int contextIdx, int32_t vboId) {
+void ObjectNodeMesh::setupVertexIndicesBuffer(RendererBackend *rendererBackend, int contextIdx, int32_t vboId) {
 	// upload
-	if (renderer->isUsingShortIndices() == true) {
+	if (rendererBackend->isUsingShortIndices() == true) {
 		if (instances * indices.size() > 65535) {
 			Console::printLine(
 				"ObjectNodeMesh::setupVertexIndicesBuffer(): " +
@@ -364,7 +364,7 @@ void ObjectNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, int contextIdx
 			sbIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		rendererBackend->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
 		auto ibIndices = ObjectBuffer::getByteBuffer(contextIdx, instances * faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
 		// create face vertex indices, will never be changed in engine
@@ -373,12 +373,12 @@ void ObjectNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, int contextIdx
 			ibIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+		rendererBackend->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }
 
 
-void ObjectNodeMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
+void ObjectNodeMesh::setupTextureCoordinatesBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId)
 {
 	if (textureCoordinates->size() == 0) return;
 	// create texture coordinates buffer, will never be changed in engine
@@ -388,10 +388,10 @@ void ObjectNodeMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int conte
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
-void ObjectNodeMesh::setupVerticesBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
+void ObjectNodeMesh::setupVerticesBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId)
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(contextIdx, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
@@ -399,10 +399,10 @@ void ObjectNodeMesh::setupVerticesBuffer(Renderer* renderer, int contextIdx, int
 		fbVertices.put(vertex.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
-void ObjectNodeMesh::setupNormalsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
+void ObjectNodeMesh::setupNormalsBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId)
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(contextIdx, normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
@@ -410,10 +410,10 @@ void ObjectNodeMesh::setupNormalsBuffer(Renderer* renderer, int contextIdx, int3
 		fbNormals.put(normal.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
-void ObjectNodeMesh::setupTangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
+void ObjectNodeMesh::setupTangentsBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId)
 {
 	// check if we have tangents
 	if (tangents == nullptr) return;
@@ -423,10 +423,10 @@ void ObjectNodeMesh::setupTangentsBuffer(Renderer* renderer, int contextIdx, int
 		fbTangents.put(tangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-void ObjectNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
+void ObjectNodeMesh::setupBitangentsBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId)
 {
 	// check if we have bitangents
 	if (bitangents == nullptr) return;
@@ -436,10 +436,10 @@ void ObjectNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, i
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 
-void ObjectNodeMesh::setupOriginsBuffer(Renderer* renderer, int contextIdx, int32_t vboId) {
+void ObjectNodeMesh::setupOriginsBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId) {
 	// check if we have origins
 	const auto& origins = node->getOrigins();
 	if (origins.size() == 0) return;
@@ -450,10 +450,10 @@ void ObjectNodeMesh::setupOriginsBuffer(Renderer* renderer, int contextIdx, int3
 		fbOrigins.put(origin.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(contextIdx, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
+	rendererBackend->uploadBufferObject(contextIdx, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
 }
 
-void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t vboId, int lodLevel) {
+void ObjectNodeMesh::setupLodBuffer(RendererBackend* rendererBackend, int contextIdx, int32_t vboId, int lodLevel) {
 	// TODO: we only support faces entities 0 lod indices for terrain now
 	const vector<int32_t>* indices { nullptr };
 	switch (lodLevel) {
@@ -478,7 +478,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		);
 		return;
 	}
-	if (renderer->isUsingShortIndices() == true) {
+	if (rendererBackend->isUsingShortIndices() == true) {
 		if (instances * indices->size() > 65535) {
 			Console::printLine(
 				"ObjectNodeMesh::setupLodBuffer(): " +
@@ -494,7 +494,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		for (const auto index: *indices) {
 			sbIndices.put(index);
 		}
-		renderer->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		rendererBackend->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
 		// create indices buffer, will never be changed in engine
 		auto ibIndices = ObjectBuffer::getByteBuffer(contextIdx, indices->size() * sizeof(uint32_t))->asIntBuffer();
@@ -502,6 +502,6 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		for (const auto index: *indices) {
 			ibIndices.put(index);
 		}
-		renderer->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+		rendererBackend->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }

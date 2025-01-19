@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Camera.h>
@@ -33,7 +33,7 @@ using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
@@ -57,10 +57,10 @@ using tdme::math::Vector3;
 ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height)
 {
 	this->shadowMapping = shadowMapping;
-	lightCamera = make_unique<Camera>(shadowMapping->renderer);
+	lightCamera = make_unique<Camera>(shadowMapping->rendererBackend);
 	lightCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	frameBuffer = make_unique<FrameBuffer>(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
-	if (shadowMapping->renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
+	if (shadowMapping->rendererBackend->getRendererType() == RendererBackend::RENDERERTYPE_VULKAN) {
 		biasMatrix.set(
 			0.5f, 0.0f, 0.0f, 0.0f,
 			0.0f, -0.5f, 0.0f, 0.0f,
@@ -108,7 +108,7 @@ Camera* ShadowMap::getCamera()
 void ShadowMap::createShadowMap(Light* light)
 {
 	// use default context
-	auto contextIdx = shadowMapping->renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = shadowMapping->rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	//
 	auto camera = shadowMapping->engine->getCamera();
@@ -293,7 +293,7 @@ void ShadowMap::createShadowMap(Light* light)
 	// bind frame buffer
 	frameBuffer->enableFrameBuffer();
 	// clear depth buffer
-	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
+	shadowMapping->rendererBackend->clear(shadowMapping->rendererBackend->CLEAR_DEPTH_BUFFER_BIT);
 	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();
 	// only draw opaque face entities as shadows will not be produced from transparent objects
@@ -312,8 +312,8 @@ void ShadowMap::createShadowMap(Light* light)
 void ShadowMap::computeDepthBiasMVPMatrix()
 {
 	// matrices
-	auto modelViewMatrix = shadowMapping->renderer->getModelViewMatrix();
-	auto projectionMatrix = shadowMapping->renderer->getProjectionMatrix();
+	auto modelViewMatrix = shadowMapping->rendererBackend->getModelViewMatrix();
+	auto projectionMatrix = shadowMapping->rendererBackend->getProjectionMatrix();
 	// compute shadow texture matrix
 	depthBiasMVPMatrix.set(modelViewMatrix).multiply(projectionMatrix).multiply(biasMatrix);
 }

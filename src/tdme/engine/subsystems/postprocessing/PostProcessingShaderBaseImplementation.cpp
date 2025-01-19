@@ -2,16 +2,16 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 
-PostProcessingShaderBaseImplementation::PostProcessingShaderBaseImplementation(Renderer* renderer)
+PostProcessingShaderBaseImplementation::PostProcessingShaderBaseImplementation(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	isRunning = false;
 	initialized = false;
 }
@@ -24,21 +24,21 @@ bool PostProcessingShaderBaseImplementation::isInitialized()
 void PostProcessingShaderBaseImplementation::initialize()
 {
 	// map inputs to attributes
-	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
+	if (rendererBackend->isUsingProgramAttributeLocation() == true) {
+		rendererBackend->setProgramAttributeLocation(programId, 0, "inVertex");
+		rendererBackend->setProgramAttributeLocation(programId, 2, "inTextureUV");
 	}
 
-	if (renderer->linkProgram(programId) == false)
+	if (rendererBackend->linkProgram(programId) == false)
 		return;
 
 	// uniforms
-	uniformColorBufferTextureUnit = renderer->getProgramUniformLocation(programId, "colorBufferTextureUnit");
-	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
-	uniformTemporaryColorBufferTextureUnit = renderer->getProgramUniformLocation(programId, "temporaryColorBufferTextureUnit");
-	uniformTemporaryDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "temporaryDepthBufferTextureUnit");
-	uniformBufferTexturePixelWidth = renderer->getProgramUniformLocation(programId, "bufferTexturePixelWidth");
-	uniformBufferTexturePixelHeight = renderer->getProgramUniformLocation(programId, "bufferTexturePixelHeight");
+	uniformColorBufferTextureUnit = rendererBackend->getProgramUniformLocation(programId, "colorBufferTextureUnit");
+	uniformDepthBufferTextureUnit = rendererBackend->getProgramUniformLocation(programId, "depthBufferTextureUnit");
+	uniformTemporaryColorBufferTextureUnit = rendererBackend->getProgramUniformLocation(programId, "temporaryColorBufferTextureUnit");
+	uniformTemporaryDepthBufferTextureUnit = rendererBackend->getProgramUniformLocation(programId, "temporaryDepthBufferTextureUnit");
+	uniformBufferTexturePixelWidth = rendererBackend->getProgramUniformLocation(programId, "bufferTexturePixelWidth");
+	uniformBufferTexturePixelHeight = rendererBackend->getProgramUniformLocation(programId, "bufferTexturePixelHeight");
 
 	//
 	initialized = true;
@@ -47,12 +47,12 @@ void PostProcessingShaderBaseImplementation::initialize()
 void PostProcessingShaderBaseImplementation::useProgram(int contextIdx)
 {
 	isRunning = true;
-	renderer->useProgram(contextIdx, programId);
-	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
-	if (uniformColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(contextIdx, uniformColorBufferTextureUnit, 0);
-	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(contextIdx, uniformDepthBufferTextureUnit, 1);
-	if (uniformTemporaryColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(contextIdx, uniformTemporaryColorBufferTextureUnit, 2);
-	if (uniformTemporaryDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(contextIdx, uniformTemporaryDepthBufferTextureUnit, 3);
+	rendererBackend->useProgram(contextIdx, programId);
+	rendererBackend->setLighting(contextIdx, rendererBackend->LIGHTING_NONE);
+	if (uniformColorBufferTextureUnit != -1) rendererBackend->setProgramUniformInteger(contextIdx, uniformColorBufferTextureUnit, 0);
+	if (uniformDepthBufferTextureUnit != -1) rendererBackend->setProgramUniformInteger(contextIdx, uniformDepthBufferTextureUnit, 1);
+	if (uniformTemporaryColorBufferTextureUnit != -1) rendererBackend->setProgramUniformInteger(contextIdx, uniformTemporaryColorBufferTextureUnit, 2);
+	if (uniformTemporaryDepthBufferTextureUnit != -1) rendererBackend->setProgramUniformInteger(contextIdx, uniformTemporaryDepthBufferTextureUnit, 3);
 }
 
 void PostProcessingShaderBaseImplementation::unUseProgram()
@@ -62,13 +62,13 @@ void PostProcessingShaderBaseImplementation::unUseProgram()
 
 void PostProcessingShaderBaseImplementation::setBufferPixelWidth(int contextIdx, float pixelWidth) {
 	if (uniformBufferTexturePixelWidth != -1) {
-		renderer->setProgramUniformFloat(contextIdx, uniformBufferTexturePixelWidth, pixelWidth);
+		rendererBackend->setProgramUniformFloat(contextIdx, uniformBufferTexturePixelWidth, pixelWidth);
 	}
 }
 
 void PostProcessingShaderBaseImplementation::setBufferPixelHeight(int contextIdx, float pixelHeight) {
 	if (uniformBufferTexturePixelHeight != -1) {
-		renderer->setProgramUniformFloat(contextIdx, uniformBufferTexturePixelHeight, pixelHeight);
+		rendererBackend->setProgramUniformFloat(contextIdx, uniformBufferTexturePixelHeight, pixelHeight);
 	}
 }
 

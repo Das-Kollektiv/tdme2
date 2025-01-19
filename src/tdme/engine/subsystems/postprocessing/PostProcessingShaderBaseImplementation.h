@@ -10,7 +10,7 @@
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 
@@ -35,7 +35,7 @@ protected:
 
 	bool isRunning { false };
 	bool initialized { false };
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 
 public:
 	// forbid class copy
@@ -43,9 +43,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 */
-	PostProcessingShaderBaseImplementation(Renderer* renderer);
+	PostProcessingShaderBaseImplementation(RendererBackend* rendererBackend);
 
 	// overridden methods
 	virtual bool isInitialized() override;

@@ -12,7 +12,7 @@ namespace renderer {
 	class GL2Renderer;
 	class GL3Renderer;
 	class GLES2Renderer;
-	class Renderer;
+	class RendererBackend;
 	class RendererPlugin;
 	class VKRenderer;
 	class VKGL3CoreShaderProgram;

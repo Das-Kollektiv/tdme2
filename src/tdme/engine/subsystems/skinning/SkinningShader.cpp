@@ -9,7 +9,7 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
@@ -34,7 +34,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -45,12 +45,12 @@ using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 
-SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex")
+SkinningShader::SkinningShader(RendererBackend* rendererBackend): mutex("skinningshader-mutex")
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 	isRunning = false;
 	initialized = false;
-	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	auto threadCount = rendererBackend->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
@@ -61,34 +61,34 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	if (renderer->isGLCLAvailable() == true) {
-		uniformMatrixCount = renderer->UNIFORM_CL_SKINNING_MATRIX_COUNT;
-		uniformInstanceCount = renderer->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
-		uniformVertexCount = renderer->UNIFORM_CL_SKINNING_VERTEX_COUNT;
+	if (rendererBackend->isGLCLAvailable() == true) {
+		uniformMatrixCount = rendererBackend->UNIFORM_CL_SKINNING_MATRIX_COUNT;
+		uniformInstanceCount = rendererBackend->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
+		uniformVertexCount = rendererBackend->UNIFORM_CL_SKINNING_VERTEX_COUNT;
 	} else {
-		auto shaderVersion = renderer->getShaderVersion();
+		auto shaderVersion = rendererBackend->getShaderVersion();
 
 		// shader
-		shaderId = renderer->loadShader(
-			renderer->SHADER_COMPUTE_SHADER,
+		shaderId = rendererBackend->loadShader(
+			rendererBackend->SHADER_COMPUTE_SHADER,
 			"shader/" + shaderVersion + "/skinning",
 			"skinning.glsl"
 		);
 		if (shaderId == 0) return;
 
 		// create, attach and link program
-		programId = renderer->createProgram(renderer->PROGRAM_COMPUTE);
-		renderer->attachShaderToProgram(programId, shaderId);
+		programId = rendererBackend->createProgram(rendererBackend->PROGRAM_COMPUTE);
+		rendererBackend->attachShaderToProgram(programId, shaderId);
 
 		// link program
-		if (renderer->linkProgram(programId) == false) return;
+		if (rendererBackend->linkProgram(programId) == false) return;
 
 		//
-		uniformVertexCount = renderer->getProgramUniformLocation(programId, "vertexCount");
+		uniformVertexCount = rendererBackend->getProgramUniformLocation(programId, "vertexCount");
 		if (uniformVertexCount == -1) return;
-		uniformMatrixCount = renderer->getProgramUniformLocation(programId, "matrixCount");
+		uniformMatrixCount = rendererBackend->getProgramUniformLocation(programId, "matrixCount");
 		if (uniformMatrixCount == -1) return;
-		uniformInstanceCount = renderer->getProgramUniformLocation(programId, "instanceCount");
+		uniformInstanceCount = rendererBackend->getProgramUniformLocation(programId, "instanceCount");
 		if (uniformInstanceCount == -1) return;
 	}
 
@@ -107,8 +107,8 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 	auto& skinningContext = contexts[contextIdx];
 	if (skinningContext.running == false) {
 		skinningContext.running = true;
-		renderer->useProgram(contextIdx, programId);
-		renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+		rendererBackend->useProgram(contextIdx, programId);
+		rendererBackend->setLighting(contextIdx, rendererBackend->LIGHTING_NONE);
 	}
 
 	// vbo base ids
@@ -135,7 +135,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 			modelSkinningCache.vboIds = vboManaged->getVBOIds();
 		}
 		{
-			if (renderer->isSupportingMultithreadedRendering() == true) {
+			if (rendererBackend->isSupportingMultithreadedRendering() == true) {
 				for (auto i = 0; i < Engine::getThreadCount(); i++) {
 					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false, false, created);
 					modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
@@ -148,12 +148,12 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 
 		// vertices
 		{
-			objectNodeMesh->setupVerticesBuffer(renderer, contextIdx, (*modelSkinningCache.vboIds)[0]);
+			objectNodeMesh->setupVerticesBuffer(rendererBackend, contextIdx, (*modelSkinningCache.vboIds)[0]);
 		}
 
 		// normals
 		{
-			objectNodeMesh->setupNormalsBuffer(renderer, contextIdx, (*modelSkinningCache.vboIds)[1]);
+			objectNodeMesh->setupNormalsBuffer(rendererBackend, contextIdx, (*modelSkinningCache.vboIds)[1]);
 		}
 
 		{
@@ -164,7 +164,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 				// put number of joints
 				ibVerticesJoints.put((int)vertexJoints);
 			}
-			renderer->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[2], ibVerticesJoints.getPosition() * sizeof(int), &ibVerticesJoints);
+			rendererBackend->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[2], ibVerticesJoints.getPosition() * sizeof(int), &ibVerticesJoints);
 		}
 
 		{
@@ -178,7 +178,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 					ibVerticesVertexJointsIdxs.put((int)jointIndex);
 				}
 			}
-			renderer->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[3], ibVerticesVertexJointsIdxs.getPosition() * sizeof(int), &ibVerticesVertexJointsIdxs);
+			rendererBackend->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[3], ibVerticesVertexJointsIdxs.getPosition() * sizeof(int), &ibVerticesVertexJointsIdxs);
 		}
 
 		{
@@ -191,7 +191,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
 				}
 			}
-			renderer->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[4], fbVerticesVertexJointsWeights.getPosition() * sizeof(float), &fbVerticesVertexJointsWeights);
+			rendererBackend->uploadSkinningBufferObject(contextIdx, (*modelSkinningCache.vboIds)[4], fbVerticesVertexJointsWeights.getPosition() * sizeof(float), &fbVerticesVertexJointsWeights);
 		}
 
 		// add to cache
@@ -203,15 +203,15 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 	mutex.unlock();
 
 	// bind
-	renderer->bindSkinningVerticesBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[0]);
-	renderer->bindSkinningNormalsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[1]);
-	renderer->bindSkinningVertexJointsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[2]);
-	renderer->bindSkinningVertexJointIdxsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[3]);
-	renderer->bindSkinningVertexJointWeightsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[4]);
+	rendererBackend->bindSkinningVerticesBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[0]);
+	rendererBackend->bindSkinningNormalsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[1]);
+	rendererBackend->bindSkinningVertexJointsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[2]);
+	rendererBackend->bindSkinningVertexJointIdxsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[3]);
+	rendererBackend->bindSkinningVertexJointWeightsBufferObject(contextIdx, (*modelSkinningCacheCached->vboIds)[4]);
 
 	// bind output / result buffers
-	renderer->bindSkinningVerticesResultBufferObject(contextIdx, (*vboBaseIds)[1]);
-	renderer->bindSkinningNormalsResultBufferObject(contextIdx, (*vboBaseIds)[2]);
+	rendererBackend->bindSkinningVerticesResultBufferObject(contextIdx, (*vboBaseIds)[1]);
+	rendererBackend->bindSkinningNormalsResultBufferObject(contextIdx, (*vboBaseIds)[2]);
 
 	// upload matrices and set corresponding uniforms
 	{
@@ -232,19 +232,19 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 			}
 		}
 		objectBase->setCurrentInstance(currentInstance);
-		renderer->uploadSkinningBufferObject(contextIdx, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
-		renderer->setProgramUniformInteger(contextIdx, uniformMatrixCount, skinningJoints.size());
-		renderer->setProgramUniformInteger(contextIdx, uniformInstanceCount, objectBase->enabledInstances);
+		rendererBackend->uploadSkinningBufferObject(contextIdx, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
+		rendererBackend->setProgramUniformInteger(contextIdx, uniformMatrixCount, skinningJoints.size());
+		rendererBackend->setProgramUniformInteger(contextIdx, uniformInstanceCount, objectBase->enabledInstances);
 	}
 
 	//
-	renderer->bindSkinningMatricesBufferObject(contextIdx, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
+	rendererBackend->bindSkinningMatricesBufferObject(contextIdx, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
 
 	// skinning count
-	renderer->setProgramUniformInteger(contextIdx, uniformVertexCount, vertices.size());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformVertexCount, vertices.size());
 
 	// do it so
-	renderer->dispatchCompute(
+	rendererBackend->dispatchCompute(
 		contextIdx,
 		(int)Math::ceil(vertices.size() / 16.0f),
 		(int)Math::ceil(objectBase->instances / 16.0f),
@@ -258,7 +258,7 @@ void SkinningShader::unUseProgram()
 	isRunning = false;
 	for (auto& skinningContext: contexts) skinningContext.running = false;
 	// we are done, do memory barrier
-	renderer->memoryBarrier();
+	rendererBackend->memoryBarrier();
 }
 
 void SkinningShader::reset() {

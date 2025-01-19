@@ -163,15 +163,15 @@ public:
 	virtual void stop();
 
 	/**
-	 * Updates the effect to GUI renderer and updates time
-	 * @param guiRenderer gui renderer
+	 * Updates the effect to GUI rendererBackend and updates time
+	 * @param guiRenderer gui rendererBackend
 	 * @return if action should be called
 	 */
 	virtual bool update(GUIRenderer* guiRenderer);
 
 	/**
 	 * Apply effect
-	 * @param guiRenderer GUI renderer
+	 * @param guiRenderer GUI rendererBackend
 	 * @param guiNode GUI node
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;

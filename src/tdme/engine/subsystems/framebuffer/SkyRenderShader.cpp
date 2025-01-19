@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
@@ -27,7 +27,7 @@ using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Camera;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
@@ -39,9 +39,9 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-SkyRenderShader::SkyRenderShader(Renderer* renderer)
+SkyRenderShader::SkyRenderShader(RendererBackend* rendererBackend)
 {
-	this->renderer = renderer;
+	this->rendererBackend = rendererBackend;
 }
 
 SkyRenderShader::~SkyRenderShader()
@@ -56,124 +56,124 @@ bool SkyRenderShader::isInitialized()
 void SkyRenderShader::initialize()
 {
 	//
-	auto shaderVersion = renderer->getShaderVersion();
+	auto shaderVersion = rendererBackend->getShaderVersion();
 
 	//
-	vertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
+	vertexShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
 		"render_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
+	fragmentShaderId = rendererBackend->loadShader(
+		rendererBackend->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer/sky",
 		"render_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, vertexShaderId);
-	renderer->attachShaderToProgram(programId, fragmentShaderId);
-	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
+	programId = rendererBackend->createProgram(rendererBackend->PROGRAM_OBJECTS);
+	rendererBackend->attachShaderToProgram(programId, vertexShaderId);
+	rendererBackend->attachShaderToProgram(programId, fragmentShaderId);
+	if (rendererBackend->isUsingProgramAttributeLocation() == true) {
+		rendererBackend->setProgramAttributeLocation(programId, 0, "inVertex");
+		rendererBackend->setProgramAttributeLocation(programId, 2, "inTextureUV");
 	}
-	if (renderer->linkProgram(programId) == false) return;
+	if (rendererBackend->linkProgram(programId) == false) return;
 
 	//
-	uniformLIGHT0_ENABLED = renderer->getProgramUniformLocation(programId, "LIGHT0_ENABLED");
+	uniformLIGHT0_ENABLED = rendererBackend->getProgramUniformLocation(programId, "LIGHT0_ENABLED");
 	if (uniformLIGHT0_ENABLED == -1) return;
-	uniformLIGHT0_DIRECTION = renderer->getProgramUniformLocation(programId, "LIGHT0_DIRECTION");
+	uniformLIGHT0_DIRECTION = rendererBackend->getProgramUniformLocation(programId, "LIGHT0_DIRECTION");
 	if (uniformLIGHT0_DIRECTION == -1) return;
-	uniformLIGHT1_ENABLED = renderer->getProgramUniformLocation(programId, "LIGHT1_ENABLED");
+	uniformLIGHT1_ENABLED = rendererBackend->getProgramUniformLocation(programId, "LIGHT1_ENABLED");
 	if (uniformLIGHT1_ENABLED == -1) return;
-	uniformLIGHT1_DIRECTION = renderer->getProgramUniformLocation(programId, "LIGHT1_DIRECTION");
+	uniformLIGHT1_DIRECTION = rendererBackend->getProgramUniformLocation(programId, "LIGHT1_DIRECTION");
 	if (uniformLIGHT1_DIRECTION == -1) return;
-	uniformStarsTexture = renderer->getProgramUniformLocation(programId, "stars_texture");
+	uniformStarsTexture = rendererBackend->getProgramUniformLocation(programId, "stars_texture");
 	if (uniformStarsTexture == -1) return;
-	uniformCloudsTopTexture = renderer->getProgramUniformLocation(programId, "clouds_top_texture");
+	uniformCloudsTopTexture = rendererBackend->getProgramUniformLocation(programId, "clouds_top_texture");
 	if (uniformCloudsTopTexture == -1) return;
-	uniformCloudsMiddleTexture = renderer->getProgramUniformLocation(programId, "clouds_middle_texture");
+	uniformCloudsMiddleTexture = rendererBackend->getProgramUniformLocation(programId, "clouds_middle_texture");
 	if (uniformCloudsMiddleTexture == -1) return;
-	uniformCloudsBottomTexture = renderer->getProgramUniformLocation(programId, "clouds_bottom_texture");
+	uniformCloudsBottomTexture = rendererBackend->getProgramUniformLocation(programId, "clouds_bottom_texture");
 	if (uniformCloudsBottomTexture == -1) return;
-	uniformLightScatteringPass = renderer->getProgramUniformLocation(programId, "lightScatteringPass");
+	uniformLightScatteringPass = rendererBackend->getProgramUniformLocation(programId, "lightScatteringPass");
 	if (uniformLightScatteringPass == -1) return;
-	uniformTime = renderer->getProgramUniformLocation(programId, "time");
+	uniformTime = rendererBackend->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
-	uniformAspectRatio = renderer->getProgramUniformLocation(programId, "aspectRatio");
+	uniformAspectRatio = rendererBackend->getProgramUniformLocation(programId, "aspectRatio");
 	if (uniformAspectRatio == -1) return;
-	uniformForwardVector = renderer->getProgramUniformLocation(programId, "forwardVector");
+	uniformForwardVector = rendererBackend->getProgramUniformLocation(programId, "forwardVector");
 	if (uniformForwardVector == -1) return;
-	uniformSideVector = renderer->getProgramUniformLocation(programId, "sideVector");
+	uniformSideVector = rendererBackend->getProgramUniformLocation(programId, "sideVector");
 	if (uniformSideVector == -1) return;
-	uniformUpVector = renderer->getProgramUniformLocation(programId, "upVector");
+	uniformUpVector = rendererBackend->getProgramUniformLocation(programId, "upVector");
 	if (uniformUpVector == -1) return;
 	//
 	// sky
-	uniformDayTopColor = renderer->getProgramUniformLocation(programId, "day_top_color");
+	uniformDayTopColor = rendererBackend->getProgramUniformLocation(programId, "day_top_color");
 	if (uniformDayTopColor == -1) return;
-	uniformDayBottomColor = renderer->getProgramUniformLocation(programId, "day_bottom_color");
+	uniformDayBottomColor = rendererBackend->getProgramUniformLocation(programId, "day_bottom_color");
 	if (uniformDayBottomColor == -1) return;
-	uniformSunsetTopColor = renderer->getProgramUniformLocation(programId, "sunset_top_color");
+	uniformSunsetTopColor = rendererBackend->getProgramUniformLocation(programId, "sunset_top_color");
 	if (uniformSunsetTopColor == -1) return;
-	uniformSunsetBottomColor = renderer->getProgramUniformLocation(programId, "sunset_bottom_color");
+	uniformSunsetBottomColor = rendererBackend->getProgramUniformLocation(programId, "sunset_bottom_color");
 	if (uniformSunsetBottomColor == -1) return;
-	uniformNightTopColor = renderer->getProgramUniformLocation(programId, "night_top_color");
+	uniformNightTopColor = rendererBackend->getProgramUniformLocation(programId, "night_top_color");
 	if (uniformNightTopColor == -1) return;
-	uniformNightBottomColor = renderer->getProgramUniformLocation(programId, "night_bottom_color");
+	uniformNightBottomColor = rendererBackend->getProgramUniformLocation(programId, "night_bottom_color");
 	if (uniformNightBottomColor == -1) return;
 	// horizon
-	uniformHorizonColor = renderer->getProgramUniformLocation(programId, "horizon_color");
+	uniformHorizonColor = rendererBackend->getProgramUniformLocation(programId, "horizon_color");
 	if (uniformHorizonColor == -1) return;
-	uniformHorizonBlur = renderer->getProgramUniformLocation(programId, "horizon_blur");
+	uniformHorizonBlur = rendererBackend->getProgramUniformLocation(programId, "horizon_blur");
 	if (uniformHorizonBlur == -1) return;
 	// sun
-	uniformSunColorFactor = renderer->getProgramUniformLocation(programId, "sun_color_factor");
+	uniformSunColorFactor = rendererBackend->getProgramUniformLocation(programId, "sun_color_factor");
 	if (uniformSunColorFactor == -1) return;
-	uniformSunColor = renderer->getProgramUniformLocation(programId, "sun_color");
+	uniformSunColor = rendererBackend->getProgramUniformLocation(programId, "sun_color");
 	if (uniformSunColor == -1) return;
-	uniformSunSunsetColor = renderer->getProgramUniformLocation(programId, "sun_sunset_color");
+	uniformSunSunsetColor = rendererBackend->getProgramUniformLocation(programId, "sun_sunset_color");
 	if (uniformSunSunsetColor == -1) return;
-	uniformSunSize = renderer->getProgramUniformLocation(programId, "sun_size");
+	uniformSunSize = rendererBackend->getProgramUniformLocation(programId, "sun_size");
 	if (uniformSunSize == -1) return;
-	uniformSunBlur = renderer->getProgramUniformLocation(programId, "sun_blur");
+	uniformSunBlur = rendererBackend->getProgramUniformLocation(programId, "sun_blur");
 	if (uniformSunBlur == -1) return;
 	// moon
-	uniformMoonColorFactor = renderer->getProgramUniformLocation(programId, "moon_color_factor");
+	uniformMoonColorFactor = rendererBackend->getProgramUniformLocation(programId, "moon_color_factor");
 	if (uniformMoonColorFactor == -1) return;
-	uniformMoonColor = renderer->getProgramUniformLocation(programId, "moon_color");
+	uniformMoonColor = rendererBackend->getProgramUniformLocation(programId, "moon_color");
 	if (uniformMoonColor == -1) return;
-	uniformMoonSize = renderer->getProgramUniformLocation(programId, "moon_size");
+	uniformMoonSize = rendererBackend->getProgramUniformLocation(programId, "moon_size");
 	if (uniformMoonSize == -1) return;
-	uniformMoonBlur = renderer->getProgramUniformLocation(programId, "moon_blur");
+	uniformMoonBlur = rendererBackend->getProgramUniformLocation(programId, "moon_blur");
 	if (uniformMoonBlur == -1) return;
 	// clouds
-	uniformCloudsEdgeColor = renderer->getProgramUniformLocation(programId, "clouds_edge_color");
+	uniformCloudsEdgeColor = rendererBackend->getProgramUniformLocation(programId, "clouds_edge_color");
 	if (uniformCloudsEdgeColor == -1) return;
-	uniformCloudsTopColor = renderer->getProgramUniformLocation(programId, "clouds_top_color");
+	uniformCloudsTopColor = rendererBackend->getProgramUniformLocation(programId, "clouds_top_color");
 	if (uniformCloudsTopColor == -1) return;
-	uniformCloudsMiddleColor = renderer->getProgramUniformLocation(programId, "clouds_middle_color");
+	uniformCloudsMiddleColor = rendererBackend->getProgramUniformLocation(programId, "clouds_middle_color");
 	if (uniformCloudsMiddleColor == -1) return;
-	uniformCloudsBottomColor = renderer->getProgramUniformLocation(programId, "clouds_bottom_color");
+	uniformCloudsBottomColor = rendererBackend->getProgramUniformLocation(programId, "clouds_bottom_color");
 	if (uniformCloudsBottomColor == -1) return;
-	uniformCloudsSpeed = renderer->getProgramUniformLocation(programId, "clouds_speed");
+	uniformCloudsSpeed = rendererBackend->getProgramUniformLocation(programId, "clouds_speed");
 	if (uniformCloudsSpeed == -1) return;
-	uniformCloudsDirection = renderer->getProgramUniformLocation(programId, "clouds_direction");
+	uniformCloudsDirection = rendererBackend->getProgramUniformLocation(programId, "clouds_direction");
 	if (uniformCloudsDirection == -1) return;
-	uniformCloudsScale = renderer->getProgramUniformLocation(programId, "clouds_scale");
+	uniformCloudsScale = rendererBackend->getProgramUniformLocation(programId, "clouds_scale");
 	if (uniformCloudsScale == -1) return;
-	uniformCloudsCutoff = renderer->getProgramUniformLocation(programId, "clouds_cutoff");
+	uniformCloudsCutoff = rendererBackend->getProgramUniformLocation(programId, "clouds_cutoff");
 	if (uniformCloudsCutoff == -1) return;
-	uniformCloudsFuzziness = renderer->getProgramUniformLocation(programId, "clouds_fuzziness");
+	uniformCloudsFuzziness = rendererBackend->getProgramUniformLocation(programId, "clouds_fuzziness");
 	if (uniformCloudsFuzziness == -1) return;
-	uniformCloudsWeight = renderer->getProgramUniformLocation(programId, "clouds_weight");
+	uniformCloudsWeight = rendererBackend->getProgramUniformLocation(programId, "clouds_weight");
 	if (uniformCloudsWeight == -1) return;
-	uniformCloudsBlur = renderer->getProgramUniformLocation(programId, "clouds_blur");
+	uniformCloudsBlur = rendererBackend->getProgramUniformLocation(programId, "clouds_blur");
 	if (uniformCloudsBlur == -1) return;
-	uniformStarsSpeed = renderer->getProgramUniformLocation(programId, "stars_speed");
+	uniformStarsSpeed = rendererBackend->getProgramUniformLocation(programId, "stars_speed");
 	if (uniformStarsSpeed == -1) return;
 
 	//
@@ -237,46 +237,46 @@ void SkyRenderShader::unloadTextures() {
 		Engine::getInstance()->getTextureManager()->removeTexture(starsTexture);
 		starsTexture->releaseReference();
 		starsTexture = nullptr;
-		starsTextureId = renderer->ID_NONE;
+		starsTextureId = rendererBackend->ID_NONE;
 	}
 	if (cloudsTopTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(cloudsTopTexture);
 		cloudsTopTexture->releaseReference();
 		cloudsTopTexture = nullptr;
-		cloudsTopTextureId = renderer->ID_NONE;
+		cloudsTopTextureId = rendererBackend->ID_NONE;
 	}
 	if (cloudsMiddleTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(cloudsMiddleTexture);
 		cloudsMiddleTexture->releaseReference();
 		cloudsMiddleTexture = nullptr;
-		cloudsMiddleTextureId = renderer->ID_NONE;
+		cloudsMiddleTextureId = rendererBackend->ID_NONE;
 	}
 	if (cloudsBottomTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(cloudsBottomTexture);
 		cloudsBottomTexture->releaseReference();
 		cloudsBottomTexture = nullptr;
-		cloudsBottomTextureId = renderer->ID_NONE;
+		cloudsBottomTextureId = rendererBackend->ID_NONE;
 	}
 }
 
 void SkyRenderShader::loadTextures(const string& pathName) {
 	unloadTextures();
-	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), renderer->CONTEXTINDEX_DEFAULT);
-	cloudsTopTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsTopTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_top.png"), renderer->CONTEXTINDEX_DEFAULT);
-	cloudsMiddleTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsMiddleTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_middle.png"), renderer->CONTEXTINDEX_DEFAULT);
-	cloudsBottomTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsBottomTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_bottom.png"), renderer->CONTEXTINDEX_DEFAULT);
+	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	cloudsTopTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsTopTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_top.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	cloudsMiddleTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsMiddleTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_middle.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
+	cloudsBottomTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsBottomTexture = TextureReader::read(pathName + "/resources/engine/textures", "clouds_bottom.png"), rendererBackend->CONTEXTINDEX_DEFAULT);
 }
 
 void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* camera) {
 	// use default context
-	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	auto contextIdx = rendererBackend->CONTEXTINDEX_DEFAULT;
 
 	// camera, use engine camera if no camera given
 	if (camera == nullptr) camera = engine->getCamera();
 
 	//
-	renderer->useProgram(contextIdx, programId);
-	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+	rendererBackend->useProgram(contextIdx, programId);
+	rendererBackend->setLighting(contextIdx, rendererBackend->LIGHTING_NONE);
 
 	//
 	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
@@ -298,99 +298,99 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	auto moonLightPosition = Vector3(moonLightPosition4[0], moonLightPosition4[1], moonLightPosition4[2]);
 	auto moonLightDirection = moonLightPosition.clone().normalize().scale(-1.0f);
 	//
-	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, sunLight->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, sunLightDirection.getArray());
-	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, moonLight->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, moonLightDirection.getArray());
-	renderer->setProgramUniformInteger(contextIdx, uniformLightScatteringPass, lightScatteringPass == false?0:1);
-	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	renderer->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(camera->getWidth()) / static_cast<float>(camera->getHeight()));
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, camera->getForwardVector().getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, camera->getSideVector().getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, camera->getUpVector().getArray());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, sunLight->isEnabled() == true?1:0);
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, sunLightDirection.getArray());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, moonLight->isEnabled() == true?1:0);
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, moonLightDirection.getArray());
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformLightScatteringPass, lightScatteringPass == false?0:1);
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(camera->getWidth()) / static_cast<float>(camera->getHeight()));
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, camera->getForwardVector().getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSideVector, camera->getSideVector().getArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformUpVector, camera->getUpVector().getArray());
 	//
-	renderer->setProgramUniformInteger(contextIdx, uniformStarsTexture, 0);
-	renderer->setProgramUniformInteger(contextIdx, uniformCloudsTopTexture, 1);
-	renderer->setProgramUniformInteger(contextIdx, uniformCloudsMiddleTexture, 2);
-	renderer->setProgramUniformInteger(contextIdx, uniformCloudsBottomTexture, 3);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformStarsTexture, 0);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformCloudsTopTexture, 1);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformCloudsMiddleTexture, 2);
+	rendererBackend->setProgramUniformInteger(contextIdx, uniformCloudsBottomTexture, 3);
 	// sky
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetTopColor, engine->getShaderParameter("sky", "sunset_top_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetBottomColor, engine->getShaderParameter("sky", "sunset_bottom_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightTopColor, engine->getShaderParameter("sky", "night_top_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightBottomColor, engine->getShaderParameter("sky", "night_bottom_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSunsetTopColor, engine->getShaderParameter("sky", "sunset_top_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSunsetBottomColor, engine->getShaderParameter("sky", "sunset_bottom_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformNightTopColor, engine->getShaderParameter("sky", "night_top_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformNightBottomColor, engine->getShaderParameter("sky", "night_bottom_color").getColor3ValueArray());
 	// horizon
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformHorizonColor, engine->getShaderParameter("sky", "horizon_color").getColor3ValueArray());
-	renderer->setProgramUniformFloat(contextIdx, uniformHorizonBlur, engine->getShaderParameter("sky", "horizon_blur").getFloatValue());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformHorizonColor, engine->getShaderParameter("sky", "horizon_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformHorizonBlur, engine->getShaderParameter("sky", "horizon_blur").getFloatValue());
 	// sun
-	renderer->setProgramUniformFloat(contextIdx, uniformSunColorFactor, engine->getShaderParameter("sky", "sun_color_factor").getFloatValue());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunColor, engine->getShaderParameter("sky", "sun_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunSunsetColor, engine->getShaderParameter("sky", "sun_sunset_color").getColor3ValueArray());
-	renderer->setProgramUniformFloat(contextIdx, uniformSunSize, engine->getShaderParameter("sky", "sun_size").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformSunBlur, engine->getShaderParameter("sky", "sun_blur").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformSunColorFactor, engine->getShaderParameter("sky", "sun_color_factor").getFloatValue());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSunColor, engine->getShaderParameter("sky", "sun_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformSunSunsetColor, engine->getShaderParameter("sky", "sun_sunset_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformSunSize, engine->getShaderParameter("sky", "sun_size").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformSunBlur, engine->getShaderParameter("sky", "sun_blur").getFloatValue());
 	// moon
-	renderer->setProgramUniformFloat(contextIdx, uniformMoonColorFactor, engine->getShaderParameter("sky", "moon_color_factor").getFloatValue());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformMoonColor, engine->getShaderParameter("sky", "moon_color").getColor3ValueArray());
-	renderer->setProgramUniformFloat(contextIdx, uniformMoonSize, engine->getShaderParameter("sky", "moon_size").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformMoonBlur, engine->getShaderParameter("sky", "moon_blur").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformMoonColorFactor, engine->getShaderParameter("sky", "moon_color_factor").getFloatValue());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformMoonColor, engine->getShaderParameter("sky", "moon_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformMoonSize, engine->getShaderParameter("sky", "moon_size").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformMoonBlur, engine->getShaderParameter("sky", "moon_blur").getFloatValue());
 	// clouds
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsEdgeColor, engine->getShaderParameter("sky", "clouds_edge_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsTopColor, engine->getShaderParameter("sky", "clouds_top_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsMiddleColor, engine->getShaderParameter("sky", "clouds_middle_color").getColor3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsBottomColor, engine->getShaderParameter("sky", "clouds_bottom_color").getColor3ValueArray());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsSpeed, engine->getShaderParameter("sky", "clouds_speed").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsDirection, engine->getShaderParameter("sky", "clouds_direction").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsScale, engine->getShaderParameter("sky", "clouds_scale").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsCutoff, engine->getShaderParameter("sky", "clouds_cutoff").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsFuzziness, engine->getShaderParameter("sky", "clouds_fuzziness").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsWeight, engine->getShaderParameter("sky", "clouds_weight").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformCloudsBlur, engine->getShaderParameter("sky", "clouds_blur").getFloatValue());
-	renderer->setProgramUniformFloat(contextIdx, uniformStarsSpeed, engine->getShaderParameter("sky", "stars_speed").getFloatValue());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformCloudsEdgeColor, engine->getShaderParameter("sky", "clouds_edge_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformCloudsTopColor, engine->getShaderParameter("sky", "clouds_top_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformCloudsMiddleColor, engine->getShaderParameter("sky", "clouds_middle_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloatVec3(contextIdx, uniformCloudsBottomColor, engine->getShaderParameter("sky", "clouds_bottom_color").getColor3ValueArray());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsSpeed, engine->getShaderParameter("sky", "clouds_speed").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsDirection, engine->getShaderParameter("sky", "clouds_direction").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsScale, engine->getShaderParameter("sky", "clouds_scale").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsCutoff, engine->getShaderParameter("sky", "clouds_cutoff").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsFuzziness, engine->getShaderParameter("sky", "clouds_fuzziness").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsWeight, engine->getShaderParameter("sky", "clouds_weight").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformCloudsBlur, engine->getShaderParameter("sky", "clouds_blur").getFloatValue());
+	rendererBackend->setProgramUniformFloat(contextIdx, uniformStarsSpeed, engine->getShaderParameter("sky", "stars_speed").getFloatValue());
 	//
-	renderer->disableDepthBufferWriting();
-	renderer->disableDepthBufferTest();
+	rendererBackend->disableDepthBufferWriting();
+	rendererBackend->disableDepthBufferTest();
 	//
-	renderer->disableCulling(contextIdx);
+	rendererBackend->disableCulling(contextIdx);
 	//
-	renderer->setTextureUnit(contextIdx, 0);
-	renderer->bindTexture(contextIdx, starsTextureId);
+	rendererBackend->setTextureUnit(contextIdx, 0);
+	rendererBackend->bindTexture(contextIdx, starsTextureId);
 	//
-	renderer->setTextureUnit(contextIdx, 1);
-	renderer->bindTexture(contextIdx, cloudsTopTextureId);
+	rendererBackend->setTextureUnit(contextIdx, 1);
+	rendererBackend->bindTexture(contextIdx, cloudsTopTextureId);
 	//
-	renderer->setTextureUnit(contextIdx, 2);
-	renderer->bindTexture(contextIdx, cloudsMiddleTextureId);
+	rendererBackend->setTextureUnit(contextIdx, 2);
+	rendererBackend->bindTexture(contextIdx, cloudsMiddleTextureId);
 	//
-	renderer->setTextureUnit(contextIdx, 3);
-	renderer->bindTexture(contextIdx, cloudsBottomTextureId);
+	rendererBackend->setTextureUnit(contextIdx, 3);
+	rendererBackend->bindTexture(contextIdx, cloudsBottomTextureId);
 
 	// use frame buffer render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
 
 	//
-	renderer->bindVerticesBufferObject(contextIdx, frameBufferRenderShader->getVBOVertices());
-	renderer->bindTextureCoordinatesBufferObject(contextIdx, frameBufferRenderShader->getVBOTextureCoordinates());
+	rendererBackend->bindVerticesBufferObject(contextIdx, frameBufferRenderShader->getVBOVertices());
+	rendererBackend->bindTextureCoordinatesBufferObject(contextIdx, frameBufferRenderShader->getVBOTextureCoordinates());
 
 	// draw
-	renderer->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
+	rendererBackend->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
 
 	// unbind buffers
-	renderer->unbindBufferObjects(contextIdx);
+	rendererBackend->unbindBufferObjects(contextIdx);
 
 	//
 	//
-	renderer->setTextureUnit(contextIdx, 0);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, 1);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, 2);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	renderer->setTextureUnit(contextIdx, 3);
-	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, 0);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, 1);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, 2);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
+	rendererBackend->setTextureUnit(contextIdx, 3);
+	rendererBackend->bindTexture(contextIdx, rendererBackend->ID_NONE);
 
 	// unset
-	renderer->enableCulling(contextIdx);
-	renderer->enableDepthBufferTest();
-	renderer->enableDepthBufferWriting();
+	rendererBackend->enableCulling(contextIdx);
+	rendererBackend->enableDepthBufferTest();
+	rendererBackend->enableDepthBufferWriting();
 }

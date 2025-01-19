@@ -15,7 +15,7 @@
 using std::vector;
 using std::unique_ptr;
 
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::Engine;
@@ -35,7 +35,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 private:
 	enum ShadowMapping_RunState {NONE, CREATE, RENDER};
 
-	Renderer* renderer { nullptr };
+	RendererBackend* rendererBackend { nullptr };
 	EntityRenderer* entityRenderer { nullptr };
 
 	Matrix4x4 shadowTransformMatrix;
@@ -55,10 +55,10 @@ public:
 	/**
 	 * Constructor
 	 * @param engine engine
-	 * @param renderer renderer
+	 * @param rendererBackend renderer backend
 	 * @param entityRenderer entityRenderer
 	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* entityRenderer);
+	ShadowMapping(Engine* engine, RendererBackend* rendererBackend, EntityRenderer* entityRenderer);
 
 	/**
 	 * Destructor

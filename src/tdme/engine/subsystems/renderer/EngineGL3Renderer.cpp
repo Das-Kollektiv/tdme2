@@ -196,11 +196,11 @@ void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
 		Engine::currentEngine->shadowMapping->updateShaderParameters(contextIdx);
 }
 
-// end point for engine to create renderer
+// end point for engine to create renderer backend
 extern "C" EngineGL3Renderer* createInstance()
 {
 	if (EngineGL3Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::printLine("EngineGL3Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineGL3Renderer::createInstance(): Engine and rendererBackend version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
 	Console::printLine("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");

@@ -13,7 +13,7 @@ using tdme::engine::Entity;
 using tdme::engine::Object;
 
 /**
- * Entity renderer parameters
+ * Entity rendererBackend parameters
  * @author Andreas Drewke
  */
 struct tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters final {

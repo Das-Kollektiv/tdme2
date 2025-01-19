@@ -107,8 +107,8 @@ const string GL3Renderer::getVendor() {
 }
 
 const string GL3Renderer::getRenderer() {
-	auto renderer = (char*)glGetString(GL_RENDERER);
-	return string(renderer) + " [GL3+/CORE]";
+	auto rendererBackend = (char*)glGetString(GL_RENDERER);
+	return string(rendererBackend) + " [GL3+/CORE]";
 }
 
 const string GL3Renderer::getShaderVersion()
@@ -1412,7 +1412,7 @@ ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t
 	return pixelBuffer;
 }
 
-void GL3Renderer::initGuiMode()
+void GL3Renderer::initGUIMode()
 {
 	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
@@ -1424,7 +1424,7 @@ void GL3Renderer::initGuiMode()
 	glGetError();
 }
 
-void GL3Renderer::doneGuiMode()
+void GL3Renderer::doneGUIMode()
 {
 	glGetError();
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
@@ -1582,7 +1582,7 @@ void GL3Renderer::setVSync(bool vSync) {
 	// no op
 }
 
-const Renderer::Renderer_Statistics GL3Renderer::getStatistics() {
+const RendererBackend::Renderer_Statistics GL3Renderer::getStatistics() {
 	auto stats = statistics;
 	statistics.time = Time::getCurrentMillis();
 	statistics.memoryUsageGPU = -1LL;
