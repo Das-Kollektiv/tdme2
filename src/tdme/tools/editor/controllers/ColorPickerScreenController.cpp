@@ -5,18 +5,18 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/events/GUIFocusListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/events/GUIFocusListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUIStyledTextNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/ColorPickerImageController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -26,7 +26,7 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Hex.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -35,19 +35,19 @@ using std::unique_ptr;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIFocusListener;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListener;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::events::GUIChangeListener;
+using agui::gui::events::GUIFocusListener;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIStyledTextNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::tools::editor::controllers::ColorPickerImageController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -57,7 +57,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Hex;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ColorPickerScreenController::ColorPickerScreenController(PopUps* popUps): popUps(popUps)
@@ -207,8 +207,8 @@ void ColorPickerScreenController::updateColor() {
 	blueInput->getController()->setValue(MutableString((int)(color.getBlue() * 255.0f)));
 	alphaInput->getController()->setValue(MutableString((int)(color.getAlpha() * 255.0f)));
 	brightnessSlider->getController()->setValue(MutableString((color.getRed() + color.getGreen() + color.getBlue()) / 3.0f));
-	colorOld->setEffectColorMul(initialColor);
-	colorNew->setEffectColorMul(color);
+	colorOld->setEffectColorMul(initialColor.toGUIColor());
+	colorNew->setEffectColorMul(color.toGUIColor());
 }
 
 void ColorPickerScreenController::updateColorHex() {

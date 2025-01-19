@@ -59,8 +59,11 @@ function: main()
 		$minitScriptDefinitions = ""
 		$yannetLdFlags = ""
 		$yannetDefinitions = ""
+		$aguiIncludes = "-Iext/a-gui/src"
+		$aguiLdFlags = "-Llib -lminitscript -ltdme-ext"
+		$aguiDefinitions = ""
 		$tdmeIncludes = ""
-		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext"
+		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext -lagui"
 		$tdmeDefinitions = ""
 		$tdmeRendererDefinitions = ""
 		$tdmeRendererLdFlags = "-Llib -ltdme"
@@ -81,6 +84,7 @@ function: main()
 			]
 			$minitScriptLdFlags = "-L/usr/lib -ldl -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -ldl -lexecinfo"
+			$aguiLdFlags = $aguiLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "Haiku")
@@ -121,6 +125,7 @@ function: main()
 			]
 			$minitScriptLdFlags = "-L/usr/lib -lexecinfo"
 			$yannetLdFlags = "-L/usr/lib -lexecinfo"
+			$aguiLdFlags = $aguiLdFlags + " " + "-L/usr/lib -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -lexecinfo"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "OpenBSD")
@@ -139,11 +144,16 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
+			$aguiLdFlags = ""
+			$aguiLdFlags = $aguiLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/opengl32.lib" + "\""
+			$aguiLdFlags = $aguiLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
+			$aguiLdFlags = $aguiLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
 			$tdmeIncludes = "/I \"ext/fbx/win64/include\""
 			$tdmeLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
 			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/OpenGL32.Lib\""
 			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
@@ -154,6 +164,7 @@ function: main()
 			$minitScriptLdFlags = ""
 			$minitScriptDefinitions = "/D MINITSCRIPT_DLL_EXPORT"
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
+			$aguiDefinitions = "/D MINITSCRIPT_DLL_IMPORT"
 			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_EXPORT"
 			$glfwDefinitions = "/D GLFW_DLL"
 			$executableDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
@@ -172,6 +183,7 @@ function: main()
 			]
 			$minitScriptLdFlags = "-lws2_32"
 			$yannetLdFlags = "-lws2_32"
+			$aguiLdFlags = $aguiLdFlags + " " + "-lws2_32 -lopengl32 -luser32 -dbghelp"
 			$tdmeLdFlags = "-lws2_32"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 		end
@@ -464,6 +476,170 @@ function: main()
 			],
 			false
 		)
+
+		script.call(
+			$buildLibrary,
+			"libagui",
+			[
+				"glfw3",
+				"openal",
+				"freetype2",
+				"libssl",
+				"libcrypto"
+			],
+			$glfwDefinitions + " " + $aguiDefinitions,
+			"-Isrc -Iext -I. -Iext/cpp-spline/src -Iext/zlib -Iext/minitscript/src" + " " + $aguiIncludes,
+			$aguiLdFlags,
+			[
+				"ext/a-gui/src/agui/application/Application.cpp",
+				"ext/a-gui/src/agui/audio/AudioBufferManager.cpp",
+				"ext/a-gui/src/agui/audio/Audio.cpp",
+				"ext/a-gui/src/agui/audio/AudioStream.cpp",
+				"ext/a-gui/src/agui/audio/decoder/AudioDecoderException.cpp",
+				"ext/a-gui/src/agui/audio/decoder/VorbisDecoder.cpp",
+				"ext/a-gui/src/agui/audio/PacketAudioStream.cpp",
+				"ext/a-gui/src/agui/audio/Sound.cpp",
+				"ext/a-gui/src/agui/audio/VorbisAudioStream.cpp",
+				"ext/a-gui/src/agui/gui/effects/GUIColorEffect.cpp",
+				"ext/a-gui/src/agui/gui/effects/GUIEffect.cpp",
+				"ext/a-gui/src/agui/gui/effects/GUIPositionEffect.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIButtonController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIButton.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUICheckboxController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUICheckbox.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIContextMenuController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIContextMenu.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIContextMenuItemController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIContextMenuItem.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIDropDownController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIDropDown.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIDropDownOptionController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIDropDownOption.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIGridController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIGrid.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIGridItemController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIGridItem.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIImageButton.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIInputController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIInput.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIKnobController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIKnob.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuHeaderController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuHeader.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuHeaderItemController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuHeaderItem.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuItemController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuItem.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMenuSeparator.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMoveableController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIMoveable.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIProgressBarController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIProgressBar.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIRadioButtonController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIRadioButton.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIScrollAreaController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIScrollArea.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBoxController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBox.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBoxOptionController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBoxOption.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBoxParentOptionController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectBoxParentOption.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectorHController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectorH.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectorHOptionController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISelectorHOption.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISliderHController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISliderH.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISliderVController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUISliderV.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIStyledInputController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUIStyledInput.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabContentController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabContent.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITab.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabsContent.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabsController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabs.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabsHeaderController.cpp",
+				"ext/a-gui/src/agui/gui/elements/GUITabsHeader.cpp",
+				"ext/a-gui/src/agui/gui/fileio/BC7TextureReader.cpp",
+				"ext/a-gui/src/agui/gui/fileio/BC7TextureWriter.cpp",
+				"ext/a-gui/src/agui/gui/fileio/PNGTextureReader.cpp",
+				"ext/a-gui/src/agui/gui/fileio/PNGTextureWriter.cpp",
+				"ext/a-gui/src/agui/gui/fileio/TextureReader.cpp",
+				"ext/a-gui/src/agui/gui/GUI.cpp",
+				"ext/a-gui/src/agui/gui/GUIParser.cpp",
+				"ext/a-gui/src/agui/gui/GUIParserException.cpp",
+				"ext/a-gui/src/agui/gui/GUIVersion.cpp",
+				"ext/a-gui/src/agui/gui/misc/GUIColorTextureCanvas.cpp",
+				"ext/a-gui/src/agui/gui/misc/GUIDynamicColorTexture.cpp",
+				"ext/a-gui/src/agui/gui/misc/GUITiming.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIColor.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIElementController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIElementIgnoreEventsController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIElementNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIGradientNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIHorizontalScrollbarInternalController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIImageNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIInputInternalController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIInputInternalNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUILayerNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUILayoutNode_Alignment.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUILayoutNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINode_AlignmentHorizontal.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINode_AlignmentVertical.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINodeConditions.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINode_Flow.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIPanelNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIParentNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIParentNode_Overflow.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIScreenNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUISpaceNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIStyledTextNodeController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIStyledTextNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUITableCellNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUITableNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUITableRowNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUITextNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUITextureBaseNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIVerticalScrollbarInternalController.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIVerticalScrollbarInternalNode.cpp",
+				"ext/a-gui/src/agui/gui/nodes/GUIVideoNode.cpp",
+				"ext/a-gui/src/agui/gui/renderer/ApplicationGL3Renderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GL3Renderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GUIFont.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GUIRendererBackend.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GUIRenderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GUIShader.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GUIShaderParameters.cpp",
+				"ext/a-gui/src/agui/gui/scripting/GUIMinitScript.cpp",
+				"ext/a-gui/src/agui/gui/textures/GUITexture.cpp",
+				"ext/a-gui/src/agui/gui/textures/GUITextureManager.cpp",
+				"ext/a-gui/src/agui/gui/vbos/GUIVBOManager.cpp",
+				"ext/a-gui/src/agui/os/filesystem/FileSystem.cpp",
+				"ext/a-gui/src/agui/os/filesystem/FileSystemException.cpp",
+				"ext/a-gui/src/agui/os/filesystem/StandardFileSystem.cpp",
+				"ext/a-gui/src/agui/os/threading/Barrier.cpp",
+				"ext/a-gui/src/agui/utilities/Console.cpp",
+				"ext/a-gui/src/agui/utilities/ExceptionBase.cpp",
+				"ext/a-gui/src/agui/utilities/Float.cpp",
+				"ext/a-gui/src/agui/utilities/Hex.cpp",
+				"ext/a-gui/src/agui/utilities/Integer.cpp",
+				"ext/a-gui/src/agui/utilities/Properties.cpp",
+				"ext/a-gui/src/agui/utilities/RTTI.cpp",
+				"ext/a-gui/src/agui/utilities/StringTokenizer.cpp",
+				"ext/a-gui/src/agui/utilities/StringTools.cpp",
+				"ext/a-gui/src/agui/utilities/TextureAtlas.cpp",
+				"ext/a-gui/src/agui/video/decoder/MPEG1Decoder.cpp",
+				"ext/a-gui/src/agui/video/decoder/VideoDecoderException.cpp"
+			],
+			false
+		)
 	
 		script.call(
 			$buildLibrary,
@@ -476,7 +652,7 @@ function: main()
 				"libcrypto"
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeDefinitions,
-			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src" + " " + $tdmeIncludes,
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src" + " " + $tdmeIncludes,
 			$tdmeLdFlags,
 			[
 				"src/tdme/audio/Audio.cpp",
@@ -682,111 +858,6 @@ function: main()
 				"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp",
 				"src/tdme/engine/subsystems/skinning/SkinningShader.cpp",
 				"src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp",
-				"src/tdme/gui/GUI.cpp",
-				"src/tdme/gui/GUIParser.cpp",
-				"src/tdme/gui/GUIParserException.cpp",
-				"src/tdme/gui/effects/GUIColorEffect.cpp",
-				"src/tdme/gui/effects/GUIEffect.cpp",
-				"src/tdme/gui/effects/GUIPositionEffect.cpp",
-				"src/tdme/gui/elements/GUIButton.cpp",
-				"src/tdme/gui/elements/GUIButtonController.cpp",
-				"src/tdme/gui/elements/GUICheckbox.cpp",
-				"src/tdme/gui/elements/GUICheckboxController.cpp",
-				"src/tdme/gui/elements/GUIContextMenu.cpp",
-				"src/tdme/gui/elements/GUIContextMenuController.cpp",
-				"src/tdme/gui/elements/GUIContextMenuItem.cpp",
-				"src/tdme/gui/elements/GUIContextMenuItemController.cpp",
-				"src/tdme/gui/elements/GUIDropDown.cpp",
-				"src/tdme/gui/elements/GUIDropDownController.cpp",
-				"src/tdme/gui/elements/GUIDropDownOption.cpp",
-				"src/tdme/gui/elements/GUIDropDownOptionController.cpp",
-				"src/tdme/gui/elements/GUIGrid.cpp",
-				"src/tdme/gui/elements/GUIGridController.cpp",
-				"src/tdme/gui/elements/GUIGridItem.cpp",
-				"src/tdme/gui/elements/GUIGridItemController.cpp",
-				"src/tdme/gui/elements/GUIImageButton.cpp",
-				"src/tdme/gui/elements/GUIInput.cpp",
-				"src/tdme/gui/elements/GUIInputController.cpp",
-				"src/tdme/gui/elements/GUIKnob.cpp",
-				"src/tdme/gui/elements/GUIKnobController.cpp",
-				"src/tdme/gui/elements/GUIMenuHeader.cpp",
-				"src/tdme/gui/elements/GUIMenuHeaderController.cpp",
-				"src/tdme/gui/elements/GUIMenuHeaderItem.cpp",
-				"src/tdme/gui/elements/GUIMenuHeaderItemController.cpp",
-				"src/tdme/gui/elements/GUIMenuItem.cpp",
-				"src/tdme/gui/elements/GUIMenuItemController.cpp",
-				"src/tdme/gui/elements/GUIMenuSeparator.cpp",
-				"src/tdme/gui/elements/GUIMoveable.cpp",
-				"src/tdme/gui/elements/GUIMoveableController.cpp",
-				"src/tdme/gui/elements/GUIProgressBar.cpp",
-				"src/tdme/gui/elements/GUIProgressBarController.cpp",
-				"src/tdme/gui/elements/GUIRadioButton.cpp",
-				"src/tdme/gui/elements/GUIRadioButtonController.cpp",
-				"src/tdme/gui/elements/GUISelectorH.cpp",
-				"src/tdme/gui/elements/GUISelectorHController.cpp",
-				"src/tdme/gui/elements/GUISelectorHOption.cpp",
-				"src/tdme/gui/elements/GUISelectorHOptionController.cpp",
-				"src/tdme/gui/elements/GUIScrollArea.cpp",
-				"src/tdme/gui/elements/GUIScrollAreaController.cpp",
-				"src/tdme/gui/elements/GUISelectBox.cpp",
-				"src/tdme/gui/elements/GUISelectBoxController.cpp",
-				"src/tdme/gui/elements/GUISelectBoxOption.cpp",
-				"src/tdme/gui/elements/GUISelectBoxOptionController.cpp",
-				"src/tdme/gui/elements/GUISelectBoxParentOption.cpp",
-				"src/tdme/gui/elements/GUISelectBoxParentOptionController.cpp",
-				"src/tdme/gui/elements/GUISliderH.cpp",
-				"src/tdme/gui/elements/GUISliderHController.cpp",
-				"src/tdme/gui/elements/GUISliderV.cpp",
-				"src/tdme/gui/elements/GUISliderVController.cpp",
-				"src/tdme/gui/elements/GUIStyledInput.cpp",
-				"src/tdme/gui/elements/GUIStyledInputController.cpp",
-				"src/tdme/gui/elements/GUITab.cpp",
-				"src/tdme/gui/elements/GUITabContent.cpp",
-				"src/tdme/gui/elements/GUITabContentController.cpp",
-				"src/tdme/gui/elements/GUITabController.cpp",
-				"src/tdme/gui/elements/GUITabs.cpp",
-				"src/tdme/gui/elements/GUITabsContent.cpp",
-				"src/tdme/gui/elements/GUITabsController.cpp",
-				"src/tdme/gui/elements/GUITabsHeader.cpp",
-				"src/tdme/gui/elements/GUITabsHeaderController.cpp",
-				"src/tdme/gui/nodes/GUIColor.cpp",
-				"src/tdme/gui/nodes/GUIElementController.cpp",
-				"src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp",
-				"src/tdme/gui/nodes/GUIElementNode.cpp",
-				"src/tdme/gui/nodes/GUIGradientNode.cpp",
-				"src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp",
-				"src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp",
-				"src/tdme/gui/nodes/GUIImageNode.cpp",
-				"src/tdme/gui/nodes/GUIInputInternalController.cpp",
-				"src/tdme/gui/nodes/GUIInputInternalNode.cpp",
-				"src/tdme/gui/nodes/GUILayerNode.cpp",
-				"src/tdme/gui/nodes/GUILayoutNode.cpp",
-				"src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp",
-				"src/tdme/gui/nodes/GUINode.cpp",
-				"src/tdme/gui/nodes/GUINodeConditions.cpp",
-				"src/tdme/gui/nodes/GUINode_AlignmentHorizontal.cpp",
-				"src/tdme/gui/nodes/GUINode_AlignmentVertical.cpp",
-				"src/tdme/gui/nodes/GUINode_Flow.cpp",
-				"src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp",
-				"src/tdme/gui/nodes/GUIPanelNode.cpp",
-				"src/tdme/gui/nodes/GUIParentNode.cpp",
-				"src/tdme/gui/nodes/GUIParentNode_Overflow.cpp",
-				"src/tdme/gui/nodes/GUIScreenNode.cpp",
-				"src/tdme/gui/nodes/GUISpaceNode.cpp",
-				"src/tdme/gui/nodes/GUIStyledTextNode.cpp",
-				"src/tdme/gui/nodes/GUIStyledTextNodeController.cpp",
-				"src/tdme/gui/nodes/GUITableNode.cpp",
-				"src/tdme/gui/nodes/GUITableCellNode.cpp",
-				"src/tdme/gui/nodes/GUITableRowNode.cpp",
-				"src/tdme/gui/nodes/GUITextNode.cpp",
-				"src/tdme/gui/nodes/GUITextureBaseNode.cpp",
-				"src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp",
-				"src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp",
-				"src/tdme/gui/nodes/GUIVideoNode.cpp",
-				"src/tdme/gui/renderer/GUIFont.cpp",
-				"src/tdme/gui/renderer/GUIRenderer.cpp",
-				"src/tdme/gui/renderer/GUIShader.cpp",
-				"src/tdme/gui/scripting/GUIMinitScript.cpp",
 				"src/tdme/minitscript/EngineMinitScript.cpp",
 				"src/tdme/minitscript/MinitScriptMatrix3x3.cpp",
 				"src/tdme/minitscript/MinitScriptMatrix4x4.cpp",

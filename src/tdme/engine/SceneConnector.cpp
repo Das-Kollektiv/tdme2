@@ -80,8 +80,6 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
-#include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
@@ -163,8 +161,6 @@ using tdme::math::Vector4;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
-using tdme::utilities::MutableString;
-using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 using tdme::utilities::Terrain;
 

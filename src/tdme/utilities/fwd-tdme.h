@@ -18,7 +18,6 @@ namespace utilities {
 	class Hex;
 	class IntBuffer;
 	class Integer;
-	class MutableString;
 	class ModelTools;
 	class PathFinding;
 	class PathFindingNode;

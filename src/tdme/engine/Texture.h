@@ -8,6 +8,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Reference.h>
+#include <agui/gui/textures/GUITexture.h>
 
 using std::string;
 using std::vector;
@@ -15,6 +16,7 @@ using std::vector;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Reference;
+using agui::gui::textures::GUITexture;
 
 /**
  * Texture entity
@@ -426,6 +428,11 @@ public:
 
 	// overridden methods
 	virtual void onDelete() override;
+
+	/**
+	 * @returns gui texture
+	 */
+	GUITexture* toGUITexture();
 
 private:
 	string id;

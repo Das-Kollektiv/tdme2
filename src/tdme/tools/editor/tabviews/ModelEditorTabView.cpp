@@ -23,8 +23,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -73,8 +73,8 @@ using tdme::engine::ModelUtilities;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::engine::Timing;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

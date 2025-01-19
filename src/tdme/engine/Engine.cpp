@@ -66,10 +66,10 @@
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/renderer/GUIShader.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/renderer/GUIRenderer.h>
+#include <agui/gui/renderer/GUIShader.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
@@ -151,10 +151,10 @@ using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
-using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::renderer::GUIShader;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::renderer::GUIRenderer;
+using agui::gui::renderer::GUIShader;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -304,7 +304,9 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	auto offScreenEngine = new Engine();
 	offScreenEngine->initialized = true;
 	// create GUI
-	offScreenEngine->gui = make_unique<GUI>(offScreenEngine, guiRenderer.get());
+	//	TODO: GUIApplication: xxx
+	//	TODO: rendererBackend: xxx
+	offScreenEngine->gui = make_unique<GUI>(nullptr, nullptr, width, height);
 	// create entity renderer
 	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, rendererBackend);
 	offScreenEngine->entityRenderer->initialize();
@@ -792,9 +794,12 @@ void Engine::initialize()
 	GUIParser::initialize();
 
 	// create GUI
-	guiRenderer = make_unique<GUIRenderer>(rendererBackend);
+	//	TODO: rendererBackend: xxx
+	guiRenderer = make_unique<GUIRenderer>(nullptr);
 	guiRenderer->initialize();
-	gui = make_unique<GUI>(this, guiRenderer.get());
+	//	TODO: guiApplication: xxx
+	//	TODO: rendererBackend: xxx
+	gui = make_unique<GUI>(nullptr, nullptr, width, height);
 	gui->initialize();
 
 	// create camera
@@ -851,7 +856,8 @@ void Engine::initialize()
 	linesShader->initialize();
 
 	// create gui shader
-	guiShader = make_unique<GUIShader>(rendererBackend);
+	//	TODO: xxx: rendererBackend
+	guiShader = make_unique<GUIShader>(nullptr);
 	guiShader->initialize();
 
 	// create post processing shader

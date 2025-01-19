@@ -10,14 +10,14 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -34,7 +34,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
@@ -46,13 +46,13 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUIParser;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -70,7 +70,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, PrototypePhysicsSubView* physicsView)
@@ -295,7 +295,7 @@ void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype
 				case ShaderParameter::TYPE_COLOR4:
 					{
 						auto color4 = parameter.getColor4Value();
-						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
 					}
 					break;
 				default:

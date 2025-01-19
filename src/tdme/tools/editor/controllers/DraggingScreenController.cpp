@@ -5,19 +5,19 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/elements/GUIMoveableController.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/elements/GUIMoveableController.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINode_RequestedConstraints.h>
+#include <agui/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::tools::editor::controllers::DraggingScreenController;
@@ -28,20 +28,20 @@ using std::unordered_map;
 using std::unique_ptr;
 
 using tdme::engine::Engine;
-using tdme::gui::elements::GUIMoveableController;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
-using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUIParser;
+using agui::gui::elements::GUIMoveableController;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINode_RequestedConstraints;
+using agui::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 DraggingScreenController::DraggingScreenController()

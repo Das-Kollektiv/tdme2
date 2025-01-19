@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/GUIParser.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <agui/gui/GUIParser.h>
+#include <agui/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -24,8 +24,8 @@ using std::to_string;
 
 using tdme::tools::editor::misc::TextFormatter;
 
-using tdme::gui::GUIParser;
-using tdme::gui::nodes::GUIStyledTextNode;
+using agui::gui::GUIParser;
+using agui::gui::nodes::GUIStyledTextNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;

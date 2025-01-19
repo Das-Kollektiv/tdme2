@@ -3,19 +3,19 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINodeController.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/nodes/GUINodeController.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 
 using std::string;
 
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 /**
  * Color picker image controller controller

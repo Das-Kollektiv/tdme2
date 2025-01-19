@@ -7,8 +7,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -20,9 +20,9 @@ using std::vector;
 using std::unique_ptr;
 
 using tdme::engine::Engine;
-using tdme::gui::events::GUIInputEventHandler;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIInputEventHandler;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;

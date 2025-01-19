@@ -7,16 +7,16 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 
 using std::array;
 using std::unique_ptr;
@@ -24,15 +24,15 @@ using std::unique_ptr;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 /**
  * Prototype display sub screen controller

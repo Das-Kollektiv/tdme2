@@ -4,8 +4,8 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUIColor.h>
+#include <agui/gui/nodes/fwd-agui.h>
+#include <agui/gui/nodes/GUIColor.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -13,8 +13,8 @@
 using std::string;
 using std::vector;
 
-using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIStyledTextNode;
+using agui::gui::nodes::GUIColor;
+using agui::gui::nodes::GUIStyledTextNode;
 
 using tinyxml::TiXmlElement;
 

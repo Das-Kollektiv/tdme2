@@ -17,7 +17,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
-#include <tdme/gui/renderer/GUIShader.h>
+#include <agui/gui/renderer/GUIShader.h>
 
 using tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 
@@ -29,7 +29,7 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Version;
-using tdme::gui::renderer::GUIShader;
+using agui::gui::renderer::GUIShader;
 
 EngineGLES2Renderer::EngineGLES2Renderer()
 {

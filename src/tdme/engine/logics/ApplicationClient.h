@@ -7,8 +7,8 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/physics/World.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -20,8 +20,8 @@ using std::unique_ptr;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::physics::World;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 

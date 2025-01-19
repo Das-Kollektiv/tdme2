@@ -8,14 +8,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <agui/utilities/fwd-agui.h>
 
 using std::array;
 using std::map;
@@ -26,14 +27,14 @@ using std::vector;
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 /**
  * Prototype base sub screen controller

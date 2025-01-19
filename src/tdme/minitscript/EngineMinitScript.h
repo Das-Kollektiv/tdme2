@@ -83,7 +83,7 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	static EngineMinitScript* loadScript(const string& pathName, const string& fileName);
+	static MinitScript* loadScript(const string& pathName, const string& fileName);
 
 	/**
 	 * Public constructor

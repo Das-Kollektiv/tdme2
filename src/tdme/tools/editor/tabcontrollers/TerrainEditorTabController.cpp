@@ -13,17 +13,17 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -43,7 +43,7 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
@@ -64,16 +64,16 @@ using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -93,7 +93,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 using tdme::utilities::Terrain;
 
@@ -710,7 +710,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 			currentTerrainBrushTexture = nullptr;
 			currentTerrainBrushTextureFileName.clear();
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 		} else
 		if (node->getId() == "terrainbrush_texture_browseto") {
@@ -952,7 +952,7 @@ void TerrainEditorTabController::setTerrainBrushDetails() {
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_terrainbrush"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture->toGUITexture());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 	} catch (Exception& exception) {
 		Console::printLine("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: " + string(exception.what()));
@@ -1603,7 +1603,7 @@ void TerrainEditorTabController::setTerrainBrushTexture(const string& fileName) 
 			false
 		);
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture->toGUITexture());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 	} catch (Exception& exception) {
 		Console::printLine("TerrainEditorTabController::setTerrainBrushTexture(): An error occurred: " + string(exception.what()));

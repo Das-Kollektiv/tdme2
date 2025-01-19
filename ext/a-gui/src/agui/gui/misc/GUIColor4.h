@@ -1,0 +1,473 @@
+#pragma once
+
+#include <array>
+
+#include <agui/agui.h>
+#include <agui/gui/misc/fwd-agui.h>
+#include <agui/math/Math.h>
+
+using std::array;
+
+// namespaces
+namespace agui {
+namespace gui {
+namespace misc {
+	using ::agui::math::Math;
+}
+}
+}
+
+/**
+ * Color 4 definition class
+ * @author Andreas Drewke
+ */
+class agui::gui::misc::GUIColor4
+{
+protected:
+	array<float, 4> data { 0.0f, 0.0f, 0.0f, 1.0f };
+
+public:
+	/**
+	 * Public constructor
+	 */
+	inline GUIColor4() {
+	}
+
+	/**
+	 * Public constructor
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @param a alpha component
+	 */
+	inline GUIColor4(float r, float g, float b, float a) {
+		data[0] = r;
+		data[1] = g;
+		data[2] = b;
+		data[3] = a;
+	}
+
+	/**
+	 * Public constructor
+	 * @param color color as array
+	 */
+	inline GUIColor4(const array<float, 4>& color) {
+		this->data = color;
+	}
+
+	/**
+	 * Public constructor
+	 * @param color color
+	 */
+	inline GUIColor4(const GUIColor4& color) {
+		data = color.data;
+	}
+
+	/**
+	 * Sets this color by its components
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @param a alpha component
+	 */
+	inline void set(float r, float g, float b, float a) {
+		data[0] = r;
+		data[1] = g;
+		data[2] = b;
+		data[3] = a;
+	}
+
+	/**
+	 * Sets this color by array
+	 * @param color color as array
+	 */
+	inline void set(const array<float, 4>& color) {
+		this->data = color;
+	}
+
+	/**
+	 * Sets this color by given color
+	 * @param color color
+	 */
+	inline void set(const GUIColor4& color) {
+		data = color.data;
+	}
+
+	/**
+	 * @return red component
+	 */
+	inline float getRed() const {
+		return data[0];
+	}
+
+	/**
+	 * Sets red component
+	 * @param red red component
+	 */
+	inline void setRed(float red) {
+		data[0] = red;
+	}
+
+	/**
+	 * @return green component
+	 */
+	inline float getGreen() const {
+		return data[1];
+	}
+
+	/**
+	 * Sets green component
+	 * @param green green component
+	 */
+	inline void setGreen(float green) {
+		data[1] = green;
+	}
+
+	/**
+	 * @return blue component
+	 */
+	inline float getBlue() const {
+		return data[2];
+	}
+
+	/**
+	 * Sets blue component
+	 * @param blue blue component
+	 */
+	inline void setBlue(float blue) {
+		data[2] = blue;
+	}
+
+	/**
+	 * @return alpha component
+	 */
+	inline float getAlpha() const {
+		return data[3];
+	}
+
+	/**
+	 * Sets alpha component
+	 * @param alpha alpha component
+	 */
+	inline void setAlpha(float alpha) {
+		data[3] = alpha;
+	}
+
+	/**
+	 * Adds a scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& add(float scalar) {
+		data[0] += scalar;
+		data[1] += scalar;
+		data[2] += scalar;
+		data[3] += scalar;
+		return *this;
+	}
+
+	/**
+	 * Adds a color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& add(const GUIColor4& color) {
+		data[0] += color.data[0];
+		data[1] += color.data[1];
+		data[2] += color.data[2];
+		data[3] += color.data[3];
+		return *this;
+	}
+
+	/**
+	 * Subtracts a scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& sub(float scalar) {
+		data[0] -= scalar;
+		data[1] -= scalar;
+		data[2] -= scalar;
+		data[3] -= scalar;
+		return *this;
+	}
+
+	/**
+	 * Subtracts a color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& sub(const GUIColor4& color) {
+		data[0] -= color.data[0];
+		data[1] -= color.data[1];
+		data[2] -= color.data[2];
+		data[3] -= color.data[3];
+		return *this;
+	}
+
+	/**
+	 * Scales this color
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& scale(float scalar) {
+		data[0] *= scalar;
+		data[1] *= scalar;
+		data[2] *= scalar;
+		data[3] *= scalar;
+		return *this;
+	}
+
+	/**
+	 * Scales this color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& scale(const GUIColor4& color) {
+		data[0] *= color.data[0];
+		data[1] *= color.data[1];
+		data[2] *= color.data[2];
+		data[3] *= color.data[3];
+		return *this;
+	}
+
+	/**
+	 * Compares this color with given color
+	 * @param color color
+	 * @param tolerance tolerance per color component
+	 * @return equality
+	 */
+	inline bool equals(const GUIColor4& color, float tolerance = Math::EPSILON) const {
+		return (this == &color) ||
+			(
+				Math::abs(data[0] - color.data[0]) < tolerance &&
+				Math::abs(data[1] - color.data[1]) < tolerance &&
+				Math::abs(data[2] - color.data[2]) < tolerance &&
+				Math::abs(data[3] - color.data[3]) < tolerance
+			);
+	}
+
+	/**
+	 * Interpolates between a and b by 0f<=t<=1f linearly
+	 * @param a color a
+	 * @param b color b
+	 * @param t t
+	 * @return interpolated color
+	 */
+	inline static GUIColor4 interpolateLinear(const GUIColor4& a, const GUIColor4& b, float t) {
+		return GUIColor4(
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
+			(b.data[2] * t) + ((1.0f - t) * a.data[2]),
+			(b.data[3] * t) + ((1.0f - t) * a.data[3])
+		);
+	}
+
+	/**
+	 * @return color as array
+	 */
+	inline const array<float, 4>& getArray() const {
+		return data;
+	}
+
+	/**
+	 * Clones this color
+	 * @return new cloned color
+	 */
+	inline GUIColor4 clone() const {
+		return GUIColor4(*this);
+	}
+
+	/**
+	 * Array access operator
+	 * @param i index
+	 * @return color component
+	 */
+	inline float& operator[](int i) {
+		return data[i];
+	}
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return color component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
+
+	/**
+	 * Operator + scalar
+	 * @param scalar scalar
+	 * @return new color (this + scalar)
+	 */
+	inline GUIColor4 operator +(const float scalar) const {
+		auto r = this->clone().add(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator + color
+	 * @param color color
+	 * @return new color (this + color)
+	 */
+	inline GUIColor4 operator +(const GUIColor4& color) const {
+		auto r = this->clone().add(color);
+		return r;
+	}
+
+	/**
+	 * Operator - scalar
+	 * @param scalar scalar
+	 * @return new color (this - scalar)
+	 */
+	inline GUIColor4 operator -(const float scalar) const {
+		auto r = this->clone().sub(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator - color
+	 * @param color color
+	 * @return new color (this - color)
+	 */
+	inline GUIColor4 operator -(const GUIColor4& color) const {
+		auto r = this->clone().sub(color);
+		return r;
+	}
+
+	/**
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new color (this * scalar)
+	 */
+	inline GUIColor4 operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator * color
+	 * @param color color
+	 * @return new color (this * color)
+	 */
+	inline GUIColor4 operator *(const GUIColor4& color) const {
+		auto r = this->clone().scale(color);
+		return r;
+	}
+
+	/**
+	 * Operator / scalar
+	 * @param scalar scalar
+	 * @return new color (this / scalar)
+	 */
+	inline GUIColor4 operator /(const float scalar) const {
+		auto vInverted = GUIColor4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator / color
+	 * @param color color
+	 * @return new color (this / color)
+	 */
+	inline GUIColor4 operator /(const GUIColor4& color) const {
+		auto vInverted = GUIColor4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator += scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& operator +=(const float scalar) {
+		return this->add(scalar);
+	}
+
+	/**
+	 * Operator += color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& operator +=(const GUIColor4& color) {
+		return this->add(color);
+	}
+
+	/**
+	 * Operator -= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& operator -=(const float scalar) {
+		return this->sub(scalar);
+	}
+
+	/**
+	 * Operator -= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& operator -=(const GUIColor4& color) {
+		return this->sub(color);
+	}
+
+	/**
+	 * Operator *= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& operator *=(const float scalar) {
+		return this->scale(scalar);
+	}
+
+	/**
+	 * Operator *= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& operator *=(const GUIColor4& color) {
+		return this->scale(color);
+	}
+
+	/**
+	 * Operator /= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline GUIColor4& operator /=(const float scalar) {
+		auto vInverted = GUIColor4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Operator /= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline GUIColor4& operator /=(const GUIColor4& color) {
+		auto vInverted = GUIColor4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param color color
+	 * @return equality
+	 */
+	inline bool operator ==(const GUIColor4& color) const {
+		return this->equals(color);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param color color
+	 * @return non equality
+	 */
+	inline bool operator !=(const GUIColor4& color) const {
+		return this->equals(color) == false;
+	}
+
+};

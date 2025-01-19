@@ -8,7 +8,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
-#include <tdme/gui/scripting/GUIMinitScript.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -33,7 +33,7 @@ using std::vector;
 using minitscript::minitscript::MinitScript;
 
 using tdme::engine::logics::LogicMinitScript;
-using tdme::gui::scripting::GUIMinitScript;
+using agui::gui::scripting::GUIMinitScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
@@ -68,7 +68,7 @@ void EngineMinitScript::initialize() {
 	MinitScriptVector4::initialize();
 }
 
-EngineMinitScript* EngineMinitScript::loadScript(const string& pathName, const string& fileName) {
+MinitScript* EngineMinitScript::loadScript(const string& pathName, const string& fileName) {
 	// we need to detect MinitScript variant
 	vector<string> scriptAsStringArray;
 	try {
@@ -117,7 +117,7 @@ EngineMinitScript* EngineMinitScript::loadScript(const string& pathName, const s
 	}
 
 	// load specific MinitScript
-	unique_ptr<EngineMinitScript> scriptInstance;
+	unique_ptr<MinitScript> scriptInstance;
 	if (logicMinitScript == true) {
 		scriptInstance = make_unique<LogicMinitScript>();
 		scriptInstance->parseScript(pathName, fileName);

@@ -7,8 +7,8 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -21,9 +21,9 @@ using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUIChangeListener;
+using agui::gui::events::GUIActionListener;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::events::GUIChangeListener;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::PopUps;

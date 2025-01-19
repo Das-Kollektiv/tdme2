@@ -3,25 +3,25 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUITooltipRequestListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUITooltipRequestListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <agui/utilities/fwd-agui.h>
 
 using std::string;
 
-using tdme::gui::events::GUITooltipRequestListener;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
+using agui::gui::events::GUITooltipRequestListener;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 /**
  * Progress bar screen controller

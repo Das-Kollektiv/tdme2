@@ -8,17 +8,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/events/GUITooltipRequestListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/events/GUITooltipRequestListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -27,7 +27,7 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -41,17 +41,17 @@ using std::vector;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUITooltipRequestListener;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListener;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::events::GUITooltipRequestListener;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -60,7 +60,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 

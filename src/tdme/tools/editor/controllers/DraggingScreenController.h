@@ -4,18 +4,18 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/GUIMoveListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/GUIMoveListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 using std::unique_ptr;
 
-using tdme::gui::events::GUIMoveListener;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIMoveListener;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::Action;
 

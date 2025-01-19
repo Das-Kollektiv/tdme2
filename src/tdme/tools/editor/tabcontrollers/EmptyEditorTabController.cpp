@@ -5,12 +5,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
@@ -25,7 +25,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 
 using std::make_unique;
 using std::string;
@@ -34,11 +34,11 @@ using std::unique_ptr;
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
 using tdme::engine::prototype::Prototype;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
@@ -52,7 +52,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 EmptyEditorTabController::EmptyEditorTabController(EmptyEditorTabView* view)
 {

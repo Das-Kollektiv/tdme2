@@ -21,17 +21,18 @@
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/Texture.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -57,7 +58,7 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -83,15 +84,16 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUIParser;
+using tdme::engine::Texture;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -117,7 +119,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
@@ -801,13 +803,13 @@ void ModelEditorTabController::updateMaterialDetails() {
 							specularMaterialProperties->getSpecularTextureFileName()
 						);
 			//
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setTexture(specularMaterialProperties->getDiffuseTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setTexture(specularMaterialProperties->getDiffuseTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setTooltip(diffuseTextureFileName);
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(diffuseTransparencyTextureFileName);
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setTooltip(diffuseTransparencyTextureFileName);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTooltip(normalTextureFileName);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTooltip(specularTextureFileName);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->setValue(specularMaterialProperties->getShininess());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
@@ -860,13 +862,13 @@ void ModelEditorTabController::updateMaterialDetails() {
 					pbrMaterialProperties->getEmissiveTextureFileName()
 				);
 			//
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTooltip(baseColorTextureFileName);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTooltip(metallicRoughnessTextureFileName);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTooltip(normalTextureFileName);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissive_texture"))->setTexture(pbrMaterialProperties->getEmissiveTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissive_texture"))->setTexture(pbrMaterialProperties->getEmissiveTexture()->toGUITexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissive_texture"))->setTooltip(emissiveTextureFileName);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->setValue(pbrMaterialProperties->getMetallicFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->setValue(pbrMaterialProperties->getRoughnessFactor());
@@ -891,14 +893,14 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()).toGUIColor());
 
 		if (pbrMaterialProperties != nullptr) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()).toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()).toGUIColor());
 		}
 	} catch (Exception& exception) {
 		Console::printLine("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: " + string(exception.what()));
@@ -2225,8 +2227,8 @@ void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
 	if (prototypeLODLevel == nullptr) return;
 
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()).toGUIColor());
 	} catch (Exception& exception) {
 		Console::printLine("ModelEditorTabController::updateLODColorDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));

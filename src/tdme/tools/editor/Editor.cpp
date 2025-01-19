@@ -14,7 +14,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Version.h>
-#include <tdme/gui/GUI.h>
+#include <agui/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -38,7 +38,7 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
 using tdme::engine::SimplePartition;
 using tdme::engine::Version;
-using tdme::gui::GUI;
+using agui::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -149,7 +149,8 @@ void Editor::initialize()
 	Application::setVSyncEnabled(true);
 	Application::setLimitFPS(true);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	setInputEventHandler(engine->getGUI());
+	// TODO: implement me! xxx
+	// setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
 	setView((editorView = make_unique<EditorView>(popUps.get())).get());

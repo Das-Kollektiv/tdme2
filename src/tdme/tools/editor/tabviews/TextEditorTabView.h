@@ -6,8 +6,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/DynamicColorTexture.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
+#include <agui/gui/nodes/fwd-agui.h>
+#include <agui/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
@@ -25,10 +25,10 @@ using std::unordered_map;
 
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIMoveListener;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUIStyledTextNodeController;
+using agui::gui::events::GUIMoveListener;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIStyledTextNode;
+using agui::gui::nodes::GUIStyledTextNodeController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;

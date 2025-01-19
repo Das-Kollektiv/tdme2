@@ -3,23 +3,23 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/events/GUIContextMenuRequestListener.h>
-#include <tdme/gui/events/GUIFocusListener.h>
-#include <tdme/gui/events/GUITooltipRequestListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/events/GUIContextMenuRequestListener.h>
+#include <agui/gui/events/GUIFocusListener.h>
+#include <agui/gui/events/GUITooltipRequestListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 
 using std::string;
 
-using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIContextMenuRequestListener;
-using tdme::gui::events::GUIFocusListener;
-using tdme::gui::events::GUITooltipRequestListener;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIActionListener;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::events::GUIChangeListener;
+using agui::gui::events::GUIContextMenuRequestListener;
+using agui::gui::events::GUIFocusListener;
+using agui::gui::events::GUITooltipRequestListener;
+using agui::gui::nodes::GUIScreenNode;
 
 /**
  * Tab controller, which connects UI with logic

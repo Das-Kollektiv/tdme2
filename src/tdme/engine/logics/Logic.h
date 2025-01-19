@@ -6,8 +6,8 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/Time.h>
 
@@ -16,8 +16,8 @@ using std::vector;
 using tdme::engine::logics::Context;
 using tdme::engine::physics::World;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::Time;
 

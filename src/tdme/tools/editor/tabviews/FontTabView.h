@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/FontTabController.h>
@@ -19,7 +19,7 @@ using std::unique_ptr;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::FontTabController;
 using tdme::tools::editor::tabcontrollers::TabController;

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 #include <ext/tinyxml/tinyxml.h>

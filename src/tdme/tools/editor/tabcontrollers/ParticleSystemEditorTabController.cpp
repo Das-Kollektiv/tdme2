@@ -22,17 +22,17 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIColor.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -58,7 +58,7 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -85,14 +85,14 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIColor;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -118,7 +118,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSystemEditorTabView* view)
@@ -492,7 +492,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							bbpe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -529,7 +529,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							bbpe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -566,7 +566,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							ppe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppe->getColorStart());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppe->getColorStart().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -603,7 +603,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							ppe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppe->getColorEnd());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppe->getColorEnd().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -640,7 +640,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							spe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spe->getColorStart());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spe->getColorStart().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -677,7 +677,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							spe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spe->getColorEnd());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spe->getColorEnd().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -714,7 +714,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							cpe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorstart"))->setEffectColorMul(cpe->getColorStart());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorstart"))->setEffectColorMul(cpe->getColorStart().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -751,7 +751,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							cpe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorend"))->setEffectColorMul(cpe->getColorEnd());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorend"))->setEffectColorMul(cpe->getColorEnd().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -788,7 +788,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							rpe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpe->getColorStart());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpe->getColorStart().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -825,7 +825,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 							rpe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 							//
 							try {
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpe->getColorEnd());
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpe->getColorEnd().toGUIColor());
 							} catch (Exception& exception) {
 								Console::printLine("OnColorChangeAction::performAction(): An error occurred: " + string(exception.what()));
 								particleSystemEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -1310,8 +1310,8 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->setValue(MutableString(ppse->getPosition().getX()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->setValue(MutableString(ppse->getPosition().getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->setValue(MutableString(ppse->getPosition().getZ()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppse->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppse->getColorEnd());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppse->getColorStart().toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppse->getColorEnd().toGUIColor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->setValue(MutableString(ppse->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime() + ppse->getLifeTimeRnd())));
@@ -1344,8 +1344,8 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getX()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getZ()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart().toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd().toGUIColor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_count"))->getController()->setValue(MutableString(bbpe->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getLifeTime() + bbpe->getLifeTimeRnd())));
@@ -1376,8 +1376,8 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_radius"))->getController()->setValue(MutableString(cpse->getRadius()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_circle_colorstart"))->setEffectColorMul(cpse->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_circle_colorend"))->setEffectColorMul(cpse->getColorEnd());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_circle_colorstart"))->setEffectColorMul(cpse->getColorStart().toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_circle_colorend"))->setEffectColorMul(cpse->getColorEnd().toGUIColor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_count"))->getController()->setValue(MutableString(cpse->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(cpse->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(cpse->getLifeTime() + cpse->getLifeTimeRnd())));
@@ -1408,8 +1408,8 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->setValue(MutableString(rpse->getRadius()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpse->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpse->getColorEnd());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpse->getColorStart().toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpse->getColorEnd().toGUIColor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_count"))->getController()->setValue(MutableString(rpse->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getLifeTime() + rpse->getLifeTimeRnd())));
@@ -1426,8 +1426,8 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->setValue(MutableString(spse->getCenter().getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->setValue(MutableString(spse->getCenter().getZ()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->setValue(MutableString(spse->getRadius()));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spse->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spse->getColorEnd());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spse->getColorStart().toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spse->getColorEnd().toGUIColor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_count"))->getController()->setValue(MutableString(spse->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getLifeTime() + spse->getLifeTimeRnd())));

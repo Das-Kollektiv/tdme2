@@ -14,7 +14,7 @@
 #include <minitscript/utilities/Properties.h>
 
 #include <tdme/engine/logics/LogicMinitScript.h>
-#include <tdme/gui/scripting/GUIMinitScript.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
@@ -32,7 +32,7 @@ using minitscript::minitscript::Version;
 using minitscript::utilities::Properties;
 
 using tdme::engine::logics::LogicMinitScript;
-using tdme::gui::scripting::GUIMinitScript;
+using agui::gui::scripting::GUIMinitScript;
 using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;

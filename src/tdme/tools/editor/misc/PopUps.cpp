@@ -4,8 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -23,8 +23,8 @@ using std::make_unique;
 using std::unique_ptr;
 
 using tdme::engine::Engine;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;

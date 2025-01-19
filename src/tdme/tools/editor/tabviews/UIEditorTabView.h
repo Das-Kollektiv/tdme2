@@ -8,8 +8,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
+#include <agui/gui/nodes/fwd-agui.h>
+#include <agui/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -29,9 +29,9 @@ using std::unique_ptr;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUIStyledTextNodeController;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIStyledTextNode;
+using agui::gui::nodes::GUIStyledTextNodeController;
 using tdme::math::Matrix4x4;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;

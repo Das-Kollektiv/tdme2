@@ -1,10 +1,10 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIScreenNode;
 
 /**
  * Screen controller, which connects GUI screen definition with code

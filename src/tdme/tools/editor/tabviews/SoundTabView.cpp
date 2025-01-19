@@ -7,8 +7,8 @@
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/SoundTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -25,8 +25,8 @@ using tdme::tools::editor::tabviews::SoundTabView;
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::engine::Engine;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::SoundTabController;
 using tdme::tools::editor::views::EditorView;

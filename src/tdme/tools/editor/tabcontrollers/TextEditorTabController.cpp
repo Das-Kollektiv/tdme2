@@ -9,16 +9,16 @@
 #include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/scripting/GUIMinitScript.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -53,15 +53,15 @@ using std::unordered_map;
 using tdme::engine::Texture;
 using tdme::engine::logics::LogicMinitScript;
 using tdme::engine::Engine;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::scripting::GUIMinitScript;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::scripting::GUIMinitScript;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -441,7 +441,7 @@ void TextEditorTabController::updateMinitScriptSyntaxTree(int minitScriptScriptI
 	}
 
 	// load specific EngineMinitScript
-	scriptInstance = unique_ptr<EngineMinitScript>(EngineMinitScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	scriptInstance = unique_ptr<MinitScript>(EngineMinitScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {

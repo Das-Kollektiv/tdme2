@@ -7,8 +7,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/Version.h>
-#include <tdme/gui/scripting/GUIMinitScript.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -22,8 +22,8 @@ using std::vector;
 
 using tdme::engine::logics::LogicMinitScript;
 using tdme::engine::Version;
-using tdme::gui::scripting::GUIMinitScript;
-using tdme::gui::GUIParser;
+using agui::gui::scripting::GUIMinitScript;
+using agui::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;

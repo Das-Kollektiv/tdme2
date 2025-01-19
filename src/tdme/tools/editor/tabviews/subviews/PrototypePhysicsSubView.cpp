@@ -18,9 +18,9 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/GUI.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -52,9 +52,9 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::GUI;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;

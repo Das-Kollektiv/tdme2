@@ -8,9 +8,9 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -27,18 +27,18 @@ using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 /**
  * Prototype physics sub screen controller

@@ -33,9 +33,9 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <tdme/gui/fwd-tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/renderer/fwd-tdme.h>
+#include <agui/gui/fwd-agui.h>
+#include <agui/gui/nodes/fwd-agui.h>
+#include <agui/gui/renderer/fwd-agui.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -108,9 +108,9 @@ using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
-using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::renderer::GUIShader;
-using tdme::gui::GUI;
+using agui::gui::renderer::GUIRenderer;
+using agui::gui::renderer::GUIShader;
+using agui::gui::GUI;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -174,11 +174,11 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 	friend class tdme::engine::subsystems::texture2D::Texture2DRenderShader;
-	friend class tdme::gui::GUI;
-	friend class tdme::gui::nodes::GUIImageNode;
-	friend class tdme::gui::nodes::GUINode;
-	friend class tdme::gui::renderer::GUIRenderer;
-	friend class tdme::gui::renderer::GUIFont;
+	friend class agui::gui::GUI;
+	friend class agui::gui::nodes::GUIImageNode;
+	friend class agui::gui::nodes::GUINode;
+	friend class agui::gui::renderer::GUIRenderer;
+	friend class agui::gui::renderer::GUIFont;
 
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };

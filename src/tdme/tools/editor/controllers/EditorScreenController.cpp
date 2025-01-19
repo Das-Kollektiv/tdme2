@@ -29,19 +29,19 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/elements/GUISelectBoxController.h>
-#include <tdme/gui/elements/GUIScrollAreaController.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/elements/GUISelectBoxController.h>
+#include <agui/gui/elements/GUIScrollAreaController.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINode_Padding.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUIStyledTextNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -85,9 +85,10 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::move;
@@ -119,18 +120,18 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::gui::elements::GUISelectBoxController;
-using tdme::gui::elements::GUIScrollAreaController;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUIParser;
+using agui::gui::elements::GUISelectBoxController;
+using agui::gui::elements::GUIScrollAreaController;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUINode_Padding;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIStyledTextNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
 using tdme::math::Matrix3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
@@ -174,9 +175,10 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 EditorScreenController::EditorScreenController(EditorView* view): fileEntitiesMutex("fileentities-mutex")
 {
@@ -996,9 +998,9 @@ void EditorScreenController::addPendingFileEntities() {
 		if (pendingFileEntity->thumbnailTexture == nullptr) continue;
 		if (screenNode->getNodeById(pendingFileEntity->id + "_texture_normal") == nullptr) continue;
 		try {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture->toGUITexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture->toGUITexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture->toGUITexture());
 		} catch (Exception& exception) {
 			Console::printLine("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 		}

@@ -3,13 +3,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
-using tdme::gui::events::GUIInputEventHandler;
+using agui::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 

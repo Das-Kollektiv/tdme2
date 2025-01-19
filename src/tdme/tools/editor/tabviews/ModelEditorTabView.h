@@ -8,7 +8,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
@@ -26,7 +26,7 @@ using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::gui::events::GUIInputEventHandler;
+using agui::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;

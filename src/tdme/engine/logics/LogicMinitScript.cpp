@@ -23,8 +23,8 @@
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -65,8 +65,8 @@ using tdme::engine::Object;
 using tdme::engine::ParticleSystem;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

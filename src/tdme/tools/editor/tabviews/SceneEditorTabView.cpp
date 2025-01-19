@@ -34,11 +34,11 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
@@ -85,11 +85,11 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
@@ -713,15 +713,15 @@ void SceneEditorTabView::selectEntityInternal(Entity* entity)
 		if (decalObbEntity != nullptr) decalObbEntity->setEnabled(true);
 	}
 	const auto& red = entityColors["red"];
-	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f));
-	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f));
+	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f).toGUIColor());
+	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f).toGUIColor());
 }
 
 void SceneEditorTabView::unselectEntityInternal(Entity* entity)
 {
 	const auto& color = entityColors["none"];
-	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f));
-	entity->setEffectColorMul(Color4(color.colorMulR, color.colorMulG, color.colorMulB, 1.0f));
+	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f).toGUIColor());
+	entity->setEffectColorMul(Color4(color.colorMulR, color.colorMulG, color.colorMulB, 1.0f).toGUIColor());
 	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	auto colorProperty = sceneEntity->getProperty("object.color");

@@ -15,7 +15,6 @@
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 using std::vector;
@@ -36,7 +35,6 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
-using tdme::utilities::MutableString;
 
 /**
  * Scene engine/physics connector

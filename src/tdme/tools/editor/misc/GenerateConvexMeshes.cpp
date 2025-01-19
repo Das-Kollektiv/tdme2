@@ -23,11 +23,11 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/ObjectModel.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
@@ -39,7 +39,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/ModelTools.h>
-#include <tdme/utilities/MutableString.h>
+#include <agui/utilities/MutableString.h>
 
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 
@@ -65,11 +65,11 @@ using tdme::engine::primitives::Triangle;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::ObjectModel;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::StandardFileSystem;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -81,7 +81,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
-using tdme::utilities::MutableString;
+using agui::utilities::MutableString;
 
 void GenerateConvexMeshes::removeConvexMeshes(Prototype* prototype)
 {

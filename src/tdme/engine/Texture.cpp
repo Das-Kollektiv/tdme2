@@ -10,6 +10,7 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <agui/gui/textures/GUITexture.h>
 
 using std::string;
 using std::to_string;
@@ -24,6 +25,7 @@ using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using agui::gui::textures::GUITexture;
 
 ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& textureData) {
 	// do we already have the requested rgb format?
@@ -335,4 +337,9 @@ const vector<Texture::MipMapTexture>& Texture::getMipMapTextures(bool bc7Encoded
 
 void Texture::onDelete() {
 	TextureReader::removeFromCache(this);
+}
+
+GUITexture* Texture::toGUITexture() {
+	// TODO: xxx: implement me!
+	return nullptr;
 }

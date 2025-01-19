@@ -12,7 +12,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/gui/events/fwd-tdme.h>
+#include <agui/gui/events/fwd-agui.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 
@@ -28,8 +28,8 @@ using tdme::engine::logics::MinitScriptLogic;
 using tdme::engine::physics::Body;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Transform;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
 using tdme::minitscript::EngineMinitScript;
 

@@ -5,20 +5,17 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Color4.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/math/Vector2.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeConditions.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/math/Vector2.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
-#include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -27,20 +24,17 @@ using tdme::tools::editor::controllers::ColorPickerImageController;
 
 using tdme::engine::Texture;
 using tdme::engine::Color4;
-using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
-using tdme::math::Vector2;
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeConditions;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+using agui::math::Vector2;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
-using tdme::utilities::ByteBuffer;
-using tdme::utilities::Console;
-using tdme::utilities::Time;
 
 ColorPickerImageController::ColorPickerImageController(GUINode* node, ColorPickerScreenController* colorPickerScreenController)
 	: GUINodeController(node), colorPickerScreenController(colorPickerScreenController)
