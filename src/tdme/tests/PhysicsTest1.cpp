@@ -4,8 +4,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Material.h>
@@ -31,6 +29,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;

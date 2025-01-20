@@ -1,6 +1,5 @@
 #include <tdme/tools/installer/Installer.h>
 
-
 #include <yannet/os/network/Network.h>
 
 using yannet::os::network::Network;

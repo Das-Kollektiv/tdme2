@@ -5,8 +5,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <tdme/application/Application.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/PacketAudioStream.h>
@@ -39,6 +37,7 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;

@@ -3,8 +3,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -33,6 +31,7 @@
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/PathFinding.h>
 #include <tdme/utilities/Primitives.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;

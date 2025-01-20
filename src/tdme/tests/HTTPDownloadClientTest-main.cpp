@@ -1,5 +1,5 @@
-#include <tdme/os/threading/Thread.h>
 #include <tdme/tdme.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 

@@ -1,5 +1,5 @@
-#include <tdme/audio/Audio.h>
 #include <tdme/tdme.h>
+#include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/audio/VorbisAudioStream.h>

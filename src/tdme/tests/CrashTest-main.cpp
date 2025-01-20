@@ -1,5 +1,5 @@
-#include <tdme/application/Application.h>
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::application::Application;

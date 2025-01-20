@@ -3,8 +3,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -26,6 +24,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;

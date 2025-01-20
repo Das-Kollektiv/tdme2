@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include <yannet/network/udp/UDPPacket.h>
 #include <yannet/network/udpserver/UDPServerClient.h>
 

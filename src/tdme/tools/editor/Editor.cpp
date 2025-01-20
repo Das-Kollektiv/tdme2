@@ -5,12 +5,10 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <agui/agui.h>
 #include <agui/gui/GUI.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/Color4.h>
@@ -24,6 +22,7 @@
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;

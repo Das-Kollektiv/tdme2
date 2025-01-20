@@ -4,8 +4,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Time.h>
-
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
@@ -31,6 +29,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/PathFinding.h>
 #include <tdme/utilities/Primitives.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;

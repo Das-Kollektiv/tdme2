@@ -1,5 +1,5 @@
-#include <tdme/utilities/Console.h>
 #include <tdme/tdme.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
 #include <yannet/network/httpclient/HTTPClient.h>
