@@ -177,7 +177,6 @@ RendererBackend* Engine::rendererBackend = nullptr;
 unique_ptr<TextureManager> Engine::textureManager;
 unique_ptr<VBOManager> Engine::vboManager;
 unique_ptr<MeshManager> Engine::meshManager;
-unique_ptr<GUIRenderer> Engine::guiRenderer;
 unique_ptr<BRDFLUTShader> Engine::brdfLUTShader;
 unique_ptr<FrameBufferRenderShader> Engine::frameBufferRenderShader;
 unique_ptr<DeferredLightingRenderShader> Engine::deferredLightingRenderShader;
@@ -192,7 +191,6 @@ unique_ptr<LightingShader> Engine::lightingShader;
 unique_ptr<ParticlesShader> Engine::particlesShader;
 unique_ptr<LinesShader> Engine::linesShader;
 unique_ptr<SkinningShader> Engine::skinningShader;
-unique_ptr<GUIShader> Engine::guiShader;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
 int Engine::threadCount = 0;
@@ -307,9 +305,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	auto offScreenEngine = new Engine();
 	offScreenEngine->initialized = true;
 	// create GUI
-	//	TODO: GUIApplication: xxx
-	//	TODO: rendererBackend: xxx
-	offScreenEngine->gui = make_unique<GUI>(nullptr, nullptr, width, height);
+	offScreenEngine->gui = make_unique<GUI>(Application::getApplication(), Application::getGUIRendererBackend(), width, height);
 	// create entity renderer
 	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, rendererBackend);
 	offScreenEngine->entityRenderer->initialize();
@@ -794,15 +790,10 @@ void Engine::initialize()
 	// create entity renderer
 	entityRenderer = make_unique<EntityRenderer>(this, rendererBackend);
 	entityRenderer->initialize();
-	GUIParser::initialize();
 
-	// create GUI
-	//	TODO: rendererBackend: xxx
-	guiRenderer = make_unique<GUIRenderer>(nullptr);
-	guiRenderer->initialize();
-	//	TODO: guiApplication: xxx
-	//	TODO: rendererBackend: xxx
-	gui = make_unique<GUI>(nullptr, nullptr, width, height);
+	// GUI
+	GUIParser::initialize();
+	gui = make_unique<GUI>(Application::getApplication(), Application::getGUIRendererBackend(), width, height);
 	gui->initialize();
 
 	// create camera
@@ -858,11 +849,6 @@ void Engine::initialize()
 	linesShader = make_unique<LinesShader>(this, rendererBackend);
 	linesShader->initialize();
 
-	// create gui shader
-	//	TODO: xxx: rendererBackend
-	guiShader = make_unique<GUIShader>(nullptr);
-	guiShader->initialize();
-
 	// create post processing shader
 	postProcessingShader = make_unique<PostProcessingShader>(rendererBackend);
 	postProcessingShader->initialize();
@@ -909,7 +895,6 @@ void Engine::initialize()
 	CHECK_INITIALIZED("LightingShader", lightingShader);
 	CHECK_INITIALIZED("ParticlesShader", particlesShader);
 	CHECK_INITIALIZED("LinesShader", linesShader);
-	CHECK_INITIALIZED("GUIShader", guiShader);
 	CHECK_INITIALIZED("FrameBufferRenderShader", frameBufferRenderShader);
 	if (brdfLUTShader != nullptr) {
 		CHECK_INITIALIZED("BRDFLUTShader", brdfLUTShader);
@@ -926,7 +911,6 @@ void Engine::initialize()
 	initialized &= lightingShader->isInitialized();
 	initialized &= particlesShader->isInitialized();
 	initialized &= linesShader->isInitialized();
-	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
 	if (brdfLUTShader != nullptr) {
 		initialized &= brdfLUTShader->isInitialized();
@@ -2108,10 +2092,6 @@ void Engine::dispose()
 
 	// dispose GUI
 	gui->dispose();
-	if (this == Engine::instance) {
-		guiRenderer->dispose();
-		GUIParser::dispose();
-	}
 
 	// dispose entity renderer
 	entityRenderer->dispose();

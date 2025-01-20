@@ -23,6 +23,7 @@
 #include <agui/agui.h>
 #include <agui/gui/GUIApplication.h>
 #include <agui/gui/GUIEventHandler.h>
+#include <agui/gui/renderer/GUIRendererBackend.h>
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
@@ -38,6 +39,7 @@ using std::vector;
 // namespaces
 using agui::gui::GUIApplication;
 using agui::gui::GUIEventHandler;
+using agui::gui::renderer::GUIRendererBackend;
 
 using tdme::engine::subsystems::renderer::RendererBackend;
 
@@ -76,6 +78,13 @@ public:
 	 */
 	inline static RendererBackend* getRendererBackend() {
 		return rendererBackend.get();
+	}
+
+	/**
+	 * @return GUI renderer backend
+	 */
+	inline static GUIRendererBackend* getGUIRendererBackend() {
+		return guiRendererBackend.get();
 	}
 
 	/**
@@ -356,6 +365,7 @@ public:
 
 private:
 	STATIC_DLL_IMPEXT static unique_ptr<RendererBackend> rendererBackend;
+	STATIC_DLL_IMPEXT static unique_ptr<GUIRendererBackend> guiRendererBackend;
 	STATIC_DLL_IMPEXT static unique_ptr<Application> application;
 	STATIC_DLL_IMPEXT static GUIEventHandler* eventHandler;
 	int windowHints { WINDOW_HINT_NONE };

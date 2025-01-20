@@ -61,8 +61,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using agui::gui::renderer::GUIRenderer;
-using agui::gui::renderer::GUIShader;
 using agui::gui::GUI;
 
 using tdme::engine::model::Material;
@@ -180,7 +178,6 @@ class tdme::engine::Engine final
 	friend class agui::gui::GUI;
 	friend class agui::gui::nodes::GUIImageNode;
 	friend class agui::gui::nodes::GUINode;
-	friend class agui::gui::renderer::GUIRenderer;
 	friend class agui::gui::renderer::GUIFont;
 
 public:
@@ -210,7 +207,6 @@ private:
 	STATIC_DLL_IMPEXT static unique_ptr<TextureManager> textureManager;
 	STATIC_DLL_IMPEXT static unique_ptr<VBOManager> vboManager;
 	STATIC_DLL_IMPEXT static unique_ptr<MeshManager> meshManager;
-	STATIC_DLL_IMPEXT static unique_ptr<GUIRenderer> guiRenderer;
 
 	STATIC_DLL_IMPEXT static AnimationProcessingTarget animationProcessingTarget;
 
@@ -220,7 +216,6 @@ private:
 	STATIC_DLL_IMPEXT static unique_ptr<ParticlesShader> particlesShader;
 	STATIC_DLL_IMPEXT static unique_ptr<LinesShader> linesShader;
 	STATIC_DLL_IMPEXT static unique_ptr<SkinningShader> skinningShader;
-	STATIC_DLL_IMPEXT static unique_ptr<GUIShader> guiShader;
 	STATIC_DLL_IMPEXT static unique_ptr<BRDFLUTShader> brdfLUTShader;
 	STATIC_DLL_IMPEXT static unique_ptr<FrameBufferRenderShader> frameBufferRenderShader;
 	STATIC_DLL_IMPEXT static unique_ptr<DeferredLightingRenderShader> deferredLightingRenderShader;
@@ -471,13 +466,6 @@ private:
 	 */
 	inline static SkinningShader* getSkinningShader() {
 		return skinningShader.get();
-	}
-
-	/**
-	 * @returns GUI shader
-	 */
-	inline static GUIShader* getGUIShader() {
-		return guiShader.get();
 	}
 
 	/**

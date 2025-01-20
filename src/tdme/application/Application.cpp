@@ -35,6 +35,8 @@
 #include <string>
 
 #include <agui/gui/GUIEventHandler.h>
+#include <agui/gui/renderer/ApplicationGL3Renderer.h>
+#include <agui/gui/renderer/GUIRendererBackend.h>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
@@ -63,6 +65,8 @@ using std::string;
 using std::to_string;
 
 using agui::gui::GUIEventHandler;
+using agui::gui::renderer::ApplicationGL3Renderer;
+using agui::gui::renderer::GUIRendererBackend;
 
 using tdme::application::Application;
 using tdme::audio::Audio;
@@ -83,6 +87,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 unique_ptr<RendererBackend> Application::rendererBackend = nullptr;
+unique_ptr<GUIRendererBackend> Application::guiRendererBackend = nullptr;
 unique_ptr<Application> Application::application = nullptr;
 GUIEventHandler* Application::eventHandler = nullptr;
 int64_t Application::timeLast = -1L;
@@ -675,6 +680,13 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 
 	//
 	rendererBackend->initialize();
+
+	// TODO: improve me!
+	if (rendererBackend->getRendererType() == RendererBackend::RENDERERTYPE_OPENGL) {
+		guiRendererBackend = make_unique<ApplicationGL3Renderer>();
+	} else {
+		Console::printLine("Application::run(): GUI renderer backend: Not available");
+	}
 
 	//
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
