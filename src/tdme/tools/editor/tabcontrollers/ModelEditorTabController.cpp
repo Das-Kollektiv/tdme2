@@ -172,7 +172,7 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnModelSave: public virtual Action
+				class OnModelSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -510,7 +510,7 @@ void ModelEditorTabController::onModelReload()
 }
 
 void ModelEditorTabController::onModelLoad() {
-	class OnModelLoad: public virtual Action
+	class OnModelLoad: public Action
 	{
 
 	public:
@@ -545,7 +545,7 @@ void ModelEditorTabController::onModelLoad() {
 
 void ModelEditorTabController::onModelReimport()
 {
-	class OnModelReimport: public virtual Action
+	class OnModelReimport: public Action
 	{
 
 	public:
@@ -589,7 +589,7 @@ void ModelEditorTabController::loadFile(const string& pathName, const string& fi
 }
 
 void ModelEditorTabController::onLODLoad(int lodLevel) {
-	class OnLODLoad: public virtual Action
+	class OnLODLoad: public Action
 	{
 
 	public:
@@ -1150,7 +1150,7 @@ void ModelEditorTabController::setPreviewAnimationsAttachment1Model(const string
 }
 
 void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
-	class OnPreviewAnimationsAttachment1ModelLoad: public virtual Action
+	class OnPreviewAnimationsAttachment1ModelLoad: public Action
 	{
 
 	public:
@@ -1264,7 +1264,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 		material->setSpecularMaterialProperties(specularMaterialProperties);
 	}
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1366,7 +1366,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1474,7 +1474,7 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1573,7 +1573,7 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1668,7 +1668,7 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr) return;
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1761,7 +1761,7 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr) return;
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1854,7 +1854,7 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr) return;
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -1947,7 +1947,7 @@ void ModelEditorTabController::onMaterialLoadPBREmissiveTexture() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr) return;
 
-	class OnLoadTexture: public virtual Action
+	class OnLoadTexture: public Action
 	{
 	public:
 		void performAction() override {
@@ -2107,7 +2107,7 @@ void ModelEditorTabController::createAnimationSetup(int lodLevel) {
 }
 
 void ModelEditorTabController::createLOD() {
-	class OnLoadLODModel: public virtual Action
+	class OnLoadLODModel: public Action
 	{
 	public:
 		void performAction() override {
@@ -2438,7 +2438,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 
 			// reload
-			class OnModelReloadAction: public virtual Action
+			class OnModelReloadAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2452,7 +2452,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Reload", "contextmenu_reload", new OnModelReloadAction(this));
 
 			// load
-			class OnModelLoadAction: public virtual Action
+			class OnModelLoadAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2466,7 +2466,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnModelLoadAction(this));
 
 			// reimport
-			class OnModelReimportAction: public virtual Action
+			class OnModelReimportAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2480,7 +2480,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
 
 			// generate billboard lod
-			class EnqueueOnModelGenerateBillboardLodAction: public virtual Action {
+			class EnqueueOnModelGenerateBillboardLodAction: public Action {
 				public:
 					void performAction() override {
 						auto prototype = modelEditorTabController->getView()->getPrototype();
@@ -2533,7 +2533,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Generate billboard LOD", "contextmenu_generatebillboardlod", new EnqueueOnModelGenerateBillboardLodAction(this));
 
 			// generate imposter lod
-			class EnqueueOnModelGenerateImposterLodAction: public virtual Action {
+			class EnqueueOnModelGenerateImposterLodAction: public Action {
 				public:
 					void performAction() override {
 						auto prototype = modelEditorTabController->getView()->getPrototype();
@@ -2582,7 +2582,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 
 			// load
-			class OnLODLoadAction: public virtual Action
+			class OnLODLoadAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2597,7 +2597,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 2));
 
 			// delete
-			class OnLODDeleteAction: public virtual Action
+			class OnLODDeleteAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2623,7 +2623,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 
 			// load
-			class OnLODLoadAction: public virtual Action
+			class OnLODLoadAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2638,7 +2638,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 3));
 
 			// delete
-			class OnLODDeleteAction: public virtual Action
+			class OnLODDeleteAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2664,7 +2664,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 
 			// delete
-			class OnLOD4DeleteAction: public virtual Action
+			class OnLOD4DeleteAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2688,7 +2688,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// add
-			class OnAddAnimationAction: public virtual Action
+			class OnAddAnimationAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2713,7 +2713,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// rename
-			class OnRenameAction: public virtual Action
+			class OnRenameAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2740,7 +2740,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuSeparator();
 
 			// delete
-			class OnDeleteAction: public virtual Action
+			class OnDeleteAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -2877,7 +2877,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			if (specularMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -2897,7 +2897,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			if (specularMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -2917,7 +2917,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			if (specularMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -2937,7 +2937,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			if (specularMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -2957,7 +2957,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
 			if (pbrMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -2977,7 +2977,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			auto material = getSelectedMaterial();
 			auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
 			if (pbrMaterialProperties != nullptr) {
-				class OnColorChangeAction: public virtual Action
+				class OnColorChangeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -3005,7 +3005,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				default: break;
 			}
 			if (prototypeLODLevel == nullptr) return;
-			class OnColorChangeAction: public virtual Action
+			class OnColorChangeAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -3034,7 +3034,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				default: break;
 			}
 			if (prototypeLODLevel == nullptr) return;
-			class OnColorChangeAction: public virtual Action
+			class OnColorChangeAction: public Action
 			{
 			public:
 				void performAction() override {

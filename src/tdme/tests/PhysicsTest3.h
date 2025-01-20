@@ -28,8 +28,7 @@ using tdme::utilities::ObjectDeleter;
  * Engine with physics test 3
  * @author andreas.drewke
  */
-class tdme::tests::PhysicsTest3 final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::PhysicsTest3 final: public Application, public InputEventHandler
 {
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };

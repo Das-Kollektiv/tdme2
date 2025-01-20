@@ -28,8 +28,7 @@ namespace cli {
  * Delete VK cache
  * @author andreas.drewke
  */
-class RecreateVKCacheApplication final
-	: public virtual Application
+class RecreateVKCacheApplication final: public Application
 {
 public:
 	// forbid class copy

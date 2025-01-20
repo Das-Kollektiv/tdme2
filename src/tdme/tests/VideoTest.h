@@ -32,8 +32,7 @@ using tdme::video::decoder::MPEG1Decoder;
  * Video test
  * @author andreas.drewke
  */
-class tdme::tests::VideoTest final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::VideoTest final: public Application, public InputEventHandler
 {
 private:
 	Audio* audio { nullptr };

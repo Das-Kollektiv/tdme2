@@ -1253,7 +1253,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_browse") {
-			class OnBrowseAction: public virtual Action
+			class OnBrowseAction: public Action
 			{
 			public:
 				void performAction() override {

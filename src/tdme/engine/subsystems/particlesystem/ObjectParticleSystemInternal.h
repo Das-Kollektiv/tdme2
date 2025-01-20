@@ -46,9 +46,7 @@ using tdme::math::Vector3;
  * Particle system which displays objects as particles
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
-	: public Transform
-	, public virtual ParticleSystemInternal
+class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal: public Transform, public ParticleSystemInternal
 {
 protected:
 	Engine* engine { nullptr };

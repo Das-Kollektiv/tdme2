@@ -154,7 +154,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnTextSave: public virtual Action
+				class OnTextSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -201,7 +201,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 				searchIndex = view->getTextIndex();
 
 				//
-				class FindAction: public virtual Action
+				class FindAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -227,7 +227,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 					TextEditorTabController* textEditorTabController;
 				};
 				//
-				class CountAction: public virtual Action
+				class CountAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -249,7 +249,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 					TextEditorTabController* textEditorTabController;
 				};
 				//
-				class ReplaceAction: public virtual Action
+				class ReplaceAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -274,7 +274,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 					TextEditorTabController* textEditorTabController;
 				};
 				//
-				class ReplaceAllAction: public virtual Action
+				class ReplaceAllAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -298,7 +298,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 					TextEditorTabController* textEditorTabController;
 				};
 				//
-				class CompleteAction: public virtual Action
+				class CompleteAction: public Action
 				{
 				public:
 					void performAction() override {

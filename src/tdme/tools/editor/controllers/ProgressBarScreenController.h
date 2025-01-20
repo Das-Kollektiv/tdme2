@@ -32,7 +32,7 @@ using tdme::tools::editor::misc::PopUps;
  */
 class tdme::tools::editor::controllers::ProgressBarScreenController final
 	: public ScreenController
-	, public virtual GUITooltipRequestListener
+	, public GUITooltipRequestListener
 {
 
 private:

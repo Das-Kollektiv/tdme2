@@ -91,7 +91,7 @@ void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
 }
 
 void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const string& soundId) {
-	class LoadSoundAction: public virtual Action
+	class LoadSoundAction: public Action
 	{
 	public:
 		LoadSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype, const string& soundId): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype), soundId(soundId) {
@@ -417,7 +417,7 @@ void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, in
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// add
-			class OnAddSoundAction: public virtual Action
+			class OnAddSoundAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -438,7 +438,7 @@ void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, in
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// rename
-			class OnRenameAction: public virtual Action
+			class OnRenameAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -462,7 +462,7 @@ void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, in
 			popUps->getContextMenuScreenController()->addMenuSeparator();
 
 			// delete
-			class OnDeleteAction: public virtual Action
+			class OnDeleteAction: public Action
 			{
 			public:
 				void performAction() override {

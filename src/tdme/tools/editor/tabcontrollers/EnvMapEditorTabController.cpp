@@ -105,7 +105,7 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnEnvMapSave: public virtual Action
+				class OnEnvMapSave: public Action
 				{
 				public:
 					void performAction() override {

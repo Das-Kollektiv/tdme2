@@ -305,7 +305,7 @@ void BasePropertiesSubController::onContextMenuRequest(GUIElementNode* node, int
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// add
-			class OnAddPropertyAction: public virtual Action
+			class OnAddPropertyAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -325,7 +325,7 @@ void BasePropertiesSubController::onContextMenuRequest(GUIElementNode* node, int
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// rename
-			class OnRenameAction: public virtual Action
+			class OnRenameAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -349,7 +349,7 @@ void BasePropertiesSubController::onContextMenuRequest(GUIElementNode* node, int
 			popUps->getContextMenuScreenController()->addMenuSeparator();
 
 			// delete
-			class OnDeleteAction: public virtual Action
+			class OnDeleteAction: public Action
 			{
 			public:
 				void performAction() override {

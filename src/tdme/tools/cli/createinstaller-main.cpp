@@ -61,7 +61,7 @@ namespace installer {
 using tdme::tools::cli::installer::FileInformation;
 
 static void scanPathResources(const string& path, vector<string>& totalFiles) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 
@@ -152,7 +152,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 }
 
 static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 
@@ -209,7 +209,7 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 }
 
 static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 
@@ -249,7 +249,7 @@ static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
 }
 
 static void scanPathExecutables(const string& path, vector<string>& totalFiles) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 

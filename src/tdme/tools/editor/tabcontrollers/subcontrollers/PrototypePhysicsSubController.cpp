@@ -631,7 +631,7 @@ bool PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "boundingvolume_convexmesh_file_open") {
 			if (prototype != nullptr) {
-				class OnConvexMeshFileOpen: public virtual Action
+				class OnConvexMeshFileOpen: public Action
 				{
 				public:
 					void performAction() override {
@@ -701,7 +701,7 @@ bool PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 		} else
 		if (node->getId() == "importconvexmesh_file_open") {
 			if (prototype != nullptr) {
-				class OnConvexMeshesFileImport: public virtual Action
+				class OnConvexMeshesFileImport: public Action
 				{
 				public:
 					void performAction() override {
@@ -736,7 +736,7 @@ bool PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 		} else
 		if (node->getId() == "generateconvexmesh_file_open") {
 			if (prototype != nullptr) {
-				class OnConvexMeshesFileOpen: public virtual Action
+				class OnConvexMeshesFileOpen: public Action
 				{
 				public:
 					void performAction() override {
@@ -781,7 +781,7 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 			popUps->getContextMenuScreenController()->clear();
 
 			// delete
-			class OnDeleteAction: public virtual Action
+			class OnDeleteAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -815,7 +815,7 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 			popUps->getContextMenuScreenController()->clear();
 
 			// add
-			class OnAddBoundingVolumeAction: public virtual Action
+			class OnAddBoundingVolumeAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -830,7 +830,7 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 			popUps->getContextMenuScreenController()->addMenuItem("Add Bounding Volume", "contextmenu_add", new OnAddBoundingVolumeAction(this, prototype));
 
 			// import convex meshes from model
-			class OnImportConvexMeshesFromModel: public virtual Action
+			class OnImportConvexMeshesFromModel: public Action
 			{
 			public:
 				void performAction() override {
@@ -844,7 +844,7 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 			popUps->getContextMenuScreenController()->addMenuItem("Import convex meshes", "contextmenu_importconvexmeshfrommodel", new OnImportConvexMeshesFromModel(this, prototype));
 
 			// generate convex meshes from model
-			class OnGenerateConvexMeshesFromModel: public virtual Action
+			class OnGenerateConvexMeshesFromModel: public Action
 			{
 			public:
 				void performAction() override {
@@ -859,7 +859,7 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 			popUps->getContextMenuScreenController()->addMenuItem("Generate convex meshes", "contextmenu_generateconvexmeshfrommodel", new OnGenerateConvexMeshesFromModel(this, prototype));
 
 			// delete convex meshes
-			class OnDeleteConvexMeshesFromModel: public virtual Action
+			class OnDeleteConvexMeshesFromModel: public Action
 			{
 			public:
 				void performAction() override {

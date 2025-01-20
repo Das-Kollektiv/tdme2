@@ -151,7 +151,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	//
 	{
 		// entity picking filter for no grid
-		class PrototypePickingFilterNoGrid: public virtual EntityPickingFilter
+		class PrototypePickingFilterNoGrid: public EntityPickingFilter
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
@@ -175,7 +175,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	//
 	{
 		// entity picking filter for no placing object
-		class PrototypePickingFilterPlacing: public virtual EntityPickingFilter
+		class PrototypePickingFilterPlacing: public EntityPickingFilter
 		{
 		public:
 			bool filterEntity(Entity* entity) override {

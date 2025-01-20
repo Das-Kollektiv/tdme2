@@ -145,7 +145,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 				searchIndex = view->getTextIndex();
 
 				//
-				class FindAction: public virtual Action
+				class FindAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -171,7 +171,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 					UIEditorTabController* uiEditorTabController;
 				};
 				//
-				class CountAction: public virtual Action
+				class CountAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -193,7 +193,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 					UIEditorTabController* uiEditorTabController;
 				};
 				//
-				class ReplaceAction: public virtual Action
+				class ReplaceAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -218,7 +218,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 					UIEditorTabController* uiEditorTabController;
 				};
 				//
-				class ReplaceAllAction: public virtual Action
+				class ReplaceAllAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -242,7 +242,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 					UIEditorTabController* uiEditorTabController;
 				};
 				//
-				class CompleteAction: public virtual Action
+				class CompleteAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -353,7 +353,7 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			popUps->getContextMenuScreenController()->clear();
 
 			// add screen
-			class OnAddScreenAction: public virtual Action
+			class OnAddScreenAction: public Action
 			{
 			public:
 				OnAddScreenAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
@@ -369,7 +369,7 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			popUps->getContextMenuScreenController()->addMenuItem("Add Screen", "contextmenu_add", new OnAddScreenAction(this));
 
 			// reload screens
-			class OnScreensReloadAction: public virtual Action
+			class OnScreensReloadAction: public Action
 			{
 			public:
 				OnScreensReloadAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
@@ -392,7 +392,7 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			popUps->getContextMenuScreenController()->clear();
 
 			// remove screen
-			class OnScreenRemoveAction: public virtual Action
+			class OnScreenRemoveAction: public Action
 			{
 			public:
 				OnScreenRemoveAction(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
@@ -582,7 +582,7 @@ void UIEditorTabController::updateScreensDetails() {
 }
 
 void UIEditorTabController::onLoadScreen() {
-	class OnLoadScreen: public virtual Action
+	class OnLoadScreen: public Action
 	{
 	public:
 		void performAction() override {
@@ -662,7 +662,7 @@ void UIEditorTabController::reloadScreens() {
 }
 
 void UIEditorTabController::onLoadPrototype() {
-	class OnLoadPrototype: public virtual Action
+	class OnLoadPrototype: public Action
 	{
 	public:
 		void performAction() override {
@@ -768,7 +768,7 @@ void UIEditorTabController::save() {
 	view->storeUIXML();
 
 	//
-	class OnUISave: public virtual Action
+	class OnUISave: public Action
 	{
 	public:
 		void performAction() override {
@@ -884,7 +884,7 @@ void UIEditorTabController::saveAs() {
 	view->storeUIXML();
 
 	//
-	class OnUISaveAs: public virtual Action
+	class OnUISaveAs: public Action
 	{
 	public:
 		/**

@@ -20,8 +20,7 @@ using tdme::utilities::ObjectDeleter;
  * LOD test
  * @author andreas.drewke
  */
-class tdme::tests::SkinningTest final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::SkinningTest final: public Application, public InputEventHandler
 {
 private:
 	Engine* engine { nullptr };

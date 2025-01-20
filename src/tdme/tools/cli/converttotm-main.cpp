@@ -47,8 +47,7 @@ namespace cli {
  * Convert to tm application
  * @author andreas.drewke
  */
-class ConvertToTMApplication final
-	: public virtual Application
+class ConvertToTMApplication final: public  Application
 {
 private:
 	vector<string> modelFileNames;

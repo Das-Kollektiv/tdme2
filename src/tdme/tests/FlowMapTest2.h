@@ -39,8 +39,7 @@ using tdme::utilities::PathFinding;
  * Flow map test 2
  * @author andreas.drewke
  */
-class tdme::tests::FlowMapTest2 final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::FlowMapTest2 final: public Application, public InputEventHandler
 {
 private:
 	struct CombatUnit {

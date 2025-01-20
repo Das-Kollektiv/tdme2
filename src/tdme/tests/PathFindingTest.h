@@ -30,8 +30,7 @@ using tdme::utilities::PathFinding;
  * Engine with physics test 2
  * @author andreas.drewke
  */
-class tdme::tests::PathFindingTest final
-	: public virtual Application
+class tdme::tests::PathFindingTest final: public Application
 {
 private:
 	unique_ptr<World> world;

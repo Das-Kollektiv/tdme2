@@ -52,7 +52,7 @@ namespace archive {
 using tdme::tools::cli::archive::FileInformation;
 
 void scanPath(const string& path, vector<string>& totalFiles) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter : public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 

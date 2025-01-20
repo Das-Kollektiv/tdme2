@@ -18,8 +18,7 @@ using tdme::utilities::ObjectDeleter;
  * Engine entity hierarchy test
  * @author andreas.drewke
  */
-class tdme::tests::EntityHierarchyTest final
-	: public virtual Application
+class tdme::tests::EntityHierarchyTest final: public Application
 {
 private:
 	Engine* engine { nullptr };

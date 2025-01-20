@@ -41,9 +41,7 @@ using tdme::math::Vector3;
  * Fog particle system
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal
-	: public Transform
-	, public virtual ParticleSystemInternal
+class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal: public Transform, public ParticleSystemInternal
 {
 protected:
 	string id;

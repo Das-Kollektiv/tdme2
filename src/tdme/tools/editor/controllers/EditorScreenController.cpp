@@ -430,7 +430,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		view->getPopUps()->getContextMenuScreenController()->clear();
 		{
 			// open
-			class OnOpenAction: public virtual Action
+			class OnOpenAction: public Action
 			{
 			public:
 				OnOpenAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -449,7 +449,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		//
 		{
 			// copy path
-			class OnCopyPathAction: public virtual Action
+			class OnCopyPathAction: public Action
 			{
 			public:
 				OnCopyPathAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -466,13 +466,13 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		//
 		if (path == false) {
 			// duplicate
-			class OnDuplicateAction: public virtual Action
+			class OnDuplicateAction: public Action
 			{
 			public:
 				OnDuplicateAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					class DuplicateFileAction: public virtual Action
+					class DuplicateFileAction: public Action
 					{
 					public:
 						DuplicateFileAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -529,13 +529,13 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		//
 		{
 			// rename
-			class OnRenameAction: public virtual Action
+			class OnRenameAction: public Action
 			{
 			public:
 				OnRenameAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					class RenameFileAction: public virtual Action
+					class RenameFileAction: public Action
 					{
 					public:
 						RenameFileAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -585,13 +585,13 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		//
 		{
 			// move
-			class OnMoveAction: public virtual Action
+			class OnMoveAction: public Action
 			{
 			public:
 				OnMoveAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					class FileMoveAction: public virtual Action
+					class FileMoveAction: public Action
 					{
 					public:
 						/**
@@ -640,7 +640,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		}
 		{
 			// delete
-			class OnDeleteAction: public virtual Action
+			class OnDeleteAction: public Action
 			{
 			public:
 				OnDeleteAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -674,7 +674,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 						{
 
 							// add to scene
-							class OnAddToSceneAction: public virtual Action
+							class OnAddToSceneAction: public Action
 							{
 							public:
 								OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -718,7 +718,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 		//
 		{
 			// show in file browser
-			class OnShowInFileBrowserAction: public virtual Action
+			class OnShowInFileBrowserAction: public Action
 			{
 			public:
 				OnShowInFileBrowserAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -726,9 +726,9 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 				void performAction() override {
 					try {
 						if (FileSystem::getInstance()->isPath(absoluteFileName) == true) {
-							Application::openBrowser(absoluteFileName);
+							Application::getApplication()->openBrowser(absoluteFileName);
 						} else {
-							Application::openBrowser(Tools::getPathName(absoluteFileName));
+							Application::getApplication()->openBrowser(Tools::getPathName(absoluteFileName));
 						}
 					} catch (Exception& exception) {
 						Console::printLine("OnShowInFileBrowserAction::performAction(): An error occurred: " + string(exception.what()));
@@ -812,7 +812,7 @@ void EditorScreenController::openProject(const string& pathName) {
 }
 
 void EditorScreenController::onOpenProject() {
-	class OnOpenProject: public virtual Action
+	class OnOpenProject: public Action
 	{
 	public:
 		/**
@@ -863,7 +863,7 @@ void EditorScreenController::scanProjectPaths() {
 }
 
 void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 
@@ -1059,7 +1059,7 @@ void EditorScreenController::browseTo(const string& fileName) {
 }
 
 void EditorScreenController::ScanFilesThread::run() {
-	class ListFilter : public virtual FileNameFilter {
+	class ListFilter: public FileNameFilter {
 		public:
 			ListFilter(const string& searchTerm): searchTerm(searchTerm) {}
 			virtual ~ListFilter() {}
@@ -1316,7 +1316,7 @@ void EditorScreenController::ScanFilesThread::run() {
 }
 
 void EditorScreenController::onAddFile(const string& type) {
-	class OnAddFile: public virtual Action
+	class OnAddFile: public Action
 	{
 	public:
 		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {

@@ -26,8 +26,7 @@ using tdme::tools::editor::views::View;
  * TDME editor
  * @author andreas.drewke
  */
-class tdme::tools::editor::Editor final
-	: public virtual Application
+class tdme::tools::editor::Editor final: public Application
 {
 private:
 	STATIC_DLL_IMPEXT static Editor* instance;

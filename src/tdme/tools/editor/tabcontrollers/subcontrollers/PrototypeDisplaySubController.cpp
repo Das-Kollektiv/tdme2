@@ -434,7 +434,7 @@ bool PrototypeDisplaySubController::onAction(GUIActionListenerType type, GUIElem
 		auto parameter = shaderParameters.getShaderParameter(parameterName);
 		auto color4 = parameter.getColor4Value();
 		//
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {

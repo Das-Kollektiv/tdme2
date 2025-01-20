@@ -153,7 +153,7 @@ void TerrainEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnModelSave: public virtual Action
+				class OnModelSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -356,7 +356,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// delete
-			class OnTerrainWaterDelete: public virtual Action
+			class OnTerrainWaterDelete: public Action
 			{
 			public:
 				void performAction() override {
@@ -380,7 +380,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// add
-			class OnTerrainFoliageAddBrush: public virtual Action
+			class OnTerrainFoliageAddBrush: public Action
 			{
 			public:
 				void performAction() override {
@@ -406,7 +406,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 			popUps->getContextMenuScreenController()->clear();
 
 			// delete
-			class OnTerrainDeleteFoliageBrush: public virtual Action
+			class OnTerrainDeleteFoliageBrush: public Action
 			{
 			public:
 				void performAction() override {
@@ -439,7 +439,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 
 
 			// add prototype
-			class OnTerrainAddFoliageBrushPrototype: public virtual Action
+			class OnTerrainAddFoliageBrushPrototype: public Action
 			{
 			public:
 				void performAction() override {
@@ -465,7 +465,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 
 
 			// delete
-			class OnTerrainDeleteFoliageBrush: public virtual Action
+			class OnTerrainDeleteFoliageBrush: public Action
 			{
 			public:
 				void performAction() override {
@@ -524,7 +524,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			if (brush == nullptr) return;
 
 			//
-			class OnFoliageBrushFileOpenAction: public virtual Action
+			class OnFoliageBrushFileOpenAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -588,7 +588,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			view->getEditorView()->getScreenController()->browseTo(brush->getFileName());
 		} else
 		if (node->getId() == "foliagebrush_prototype_file_open") {
-			class OnTerrainBrushPrototypeFileOpenAction: public virtual Action
+			class OnTerrainBrushPrototypeFileOpenAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -676,7 +676,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			view->getEditorView()->getScreenController()->browseTo(brushPrototype->getFileName());
 		} else
 		if (node->getId() == "terrainbrush_texture_open") {
-			class OnTerrainBrushFileOpenAction: public virtual Action
+			class OnTerrainBrushFileOpenAction: public Action
 			{
 			public:
 				void performAction() override {

@@ -157,7 +157,7 @@ bool PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIEleme
 }
 
 void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
-	class OnSetScript: public virtual Action
+	class OnSetScript: public Action
 	{
 	public:
 		void performAction() override {

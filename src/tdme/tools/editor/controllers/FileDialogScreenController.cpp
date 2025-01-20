@@ -110,7 +110,7 @@ void FileDialogScreenController::dispose()
 
 bool FileDialogScreenController::setupFiles()
 {
-	class ExtensionFilter: public virtual FileNameFilter
+	class ExtensionFilter: public FileNameFilter
 	{
 	public:
 		bool accept(const string& pathName, const string& fileName) override {

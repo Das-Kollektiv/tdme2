@@ -44,9 +44,7 @@ using tdme::math::Vector3;
  * Points particle system
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
-	: public Transform
-	, public virtual ParticleSystemInternal
+class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal: public Transform, public ParticleSystemInternal
 {
 
 protected:

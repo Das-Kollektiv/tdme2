@@ -45,10 +45,10 @@ using tdme::utilities::Action;
  */
 class tdme::tools::editor::controllers::FileDialogScreenController final
 	: public ScreenController
-	, public virtual GUIActionListener
-	, public virtual GUIChangeListener
-	, public virtual GUIFocusListener
-	, public virtual GUITooltipRequestListener
+	, public GUIActionListener
+	, public GUIChangeListener
+	, public GUIFocusListener
+	, public GUITooltipRequestListener
 {
 
 private:

@@ -114,7 +114,7 @@ void TriggerEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnTriggerSave: public virtual Action
+				class OnTriggerSave: public Action
 				{
 				public:
 					void performAction() override {

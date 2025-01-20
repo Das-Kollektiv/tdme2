@@ -98,7 +98,7 @@ void EmptyEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnEmptySave: public virtual Action
+				class OnEmptySave: public Action
 				{
 				public:
 					void performAction() override {

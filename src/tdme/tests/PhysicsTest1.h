@@ -27,8 +27,7 @@ using tdme::utilities::ObjectDeleter;
  * Engine with physics test 1
  * @author andreas.drewke
  */
-class tdme::tests::PhysicsTest1 final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::PhysicsTest1 final: public Application, public InputEventHandler
 {
 
 private:

@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -14,6 +15,7 @@
 using std::unique_ptr;
 
 using tdme::application::Application;
+using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -24,8 +26,7 @@ using tdme::utilities::ObjectDeleter;
  * Water shader test
  * @author andreas.drewke
  */
-class tdme::tests::WaterTest final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::WaterTest final: public Application, public InputEventHandler
 {
 private:
 	Engine* engine { nullptr };

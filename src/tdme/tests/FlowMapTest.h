@@ -34,8 +34,7 @@ using tdme::utilities::PathFinding;
  * Engine with physics test 2
  * @author andreas.drewke
  */
-class tdme::tests::FlowMapTest final
-	: public virtual Application
+class tdme::tests::FlowMapTest final: public Application
 {
 private:
 	unique_ptr<World> world;

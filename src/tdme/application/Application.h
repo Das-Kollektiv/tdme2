@@ -15,33 +15,38 @@
 
 #include <array>
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/GUIApplication.h>
+#include <agui/gui/GUIEventHandler.h>
+
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
-#include <tdme/application/InputEventHandler.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/RendererBackend.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
-using tdme::application::InputEventHandler;
+// namespaces
+using agui::gui::GUIApplication;
+using agui::gui::GUIEventHandler;
+
 using tdme::engine::subsystems::renderer::RendererBackend;
 
 /**
  * Application base class, please make sure to allocate application on heap to have correct application shutdown working
  * @author Andreas Drewke
  */
-class tdme::application::Application
+class tdme::application::Application: public GUIApplication
 {
-	friend class InputEventHandler;
-	friend class tdme::engine::subsystems::renderer::VKRenderer;
-
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(Application)
@@ -60,28 +65,41 @@ public:
 	static constexpr int64_t JOYSTICK_BUTTON_TIME_REPEAT { 150LL };
 
 	/**
-	 * @returns renderer backend
+	 * @returns GLFW Window handle
 	 */
-	inline static RendererBackend* getRendererBackend() {
-		return rendererBackend;
+	inline static GLFWwindow* getGLFWWindow() {
+		 return glfwWindow;
 	}
 
 	/**
-	 * @returns if having a GL/Vulkan window and context
+	 * @return renderer backend
+	 */
+	inline static RendererBackend* getRendererBackend() {
+		return rendererBackend.get();
+	}
+
+	/**
+	 * @return if having a GL/Vulkan window and context
 	 */
 	inline static bool hasApplication() {
 		return application != nullptr;
 	}
 
 	/**
-	 * @returns application
+	 * @return application
 	 */
 	inline static Application* getApplication() {
-		return application;
+		return application.get();
 	}
 
 	/**
-	 * @returns if FPS should be limited to 60 frames per seconds
+	 * Set vsync enabled
+	 * @param vSync vertical sync
+	 */
+	static void setVSyncEnabled(bool vSync);
+
+	/**
+	 * @return if FPS should be limited to 60 frames per seconds
 	 */
 	inline static bool isLimitFPS() {
 		return limitFPS;
@@ -96,18 +114,17 @@ public:
 	}
 
 	/**
-	 * Set vsync enabled
-	 * @param vSync vertical sync
+	 * @return If window is active on Win32, on other platforms it currently always return true
 	 */
-	static void setVSyncEnabled(bool vSync);
+	static bool isActive();
 
 	/**
-	 * @returns Operating system the application is running on
+	 * @return Operating system the application is running on
 	 */
 	static string getOSName();
 
 	/**
-	 * @returns CPU the application is running on
+	 * @return CPU the application is running on
 	 */
 	static string getCPUName();
 
@@ -118,61 +135,14 @@ public:
 	static void setLocale(const string& locale);
 
 	/**
-	 * Public constructor
+	 * Windows only: Install exception handler that will print a stack trace if crashing
 	 */
-	Application();
+	static void installExceptionHandler();
 
 	/**
-	 * Destructor
+	 * Swap rendering buffers
 	 */
-	virtual ~Application();
-
-	/**
-	 * @returns title
-	 */
-	inline const string& getTitle() {
-		return title;
-	}
-
-	/**
-	 * @returns executable file name
-	 */
-	inline const string& getExecutableFileName() {
-		return executableFileName;
-	}
-
-	/**
-	 * @returns debugging enabled
-	 */
-	inline bool isDebuggingEnabled() {
-		return debuggingEnabled;
-	}
-
-	/**
-	 * Set input event handler
-	 * @param inputEventHandler input event handler
-	 */
-	void setInputEventHandler(InputEventHandler* inputEventHandler);
-
-	/**
-	 * Execute a command and wait until it finished running
-	 * @param command command to execute
-	 * @throws std::runtime_error
-	 * @returns application output
-	 */
-	static string execute(const string& command);
-
-	/**
-	 * Execute a command in background
-	 * @param command command to execute
-	 */
-	static void executeBackground(const string& command);
-
-	/**
-	 * Open browser with given url
-	 * @param url url
-	 */
-	static void openBrowser(const string& url);
+	static void swapBuffers();
 
 	/**
 	 * Cancels a users requested exit (ALT-F4 or X button)
@@ -186,12 +156,60 @@ public:
 	static void exit(int exitCode);
 
 	/**
-	 * @returns If window is active on Win32, on other platforms it currently always return true
+	 * Execute a command and wait until it finished running
+	 * @param command command to execute
+	 * @throws std::runtime_error
+	 * @return application output
 	 */
-	static bool isActive();
+	static string execute(const string& command);
 
 	/**
-	 * @returns window X position
+	 * Execute a command in background
+	 * @param command command to execute
+	 */
+	static void executeBackground(const string& command);
+
+	/**
+	 * Public constructor
+	 */
+	Application();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Application();
+
+	/**
+	 * @return title
+	 */
+	inline const string& getTitle() {
+		return title;
+	}
+
+	/**
+	 * @return executable file name
+	 */
+	inline const string& getExecutableFileName() {
+		return executableFileName;
+	}
+
+	/**
+	 * @return debugging enabled
+	 */
+	inline bool isDebuggingEnabled() {
+		return debuggingEnabled;
+	}
+
+	/**
+	 * Set event handler
+	 * @param eventHandler event handler
+	 */
+	inline void setEventHandler(GUIEventHandler* eventHandler) {
+		Application::eventHandler = eventHandler;
+	}
+
+	/**
+	 * @return window X position
 	 */
 	int getWindowXPosition();
 
@@ -202,7 +220,7 @@ public:
 	void setWindowXPosition(int windowXPosition);
 
 	/**
-	 * @returns window Y position
+	 * @return window Y position
 	 */
 	int getWindowYPosition();
 
@@ -213,9 +231,9 @@ public:
 	void setWindowYPosition(int windowYPosition);
 
 	/**
-	 * @returns window width
+	 * @return window width
 	 */
-	int getWindowWidth() const;
+	int getWindowWidth();
 
 	/**
 	 * Set window width
@@ -224,9 +242,9 @@ public:
 	void setWindowWidth(int windowWidth);
 
 	/**
-	 * @returns window height
+	 * @return window height
 	 */
-	int getWindowHeight() const;
+	int getWindowHeight();
 
 	/**
 	 * Set window height
@@ -235,7 +253,7 @@ public:
 	void setWindowHeight(int windowHeight);
 
 	/**
-	 * @returns is full screen
+	 * @return is full screen
 	 */
 	bool isFullScreen() const;
 
@@ -246,14 +264,9 @@ public:
 	void setFullScreen(bool fullScreen);
 
 	/**
-	 * Windows only: Install exception handler that will print a stack trace if crashing
+	 * @return mouse cursor
 	 */
-	static void installExceptionHandler();
-
-	/**
-	 * @returns mouse cursor
-	 */
-	inline static int getMouseCursor() {
+	inline int getMouseCursor() {
 		return mouseCursor;
 	}
 
@@ -261,32 +274,27 @@ public:
 	 * Set mouse cursor
 	 * @param mouseCursor mouse cursor, see MOUSE_CURSOR_*
 	 */
-	static void setMouseCursor(int mouseCursor);
+	void setMouseCursor(int mouseCursor);
 
 	/**
-	 * @returns get mouse X position
+	 * @return get mouse X position
 	 */
-	static int getMousePositionX();
+	int getMousePositionX();
 
 	/**
-	 * @returns get mouse Y position
+	 * @return get mouse Y position
 	 */
-	static int getMousePositionY();
+	int getMousePositionY();
 
 	/**
 	 * Set mouse position
 	 * @param x x
 	 * @param y y
 	 */
-	static void setMousePosition(int x, int y);
+	void setMousePosition(int x, int y);
 
 	/**
-	 * Swap rendering buffers
-	 */
-	static void swapBuffers();
-
-	/**
-	 * @returns clipboard content as utf8 string
+	 * @return clipboard content as utf8 string
 	 */
 	string getClipboardContent();
 
@@ -297,15 +305,21 @@ public:
 	void setClipboardContent(const string& content);
 
 	/**
+	 * Open browser with given url
+	 * @param url url
+	 */
+	void openBrowser(const string& url);
+
+	/**
 	 * Run this application
 	 * @param argc argument count
 	 * @param argv argument values
 	 * @param title title
-	 * @param inputEventHandler application input event handler
+	 * @param eventHandler event handler
 	 * @param windowHints window hints
-	 * @returns exit code
+	 * @return exit code
 	 */
-	int run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
+	int run(int argc, char** argv, const string& title, GUIEventHandler* eventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
 	/**
 	 * Init
@@ -341,9 +355,9 @@ public:
 	virtual void onDrop(const vector<string>& paths);
 
 private:
-	STATIC_DLL_IMPEXT static RendererBackend* rendererBackend;
-	STATIC_DLL_IMPEXT static Application* application;
-	STATIC_DLL_IMPEXT static InputEventHandler* inputEventHandler;
+	STATIC_DLL_IMPEXT static unique_ptr<RendererBackend> rendererBackend;
+	STATIC_DLL_IMPEXT static unique_ptr<Application> application;
+	STATIC_DLL_IMPEXT static GUIEventHandler* eventHandler;
 	int windowHints { WINDOW_HINT_NONE };
 	string executableFileName;
 	bool debuggingEnabled { false };

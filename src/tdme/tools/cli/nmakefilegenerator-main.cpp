@@ -25,7 +25,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 void scanPath(const string& path, vector<string>& sourceFiles, vector<string>& mainSourceFiles) {
-	class SourceFilesFilter : public virtual FileNameFilter {
+	class SourceFilesFilter: public FileNameFilter {
 		public:
 			virtual ~SourceFilesFilter() {}
 

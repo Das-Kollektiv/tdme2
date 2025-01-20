@@ -1019,7 +1019,7 @@ void VKRenderer::initialize()
 	}
 
 	//
-	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&windowWidth, (int32_t*)&windowHeight);
+	glfwGetWindowSize(Application::getGLFWWindow(), (int32_t*)&windowWidth, (int32_t*)&windowHeight);
 
 	//
 	glslang::InitProcess();
@@ -1244,7 +1244,7 @@ void VKRenderer::initialize()
 	textureCompressionAvailable = gpuFeatures.textureCompressionBC == VK_TRUE;
 
 	// Create a WSI surface for the window:
-	err = glfwCreateWindowSurface(instance, Application::glfwWindow, nullptr, &surface);
+	err = glfwCreateWindowSurface(instance, Application::getGLFWWindow(), nullptr, &surface);
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
@@ -1718,7 +1718,7 @@ void VKRenderer::reshape() {
 	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
-	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&windowWidth, (int32_t*)&windowHeight);
+	glfwGetWindowSize(Application::getGLFWWindow(), (int32_t*)&windowWidth, (int32_t*)&windowHeight);
 
 	//
 	Console::printLine("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(windowWidth) + " x " + to_string(windowHeight));
@@ -1753,7 +1753,7 @@ void VKRenderer::initializeFrame()
 	{
 		int32_t currentWidth;
 		int32_t currentHeight;
-		glfwGetWindowSize(Application::glfwWindow, &currentWidth, &currentHeight);
+		glfwGetWindowSize(Application::getGLFWWindow(), &currentWidth, &currentHeight);
 		auto needsReshape =
 			(currentWidth > 0 && currentHeight > 0 && (currentWidth != windowWidth || currentHeight != windowHeight)) ||
 			lastSwapchainPresentMode != swapchainPresentMode;

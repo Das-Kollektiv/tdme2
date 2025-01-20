@@ -136,7 +136,7 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnSceneSave: public virtual Action
+				class OnSceneSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -456,7 +456,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 			{
 				// add light
-				class OnAddLightAction: public virtual Action
+				class OnAddLightAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -490,7 +490,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 				if (scene->getLightCount() < 2) return;
 
 				// remove light
-				class OnDeleteLightAction: public virtual Action
+				class OnDeleteLightAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -516,7 +516,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->clear();
 			{
 				// rename
-				class OnCenterAction: public virtual Action
+				class OnCenterAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -536,7 +536,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// center
-				class OnCenterAction: public virtual Action
+				class OnCenterAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -551,7 +551,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// select same
-				class OnSelectSameAction: public virtual Action
+				class OnSelectSameAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -566,7 +566,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// open prototype
-				class OnOpenPrototype: public virtual Action
+				class OnOpenPrototype: public Action
 				{
 				public:
 					void performAction() override {
@@ -581,7 +581,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// replace prototype
-				class OnReplacePrototypeAction: public virtual Action
+				class OnReplacePrototypeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -596,7 +596,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// jump to prototype
-				class JumpToPrototypeAction: public virtual Action
+				class JumpToPrototypeAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -620,7 +620,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			}
 			{
 				// delete
-				class OnDeleteAction: public virtual Action
+				class OnDeleteAction: public Action
 				{
 				public:
 					void performAction() override {
@@ -682,7 +682,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		auto shaderParameter = view->getScene()->getSkyShaderParameters().getShaderParameter(shaderParameterName);
 		auto color4 = shaderParameter.getColor4Value();
 		//
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -724,7 +724,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		auto parameter = shaderParameters != nullptr?shaderParameters->getShaderParameter(shaderParameterName):Engine::getDefaultShaderParameter(shaderId, shaderParameterName);
 		auto color4 = parameter.getColor4Value();
 		//
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -758,7 +758,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		//
 	} else
 	if (node->getId() == "gui_open") {
-		class OnLoadGUIAction: public virtual Action
+		class OnLoadGUIAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -821,7 +821,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (node->getId() == "light_ambient_ambient_edit" ||
 		node->getId() == "light_spot_ambient_edit" ||
 		node->getId() == "light_directional_ambient_edit") {
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -851,7 +851,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (node->getId() == "light_ambient_diffuse_edit" ||
 		node->getId() == "light_spot_diffuse_edit" ||
 		node->getId() == "light_directional_diffuse_edit") {
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -881,7 +881,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (node->getId() == "light_ambient_specular_edit" ||
 		node->getId() == "light_spot_specular_edit" ||
 		node->getId() == "light_directional_specular_edit") {
-		class OnColorChangeAction: public virtual Action
+		class OnColorChangeAction: public Action
 		{
 		public:
 			void performAction() override {
@@ -1905,7 +1905,7 @@ void SceneEditorTabController::selectEntities(const vector<string>& selectedOutl
 }
 
 void SceneEditorTabController::onReplacePrototype() {
-	class OnReplacePrototypeAction: public virtual Action
+	class OnReplacePrototypeAction: public Action
 	{
 	public:
 		void performAction() override {

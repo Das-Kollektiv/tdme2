@@ -132,7 +132,7 @@ void DecalEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnDecalSave: public virtual Action
+				class OnDecalSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -245,7 +245,7 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "decal_texture_open") {
 			//
-			class OnDecalTextureFileOpenAction: public virtual Action
+			class OnDecalTextureFileOpenAction: public Action
 			{
 			public:
 				void performAction() override {

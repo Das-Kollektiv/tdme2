@@ -10,6 +10,7 @@
 #include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
+using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Engine;
@@ -19,8 +20,7 @@ using tdme::utilities::ObjectDeleter;
  * LOD test
  * @author andreas.drewke
  */
-class tdme::tests::LODTest final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::LODTest final: public Application, public InputEventHandler
 {
 private:
 	Engine* engine { nullptr };

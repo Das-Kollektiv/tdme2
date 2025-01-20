@@ -52,8 +52,7 @@ namespace cli {
  * Import tmodel application
  * @author andreas.drewke
  */
-class ImportTModelApplication final
-	: public virtual Application
+class ImportTModelApplication final: public Application
 {
 private:
 	string tModelFileName;

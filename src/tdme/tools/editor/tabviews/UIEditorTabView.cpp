@@ -351,7 +351,7 @@ void UIEditorTabView::initialize()
 					auto i = 0;
 					for (const auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
 						// add light
-						class OnCodeCompletionAction: public virtual Action
+						class OnCodeCompletionAction: public Action
 						{
 						public:
 							OnCodeCompletionAction(UIEditorTabView* uiEditorTabView, int idx, const CodeCompletionSymbol& symbol): uiEditorTabView(uiEditorTabView), idx(idx), symbol(symbol) {}

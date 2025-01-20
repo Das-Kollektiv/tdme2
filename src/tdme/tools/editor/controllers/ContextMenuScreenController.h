@@ -42,11 +42,11 @@ using tdme::utilities::Properties;
  */
 class tdme::tools::editor::controllers::ContextMenuScreenController final
 	: public ScreenController
-	, public virtual GUIActionListener
-	, public virtual GUIChangeListener
-	, public virtual GUIFocusListener
-	, public virtual GUITooltipRequestListener
-	, public virtual GUIInputEventHandler
+	, public GUIActionListener
+	, public GUIChangeListener
+	, public GUIFocusListener
+	, public GUITooltipRequestListener
+	, public GUIInputEventHandler
 {
 public:
 	struct MinitScriptMethodSelectionListener {

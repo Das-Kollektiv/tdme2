@@ -38,8 +38,7 @@ using tdme::utilities::Properties;
  * Installer
  * @author Andreas Drewke
  */
-class tdme::tools::installer::Installer final
-	: public virtual Application, public virtual GUIActionListener, public virtual GUIChangeListener
+class tdme::tools::installer::Installer final: public Application, public GUIActionListener, public GUIChangeListener
 {
 private:
 	Engine* engine { nullptr };

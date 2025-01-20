@@ -172,7 +172,7 @@ void ParticleSystemEditorTabController::onCommand(TabControllerCommand command)
 			break;
 		case COMMAND_SAVEAS:
 			{
-				class OnParticleSave: public virtual Action
+				class OnParticleSave: public Action
 				{
 				public:
 					void performAction() override {
@@ -392,7 +392,7 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 			popUps->getContextMenuScreenController()->clear();
 
 			// delete
-			class OnAddParticleSystemAction: public virtual Action
+			class OnAddParticleSystemAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -424,7 +424,7 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 			popUps->getContextMenuScreenController()->clear();
 
 			// delete
-			class OnRemoveParticleSystemAction: public virtual Action
+			class OnRemoveParticleSystemAction: public Action
 			{
 			public:
 				void performAction() override {
@@ -483,7 +483,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
 				if (bbpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -520,7 +520,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
 				if (bbpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -557,7 +557,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
 				if (ppe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -594,7 +594,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
 				if (ppe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -631,7 +631,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
 				if (spe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -668,7 +668,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
 				if (spe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -705,7 +705,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto cpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitter():nullptr;
 				if (cpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -742,7 +742,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto cpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitter():nullptr;
 				if (cpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -779,7 +779,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
 				if (rpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -816,7 +816,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
 				if (rpe != nullptr) {
 					//
-					class OnColorChangeAction: public virtual Action
+					class OnColorChangeAction: public Action
 					{
 					public:
 						void performAction() override {
@@ -852,7 +852,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
-					class OnPointParticleSystemLoadTexture: public virtual Action
+					class OnPointParticleSystemLoadTexture: public Action
 					{
 					public:
 						void performAction() override {
@@ -923,7 +923,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
-					class OnPointParticleSystemLoadTransparencyTexture: public virtual Action
+					class OnPointParticleSystemLoadTransparencyTexture: public Action
 					{
 					public:
 						void performAction() override {
@@ -994,7 +994,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
-					class OnFogParticleSystemLoadTexture: public virtual Action
+					class OnFogParticleSystemLoadTexture: public Action
 					{
 					public:
 						void performAction() override {
@@ -1065,7 +1065,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
-					class OnFogParticleSystemLoadTransparencyTexture: public virtual Action
+					class OnFogParticleSystemLoadTransparencyTexture: public Action
 					{
 					public:
 						void performAction() override {
@@ -1137,7 +1137,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
 				if (ops != nullptr) {
 					//
-					class OnObjectParticleSystemLoadModel: public virtual Action
+					class OnObjectParticleSystemLoadModel: public Action
 					{
 					public:
 						void performAction() override {

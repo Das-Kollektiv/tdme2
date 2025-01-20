@@ -281,7 +281,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 					auto i = 0;
 					for (const auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
 						// add light
-						class OnCodeCompletionAction: public virtual Action
+						class OnCodeCompletionAction: public Action
 						{
 						public:
 							OnCodeCompletionAction(TextEditorTabView* textEditorTabView, int idx, const CodeCompletionSymbol& symbol): textEditorTabView(textEditorTabView), idx(idx), symbol(symbol) {}
@@ -2365,7 +2365,7 @@ void TextEditorTabView::setupContextMenu() {
 				popUps->getContextMenuScreenController()->clear();
 
 				// delete
-				class OnNodeDeleteAction: public virtual Action
+				class OnNodeDeleteAction: public Action
 				{
 				public:
 					void performAction() override {

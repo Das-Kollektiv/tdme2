@@ -16,6 +16,7 @@
 using std::unique_ptr;
 
 using tdme::application::Application;
+using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
@@ -27,8 +28,7 @@ using tdme::utilities::ObjectDeleter;
  * Ray Tracing Test
  * @author andreas.drewke
  */
-class tdme::tests::RayTracingTest final
-	: public virtual Application, public virtual InputEventHandler
+class tdme::tests::RayTracingTest final: public Application, public InputEventHandler
 {
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
