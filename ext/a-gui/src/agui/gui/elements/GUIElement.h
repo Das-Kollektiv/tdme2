@@ -44,7 +44,7 @@ public:
 	virtual ~GUIElement() {}
 
 	/**
-	 * @return name
+	 * @returns name
 	 */
 	virtual const string& getName() = 0;
 
@@ -54,21 +54,21 @@ public:
 	 * @param applicationSubPathName sub path name which is usually "project" or "engine"
 	 * @param fileName file name
 	 * @throws agui::os::filesystem::FileSystemException
-	 * @return template
+	 * @returns template
 	 */
 	virtual const string getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName = string()) = 0;
 
 	/**
 	 * Get default attributes
 	 * @param screenNode screen node
-	 * @return default attributes
+	 * @returns default attributes
 	 */
 	virtual unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/**
 	 * Create controller which is attached to this node
 	 * @param node node
-	 * @return
+	 * @returns
 	 */
 	virtual GUINodeController* createController(GUINode* node) = 0;
 

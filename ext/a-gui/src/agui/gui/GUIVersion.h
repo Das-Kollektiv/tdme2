@@ -15,12 +15,12 @@ struct agui::gui::GUIVersion final
 {
 public:
 	/**
-	 * @return version
+	 * @returns version
 	 */
 	static string getVersion();
 
 	/**
-	 * @return copyright
+	 * @returns copyright
 	 */
 	static string getCopyright();
 

@@ -103,7 +103,7 @@ public:
 	int getContentHeight() override;
 
 	/**
-	 * @return text
+	 * @returns text
 	 */
 	inline const MutableString& getText() const {
 		return text;

@@ -41,7 +41,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static GUINode_RequestedConstraints_RequestedConstraintsType* valueOf(const string& name);
 

@@ -53,7 +53,7 @@ private:
 	GUIMenuItemController(GUINode* node);
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	bool isSelected();
 

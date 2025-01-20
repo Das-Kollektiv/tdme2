@@ -58,7 +58,7 @@ public:
 	}
 
 	/**
-	 * @return time in milliseconds
+	 * @returns time in milliseconds
 	 */
 	inline int64_t getTime() const {
 		return time;
@@ -73,7 +73,7 @@ public:
 	}
 
 	/**
-	 * @return type
+	 * @returns type
 	 */
 	inline GUIMouseEventType getType() const {
 		return type;
@@ -88,7 +88,7 @@ public:
 	}
 
 	/**
-	 * @return x unscaled
+	 * @returns x unscaled
 	 */
 	inline int getXUnscaled() const {
 		return xUnscaled;
@@ -103,7 +103,7 @@ public:
 	}
 
 	/**
-	 * @return y unscaled
+	 * @returns y unscaled
 	 */
 	inline int getYUnscaled() const {
 		return yUnscaled;
@@ -118,7 +118,7 @@ public:
 	}
 
 	/**
-	 * @return x
+	 * @returns x
 	 */
 	inline int getX() const {
 		return x;
@@ -133,7 +133,7 @@ public:
 	}
 
 	/**
-	 * @return y
+	 * @returns y
 	 */
 	inline int getY() const {
 		return y;
@@ -148,7 +148,7 @@ public:
 	}
 
 	/**
-	 * @return button
+	 * @returns button
 	 */
 	inline int getButton() const {
 		return button;
@@ -163,7 +163,7 @@ public:
 	}
 
 	/**
-	 * @return wheel x
+	 * @returns wheel x
 	 */
 	inline float getWheelX() const {
 		return wheelX;
@@ -178,7 +178,7 @@ public:
 	}
 
 	/**
-	 * @return wheel y
+	 * @returns wheel y
 	 */
 	inline float getWheelY() const {
 		return wheelY;
@@ -193,7 +193,7 @@ public:
 	}
 
 	/**
-	 * @return wheel z
+	 * @returns wheel z
 	 */
 	inline float getWheelZ() const {
 		return wheelZ;
@@ -208,7 +208,7 @@ public:
 	}
 
 	/**
-	 * @return is meta down
+	 * @returns is meta down
 	 */
 	inline bool isMetaDown() const {
 		return metaDown;
@@ -223,7 +223,7 @@ public:
 	}
 
 	/**
-	 * @return control down
+	 * @returns control down
 	 */
 	inline bool isControlDown() const {
 		return controlDown;
@@ -238,7 +238,7 @@ public:
 	}
 
 	/**
-	 * @return is alt down
+	 * @returns is alt down
 	 */
 	inline bool isAltDown() const {
 		return altDown;
@@ -253,7 +253,7 @@ public:
 	}
 
 	/**
-	 * @return is shift down
+	 * @returns is shift down
 	 */
 	inline bool isShiftDown() const {
 		return shiftDown;
@@ -268,7 +268,7 @@ public:
 	}
 
 	/**
-	 * @return processed
+	 * @returns processed
 	 */
 	inline bool isProcessed() const {
 		return processed;

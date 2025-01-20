@@ -15,13 +15,13 @@ class agui::utilities::RTTI {
 public:
 	/**
 	 * @brief Demangle c++ symbol names
-	 * @return demangled name
+	 * @returns demangled name
 	 */
 	static const string demangle(const string& name);
 
 	/**
 	 * @brief Returns the current backtrace as string
-	 * @return backtrace as string
+	 * @returns backtrace as string
 	 */
 	static const string backtrace();
 };

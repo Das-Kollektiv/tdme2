@@ -1528,7 +1528,7 @@ void SceneEditorTabView::runScene() {
 				{},
 				scriptLibrary,
 				MinitScript::Variable()
-				// TODO: fixme, implement me, xxx
+				// TODO: implement me
 				// applicationClient->getContext()
 			);
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);

@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * @brief Gets an element from this queue, if no element exists yet the calling thread will be blocked until an element is available
-	 * @return T*
+	 * @returns T*
 	 */
 	T* getElement() {
 		m.lock();
@@ -80,7 +80,7 @@ public:
 	 * @brief Adds an element to this queue, signals threads which waits for an element
 	 * @param element T* element
 	 * @param declinable bool if element is declinable
-	 * @return if element was added
+	 * @returns if element was added
 	 */
 	bool addElement(T* element, const bool declinable) {
 		m.lock();

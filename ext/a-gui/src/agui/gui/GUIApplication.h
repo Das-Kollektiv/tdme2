@@ -20,7 +20,7 @@ public:
 	virtual ~GUIApplication() {}
 
 	/**
-	 * @return mouse cursor
+	 * @returns mouse cursor
 	 */
 	virtual int getMouseCursor() = 0;
 
@@ -31,12 +31,12 @@ public:
 	virtual void setMouseCursor(int mouseCursor) = 0;
 
 	/**
-	 * @return get mouse X position
+	 * @returns get mouse X position
 	 */
 	virtual int getMousePositionX() = 0;
 
 	/**
-	 * @return get mouse Y position
+	 * @returns get mouse Y position
 	 */
 	virtual int getMousePositionY() = 0;
 
@@ -48,7 +48,7 @@ public:
 	virtual void setMousePosition(int x, int y) = 0;
 
 	/**
-	 * @return clipboard content as utf8 string
+	 * @returns clipboard content as utf8 string
 	 */
 	virtual string getClipboardContent() = 0;
 

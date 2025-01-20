@@ -3,7 +3,6 @@
 #include <agui/agui.h>
 #include <agui/gui/textures/GUITexture.h>
 #include <agui/gui/misc/fwd-agui.h>
-#include <agui/gui/misc/GUIColorTexture.h>
 #include <agui/utilities/ByteBuffer.h>
 
 // namespaces
@@ -20,7 +19,7 @@ namespace misc {
  * Dynamic color texture
  * @author Andreas Drewke
  */
-class agui::gui::misc::GUIDynamicColorTexture final: public GUIColorTexture
+class agui::gui::misc::GUIDynamicColorTexture final
 {
 public:
 	// forbid class copy
@@ -31,7 +30,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	inline GUIDynamicColorTexture(int32_t width, int32_t height): width(width), height(height), colorBufferTextureId(0) {
+	inline GUIDynamicColorTexture(int32_t width, int32_t height): width(width), height(height), textureId(0) {
 		//
 	}
 
@@ -42,28 +41,28 @@ public:
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int32_t getHeight() {
 		return height;
 	}
 
 	/**
-	 * @return underlying texture, the format is currently RGBA
+	 * @returns underlying texture, the format is currently RGBA
 	 */
 	inline GUITexture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return underlying texture byte buffer, the format is currently RGBA
+	 * @returns underlying texture byte buffer, the format is currently RGBA
 	 */
 	inline ByteBuffer* getByteBuffer() {
 		return texture->getTextureData();
@@ -91,9 +90,11 @@ public:
 	 */
 	void update();
 
-	// overridden methods
-	inline int32_t getColorTextureId() override {
-		return colorBufferTextureId;
+	/**
+	 * @returns texture id
+	 */
+	inline int32_t getTextureId() {
+		return textureId;
 	}
 
 private:
@@ -101,7 +102,7 @@ private:
 
 	int32_t width { -1 };
 	int32_t height { -1 };
-	int32_t colorBufferTextureId { -1 };
+	int32_t textureId { -1 };
 	GUITexture* texture { nullptr };
 
 };

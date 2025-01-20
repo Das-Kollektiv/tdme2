@@ -1120,9 +1120,7 @@ void Installer::initialize()
 		if (installed == true) screen = SCREEN_WELCOME2;
 		engine->initialize();
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
-		// TODO: fixme
-		//	xxx
-		// setInputEventHandler(engine->getGUI());
+		setEventHandler(engine->getGUI());
 		popUps->initialize();
 		#if defined(_WIN32)
 			homePath = StringTools::replace(string(getenv("USERPROFILE")), '\\', '/');

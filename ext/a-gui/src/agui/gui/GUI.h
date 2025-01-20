@@ -166,7 +166,7 @@ public:
 	static constexpr int64_t TOOLTIP_TIME { 250LL };
 
 	/**
-	 * @return is focus control by TAB key disabled
+	 * @returns is focus control by TAB key disabled
 	 */
 	inline static bool isDisableTabFocusControl() {
 		return disableTabFocusControl;
@@ -181,42 +181,42 @@ public:
 	}
 
 	/**
-	 * @return application
+	 * @returns application
 	 */
 	static inline GUIApplication* getApplication() {
 		return application;
 	}
 
 	/**
-	 * @return renderer backend
+	 * @returns renderer backend
 	 */
 	static inline GUIRendererBackend* getRendererBackend() {
 		return rendererBackend;
 	}
 
 	/**
-	 * @return renderer
+	 * @returns renderer
 	 */
 	static inline GUIRenderer* getRenderer() {
 		return renderer.get();
 	}
 
 	/**
-	 * @return texture manager
+	 * @returns texture manager
 	 */
 	static inline GUITextureManager* getTextureManager() {
 		return textureManager.get();
 	}
 
 	/**
-	 * @return VBO manager
+	 * @returns VBO manager
 	 */
 	static inline GUIVBOManager* getVBOManager() {
 		return vboManager.get();
 	}
 
 	/**
-	 * @return GUI shader
+	 * @returns GUI shader
 	 */
 	static inline GUIShader* getShader() {
 		return shader.get();
@@ -240,21 +240,21 @@ public:
 	~GUI();
 
 	/**
-	 * @return timing
+	 * @returns timing
 	 */
 	inline GUITiming* getTiming() {
 		return &timing;
 	}
 
 	/**
-	 * @return width
+	 * @returns width
 	 */
 	inline int getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height
+	 * @returns height
 	 */
 	inline int getHeight() {
 		return height;
@@ -278,14 +278,14 @@ public:
 	void dispose();
 
 	/**
-	 * @return mouse events
+	 * @returns mouse events
 	 */
 	inline vector<GUIMouseEvent>& getMouseEvents() {
 		return mouseEvents;
 	}
 
 	/**
-	 * @return keyboard events
+	 * @returns keyboard events
 	 */
 	inline vector<GUIKeyboardEvent>& getKeyboardEvents() {
 		return keyboardEvents;
@@ -294,7 +294,7 @@ public:
 	/**
 	 * Get screen
 	 * @param id id
-	 * @return screen
+	 * @returns screen
 	 */
 	inline GUIScreenNode* getScreen(const string& id) {
 		auto screensIt = screens.find(id);
@@ -357,7 +357,7 @@ public:
 	void invalidateFocussedNode();
 
 	/**
-	 * @return focussed node
+	 * @returns focussed node
 	 */
 	GUIElementNode* getFocussedNode();
 
@@ -411,7 +411,7 @@ public:
 	/**
 	 * Reports if node has currently mouse interaction like dragging or pressing
 	 * @param node node
-	 * @return if node has currently mouse interaction
+	 * @returns if node has currently mouse interaction
 	 */
 	bool isHavingMouseInteraction(GUINode* node);
 
@@ -495,7 +495,7 @@ public:
 	 * Get scaled x from unscaled x
 	 * @param screenNode screen node
 	 * @param x x
-	 * @return scaled x
+	 * @returns scaled x
 	 */
 	inline int getScaledX(GUIScreenNode* screenNode, int x) {
 		return (float)x * (float)screenNode->getScreenWidth() / (float)width + screenNode->getGUIEffectOffsetX();
@@ -505,7 +505,7 @@ public:
 	 * Get scaled y from unscaled y
 	 * @param screenNode screen node
 	 * @param y y
-	 * @return scaled y
+	 * @returns scaled y
 	 */
 	inline int getScaledY(GUIScreenNode* screenNode, int y) {
 		return (float)y * (float)screenNode->getScreenHeight() / (float)height + screenNode->getGUIEffectOffsetY();

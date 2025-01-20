@@ -61,14 +61,14 @@ public:
 	void registerMethods() override;
 
 	/**
-	 * @return release next screen node
+	 * @returns release next screen node
 	 */
 	inline GUIScreenNode* releaseNextScreenNode() {
 		return nextScreenNode.release();
 	}
 
 	/**
-	 * @return if screen has been popped
+	 * @returns if screen has been popped
 	 */
 	inline bool isPopped() {
 		return popped;

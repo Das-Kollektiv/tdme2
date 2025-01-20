@@ -53,7 +53,7 @@ private:
 	GUICheckboxController(GUINode* node);
 
 	/**
-	 * @return is checked
+	 * @returns is checked
 	 */
 	bool isChecked();
 

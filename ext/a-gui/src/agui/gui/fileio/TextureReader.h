@@ -39,7 +39,7 @@ class agui::gui::fileio::TextureReader final
 
 public:
 	/**
-	 * @return texture extensions
+	 * @returns texture extensions
 	 */
 	static const vector<string>& getTextureExtensions();
 
@@ -50,7 +50,7 @@ public:
 	 * @param useCache use cache
 	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @param idPrefix id prefix
-	 * @return texture data instance or null
+	 * @returns texture data instance or null
 	 */
 	static GUITexture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
@@ -63,7 +63,7 @@ public:
 	 * @param useCache use cache
 	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @param idPrefix id prefix
-	 * @return texture data instance or null
+	 * @returns texture data instance or null
 	 */
 	static GUITexture* read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
@@ -72,7 +72,7 @@ public:
 	 * @param texture texture
 	 * @param rotation rotation in degree
 	 * @param idSuffix id suffix for generated texture
-	 * @return rotation rotation
+	 * @returns rotation rotation
 	 */
 	static GUITexture* rotate(GUITexture* texture, float rotation, const string& idSuffix = ":rotated");
 
@@ -82,7 +82,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param idSuffix id suffix for generated texture
-	 * @return texture
+	 * @returns texture
 	 */
 	static GUITexture* scale(GUITexture* texture, int width, int height, const string& idSuffix = ":scaled");
 
@@ -91,7 +91,7 @@ public:
 	 * @param texture texture
 	 * @param idSuffix id suffix for generated texture
 	 * @param adjacentSampleWeight adjacent sample weight
-	 * @return texture
+	 * @returns texture
 	 */
 	static GUITexture* smooth(GUITexture* texture, const string& idSuffix = ":smoothed", float adjacentSampleWeight = 0.05f);
 

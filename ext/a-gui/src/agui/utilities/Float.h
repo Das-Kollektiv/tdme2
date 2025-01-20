@@ -38,35 +38,35 @@ public:
 	/**
 	 * Check if given string is a float string
 	 * @param str string
-	 * @return given string is float
+	 * @returns given string is float
 	 */
 	static bool is(const string& str);
 
 	/**
 	 * Check if given string is a float string
 	 * @param str string
-	 * @return given string is float
+	 * @returns given string is float
 	 */
 	static bool viewIs(const string_view& str);
 
 	/**
 	 * Parse float
 	 * @param str string
-	 * @return float
+	 * @returns float
 	 */
 	static float parse(const string& str);
 
 	/**
 	 * Parse float
 	 * @param str string
-	 * @return float
+	 * @returns float
 	 */
 	static float viewParse(const string_view& str);
 
 	/**
 	 * Check if float is not a number
 	 * @param value float value
-	 * @return if value is not a number
+	 * @returns if value is not a number
 	 */
 	inline static bool isNaN(float value) {
 		return isnan(value);
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Check if float is infinite
 	 * @param value float value
-	 * @return if value is infinite
+	 * @returns if value is infinite
 	 */
 	inline static bool isInfinite(float value) {
 		return isinf(value);
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Check if float is infinite
 	 * @param value float value
-	 * @return if value is finite
+	 * @returns if value is finite
 	 */
 	inline static bool isFinite(float value) {
 		return isfinite(value);
@@ -95,14 +95,14 @@ public:
 	 * @param a float a
 	 * @param b float b
 	 * @param t t
-	 * @return interpolated float value
+	 * @returns interpolated float value
 	 */
 	inline static float interpolateLinear(float a, float b, float t) {
 		return (b * t) + ((1.0f - t) * a);
 	}
 
 	/**
-	 * @return f1 and f2 are equals
+	 * @returns f1 and f2 are equals
 	 */
 	inline static bool equals(float f1, float f2) {
 		return Math::abs(f2 - f1) < Math::EPSILON;

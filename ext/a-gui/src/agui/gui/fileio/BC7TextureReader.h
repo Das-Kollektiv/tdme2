@@ -31,7 +31,7 @@ public:
 	 * @param bytesPerPixel bytes per pixel
 	 * @param bc7Data BC7 vector data to read BC7 from
 	 * @param textureByteBuffer texture byte buffer
-	 * @return success
+	 * @returns success
 	 */
 	static bool read(int width, int height, int bytesPerPixel, const vector<uint8_t>& bc7Data, ByteBuffer& textureByteBuffer);
 

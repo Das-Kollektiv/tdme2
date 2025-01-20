@@ -66,7 +66,7 @@ private:
 public:
 
 	/**
-	 * @return audio singleton instance
+	 * @returns audio singleton instance
 	 */
 	inline static Audio* getInstance() {
 		if (Audio::instance == nullptr) {
@@ -81,7 +81,7 @@ public:
 	static void shutdown();
 
 	/**
-	 * @return listener position
+	 * @returns listener position
 	 */
 	inline const Vector3& getListenerPosition() const {
 		return listenerPosition;
@@ -96,7 +96,7 @@ public:
 	}
 
 	/**
-	 * @return listener velocity
+	 * @returns listener velocity
 	 */
 	inline const Vector3& getListenerVelocity() const {
 		return listenerVelocity;
@@ -111,7 +111,7 @@ public:
 	}
 
 	/**
-	 * @return listener orientation at
+	 * @returns listener orientation at
 	 */
 	inline const Vector3& getListenerOrientationAt() const {
 		return listenerOrientationAt;
@@ -126,7 +126,7 @@ public:
 	}
 
 	/**
-	 * @return listener orientation up
+	 * @returns listener orientation up
 	 */
 	inline const Vector3& getListenerOrientationUp() const {
 		return listenerOrientationUp;
@@ -134,7 +134,7 @@ public:
 
 	/**
 	 * Set listener orientation up
-	 * @return listener orientation up
+	 * @returns listener orientation up
 	 */
 	inline void setListenerOrientationUp(const Vector3& listenerOrientationUp) {
 		this->listenerOrientationUp = listenerOrientationUp;
@@ -143,7 +143,7 @@ public:
 	/**
 	 * Returns an audio entity identified by given id
 	 * @param id id
-	 * @return audio entity
+	 * @returns audio entity
 	 */
 	inline AudioEntity* getEntity(const string& id) {
 		auto audioEntityIt = audioEntities.find(id);

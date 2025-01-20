@@ -80,7 +80,7 @@ public:
 	 * @param r2c0 row 2, column 0
 	 * @param r2c1 row 2, column 1
 	 * @param r2c2 row 2, column 2
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& set(
 		float r0c0, float r0c1, float r0c2,
@@ -101,7 +101,7 @@ public:
 	/**
 	 * Sets this matrix by array
 	 * @param matrix matrix as array
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& set(const array<float, 9>& matrix) {
 		data = matrix;
@@ -111,7 +111,7 @@ public:
 	/**
 	 * Sets this matrix by given matrix
 	 * @param matrix matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& set(const Matrix3x3& matrix) {
 		data = matrix.data;
@@ -120,7 +120,7 @@ public:
 
 	/**
 	 * Creates identity matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& identity() {
 		data[0] = 1.0f;
@@ -153,7 +153,7 @@ public:
 	/**
 	 * Scales by vector2
 	 * @param vector2 vector2
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& scale(const Vector2& vector2) {
 		data[0] *= vector2.data[0];
@@ -168,7 +168,7 @@ public:
 	/**
 	 * Multiplies this matrix with given matrix
 	 * @param matrix matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& multiply(const Matrix3x3& matrix) {
 		array<float, 9> _data;
@@ -188,7 +188,7 @@ public:
 	/**
 	 * Multiplies this matrix with vector2
 	 * @param vector2 vector2
-	 * @return vector2
+	 * @returns vector2
 	 */
 	inline Vector2 multiply(const Vector2& vector2) const {
 		return Vector2(
@@ -200,7 +200,7 @@ public:
 	/**
 	 * Compares this matrix with given matrix
 	 * @param matrix matrix
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const Matrix3x3& matrix) const {
 		return
@@ -232,7 +232,7 @@ public:
 	 * Set coordinate system axes
 	 * @param xAxis x axis
 	 * @param yAxis y axis
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& setAxes(const Vector2& xAxis, const Vector2& yAxis) {
 		data[0] = xAxis.data[0];
@@ -247,7 +247,7 @@ public:
 	/**
 	 * Set coordinate system axis by rotation
 	 * @param angle angle
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& setAxes(float angle) {
 		auto r = angle * 3.1415927f / 180.0f;
@@ -276,7 +276,7 @@ public:
 	/**
 	 * Set scale
 	 * @param scale scale
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& setScale(const Vector2& scale) {
 		Vector2 axisVector;
@@ -307,7 +307,7 @@ public:
 	/**
 	 * Sets translation in matrix
 	 * @param vector2 vector2
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& setTranslation(const Vector2& vector2) {
 		data[6] = vector2.data[0];
@@ -318,7 +318,7 @@ public:
 	/**
 	 * Creates rotation matrix that rotates around texture center by given angle
 	 * @param angle angle
-	 * @return new rotation matrix
+	 * @returns new rotation matrix
 	 */
 	static inline Matrix3x3 rotateAroundTextureCenter(float angle) {
 		return rotateAroundPoint(Vector2(0.5f, 0.5f), angle);
@@ -328,7 +328,7 @@ public:
 	 * Creates rotation matrix that rotates around given point by given angle
 	 * @param point point
 	 * @param angle angle
-	 * @return new rotation matrix
+	 * @returns new rotation matrix
 	 */
 	static inline Matrix3x3 rotateAroundPoint(const Vector2& point, float angle) {
 		Matrix3x3 matrix;
@@ -344,7 +344,7 @@ public:
 	 * @param a matrix a
 	 * @param b matrix b
 	 * @param t t
-	 * @return interpolated matrix
+	 * @returns interpolated matrix
 	 */
 	inline static Matrix3x3 interpolateLinear(const Matrix3x3& a, const Matrix3x3& b, float t) {
 		return Matrix3x3(
@@ -361,7 +361,7 @@ public:
 	}
 
 	/**
-	 * @return matrix as array
+	 * @returns matrix as array
 	 */
 	inline const array<float, 9>& getArray() const {
 		return data;
@@ -369,7 +369,7 @@ public:
 
 	/**
 	 * Clones this matrix
-	 * @return cloned matrix
+	 * @returns cloned matrix
 	 */
 	inline Matrix3x3 clone() const {
 		Matrix3x3 clonedMatrix(*this);
@@ -379,7 +379,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return matrix component
+	 * @returns matrix component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -388,7 +388,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return matrix component
+	 * @returns matrix component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
@@ -397,7 +397,7 @@ public:
 	/**
 	 * Operator * scalar
 	 * @param scalar scalar
-	 * @return new matrix (this * scalar)
+	 * @returns new matrix (this * scalar)
 	 */
 	inline Matrix3x3 operator *(const float scalar) const {
 		auto r = this->clone().scale(scalar);
@@ -407,7 +407,7 @@ public:
 	/**
 	 * Operator * matrix
 	 * @param matrix matrix
-	 * @return new matrix (this * matrix)
+	 * @returns new matrix (this * matrix)
 	 */
 	inline Matrix3x3 operator *(const Matrix3x3& matrix) const {
 		auto r = this->clone().multiply(matrix);
@@ -417,7 +417,7 @@ public:
 	/*
 	 * Operator * vector2
 	 * @param vector2 vector2
-	 * @return new vector (this * vector2)
+	 * @returns new vector (this * vector2)
 	 */
 	inline Vector2 operator *(const Vector2& vector2) const {
 		return this->multiply(vector2);
@@ -426,7 +426,7 @@ public:
 	/**
 	 * Operator *= matrix
 	 * @param matrix matrix
-	 * @return this matrix
+	 * @returns this matrix
 	 */
 	inline Matrix3x3& operator *=(const Matrix3x3& matrix) {
 		return this->multiply(matrix);
@@ -435,7 +435,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param matrix matrix to compare to
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool operator ==(const Matrix3x3& matrix) const {
 		return this->equals(matrix);
@@ -444,7 +444,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param matrix matrix to compare to
-	 * @return non equality
+	 * @returns non equality
 	 */
 	inline bool operator !=(const Matrix3x3& matrix) const {
 		return this->equals(matrix) == false;

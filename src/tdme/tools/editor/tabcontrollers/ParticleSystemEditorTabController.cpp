@@ -1453,7 +1453,6 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 }
 
 void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleSystemIdx) {
-	Console::printLine("ParticleSystemEditorTabController::applyParticleSystemDetails(): xxx");
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);

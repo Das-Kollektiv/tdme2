@@ -29,7 +29,7 @@ struct agui::gui::events::GUIMoveListener
 	/**
 	 * Accept move
 	 * @param node node
-	 * @return if node has been accepted for move
+	 * @returns if node has been accepted for move
 	 */
 	virtual bool accept(GUINode* node) = 0;
 

@@ -3,6 +3,7 @@
 
 #include <agui/agui.h>
 #include <agui/gui/textures/GUITexture.h>
+#include <agui/utilities/ByteBuffer.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/BC7TextureReader.h>
@@ -343,6 +344,14 @@ void Texture::onDelete() {
 }
 
 GUITexture* Texture::toGUITexture() {
-	// TODO: xxx: implement me!
-	return nullptr;
+	// TODO: improve me!
+	return new GUITexture(
+		id,
+		static_cast<GUITexture::TextureDepth>(depth),
+		static_cast<GUITexture::TextureFormat>(format),
+		width, height,
+		textureWidth, textureHeight,
+		static_cast<GUITexture::TextureFormat>(format),
+		agui::utilities::ByteBuffer(*textureData.getBufferVector())
+	);
 }

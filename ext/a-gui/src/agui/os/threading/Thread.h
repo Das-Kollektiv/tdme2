@@ -35,7 +35,7 @@ public:
 	inline virtual ~Thread() {}
 
 	/**
-	 * @return hardware thread count
+	 * @returns hardware thread count
 	 */
 	inline static int getHardwareThreadCount() {
 		return std::thread::hardware_concurrency();
@@ -72,7 +72,7 @@ public:
 
 	/**
 	 * @brief Returns if stop has been requested
-	 * @return bool
+	 * @returns bool
 	 */
 	inline bool isStopRequested() {
 		return stopRequested;

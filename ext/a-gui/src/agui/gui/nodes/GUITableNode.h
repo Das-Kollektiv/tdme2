@@ -69,12 +69,12 @@ protected:
 	void setLeft(int left) override;
 
 	/**
-	 * @return table cell max width @ x position
+	 * @returns table cell max width @ x position
 	 */
 	int getTableCellMaxWidth(int x);
 
 	/**
-	 * @return table cell max height @ y position
+	 * @returns table cell max height @ y position
 	 */
 	int getTableCellMaxHeight(int y);
 

@@ -84,7 +84,7 @@ private:
 	/**
 	 * Tell position of OGG file data
 	 * @param oggFileData pointer to OGG file data
-	 * @return current read position
+	 * @returns current read position
 	 */
 	static long oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData);
 

@@ -22,7 +22,7 @@ struct agui::os::filesystem::FileNameFilter
 	 * Accept a file
 	 * @param path path
 	 * @param file file
-	 * @return if to accept file
+	 * @returns if to accept file
 	 */
 	virtual bool accept(const string& path, const string& file) = 0;
 };

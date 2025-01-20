@@ -66,7 +66,7 @@ private:
 	GUIDropDownController(GUINode* node);
 
 	/**
-	 * @return drop down open state
+	 * @returns drop down open state
 	 */
 	bool isOpen();
 

@@ -66,14 +66,14 @@ protected:
 public:
 
 	/**
-	 * @return id
+	 * @returns id
 	 */
 	inline virtual const string& getId() const {
 		return id;
 	}
 
 	/**
-	 * @return if sound will be looped
+	 * @returns if sound will be looped
 	 */
 	inline virtual const bool isLooping() const {
 		return looping;
@@ -88,7 +88,7 @@ public:
 	}
 
 	/**
-	 * @return fixed, means the sound will always played no matter where the position and listener is located
+	 * @returns fixed, means the sound will always played no matter where the position and listener is located
 	 */
 	inline virtual const bool isFixed() const {
 		return fixed;
@@ -103,7 +103,7 @@ public:
 	}
 
 	/**
-	 * @return pitch
+	 * @returns pitch
 	 */
 	inline virtual const float getPitch() const {
 		return pitch;
@@ -118,7 +118,7 @@ public:
 	}
 
 	/**
-	 * @return gain
+	 * @returns gain
 	 */
 	inline virtual const float getGain() const {
 		return gain;
@@ -133,7 +133,7 @@ public:
 	}
 
 	/**
-	 * @return source position
+	 * @returns source position
 	 */
 	inline virtual const Vector3& getSourcePosition() const {
 		return sourcePosition;
@@ -141,14 +141,14 @@ public:
 
 	/**
 	 * Set source position
-	 * @return source position
+	 * @returns source position
 	 */
 	inline virtual void setSourcePosition(const Vector3& sourcePosition) {
 		this->sourcePosition = sourcePosition;
 	}
 
 	/**
-	 * @return source direction
+	 * @returns source direction
 	 */
 	inline virtual const Vector3& getSourceDirection() const {
 		return sourceDirection;
@@ -163,7 +163,7 @@ public:
 	}
 
 	/**
-	 * @return source velocity
+	 * @returns source velocity
 	 */
 	inline virtual const Vector3& getSourceVelocity() const {
 		return sourceVelocity;
@@ -178,7 +178,7 @@ public:
 	}
 
 	/**
-	 * @return if stream is playing
+	 * @returns if stream is playing
 	 */
 	virtual bool isPlaying() = 0;
 

@@ -52,7 +52,7 @@ private:
 	GUITabsHeaderController(GUINode* node);
 
 	/**
-	 * @return has focus
+	 * @returns has focus
 	 */
 	bool hasFocus();
 

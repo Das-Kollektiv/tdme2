@@ -1,7 +1,7 @@
 #pragma once
 
 #include <agui/agui.h>
-#include <agui/gui/misc/GUIDynamicColorTexture.h>
+#include <agui/gui/misc/GUIRendererTexture.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -9,7 +9,7 @@
 #include <tdme/engine/Texture.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-using agui::gui::misc::GUIDynamicColorTexture;
+using agui::gui::misc::GUIRendererTexture;
 
 using tdme::engine::ColorTexture;
 using tdme::engine::Texture;
@@ -96,14 +96,17 @@ public:
 	}
 
 	/**
-	 * @returns GUI dynamic color texture
+	 * @returns GUI renderer texture
 	 */
-	GUIDynamicColorTexture* toGUIDynamicColorTexture() {
-		// TODO: implement me!
-		//	fixme
-		//	xxx
-		return nullptr;
+	GUIRendererTexture* toGUIRendererTexture() {
+		return
+			new GUIRendererTexture(
+				width,
+				height,
+				colorBufferTextureId
+			);
 	}
+
 private:
 	STATIC_DLL_IMPEXT static uint32_t counter;
 

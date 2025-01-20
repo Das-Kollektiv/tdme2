@@ -39,7 +39,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static GUINode_AlignmentHorizontal* valueOf(const string& name);
 };

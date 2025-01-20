@@ -6,7 +6,7 @@
 #include <agui/gui/fileio/PNGTextureReader.h>
 #include <agui/gui/fileio/TextureReader.h>
 #include <agui/gui/misc/GUIDynamicColorTexture.h>
-#include <agui/gui/misc/GUIFrameBuffer.h>
+#include <agui/gui/misc/GUIRendererTexture.h>
 #include <agui/gui/textures/GUITexture.h>
 #include <agui/gui/textures/GUITextureManager.h>
 #include <agui/gui/nodes/GUIColor.h>
@@ -35,7 +35,6 @@ using agui::gui::textures::GUITexture;
 using agui::gui::fileio::PNGTextureReader;
 using agui::gui::fileio::TextureReader;
 using agui::gui::misc::GUIDynamicColorTexture;
-using agui::gui::misc::GUIFrameBuffer;
 using agui::gui::textures::GUITextureManager;
 using agui::gui::nodes::GUIColor;
 using agui::gui::nodes::GUINode_Border;
@@ -126,7 +125,6 @@ void GUIImageNode::disposeTexture() {
 	releaseTextureReference = false;
 	source.clear();
 	texture = nullptr;
-	frameBuffer = nullptr;
 }
 
 const string GUIImageNode::getNodeType()
@@ -185,10 +183,23 @@ void GUIImageNode::setTexture(GUIDynamicColorTexture* texture) {
 		textureHeight = 0;
 		return;
 	}
-	textureId = texture->getColorTextureId();
+	textureId = texture->getTextureId();
 	textureWidth = texture->getWidth();
 	textureHeight = texture->getHeight();
 	releaseTextureReference = false;
+}
+
+void GUIImageNode::setTexture(GUIRendererTexture* texture) {
+	disposeTexture();
+	if (texture == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
+	}
+	textureId = texture->getTextureId();
+	textureWidth = texture->getWidth();
+	textureHeight = texture->getHeight();
 }
 
 void GUIImageNode::rotate(float rotation) {
@@ -201,21 +212,4 @@ void GUIImageNode::rotate(float rotation) {
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
 	releaseTextureReference = true;
-}
-
-GUIFrameBuffer* GUIImageNode::getFrameBuffer() {
-	return frameBuffer;
-}
-
-void GUIImageNode::setFrameBuffer(GUIFrameBuffer* frameBuffer) {
-	disposeTexture();
-	if (frameBuffer == nullptr) {
-		textureId = 0;
-		textureWidth = 0;
-		textureHeight = 0;
-		return;
-	}
-	textureId = frameBuffer->getColorBufferTextureId();
-	textureWidth = frameBuffer->getWidth();
-	textureHeight = frameBuffer->getHeight();
 }

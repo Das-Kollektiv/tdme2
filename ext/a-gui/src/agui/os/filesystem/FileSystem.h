@@ -22,13 +22,13 @@ public:
 	/**
 	 * Singleton instance to retrieve file system
 	 * will use standard file system by default if not set up different explicitly
-	 * @return file system
+	 * @returns file system
 	 */
 	static FileSystemInterface* getInstance();
 
 	/**
 	 * Retrieve standard file system
-	 * @return standard file system
+	 * @returns standard file system
 	 */
 	static FileSystemInterface* getStandardFileSystem();
 

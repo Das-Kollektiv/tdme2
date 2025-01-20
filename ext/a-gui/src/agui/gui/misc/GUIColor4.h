@@ -94,7 +94,7 @@ public:
 	}
 
 	/**
-	 * @return red component
+	 * @returns red component
 	 */
 	inline float getRed() const {
 		return data[0];
@@ -109,7 +109,7 @@ public:
 	}
 
 	/**
-	 * @return green component
+	 * @returns green component
 	 */
 	inline float getGreen() const {
 		return data[1];
@@ -124,7 +124,7 @@ public:
 	}
 
 	/**
-	 * @return blue component
+	 * @returns blue component
 	 */
 	inline float getBlue() const {
 		return data[2];
@@ -139,7 +139,7 @@ public:
 	}
 
 	/**
-	 * @return alpha component
+	 * @returns alpha component
 	 */
 	inline float getAlpha() const {
 		return data[3];
@@ -156,7 +156,7 @@ public:
 	/**
 	 * Adds a scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& add(float scalar) {
 		data[0] += scalar;
@@ -169,7 +169,7 @@ public:
 	/**
 	 * Adds a color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& add(const GUIColor4& color) {
 		data[0] += color.data[0];
@@ -182,7 +182,7 @@ public:
 	/**
 	 * Subtracts a scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& sub(float scalar) {
 		data[0] -= scalar;
@@ -195,7 +195,7 @@ public:
 	/**
 	 * Subtracts a color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& sub(const GUIColor4& color) {
 		data[0] -= color.data[0];
@@ -208,7 +208,7 @@ public:
 	/**
 	 * Scales this color
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& scale(float scalar) {
 		data[0] *= scalar;
@@ -221,7 +221,7 @@ public:
 	/**
 	 * Scales this color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& scale(const GUIColor4& color) {
 		data[0] *= color.data[0];
@@ -235,7 +235,7 @@ public:
 	 * Compares this color with given color
 	 * @param color color
 	 * @param tolerance tolerance per color component
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool equals(const GUIColor4& color, float tolerance = Math::EPSILON) const {
 		return (this == &color) ||
@@ -252,7 +252,7 @@ public:
 	 * @param a color a
 	 * @param b color b
 	 * @param t t
-	 * @return interpolated color
+	 * @returns interpolated color
 	 */
 	inline static GUIColor4 interpolateLinear(const GUIColor4& a, const GUIColor4& b, float t) {
 		return GUIColor4(
@@ -264,7 +264,7 @@ public:
 	}
 
 	/**
-	 * @return color as array
+	 * @returns color as array
 	 */
 	inline const array<float, 4>& getArray() const {
 		return data;
@@ -272,7 +272,7 @@ public:
 
 	/**
 	 * Clones this color
-	 * @return new cloned color
+	 * @returns new cloned color
 	 */
 	inline GUIColor4 clone() const {
 		return GUIColor4(*this);
@@ -281,7 +281,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return color component
+	 * @returns color component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -290,7 +290,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return color component
+	 * @returns color component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
@@ -299,7 +299,7 @@ public:
 	/**
 	 * Operator + scalar
 	 * @param scalar scalar
-	 * @return new color (this + scalar)
+	 * @returns new color (this + scalar)
 	 */
 	inline GUIColor4 operator +(const float scalar) const {
 		auto r = this->clone().add(scalar);
@@ -309,7 +309,7 @@ public:
 	/**
 	 * Operator + color
 	 * @param color color
-	 * @return new color (this + color)
+	 * @returns new color (this + color)
 	 */
 	inline GUIColor4 operator +(const GUIColor4& color) const {
 		auto r = this->clone().add(color);
@@ -319,7 +319,7 @@ public:
 	/**
 	 * Operator - scalar
 	 * @param scalar scalar
-	 * @return new color (this - scalar)
+	 * @returns new color (this - scalar)
 	 */
 	inline GUIColor4 operator -(const float scalar) const {
 		auto r = this->clone().sub(scalar);
@@ -329,7 +329,7 @@ public:
 	/**
 	 * Operator - color
 	 * @param color color
-	 * @return new color (this - color)
+	 * @returns new color (this - color)
 	 */
 	inline GUIColor4 operator -(const GUIColor4& color) const {
 		auto r = this->clone().sub(color);
@@ -339,7 +339,7 @@ public:
 	/**
 	 * Operator * scalar
 	 * @param scalar scalar
-	 * @return new color (this * scalar)
+	 * @returns new color (this * scalar)
 	 */
 	inline GUIColor4 operator *(const float scalar) const {
 		auto r = this->clone().scale(scalar);
@@ -349,7 +349,7 @@ public:
 	/**
 	 * Operator * color
 	 * @param color color
-	 * @return new color (this * color)
+	 * @returns new color (this * color)
 	 */
 	inline GUIColor4 operator *(const GUIColor4& color) const {
 		auto r = this->clone().scale(color);
@@ -359,7 +359,7 @@ public:
 	/**
 	 * Operator / scalar
 	 * @param scalar scalar
-	 * @return new color (this / scalar)
+	 * @returns new color (this / scalar)
 	 */
 	inline GUIColor4 operator /(const float scalar) const {
 		auto vInverted = GUIColor4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
@@ -370,7 +370,7 @@ public:
 	/**
 	 * Operator / color
 	 * @param color color
-	 * @return new color (this / color)
+	 * @returns new color (this / color)
 	 */
 	inline GUIColor4 operator /(const GUIColor4& color) const {
 		auto vInverted = GUIColor4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
@@ -381,7 +381,7 @@ public:
 	/**
 	 * Operator += scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator +=(const float scalar) {
 		return this->add(scalar);
@@ -390,7 +390,7 @@ public:
 	/**
 	 * Operator += color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator +=(const GUIColor4& color) {
 		return this->add(color);
@@ -399,7 +399,7 @@ public:
 	/**
 	 * Operator -= scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator -=(const float scalar) {
 		return this->sub(scalar);
@@ -408,7 +408,7 @@ public:
 	/**
 	 * Operator -= color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator -=(const GUIColor4& color) {
 		return this->sub(color);
@@ -417,7 +417,7 @@ public:
 	/**
 	 * Operator *= scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator *=(const float scalar) {
 		return this->scale(scalar);
@@ -426,7 +426,7 @@ public:
 	/**
 	 * Operator *= color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator *=(const GUIColor4& color) {
 		return this->scale(color);
@@ -435,7 +435,7 @@ public:
 	/**
 	 * Operator /= scalar
 	 * @param scalar scalar
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator /=(const float scalar) {
 		auto vInverted = GUIColor4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
@@ -445,7 +445,7 @@ public:
 	/**
 	 * Operator /= color
 	 * @param color color
-	 * @return this color
+	 * @returns this color
 	 */
 	inline GUIColor4& operator /=(const GUIColor4& color) {
 		auto vInverted = GUIColor4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
@@ -455,7 +455,7 @@ public:
 	/**
 	 * Equality comparison operator
 	 * @param color color
-	 * @return equality
+	 * @returns equality
 	 */
 	inline bool operator ==(const GUIColor4& color) const {
 		return this->equals(color);
@@ -464,7 +464,7 @@ public:
 	/**
 	 * Non equality comparison operator
 	 * @param color color
-	 * @return non equality
+	 * @returns non equality
 	 */
 	inline bool operator !=(const GUIColor4& color) const {
 		return this->equals(color) == false;

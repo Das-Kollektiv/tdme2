@@ -159,7 +159,7 @@ void GUIVideoNode::setSource(const string& source) {
 	timeLast = -1LL;
 
 	//
-	this->textureId = videoTexture->getColorTextureId();
+	this->textureId = videoTexture->getTextureId();
 	this->textureWidth = videoDecoder.getVideoWidth();
 	this->textureHeight = videoDecoder.getVideoHeight();
 }

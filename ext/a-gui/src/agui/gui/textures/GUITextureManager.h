@@ -56,21 +56,21 @@ public:
 
 	public:
 		/**
-		 * @return texture id
+		 * @returns texture id
 		 */
 		inline const string& getId() {
 			return id;
 		}
 
 		/**
-		 * @return reference counter
+		 * @returns reference counter
 		 */
 		inline int32_t getReferenceCounter() {
 			return referenceCounter;
 		}
 
 		/**
-		 * @return texture renderer id
+		 * @returns texture renderer id
 		 */
 		inline int32_t getRendererId() {
 			return rendererId;
@@ -85,7 +85,7 @@ public:
 		}
 
 		/**
-		 * @return if texture has been uploaded
+		 * @returns if texture has been uploaded
 		 */
 		inline bool isUploaded() {
 			return uploaded;
@@ -94,7 +94,7 @@ public:
 	private:
 		/**
 		 * decrement reference counter
-		 * @return if reference counter = 0
+		 * @returns if reference counter = 0
 		 */
 		inline bool decrementReferenceCounter() {
 			referenceCounter--;

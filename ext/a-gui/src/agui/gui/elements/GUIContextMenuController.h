@@ -59,7 +59,7 @@ private:
 	GUIContextMenuController(GUINode* node);
 
 	/**
-	 * @return menu open state
+	 * @returns menu open state
 	 */
 	bool isOpen();
 

@@ -87,7 +87,7 @@ public:
 	 * @param fileName file name
 	 * @param removeAlphaChannel remove alpha channel
 	 * @param flipY flip Y
-	 * @return success
+	 * @returns success
 	 */
 	static bool write(GUITexture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel = true, bool flipY = true);
 
@@ -97,7 +97,7 @@ public:
 	 * @param pngData PNG data
 	 * @param removeAlphaChannel remove alpha channel
 	 * @param flipY flip Y
-	 * @return success
+	 * @returns success
 	 */
 	static bool write(GUITexture* texture, vector<uint8_t>& pngData, bool removeAlphaChannel = true, bool flipY = true);
 
@@ -109,7 +109,7 @@ public:
 	 * @param textureByteBuffer texture RGB byte buffer
 	 * @param pngData PNG data
 	 * @param removeAlphaChannel remove alpha channel
-	 * @return success
+	 * @returns success
 	 */
 	static bool write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel = true, bool flipY = false);
 

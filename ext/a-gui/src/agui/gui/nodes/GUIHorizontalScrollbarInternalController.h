@@ -37,12 +37,12 @@ private:
 	MutableString value;
 
 	/**
-	 * @return bar width
+	 * @returns bar width
 	 */
 	virtual float getBarWidth();
 
 	/**
-	 * @return bar left
+	 * @returns bar left
 	 */
 	virtual float getBarLeft();
 
@@ -64,7 +64,7 @@ protected:
 
 public:
 	/**
-	 * @return state
+	 * @returns state
 	 */
 	virtual State getState();
 

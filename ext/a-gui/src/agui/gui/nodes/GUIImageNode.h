@@ -21,7 +21,7 @@ namespace gui {
 namespace nodes {
 	using ::agui::gui::textures::GUITexture;
 	using ::agui::gui::misc::GUIDynamicColorTexture;
-	using ::agui::gui::misc::GUIFrameBuffer;
+	using ::agui::gui::misc::GUIRendererTexture;
 }
 }
 }
@@ -39,7 +39,6 @@ private:
 	bool releaseTextureReference { false };
 	string source;
 	GUITexture* texture { nullptr };
-	GUIFrameBuffer* frameBuffer { nullptr };
 	AGUI_STATIC_DLL_IMPEXT static int thumbnailTextureIdx;
 
 	/**
@@ -113,7 +112,7 @@ protected:
 	);
 
 	/**
-	 * @return node type
+	 * @returns node type
 	 */
 	const string getNodeType() override;
 
@@ -123,14 +122,14 @@ public:
 
 
 	/**
-	 * @return texture
+	 * @returns texture
 	 */
 	inline GUITexture* getTexture() {
 		return texture;
 	}
 
 	/**
-	 * @return image source
+	 * @returns image source
 	 */
 	const string& getSource();
 
@@ -153,15 +152,10 @@ public:
 	void setTexture(GUIDynamicColorTexture* texture);
 
 	/**
-	 * @return frame buffer
+	 * Set renderer texture
+	 * @param texture texture
 	 */
-	GUIFrameBuffer* getFrameBuffer();
-
-	/**
-	 * Set frame buffer
-	 * @param frameBuffer frame buffer
-	 */
-	void setFrameBuffer(GUIFrameBuffer* frameBuffer);
+	void setTexture(GUIRendererTexture* texture);
 
 	/**
 	 * Rotate image around center

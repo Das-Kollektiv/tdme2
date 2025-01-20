@@ -34,7 +34,7 @@ public:
 
 	/**
 	 * @brief Waits on barrier
-	 * @return bool if caller thread is selected for updating shared data
+	 * @returns bool if caller thread is selected for updating shared data
 	 */
 	bool wait();
 

@@ -40,7 +40,7 @@ public:
 	/**
 	 * Create max length
 	 * @param s s
-	 * @return max length
+	 * @returns max length
 	 */
 	static int createMaxLength(const string& s);
 
@@ -117,21 +117,21 @@ public:
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
-	 * @return font
+	 * @returns font
 	 */
 	inline GUIFont* getFont() {
 		return font;
 	}
 
 	/**
-	 * @return text
+	 * @returns text
 	 */
 	inline MutableString& getText() {
 		return text;
 	}
 
 	/**
-	 * @return max length
+	 * @returns max length
 	 */
 	inline int getMaxLength() {
 		return maxLength;

@@ -45,7 +45,7 @@ public:
 	GUINodeConditions(GUIElementNode* node = nullptr);
 
 	/**
-	 * @return conditions
+	 * @returns conditions
 	 */
 	inline const vector<string>& getConditions() const {
 		return conditions;
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Returns if condition is set
 	 * @param condition condition name
-	 * @return if condition is set
+	 * @returns if condition is set
 	 */
 	inline bool has(const string& condition) const {
 		return find(conditions.begin(), conditions.end(), condition) != conditions.end();
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Add a condition
 	 * @param condition condition
-	 * @return condition changed
+	 * @returns condition changed
 	 */
 	inline bool add(const string& condition) {
 		auto conditionsChanged = has(condition) == false;
@@ -95,7 +95,7 @@ public:
 	/**
 	 * Remove a condition
 	 * @param condition condition
-	 * @return condition changed
+	 * @returns condition changed
 	 */
 	inline bool remove(const string& condition) {
 		auto conditionsChanged = has(condition);
@@ -108,7 +108,7 @@ public:
 
 	/**
 	 * Remove all
-	 * @return condition changed
+	 * @returns condition changed
 	 */
 	inline bool removeAll() {
 		auto conditionsChanged = conditions.empty() == false;

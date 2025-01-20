@@ -61,7 +61,7 @@ private:
 	GUIRadioButtonController(GUINode* node);
 
 	/**
-	 * @return is checked
+	 * @returns is checked
 	 */
 	bool isSelected();
 

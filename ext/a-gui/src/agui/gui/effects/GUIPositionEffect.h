@@ -46,7 +46,7 @@ public:
 	GUIPositionEffect(GUINode* guiNode);
 
 	/**
-	 * @return position X
+	 * @returns position X
 	 */
 	inline float getPositionX() const {
 		return originalEndState.positionX;
@@ -61,7 +61,7 @@ public:
 	}
 
 	/**
-	 * @return position Y
+	 * @returns position Y
 	 */
 	inline float getPositionY() const {
 		return originalEndState.positionY;
@@ -76,7 +76,7 @@ public:
 	}
 
 	/**
-	 * @return start position X
+	 * @returns start position X
 	 */
 	inline float getStartPositionX() const {
 		return originalStartState.positionX;
@@ -91,7 +91,7 @@ public:
 	}
 
 	/**
-	 * @return start position Y
+	 * @returns start position Y
 	 */
 	inline float getStartPositionY() const {
 		return originalStartState.positionY;

@@ -29,21 +29,21 @@ public:
 	}
 
 	/**
-	 * @return this buffer as float buffer
+	 * @returns this buffer as float buffer
 	 */
 	inline FloatBuffer asFloatBuffer() {
 		return FloatBuffer(this);
 	}
 
 	/**
-	 * @return this buffer as int buffer
+	 * @returns this buffer as int buffer
 	 */
 	inline IntBuffer asIntBuffer() {
 		return IntBuffer(this);
 	}
 
 	/**
-	 * @return this buffer as short buffer
+	 * @returns this buffer as short buffer
 	 */
 	inline ShortBuffer asShortBuffer() {
 		return ShortBuffer(this);
@@ -52,7 +52,7 @@ public:
 	/**
 	 * Move operator
 	 * @param fromBuffer from buffer
-	 * @return this buffer
+	 * @returns this buffer
 	 */
 	inline ByteBuffer& operator=(ByteBuffer&& fromBuffer) {
 		// do the swap
@@ -66,7 +66,7 @@ public:
 	/**
 	 * Assign operator
 	 * @param fromBuffer from buffer
-	 * @return this buffer
+	 * @returns this buffer
 	 */
 	inline void operator=(const ByteBuffer& fromBuffer) {
 		// delete old buffer

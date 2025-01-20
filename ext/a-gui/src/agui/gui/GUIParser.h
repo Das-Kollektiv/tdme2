@@ -58,26 +58,26 @@ public:
 	/**
 	 * Get application root path name
 	 * @param fileName file name
-	 * @return application root path name
+	 * @returns application root path name
 	 */
 	static const string getApplicationRootPathName(const string& fileName);
 
 	/**
 	 * Get application sub path name
 	 * @param fileName application sub path name
-	 * @return application sub path name
+	 * @returns application sub path name
 	 */
 	static const string getApplicationSubPathName(const string& fileName);
 
 	/**
-	 * @return engine theme properties
+	 * @returns engine theme properties
 	 */
 	inline static const Properties* getEngineThemeProperties() {
 		return &engineThemeProperties;
 	}
 
 	/**
-	 * @return project theme properties
+	 * @returns project theme properties
 	 */
 	inline static const Properties* getProjectThemeProperties() {
 		return &projectThemeProperties;
@@ -106,7 +106,7 @@ public:
 	 * @param variables variables
 	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
-	 * @return GUI screen node
+	 * @returns GUI screen node
 	 * @throws agui::gui::GUIParserException
 	 * @throws agui::os::filesystem::FileSystemException
 	 */
@@ -120,7 +120,7 @@ public:
 	 * @param fileName file name
 	 * @param scriptLibrary script library
 	 * @param scriptArguments script arguments
-	 * @return GUI screen node
+	 * @returns GUI screen node
 	 * @throws agui::gui::GUIParserException
 	 * @throws agui::os::filesystem::FileSystemException
 	 */
@@ -178,14 +178,14 @@ private:
 	 * Returns immediate children tags
 	 * @param parent parent
 	 * @param name name
-	 * @return children of parent node with given name
+	 * @returns children of parent node with given name
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/**
 	 * Get inner XML
 	 * @param node node
-	 * @return string
+	 * @returns string
 	 */
 	static const string getInnerXml(TiXmlElement* node);
 
@@ -215,7 +215,7 @@ private:
 	 * Parse factor
 	 * @param guiParentNode gui parent node
 	 * @param factor factor
-	 * @return factor
+	 * @returns factor
 	 */
 	static int parseFactor(GUIParentNode* guiParentNode, const string& factor);
 
@@ -223,7 +223,7 @@ private:
 	 * Parse integer
 	 * @param value value
 	 * @param defaultValue default value
-	 * @return size
+	 * @returns size
 	 */
 	static int parseInteger(const string& value, int defaultValue);
 
@@ -232,28 +232,28 @@ public:
 	 * Parse template attributes
 	 * @param templateXML template xml
 	 * @param guiElement GUI element
-	 * @return parsed template attributes
+	 * @returns parsed template attributes
 	 */
 	static unordered_map<string, string> parseTemplateAttributes(const string& templateXML);
 
 	/**
 	 * Get inner XML from XML string
 	 * @param xml xml
-	 * @return string
+	 * @returns string
 	 */
 	static const string getInnerXml(const string& xml);
 
 	/**
 	 * Unescape quotes and other special html characters
 	 * @param str string
-	 * @return string with unescaped quotes
+	 * @returns string with unescaped quotes
 	 */
 	static const string unescape(const string& str);
 
 	/**
 	 * Escape quotes and other special html characters
 	 * @param str string
-	 * @return string with escaped quotes
+	 * @returns string with escaped quotes
 	 */
 	static const string escape(const string& str);
 

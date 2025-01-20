@@ -38,7 +38,7 @@ public:
 	/**
 	 * Returns enum object given by name
 	 * @param name name
-	 * @return enum object
+	 * @returns enum object
 	 */
 	static GUILayoutNode_Alignment* valueOf(const string& name);
 };

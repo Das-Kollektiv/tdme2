@@ -38,35 +38,35 @@ public:
 	GUITiming();
 
 	/**
-	 * @return frames that have been rendered
+	 * @returns frames that have been rendered
 	 */
 	inline int64_t getFrame() {
 		return frame;
 	}
 
 	/**
-	 * @return start time
+	 * @returns start time
 	 */
 	inline int64_t getStartTime() {
 		return startTime;
 	}
 
 	/**
-	 * @return total time the engine is running
+	 * @returns total time the engine is running
 	 */
 	inline int64_t getTotalTime() {
 		return currentFrameAtTime - startTime;
 	}
 
 	/**
-	 * @return time last frame has been rendered in ms
+	 * @returns time last frame has been rendered in ms
 	 */
 	inline int64_t getLastFrameAtTime() {
 		return lastFrameAtTime;
 	}
 
 	/**
-	 * @return time current frame has been rendered in ms
+	 * @returns time current frame has been rendered in ms
 	 */
 	inline int64_t getCurrentFrameAtTime() {
 		return currentFrameAtTime;
@@ -74,7 +74,7 @@ public:
 
 	/**
 	 * Gets the time passed between last and current frame
-	 * @return delta time
+	 * @returns delta time
 	 */
 	inline int64_t getDeltaTime() {
 		if (currentFrameAtTime == UNDEFINED || lastFrameAtTime == UNDEFINED) {
@@ -85,21 +85,21 @@ public:
 
 	/**
 	 * Gets the time passed between last and current frame in seconds
-	 * @return delta time in seconds
+	 * @returns delta time in seconds
 	 */
 	inline float getDeltaTimeSeconds() {
 		return static_cast<float>(getDeltaTime()) / 1000.0f;
 	}
 
 	/**
-	 * @return avarage fps
+	 * @returns avarage fps
 	 */
 	inline float getFPS() {
 		return fps;
 	}
 
 	/**
-	 * @return avarage fps
+	 * @returns avarage fps
 	 */
 	inline float getAvarageFPS() {
 		return avarageFPS;

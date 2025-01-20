@@ -109,7 +109,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		//
 		linesTexture = make_unique<DynamicColorTexture>(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture.get()->toGUIDynamicColorTexture());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture.get()->toGUIRendererTexture());
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
@@ -419,7 +419,7 @@ void TextEditorTabView::display()
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
 			auto visualizationTextureNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"));
-			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture.get()->toGUIDynamicColorTexture());
+			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture.get()->toGUIRendererTexture());
 			createConnectionsPasses = 3;
 		}
 		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now

@@ -338,7 +338,7 @@ void EditorView::display()
 			reshaped = true;
 		}
 		if (tabView->getTabView()->getEngine() != nullptr) {
-			tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer()->toGUIFrameBuffer());
+			tabView->getFrameBufferNode()->setTexture(tabView->getTabView()->getEngine()->getFrameBuffer()->toGUIRendererTexture());
 		}
 		tabView->getTabView()->display();
 		if (reshaped == true) {

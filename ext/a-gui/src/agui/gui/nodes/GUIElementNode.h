@@ -137,77 +137,77 @@ protected:
 
 public:
 	/**
-	 * @return focusable
+	 * @returns focusable
 	 */
 	inline bool isFocusable() {
 		return focusable;
 	}
 
 	/**
-	 * @return name
+	 * @returns name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
 	/**
-	 * @return value
+	 * @returns value
 	 */
 	inline const string& getValue() {
 		return value;
 	}
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	inline bool isSelected() {
 		return selected;
 	}
 
 	/**
-	 * @return is disabled
+	 * @returns is disabled
 	 */
 	inline bool isDisabled() {
 		return disabled;
 	}
 
 	/**
-	 * @return on initialize expression
+	 * @returns on initialize expression
 	 */
 	inline const string& getOnInitializeExpression() {
 		return onInitializeExpression;
 	}
 
 	/**
-	 * @return on mouse click expression
+	 * @returns on mouse click expression
 	 */
 	inline const string& getOnMouseClickExpression() {
 		return onMouseClickExpression;
 	}
 
 	/**
-	 * @return on mouse double click expression
+	 * @returns on mouse double click expression
 	 */
 	inline const string& getOnMouseDoubleClickExpression() {
 		return onMouseDoubleClickExpression;
 	}
 
 	/**
-	 * @return on mouse over expression
+	 * @returns on mouse over expression
 	 */
 	inline const string& getOnMouseOverExpression() {
 		return onMouseOverExpression;
 	}
 
 	/**
-	 * @return on mouse out expression
+	 * @returns on mouse out expression
 	 */
 	inline const string& getOnMouseOutExpression() {
 		return onMouseOutExpression;
 	}
 
 	/**
-	 * @return on change expression
+	 * @returns on change expression
 	 */
 	inline const string& getOnChangeExpression() {
 		return onChangeExpression;
@@ -228,14 +228,14 @@ public:
 	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
 
 	/**
-	 * @return parent element id
+	 * @returns parent element id
 	 */
 	inline const string& getParentElementNodeId() {
 		return parentElementId;
 	}
 
 	/**
-	 * @return options
+	 * @returns options
 	 */
 	inline const vector<string> getOptions() {
 		return options;
@@ -254,7 +254,7 @@ public:
 	const string getOptionValue(const string& option);
 
 	/**
-	 * @return active conditions
+	 * @returns active conditions
 	 */
 	inline GUINodeConditions& getActiveConditions() {
 		return activeConditions;

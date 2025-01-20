@@ -73,7 +73,7 @@ private:
 	/**
 	 * Add character with given id to texture atlas
 	 * @param charId character id
-	 * @return GUI character entity
+	 * @returns GUI character entity
 	 */
 	GUICharacter* addToTextureAtlas(uint32_t charId);
 
@@ -133,7 +133,7 @@ public:
 	void dispose();
 
 	/**
-	 * @return texture id
+	 * @returns texture id
 	 */
 	inline int32_t getTextureId() {
 		return textureId;
@@ -142,7 +142,7 @@ public:
 	/**
 	 * Get character defintion
 	 * @param charId character id
-	 * @return character definition
+	 * @returns character definition
 	 */
 	inline GUICharacter* getCharacter(uint32_t charId) {
 		// ignore -1 character
@@ -155,14 +155,14 @@ public:
 	}
 
 	/**
-	 * @return line height
+	 * @returns line height
 	 */
 	inline float getLineHeight() {
 		return lineHeight;
 	}
 
 	/**
-	 * @return base line
+	 * @returns base line
 	 */
 	inline float getBaseLine() {
 		return baseLine;
@@ -174,7 +174,7 @@ public:
 	 * @param offset offset
 	 * @param length length or 0 if full length
 	 * @param index index
-	 * @return text index x
+	 * @returns text index x
 	 */
 	int getTextIndexX(const MutableString& text, int offset, int length, int index);
 
@@ -184,21 +184,21 @@ public:
 	 * @param offset offset
 	 * @param length length or 0 if full length
 	 * @param textX text X
-	 * @return text index
+	 * @returns text index
 	 */
 	int getTextIndexByX(const MutableString& text, int offset, int length, int textX);
 
 	/**
 	 * Text width
 	 * @param text text
-	 * @return text width
+	 * @returns text width
 	 */
 	int getTextWidth(const MutableString& text);
 
 	/**
 	 * Get text index X at width
 	 * @param text text
-	 * @return text width
+	 * @returns text width
 	 */
 	int getTextIndexXAtWidth(const MutableString& text, int width);
 

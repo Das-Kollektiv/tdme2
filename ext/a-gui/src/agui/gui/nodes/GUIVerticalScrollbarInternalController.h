@@ -62,19 +62,19 @@ public:
 	void onSubTreeChange() override;
 
 	/**
-	 * @return state
+	 * @returns state
 	 */
 	virtual State getState();
 
 private:
 
 	/**
-	 * @return bar height
+	 * @returns bar height
 	 */
 	virtual float getBarHeight();
 
 	/**
-	 * @return bar top
+	 * @returns bar top
 	 */
 	virtual float getBarTop();
 

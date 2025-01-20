@@ -53,7 +53,7 @@ private:
 	GUISelectBoxParentOptionController(GUINode* node);
 
 	/**
-	 * @return is expanded
+	 * @returns is expanded
 	 */
 	bool isExpanded();
 

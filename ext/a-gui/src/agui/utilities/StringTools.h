@@ -24,7 +24,7 @@ public:
 	 * Checks if string starts with prefix
 	 * @param str string
      * @param prefix prefix string
-	 * @return if string starts with prefix
+	 * @returns if string starts with prefix
 	 */
 	inline static const bool startsWith(const string& str, const string& prefix) {
 		return str.find(prefix) == 0;
@@ -34,7 +34,7 @@ public:
 	 * Checks if string starts with prefix
 	 * @param str string
      * @param prefix prefix string
-	 * @return if string starts with prefix
+	 * @returns if string starts with prefix
 	 */
 	inline static const bool viewStartsWith(const string_view& str, const string_view& prefix) {
 		return str.find(prefix) == 0;
@@ -44,7 +44,7 @@ public:
 	 * Checks if string ends with suffix
 	 * @param str string
      * @param suffix suffix string
-	 * @return if string ends with suffix
+	 * @returns if string ends with suffix
 	 */
 	inline static const bool endsWith(const string& str, const string& suffix) {
 		return
@@ -56,7 +56,7 @@ public:
 	 * Checks if string ends with suffix
 	 * @param str string
      * @param suffix suffix string
-	 * @return if string ends with suffix
+	 * @returns if string ends with suffix
 	 */
 	inline static const bool viewEndsWith(const string_view& str, const string_view& suffix) {
 		return
@@ -70,7 +70,7 @@ public:
 	 * @param what what to replace
 	 * @param by to replace by
 	 * @param beginIndex index to begin with
-	 * @return replace result
+	 * @returns replace result
 	 */
 	static const string replace(const string& str, const char what, const char by, int64_t beginIndex = 0);
 
@@ -80,7 +80,7 @@ public:
 	 * @param what what to replace
 	 * @param by to replace by
 	 * @param beginIndex index to begin with
-	 * @return replace result
+	 * @returns replace result
 	 */
 	static const string replace(const string& str, const string& what, const string& by, int64_t beginIndex = 0);
 
@@ -89,7 +89,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t indexOf(const string& str, char what, int64_t beginIndex = 0) {
 		return str.find(what, beginIndex);
@@ -100,7 +100,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t indexOf(const string& str, const string& what, int64_t beginIndex = 0) {
 		return str.find(what, beginIndex);
@@ -111,7 +111,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t firstIndexOf(const string& str, char what, int64_t beginIndex = 0) {
 		return indexOf(str, what, beginIndex);
@@ -122,7 +122,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t firstIndexOf(const string& str, const string& what, int64_t beginIndex = 0) {
 		return indexOf(str, what, beginIndex);
@@ -133,7 +133,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param endIndex end index or string::npos
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t lastIndexOf(const string& str, const char what, int64_t endIndex = string::npos) {
 		return str.rfind(what, endIndex);
@@ -144,7 +144,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param endIndex end index or string::npos
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t lastIndexOf(const string& str, const string& what, int64_t endIndex = string::npos) {
 		return str.rfind(what, endIndex);
@@ -155,7 +155,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t firstIndexOfChar(const string& str, char what, int64_t beginIndex = 0) {
 		return str.find_first_of(what, beginIndex);
@@ -166,7 +166,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param beginIndex begin index
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t firstIndexOfChars(const string& str, const string& what, int64_t beginIndex = 0) {
 		return str.find_first_of(what, beginIndex);
@@ -177,7 +177,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param endIndex end index or string::npos
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t lastIndexOfChar(const string& str, char what, int64_t endIndex = string::npos) {
 		return str.find_last_of(what, endIndex);
@@ -188,7 +188,7 @@ public:
 	 * @param str string
 	 * @param what what
 	 * @param endIndex end index or string::npos
-	 * @return index or string::npos if not found
+	 * @returns index or string::npos if not found
 	 */
 	inline static int64_t lastIndexOfChars(const string& str, const string& what, int64_t endIndex = string::npos) {
 		return str.find_last_of(what, endIndex);
@@ -198,7 +198,7 @@ public:
 	 * Returns substring of given string from begin index
 	 * @param str string
 	 * @param beginIndex begin index
-	 * @return substring result
+	 * @returns substring result
 	 */
 	inline static const string substring(const string& str, int64_t beginIndex) {
 		return str.substr(beginIndex);
@@ -208,7 +208,7 @@ public:
 	 * Returns substring of given string from begin index
 	 * @param str string
 	 * @param beginIndex begin index
-	 * @return substring result
+	 * @returns substring result
 	 */
 	inline static const string_view viewSubstring(const string_view& str, int64_t beginIndex) {
 		return str.substr(beginIndex);
@@ -219,7 +219,7 @@ public:
 	 * @param str string
 	 * @param beginIndex begin index
 	 * @param endIndex end index
-	 * @return substring result
+	 * @returns substring result
 	 */
 	inline static const string substring(const string& str, int64_t beginIndex, int64_t endIndex) {
 		return str.substr(beginIndex, endIndex - beginIndex);
@@ -230,7 +230,7 @@ public:
 	 * @param str string
 	 * @param beginIndex begin index
 	 * @param endIndex end index
-	 * @return substring result
+	 * @returns substring result
 	 */
 	inline static const string_view viewSubstring(const string_view& str, int64_t beginIndex, int64_t endIndex) {
 		return str.substr(beginIndex, endIndex - beginIndex);
@@ -240,35 +240,35 @@ public:
 	 * Checks if strings equal ignoring case
 	 * @param string1 string 1
 	 * @param string2 string 2
-	 * @return equality
+	 * @returns equality
 	 */
 	static bool equalsIgnoreCase(const string& string1, const string& string2);
 
 	/**
 	 * Trim string
 	 * @param str string
-	 * @return trimmed string
+	 * @returns trimmed string
 	 */
 	static const string trim(const string& str);
 
 	/**
 	 * Trim string
 	 * @param str string
-	 * @return trimmed string
+	 * @returns trimmed string
 	 */
 	static const string_view viewTrim(const string_view& str);
 
 	/**
 	 * Transform string to lower case
 	 * @param str string
-	 * @return lowercase string
+	 * @returns lowercase string
 	 */
 	static const string toLowerCase(const string& str);
 
 	/**
 	 * Transform string to upper case
 	 * @param str string
-	 * @return uppercase string
+	 * @returns uppercase string
 	 */
 	static const string toUpperCase(const string& str);
 
@@ -277,7 +277,7 @@ public:
 	 * @param str string
 	 * @param pattern pattern
 	 * @param matches matches
-	 * @return if pattern matches whole string
+	 * @returns if pattern matches whole string
 	 */
 	static bool regexMatch(const string& str, const string& pattern, smatch* matches = nullptr);
 
@@ -286,7 +286,7 @@ public:
 	 * @param str string
 	 * @param pattern pattern
 	 * @param matches matches
-	 * @return if search was successful
+	 * @returns if search was successful
 	 */
 	static bool regexSearch(const string& str, const string& pattern, smatch* matches = nullptr);
 
@@ -295,7 +295,7 @@ public:
 	 * @param str string
 	 * @param pattern pattern
 	 * @param by replace string
-	 * @return replace result
+	 * @returns replace result
 	 */
 	static const string regexReplace(const string& str, const string& pattern, const string& by);
 
@@ -304,7 +304,7 @@ public:
 	 * @param str string
 	 * @param delimiters delimiters
 	 * @param emptyTokens include empty tokens
-	 * @return tokens
+	 * @returns tokens
 	 */
 	static const vector<string> tokenize(const string& str, const string& delimiters, bool emptyTokens = false);
 
@@ -313,7 +313,7 @@ public:
 	 * @param str string
 	 * @param by by
 	 * @param toSize to size
-	 * @return padded string
+	 * @returns padded string
 	 */
 	inline static const string padLeft(const string& str, const string& by, int64_t toSize) {
 		auto result = str;
@@ -326,7 +326,7 @@ public:
 	 * @param str string
 	 * @param by by
 	 * @param toSize to size
-	 * @return padded string
+	 * @returns padded string
 	 */
 	inline static const string padRight(const string& str, const string& by, int64_t toSize) {
 		auto result = str;
@@ -339,7 +339,7 @@ public:
 	 * @param str string
 	 * @param with with
 	 * @param count count
-	 * @return resulting string
+	 * @returns resulting string
 	 */
 	inline static const string indent(const string& str, const string& with, int64_t count) {
 		string indentString;
@@ -351,7 +351,7 @@ public:
 	 * Generate a string
 	 * @param what what
 	 * @param count count
-	 * @return resulting string
+	 * @returns resulting string
 	 */
 	inline static const string generate(const string& what, int64_t count = 1) {
 		string result;
@@ -362,7 +362,7 @@ public:
 	/**
 	 * Get UTF8 string length
 	 * @param str string
-	 * @return UTF8 string length
+	 * @returns UTF8 string length
 	 */
 	static int64_t getUTF8Length(const string& str);
 
@@ -378,7 +378,7 @@ public:
 	 * Get UTF8 binary buffer index
 	 * @param str string
 	 * @param charIdx character index
-	 * @return UTF binary buffer position from given character/code point index
+	 * @returns UTF binary buffer position from given character/code point index
 	 */
 	static int64_t getUTF8BinaryIndex(const string& str, int64_t charIdx);
 

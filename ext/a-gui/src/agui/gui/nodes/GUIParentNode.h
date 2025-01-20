@@ -144,7 +144,7 @@ protected:
 public:
 
 	/**
-	 * @return sub nodes count
+	 * @returns sub nodes count
 	 */
 	inline int getSubNodesCount() {
 		return subNodes.size();
@@ -192,25 +192,25 @@ public:
 	void moveSubNodes(GUIParentNode* otherParentNode);
 
 	/**
-	 * @return overflow x
+	 * @returns overflow x
 	 */
 	GUIParentNode_Overflow* getOverflowX();
 
 	/**
-	 * @return overflow y
+	 * @returns overflow y
 	 */
 	GUIParentNode_Overflow* getOverflowY();
 
 	/**
 	 * Create over flow
 	 * @param overflow over flow
-	 * @return over flow
+	 * @returns over flow
 	 * @throws agui::gui::GUIParserException
 	 */
 	static GUIParentNode_Overflow* createOverflow(const string& overflow);
 
 	/**
-	 * @return children render offset x
+	 * @returns children render offset x
 	 */
 	inline float getChildrenRenderOffsetX() {
 		return childrenRenderOffsetX;
@@ -223,7 +223,7 @@ public:
 	void setChildrenRenderOffsetX(float childrenRenderOffSetX);
 
 	/**
-	 * @return children render offset y
+	 * @returns children render offset y
 	 */
 	inline float getChildrenRenderOffsetY() {
 		return childrenRenderOffsetY;
@@ -242,7 +242,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param factor factor
-	 * @return requested constraints
+	 * @returns requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 

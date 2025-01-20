@@ -35,28 +35,28 @@ public:
 	void tokenize(const string& str, const string& delimiters, bool emptyTokens = false);
 
 	/**
-	 * @return number of tokens
+	 * @returns number of tokens
 	 */
 	inline int32_t countTokens() {
 		return tokens.size();
 	}
 
 	/**
-	 * @return has more tokens
+	 * @returns has more tokens
 	 */
 	inline bool hasMoreTokens() {
 		return idx != tokens.size();
 	}
 
 	/**
-	 * @return next token
+	 * @returns next token
 	 */
 	inline const string& nextToken() {
 		return tokens[idx++];
 	}
 
 	/**
-	 * @return tokens
+	 * @returns tokens
 	 */
 	inline const vector<string>& getTokens() {
 		return tokens;

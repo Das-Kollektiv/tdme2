@@ -26,14 +26,14 @@ public:
 	}
 
 	/**
-	 * @return capacity
+	 * @returns capacity
 	 */
 	inline virtual int64_t getCapacity() {
 		return Buffer::getCapacity() / sizeof(uint32_t);
 	}
 
 	/**
-	 * @return position
+	 * @returns position
 	 */
 	inline virtual int64_t getPosition() {
 		return Buffer::getPosition() / sizeof(uint32_t);

@@ -57,7 +57,7 @@ private:
 	GUIDropDownOptionController(GUINode* node);
 
 	/**
-	 * @return is selected
+	 * @returns is selected
 	 */
 	inline bool isSelected() {
 		return selected;
@@ -76,12 +76,12 @@ private:
 	/**
 	 * Search by string
 	 * @param value value
-	 * @return search did match
+	 * @returns search did match
 	 */
 	bool search(const string& value);
 
 	/**
-	 * @return hidden
+	 * @returns hidden
 	 */
 	inline bool isHidden() {
 		return hidden;

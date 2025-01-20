@@ -106,7 +106,7 @@ public:
 	}
 
 	/**
-	 * @return underlying binary buffer position
+	 * @returns underlying binary buffer position
 	 */
 	inline int64_t getBinaryPosition() const {
 		return binaryPosition;
@@ -133,7 +133,7 @@ public:
 	}
 
 	/**
-	 * @return character position
+	 * @returns character position
 	 */
  	inline int64_t getCharacterPosition() const {
 		return characterPosition;
@@ -161,13 +161,13 @@ public:
 	}
 
 	/**
-	 * @return next character available
+	 * @returns next character available
 	 */
 	inline bool hasNext() const {
 		return binaryPosition < stringView.size();
 	}
 	/**
-	 * @return next character or -1 if an error occurred or no string left
+	 * @returns next character or -1 if an error occurred or no string left
 	 */
 	inline int next() const {
 		// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint

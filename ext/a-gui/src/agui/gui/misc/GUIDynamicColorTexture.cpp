@@ -19,7 +19,7 @@ uint32_t GUIDynamicColorTexture::counter = 0;
 
 void GUIDynamicColorTexture::initialize()
 {
-	colorBufferTextureId = GUI::getRendererBackend()->createColorBufferTexture(
+	textureId = GUI::getRendererBackend()->createColorBufferTexture(
 		width,
 		height,
 		GUI::getRendererBackend()->ID_NONE,
@@ -56,20 +56,20 @@ void GUIDynamicColorTexture::reshape(int32_t width, int32_t height)
 	texture->setUseCompression(false);
 	texture->setUseMipMap(false);
 	texture->setRepeat(false);
-	GUI::getRendererBackend()->resizeColorBufferTexture(colorBufferTextureId, width, height);
+	GUI::getRendererBackend()->resizeColorBufferTexture(textureId, width, height);
 	this->width = width;
 	this->height = height;
 }
 
 void GUIDynamicColorTexture::dispose()
 {
-	GUI::getRendererBackend()->disposeTexture(colorBufferTextureId);
+	GUI::getRendererBackend()->disposeTexture(textureId);
 	texture->releaseReference();
 }
 
 void GUIDynamicColorTexture::update()
 {
-	GUI::getRendererBackend()->bindTexture(GUI::getRendererBackend()->CONTEXTINDEX_DEFAULT, colorBufferTextureId);
+	GUI::getRendererBackend()->bindTexture(GUI::getRendererBackend()->CONTEXTINDEX_DEFAULT, textureId);
 	GUI::getRendererBackend()->uploadTexture(GUI::getRendererBackend()->CONTEXTINDEX_DEFAULT, texture);
 	GUI::getRendererBackend()->bindTexture(GUI::getRendererBackend()->CONTEXTINDEX_DEFAULT, GUI::getRendererBackend()->ID_NONE);
 }

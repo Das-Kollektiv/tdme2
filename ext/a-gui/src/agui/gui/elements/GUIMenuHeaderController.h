@@ -51,7 +51,7 @@ private:
 	GUIMenuHeaderController(GUINode* node);
 
 	/**
-	 * @return has focus
+	 * @returns has focus
 	 */
 	bool hasFocus();
 
@@ -61,7 +61,7 @@ private:
 	void determineMenuHeaderItemControllers();
 
 	/**
-	 * @return if menu is open
+	 * @returns if menu is open
 	 */
 	bool isOpen();
 

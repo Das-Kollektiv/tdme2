@@ -151,8 +151,7 @@ void Editor::initialize()
 	Application::setVSyncEnabled(true);
 	Application::setLimitFPS(true);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	// TODO: implement me! xxx
-	// setInputEventHandler(engine->getGUI());
+	setEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
 	setView((editorView = make_unique<EditorView>(popUps.get())).get());

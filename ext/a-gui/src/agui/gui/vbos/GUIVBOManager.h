@@ -54,21 +54,21 @@ public:
 		FORBID_CLASS_COPY(GUIManagedVBO)
 
 		/**
-		 * @return vbo id
+		 * @returns vbo id
 		 */
 		inline const string& getId() {
 			return id;
 		}
 
 		/**
-		 * @return vbo gl ids
+		 * @returns vbo gl ids
 		 */
 		inline vector<int32_t>* getVBOIds() {
 			return &vboIds;
 		}
 
 		/**
-		 * @return reference counter
+		 * @returns reference counter
 		 */
 		inline int32_t getReferenceCounter() {
 			return referenceCounter;
@@ -83,7 +83,7 @@ public:
 		}
 
 		/**
-		 * @return if vbo's have been uploaded
+		 * @returns if vbo's have been uploaded
 		 */
 		inline bool isUploaded() {
 			return uploaded;
@@ -92,7 +92,7 @@ public:
 	private:
 		/**
 		 * decrement reference counter
-		 * @return if reference counter = 0
+		 * @returns if reference counter = 0
 		 */
 		inline bool decrementReferenceCounter() {
 			referenceCounter--;
@@ -140,7 +140,7 @@ public:
 	/**
 	 * Retrieves a VBO managed from manager
 	 * @param vboId VBO id
-	 * @return VBO managed or nullptr
+	 * @returns VBO managed or nullptr
 	 */
 	GUIManagedVBO* getVBO(const string& vboId);
 

@@ -3,7 +3,7 @@
 #include <string>
 
 #include <agui/agui.h>
-#include <agui/gui/misc/GUIFrameBuffer.h>
+#include <agui/gui/misc/GUIRendererTexture.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -14,7 +14,7 @@ using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
-using agui::gui::misc::GUIFrameBuffer;
+using agui::gui::misc::GUIRendererTexture;
 
 using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
@@ -202,11 +202,10 @@ public:
 	}
 
 	/**
-	 * @returns GUI frame buffer
+	 * @returns GUI renderer texture
 	 */
-	GUIFrameBuffer* toGUIFrameBuffer() {
-		// TODO: implement me, fixme, xxx
-		return nullptr;
+	GUIRendererTexture* toGUIRendererTexture() {
+		return new GUIRendererTexture(width, height, colorBufferTextureId);
 	}
 
 };

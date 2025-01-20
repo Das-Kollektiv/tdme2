@@ -20,7 +20,7 @@ public:
 	 * Increment uint32 value and return its value
 	 * @param value reference to value
 	 * @param byValue value you like to add
-	 * @return incremented value
+	 * @returns incremented value
 	 */
 	inline static uint32_t increment(volatile uint32_t& value, uint32_t byValue = 1) {
 		#if defined(_WIN32) && defined(_MSC_VER)
@@ -34,7 +34,7 @@ public:
 	 * Decrement uint32 value and return its value
 	 * @param value reference to value
 	 * @param byValue value you like to subtract
-	 * @return decremented value
+	 * @returns decremented value
 	 */
 	inline static uint32_t decrement(volatile uint32_t& value, uint32_t byValue = 1) {
 		#if defined(_WIN32) && defined(_MSC_VER)

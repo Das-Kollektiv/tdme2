@@ -40,7 +40,7 @@ public:
 	inline virtual ~GUINodeController() {}
 
 	/**
-	 * @return node
+	 * @returns node
 	 */
 	inline GUINode* getNode() {
 		return node;
@@ -90,12 +90,12 @@ public:
 	virtual void onFocusLost() = 0;
 
 	/**
-	 * @return has value
+	 * @returns has value
 	 */
 	virtual bool hasValue() = 0;
 
 	/**
-	 * @return value
+	 * @returns value
 	 */
 	virtual const MutableString& getValue() = 0;
 
@@ -106,7 +106,7 @@ public:
 	virtual void setValue(const MutableString& value) = 0;
 
 	/**
-	 * @return is disabled
+	 * @returns is disabled
 	 */
 	virtual bool isDisabled() = 0;
 

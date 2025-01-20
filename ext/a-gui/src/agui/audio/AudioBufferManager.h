@@ -49,14 +49,14 @@ public:
 		}
 
 		/**
-		 * @return audio buffer id
+		 * @returns audio buffer id
 		 */
 		inline const string& getId() {
 			return id;
 		}
 
 		/**
-		 * @return OpenAL buffer id
+		 * @returns OpenAL buffer id
 		 */
 		inline uint32_t getAlId() {
 			return alId;
@@ -71,7 +71,7 @@ public:
 		}
 
 		/**
-		 * @return reference counter
+		 * @returns reference counter
 		 */
 		inline int32_t getReferenceCounter() {
 			return referenceCounter;
@@ -79,7 +79,7 @@ public:
 
 		/**
 		 * decrement reference counter
-		 * @return if reference counter = 0
+		 * @returns if reference counter = 0
 		 */
 		inline bool decrementReferenceCounter() {
 			referenceCounter--;
@@ -108,14 +108,14 @@ private:
 	/**
 	 * Adds a audio buffer to manager / open al stack
 	 * @param id id
-	 * @return managed audio buffer
+	 * @returns managed audio buffer
 	 */
 	ManagedAudioBuffer* addAudioBuffer(const string& id);
 
 	/**
 	 * Removes a texture from manager / open gl stack
 	 * @param id id
-	 * @return true if caller has to remove the audio buffer from open AL
+	 * @returns true if caller has to remove the audio buffer from open AL
 	 */
 	bool removeAudioBuffer(const string& id);
 

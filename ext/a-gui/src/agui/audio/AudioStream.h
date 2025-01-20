@@ -85,7 +85,7 @@ public:
 
 private:
 	/**
-	 * @return having buffers that are currently played
+	 * @returns having buffers that are currently played
 	 */
 	bool isPlayingBuffers();
 
