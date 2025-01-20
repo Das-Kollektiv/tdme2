@@ -1,0 +1,109 @@
+# initialize
+function: initialize()
+	console.printLine("----------------------------------------------------------")
+	console.printLine("initialize(): " + gui.screennode.getId())
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on action
+function: onAction($actionType, $elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on change
+function: onChange($elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on mouse over
+function: onMouseOver($elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on context menu request
+function: onContextMenuRequest($elementNodeId, $mouseX, $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onContextMenuRequest(): " + gui.screennode.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on focus
+function: onFocus($elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onFocus(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on unfocus
+function: onUnfocus($elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onUnfocus(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on move
+function: onMove($nodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onMove(): " + gui.screennode.getId() + ": " + $nodeId)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on move release
+function: onMoveRelease($nodeId, $mouseX, $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onMoveRelease(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on tooltip show request
+function: onTooltipShowRequest($nodeId, $mouseX, $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onTooltipShowRequest(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on tooltip close request
+function: onTooltipCloseRequest()
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onTooltipCloseRequest(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on drag request
+function: onDragRequest($elementNodeId, $mouseX, $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onDragRequest(): " + gui.screennode.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on tick
+function: onTick()
+	console.printLine("----------------------------------------------------------")
+	console.printLine("onTick(): " + gui.screennode.getId())
+	console.printLine("----------------------------------------------------------")
+	console.printLine()
+end
+
+# on error
+on: error
+	console.printLine("An error occurred")
+	script.stop()
+end

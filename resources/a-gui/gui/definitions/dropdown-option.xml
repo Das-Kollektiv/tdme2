@@ -1,0 +1,40 @@
+<template>	
+	<element id="{$id}" width="100%" height="25" value="{$value}" selected="{$selected}" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<!-- normal -->
+		<text
+			id="{$id}_unselected"
+			text="{$text}"	
+			font="{$font.default}" size="{$fontsize.default}"
+			color="{$color.font_highlight}"
+			
+			width="100%"
+			height="25"
+			padding-left="5"
+			vertical-align="center"		
+
+			hide-on="mouseover,selected,hidden"
+		/>
+		
+		<!-- mouse over / focussed -->
+		<text 
+			id="{$id}_unselected,mouseover"
+			text="{$text}"
+			font="{$font.default}" size="{$fontsize.default}" 
+			color="{$color.font_highlight}"
+			 
+			width="100%"
+			height="25"
+			padding-left="5"
+			background-color="{$color.focus}"
+			vertical-align="center"
+
+			show-on="mouseover,selected"
+			hide-on="hidden"
+		/>
+		
+		<!-- <!-- additional elements --> -->
+		<!-- <layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" > -->
+			<!-- {__InnerXML__} -->
+		<!-- </layout> -->
+	</element>
+</template>

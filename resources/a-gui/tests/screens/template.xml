@@ -1,0 +1,7 @@
+<layout height="auto" width="auto" vertical-align="center" horizontal-align="center" alignment="vertical">
+	<text font="{$font.default}" size="{$fontsize.default}" text="Lorem ipsum dolor sit amet," color="#000000" />
+	<text font="{$font.default}" size="{$fontsize.default}" text="consetetur sadipscing elitr," color="#000000" />
+	<text font="{$font.default}" size="{$fontsize.default}" text="{$my-text}" color="#FF0000" />
+	<text font="{$font.default}" size="{$fontsize.default}" text="ut labore et dolore magna aliquyam erat!" color="#000000" />
+	{__InnerXML__}
+</layout>

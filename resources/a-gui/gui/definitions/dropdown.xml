@@ -1,0 +1,22 @@
+<template>	
+	<element id="{$id}" name="{$name}" width="{$width}" border="1" border-color="{$color.element_frame}" height="25" background-color="{$color.element_midground}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout id="{$id}_layout_vertical" alignment="vertical" vertical-align="center" horizontal-align="center" width="100%" height="25">
+			<layout id="{$id}_layout_horizontal" width="100%" padding-left="5" padding-right="5" vertical-align="center" alignment="horizontal">
+				<element id="{$id}_layout_horizontal_element" width="*" height="auto"> 
+					<text show-on="enabled" id="{$id}_text_enabled" width="100%" height="auto" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
+					<text show-on="disabled" id="{$id}_text_disabled" width="100%" height="auto" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
+				</element>
+				<element show-on="enabled" id="{$id}_arrow" width="auto" height="100%" vertical-align="center">
+					<!-- Image needs transparency and white arrow so that I can do effects on it -->
+					<image effect-color-mul="{$color.font_highlight}" hide-on="opened,mouseover" src="resources/a-gui/images/arrow_down.png" vertical-align="center" />
+					<image effect-color-mul="{$color.font_normal}" hide-on="opened" src="resources/a-gui/images/arrow_down.png" vertical-align="center" />
+					<image effect-color-mul="{$color.font_highlight}" hide-on="closed,mouseover" src="resources/a-gui/images/arrow_up.png" vertical-align="center" />
+					<image effect-color-mul="{$color.font_normal}" hide-on="closed" src="resources/a-gui/images/arrow_up.png" vertical-align="center" />
+				</element>
+			</layout>
+			<layout id="{$id}_inner" padding="{$padding}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.focus}" width="100%" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_midground}">
+				{__InnerXML__}
+			</layout>
+		</layout>
+	</element>
+</template>

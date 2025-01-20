@@ -1,0 +1,60 @@
+<template>	
+	<element id="{$id}" width="auto" height="auto" value="{$value}" selected="{$selected}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" disabled="{$disabled}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layer width="auto" >
+			
+			<!-- normal -->
+			<layout width="auto" height="auto" padding="10" hide-on="disabled,selected,mouseover,focussed" alignment="vertical" horizontal-align="center" vertical-align="center">
+				<layout hide-on="empty('{$image}')" width="{$size}" height="{$size}" horizontal-align="center" vertical-align="center">
+					<image src="{$image}" />
+				</layout>
+				<space height="5" hide-on="empty('{$text}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$text}
+					]]>
+				</styled-text>
+			</layout>
+		
+			<!-- mouse over / focussed -->
+			<layout width="auto" height="auto" padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" hide-on="disabled" show-on="mouseover,focussed" background-color="{$color.focus}" >
+				<layout hide-on="empty('{$image}')" width="{$size}" height="{$size}" horizontal-align="center" vertical-align="center">
+					<image src="{$image}" />
+				</layout>
+				<space height="5" hide-on="empty('{$text}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$text}
+					]]>
+				</styled-text>
+			</layout>
+			
+			<!-- selected -->
+			<layout width="auto" height="auto" padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" hide-on="disabled,unselected,mouseover,focussed" background-color="{$color.selected}" >
+				<layout hide-on="empty('{$image}')" width="{$size}" height="{$size}" horizontal-align="center" vertical-align="center">
+					<image src="{$image}" />
+				</layout>
+				<space height="5" hide-on="empty('{$text}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$text}
+					]]>
+				</styled-text>
+			</layout>
+		
+			<!-- disabled -->
+			<layout width="auto" height="auto" padding="10" alignment="horizontal" horizontal-align="center" vertical-align="center" show-on="disabled" >
+				<layout hide-on="empty('{$image}')" width="{$size}" height="{$size}" horizontal-align="center" vertical-align="center">
+					<image src="{$image}" />
+				</layout>
+				<space height="5" hide-on="empty('{$text}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$text}
+					]]>
+				</styled-text>
+			</layout>
+		
+		</layer>
+		
+	</element>
+</template>

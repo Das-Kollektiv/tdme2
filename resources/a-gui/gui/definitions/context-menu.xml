@@ -1,0 +1,7 @@
+<template>	
+	<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" focusable="true"  on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout id="{$id}_inner" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
+			{__InnerXML__}
+		</layout>
+	</element>
+</template>

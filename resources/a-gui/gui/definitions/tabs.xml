@@ -1,0 +1,5 @@
+<template>	
+	<layout id="{$id}" alignment="vertical" width="{$width}" height="{$height}" show-on="{$show-on}" hide-on="{$hide-on}">
+		{__InnerXML__}
+	</layout>
+</template>

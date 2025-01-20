@@ -1,0 +1,418 @@
+<screen id="test" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="2048" max-height="1536">
+	<layout background-color="{$color.element_background}" padding="5" width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center"> 
+		<menu-header>
+			<menu-header-item text="File">
+				<menu-item text="Quit" id="menu_file_quit" />
+			</menu-header-item>
+			<menu-header-item text="Edit">
+				<menu-item image="resources/a-gui/images/folder.png" text="Cut" shortcut="ctrl + F4" id="menu_edit_cut" />
+				<menu-item text="Copy" id="menu_edit_copy" />
+				<menu-item text="Paste" id="menu_edit_paste" />
+				<menu-item text="Delete" id="menu_edit_delete" />
+				<menu-separator />
+				<menu-item text="Disabled Item" disabled="true" />
+				<menu-item id="menu_edit_select_all">
+					<checkbox name="checkboxall" value="1" selected="true" text="Check me!"/>
+				</menu-item >
+			</menu-header-item>
+			<menu-header-item text="Disabled Item" disabled="true" />
+			<space width="*"/>
+			<menu-header-item text="Help">
+				<menu-item text="About" id="menu_help_about" />
+			</menu-header-item>
+		</menu-header>
+		<space height="10"/>
+		<tabs width="100%" height="*">
+			<tabs-header>
+				<tab id="tab1" image="resources/a-gui/images/folder.png" text="Radio+Checkbox" closeable="true"/>
+				<tab id="tab2" text="Selectbox" closeable="true" />
+				<tab id="tab3" text="Buttons" closeable="true"/>
+				<tab id="tab4" text="Dropdown" />
+				<tab id="tab5" text="Input" />
+				<tab id="tab6" text="StyledText" />
+				<tab id="tab7" text="Sliders + Knob" />
+				<tab id="tab8" text="Scale9 + Gradient" />
+				<tab id="tab9" text="Template" />
+				<tab id="tab10" text="Conditions" />
+				<tab id="tab11" text="Table" />
+				<tab id="tab12" text="Contextmenu" />
+				<tab id="tab13" text="Grid" />
+			</tabs-header>
+			<tabs-content>
+				<tab-content tab-id="tab1" vertical-align="top">
+					<layout width="100%" height="100%" padding="10" horizontal-align="center" alignment="horizontal">
+						<layout padding="10" alignment="vertical" vertical-align="center" horizontal-align="left" width="50%">
+						
+							<checkbox name="checkbox1" value="1" disabled="true" selected="true" text="Check me!"/>
+							<checkbox name="checkbox4" value="1" disabled="true" selected="false" text="Can't check me!"/>
+							<checkbox name="checkbox2" value="1" selected="true" text="No! Check me!"/>
+							<checkbox name="checkbox3" value="1" selected="true" text="Rather check me!" />
+								
+						</layout>
+						
+						<layout padding="10" alignment="vertical" vertical-align="center" horizontal-align="left" width="50%">
+						
+							<radiobutton name="radio" value="1" disabled="true" selected="true" text="Select me!"/>
+							<radiobutton name="radio" value="4" disabled="true" text="Can't select me!"/>
+							<radiobutton name="radio" value="2" selected="true" text="No! Select me!" />
+							<radiobutton name="radio" value="3" text="Do select me!" />
+
+						</layout>
+						
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab2" vertical-align="top">
+					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="auto" >
+						
+							<selectbox name="select">
+								<scrollarea id="sasb" width="100%" height="200">
+									<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option A,B,C,D" value="1">
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option A" value="1.1" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option B" value="1.2" disabled="true" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option C" value="1.3" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option D" value="1.4" />
+									</selectbox-parent-option>
+									<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option F,G,H,I" value="2">
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option F" value="2.1" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option G" value="2.2" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option H" value="2.3" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option I" value="2.4" />
+									</selectbox-parent-option>
+									<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option J,K,L,M,N,O,P,Q" value="3">
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option J" value="3.1" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option K" value="3.2" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option L" value="3.3" />
+										<selectbox-option image="resources/a-gui/images/folder.png" text="Option M" value="3.4" />
+										<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option N,O,P,Q" value="3.5">
+											<selectbox-option image="resources/a-gui/images/folder.png" text="Option N" value="3.5.1" />
+											<selectbox-option image="resources/a-gui/images/folder.png" text="Option O" value="3.5.2" />
+											<selectbox-option image="resources/a-gui/images/folder.png" text="Option P" value="3.5.3" />
+											<selectbox-option image="resources/a-gui/images/folder.png" text="Option Q" value="3.5.4" />
+											<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option XXX" value="3.6">
+												<selectbox-option image="resources/a-gui/images/folder.png" text="Option XX" value="3.6.1" />
+												<selectbox-option image="resources/a-gui/images/folder.png" text="Option XY" value="3.6.2" />
+												<selectbox-option image="resources/a-gui/images/folder.png" text="Option XZ" value="3.6.3" />
+												<selectbox-option image="resources/a-gui/images/folder.png" text="Option YX" value="3.6.4" />
+											</selectbox-parent-option>
+										</selectbox-parent-option>
+									</selectbox-parent-option>
+									<selectbox-option image="resources/a-gui/images/folder.png" text="Option R" value="4" />
+									<selectbox-option image="resources/a-gui/images/folder.png" text="Option S" value="5" />
+									<selectbox-option image="resources/a-gui/images/folder.png" text="Option T" value="6" />
+									<selectbox-option image="resources/a-gui/images/folder.png" text="Option U" value="7" />
+								</scrollarea>
+							</selectbox>
+
+							<space height="20" />
+
+							<selectbox name="select-multiple" options="multiple">
+								<scrollarea id="sasb-multiple" width="100%" height="200">
+									<selectbox-parent-option image="resources/a-gui/images/folder.png" text="Option A,B,C,D" value="1">
+										<selectbox-option text="Option A" value="1.1" />
+										<selectbox-option text="Option B" value="1.2" />
+										<selectbox-option text="Option C" value="1.3" />
+										<selectbox-option text="Option D" value="1.4" />
+									</selectbox-parent-option>
+									<selectbox-parent-option text="Option F,G,H,I" value="2">
+										<selectbox-option text="Option F" value="2.1" />
+										<selectbox-option text="Option G" value="2.2" />
+										<selectbox-option text="Option H" value="2.3" />
+										<selectbox-option text="Option I" value="2.4" />
+									</selectbox-parent-option>
+									<selectbox-parent-option text="Option J,K,L,M,N,O,P,Q" value="3">
+										<selectbox-option text="Option J" value="3.1" />
+										<selectbox-option text="Option K" value="3.2" />
+										<selectbox-option text="Option L" value="3.3" />
+										<selectbox-option text="Option M" value="3.4" />
+										<selectbox-parent-option text="Option N,O,P,Q" value="3.5">
+											<selectbox-option text="Option N" value="3.5.1" />
+											<selectbox-option text="Option O" value="3.5.2" />
+											<selectbox-option text="Option P" value="3.5.3" />
+											<selectbox-option text="Option Q" value="3.5.4" />
+											<selectbox-parent-option text="Option XXX" value="3.6">
+												<selectbox-option text="Option XX" value="3.6.1" />
+												<selectbox-option text="Option XY" value="3.6.2" />
+												<selectbox-option text="Option XZ" value="3.6.3" />
+												<selectbox-option text="Option YX" value="3.6.4" />
+											</selectbox-parent-option>
+										</selectbox-parent-option>
+									</selectbox-parent-option>
+									<selectbox-option text="Option R" value="4" />
+									<selectbox-option text="Option S" value="5" />
+									<selectbox-option text="Option T" value="6" />
+									<selectbox-option text="Option U" value="7" />
+								</scrollarea>
+							</selectbox>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab3" vertical-align="top">
+					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="100%">
+
+						<space height="*" />
+						<button id="test_text_button" width="150" height="40" name="button" text="Active Button" />
+						<space height="*" />
+						<button id="test_text_button2" width="150" height="40" name="button2" image="resources/a-gui/images/folder.png" text="Icon Button" />
+						<space height="*" />
+						<button id="test_text_button3" width="150" height="40" name="button3" text="Disabled Button" disabled="true"/>
+						<space height="*" />
+						<button id="test_text_button4" name="button4" image="resources/a-gui/images/folder.png" />
+						<space height="*" />						
+						<element horizontal-align="center" vertical-align="center">
+							<image hide-on="mouseover,click" src="resources/a-gui/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="mouseover" src="resources/a-gui/tests/screens/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="click" src="resources/a-gui/tests/screens/images/button_click.png" horizontal-align="center" vertical-align="center" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="ImageBtn!" color="{$color.font_highlight}" horizontal-align="center" vertical-align="center" />
+						</element>
+						<space height="*" />
+						<image-button
+							id="image-button"
+							name="image-button"
+							src-normal="resources/a-gui/tests/screens/images/button_normal.png"
+							src-over="resources/a-gui/tests/screens/images/button_mouseover.png"
+							src-clicked="resources/a-gui/tests/screens/images/button_click.png"
+							src-disabled="resources/a-gui/tests/screens/images/button_normal.png"
+						/>
+						<space height="*" />
+						<image src="resources/a-gui/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" rotation="45" />
+						<space height="*" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab4" vertical-align="top">
+					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="100%">
+						<layout id="dropdown_panel" horizontal-align="center" alignment="vertical" width="80%">
+							<dropdown name="dropdown" text="Click me and select a drop down option">
+								<scrollarea id="sadd" width="100%" height="80">
+									<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" />
+									<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
+									<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
+									<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" disabled="true" />
+									<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" selected="true" />
+									<dropdown-option text="Option F" value="6" on-mouse-click="dropdownvaluetext.condition=f" />
+									<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
+									<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
+								</scrollarea>
+							</dropdown>
+							<space height="20" />
+							<dropdown name="dropdown2" text="Click me and select a drop down option">
+								<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" />
+								<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
+								<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
+								<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" />
+								<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" />
+								<dropdown-option text="Option F" value="6" on-mouse-click="dropdownvaluetext.condition=f" />
+								<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
+								<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
+							</dropdown>
+							<space height="20" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="Lorem ipsum dolor sit amet," color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="consetetur sadipscing elitr," color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam nonumy eirmod tempor invidunt " color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="ut labore et dolore magna aliquyam erat" color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam voluptua." color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam voluptua." color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="Show me the fucking ToolTip." color="#000000" tooltip="Hi. I am a mighty tooltip." />
+							<space height="20" />
+							<element id="dropdownvaluetext" on-initialize="dropdownvaluetext.condition=a">
+								<text show-on="a" font="{$font.default}" size="{$fontsize.default}" text="You have selected A" color="#FF0000" />
+								<text show-on="b" font="{$font.default}" size="{$fontsize.default}" text="You have selected B" color="#FF0000" />
+								<text show-on="c" font="{$font.default}" size="{$fontsize.default}" text="You have selected C" color="#FF0000" />
+								<text show-on="d" font="{$font.default}" size="{$fontsize.default}" text="You have selected D" color="#FF0000" />
+								<text show-on="e" font="{$font.default}" size="{$fontsize.default}" text="You have selected E" color="#FF0000" />
+								<text show-on="f" font="{$font.default}" size="{$fontsize.default}" text="You have selected F" color="#FF0000" />
+								<text show-on="g" font="{$font.default}" size="{$fontsize.default}" text="You have selected G" color="#FF0000" />
+								<text show-on="h" font="{$font.default}" size="{$fontsize.default}" text="You have selected H" color="#FF0000" />
+							</element>
+							<space height="20" />
+							<selector-horizontal>
+								<selector-horizontal-option text="Option A" value="0" />
+								<selector-horizontal-option text="Option B" value="1" />
+								<selector-horizontal-option text="Option C" value="2" />
+							</selector-horizontal>
+						</layout>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab5" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="none" width="100%" height="auto">
+						<input width="100%" height="auto" hint="Search" image="resources/a-gui/images/search.png" text="0.0" unit="m" options="type=float,min=-10.0,max=10.0,step=0.1,decimals=1" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
+					<scrollarea width="80%" height="80%" padding="5" border="1">
+						<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
+							<![CDATA[
+MIT License
+
+Developed 2012-2024 by Andreas Drewke, Dominik Hepp, Kolja Gumpert,
+drewke.net, mindty.com
+
+Copyright 2024 Andreas Drewke.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]>
+						</styled-text>
+					</scrollarea>
+				</tab-content>
+				<tab-content tab-id="tab7" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
+						<progress-bar width="300" name="progressbar-test" id="progressbar-test" text-on="true" value="0.5" />
+						<space width="25" />
+						<slider-horizontal width="100" name="sliderh-test" id="sliderh-test" value="0.5" on-change="progressbar-test.value=sliderh-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
+						<space width="25" />
+						<slider-vertical height="100" name="sliderv-test" id="sliderv-test" value="0.5" on-change="progressbar-test.value=sliderv-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
+						<space width="25" />
+						<knob name="knob-test" id="knob-test" value="0.5" on-change="progressbar-test.value=knob-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
+						<space width="25" />
+						<image id="masktest" src="resources/a-gui/tests/screens/images/mask-example-fill.png" width="50" height="50" mask="resources/a-gui/tests/screens/images/mask-example-mask.png" mask-max-value="0.4" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab8" vertical-align="top">
+					<layout horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
+						<space height="*" />
+						<image 
+							width="40%" 
+							height="15" 
+							src="resources/a-gui/tests/screens/images/hr.png" 
+							horizontal-align="center" 
+							vertical-align="center"
+							scale9-left="500"
+							scale9-right="500"
+						/>
+						<space height="*" />
+						<gradient 
+							width="50%"
+							height="50%"
+							colors="0%=red,50%=green,100%=blue"
+							rotation="45"
+						/>
+						<space height="*" />
+						<image 
+							width="50%" 
+							height="25%" 
+							src="resources/a-gui/tests/screens/images/scale9GridTest.png" 
+							horizontal-align="center" 
+							vertical-align="center"
+							scale9="125" 
+						/>
+						<space height="*" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab9" vertical-align="top">
+					<layout width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center">
+						<template src="resources/a-gui/tests/screens/template.xml" my-text="Hello this is the first template parameter" />
+						<space height="10" />
+						<template src="resources/a-gui/tests/screens/template.xml" my-text="Hello this is the second template parameter">
+							<text font="{$font.default}" size="{$fontsize.default}" text="In this case I have something additional to tell!" color="#000000" />
+						</template>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab10" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
+						<space height="*" />
+						<layout horizontal-align="center" vertical-align="center" alignment="horizontal">
+							<element id="000" border="2" focusable="true" on-mouse-click="tab10-element.condition=a">
+								<text font="{$font.default}" size="{$fontsize.default}" text="Click-A" color="#000000" />
+							</element>
+							<space width="20" />
+							<element id="111" border="2" focusable="true" on-mouse-click="tab10-element.condition=b">
+								<text font="{$font.default}" size="{$fontsize.default}" text="Click-B" color="#000000" />
+							</element>
+							<space width="20" />
+							<element id="222" border="2" focusable="true" on-mouse-over="tab10-element.condition=c" on-mouse-out="tab10-element.condition=">
+								<text font="{$font.default}" size="{$fontsize.default}" text="Over-C" color="#000000" />
+							</element>
+							<space width="20" />
+							<element id="333" border="2" focusable="true" on-mouse-click="tab10-element.condition=">
+								<text font="{$font.default}" size="{$fontsize.default}" text="Hide" color="#000000" />
+							</element>
+						</layout>
+						<space height="10" />
+						<element on-initialize="tab10-element.condition=a" id="tab10-element" horizontal-align="center" vertical-align="center" alignment="horizontal">
+							<text show-on="a" font="{$font.default}" size="{$fontsize.default}" text="A" color="#000000" />
+							<text show-on="b" font="{$font.default}" size="{$fontsize.default}" text="B" color="#000000" />
+							<text show-on="c" font="{$font.default}" size="{$fontsize.default}" text="C" color="#000000" />
+						</element>
+						<space height="*" />
+						<text show-on="empty('x', 'y', 'z')" font="{$font.default}" size="{$fontsize.default}" text="show-on,hide-on functions: This should not be visible as empty function should return false on 'x', 'y', 'z'" color="#000000" />
+						<text show-on="empty('x', 'y', 'z', '')" font="{$font.default}" size="{$fontsize.default}" text="show-on,hide-on functions: This should be visible as empty function should return true on 'x', 'y', 'z', ''" color="#000000" />
+						<space height="*" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab11" vertical-align="center">
+					<table width="auto" height="auto" background-color="white">
+						<table-row>
+							<table-cell border="1" border-color="red">
+								<text font="{$font.default}" size="{$fontsize.default}" text="aaa" color="#000000"/>
+							</table-cell>
+							<table-cell border="1" border-color="green">
+								<text font="{$font.default}" size="{$fontsize.default}" text="b" color="#000000" />
+							</table-cell>
+							<table-cell border="1" border-color="blue">
+								<text font="{$font.default}" size="{$fontsize.default}" text="cc" color="#000000" />
+							</table-cell>
+						</table-row>
+						<table-row>
+							<table-cell border="1" border-color="red">
+								<text font="{$font.default}" size="{$fontsize.default}" text="a" color="#000000" />
+							</table-cell>
+							<table-cell border="1" border-color="green">
+								<text font="{$font.default}" size="{$fontsize.default}" text="bb" color="#000000" />
+							</table-cell>
+							<table-cell border="1" border-color="blue">
+								<text font="{$font.default}" size="{$fontsize.default}" text="ccc" color="#000000" />
+							</table-cell>
+						</table-row>
+						<table-row>
+							<table-cell border="1" border-color="red">
+								<text font="{$font.default}" size="{$fontsize.default}" text="ab" color="#000000" />
+							</table-cell>
+							<table-cell border="1" border-color="green">
+								<text font="{$font.default}" size="{$fontsize.default}" text="bbb" color="#000000" />
+							</table-cell>
+							<table-cell border="1" border-color="blue">
+								<text font="{$font.default}" size="{$fontsize.default}" text="c" color="#000000" />
+							</table-cell>
+						</table-row>
+					</table>
+				</tab-content>
+				<tab-content tab-id="tab12" vertical-align="center" horizontal-align="center">
+					<context-menu>
+						<context-menu-item image="resources/a-gui/images/folder.png" text="Cut" shortcut="ctrl + F4" />
+						<context-menu-item text="Copy" />
+						<context-menu-item text="Paste" />
+						<context-menu-item text="Delete" />
+					</context-menu>
+				</tab-content>
+				<tab-content tab-id="tab13" vertical-align="center">
+					<grid id="test_grid" width="180" height="400" options="multiple,horizontal-items=2">
+						<grid-item text="Item 1" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 2" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 3" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 4" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 5" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 6" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 7" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 8" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 9" image="resources/a-gui/images/folder_big.png" size="60" />
+						<grid-item text="Item 10" image="resources/a-gui/images/folder_big.png" size="60" />
+					</grid>
+				</tab-content>			
+			</tabs-content>
+		</tabs>
+	</layout>
+</screen>
