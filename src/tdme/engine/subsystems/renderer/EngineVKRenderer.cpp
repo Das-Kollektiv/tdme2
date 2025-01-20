@@ -10,9 +10,6 @@
 
 #include <string>
 
-#include <agui/agui.h>
-#include <agui/gui/renderer/GUIShader.h>
-
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -25,8 +22,6 @@
 using tdme::engine::subsystems::renderer::EngineVKRenderer;
 
 using std::string;
-
-using agui::gui::renderer::GUIShader;
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -100,9 +95,6 @@ void EngineVKRenderer::onBindTexture(int contextIdx, int32_t textureId)
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(contextIdx, textureId);
 
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->bindTexture(textureId);
-
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(contextIdx, textureId);
 }
@@ -114,9 +106,6 @@ void EngineVKRenderer::onUpdateTextureMatrix(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateTextureMatrix(contextIdx);
-
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateTextureMatrix();
 }
 
 void EngineVKRenderer::onUpdateEffect(int contextIdx)
@@ -129,10 +118,6 @@ void EngineVKRenderer::onUpdateEffect(int contextIdx)
 
 	if (Engine::linesShader != nullptr)
 		Engine::linesShader->updateEffect(contextIdx);
-
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateEffect();
-
 }
 
 void EngineVKRenderer::onUpdateLight(int contextIdx, int32_t lightId)

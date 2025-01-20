@@ -13,9 +13,6 @@
 
 #include <string>
 
-#include <agui/agui.h>
-#include <agui/gui/renderer/GUIShader.h>
-
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -27,8 +24,6 @@
 using tdme::engine::subsystems::renderer::EngineGL2Renderer;
 
 using std::string;
-
-using agui::gui::renderer::GUIShader;
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -117,9 +112,6 @@ void EngineGL2Renderer::onBindTexture(int contextIdx, int32_t textureId)
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(contextIdx, textureId);
 
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->bindTexture(textureId);
-
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(contextIdx, textureId);
 }
@@ -131,9 +123,6 @@ void EngineGL2Renderer::onUpdateTextureMatrix(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateTextureMatrix(contextIdx);
-
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateTextureMatrix();
 }
 
 void EngineGL2Renderer::onUpdateEffect(int contextIdx)
@@ -146,9 +135,6 @@ void EngineGL2Renderer::onUpdateEffect(int contextIdx)
 
 	if (Engine::linesShader != nullptr)
 		Engine::linesShader->updateEffect(contextIdx);
-
-	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateEffect();
 }
 
 void EngineGL2Renderer::onUpdateLight(int contextIdx, int32_t lightId)

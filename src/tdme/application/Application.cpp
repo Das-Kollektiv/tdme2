@@ -684,6 +684,7 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 	// TODO: improve me!
 	if (rendererBackend->getRendererType() == RendererBackend::RENDERERTYPE_OPENGL) {
 		guiRendererBackend = make_unique<ApplicationGL3Renderer>();
+		guiRendererBackend->initialize();
 	} else {
 		Console::printLine("Application::run(): GUI renderer backend: Not available");
 	}
