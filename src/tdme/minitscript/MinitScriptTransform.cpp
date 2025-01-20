@@ -1,17 +1,17 @@
 #include <span>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/minitscript/MinitScriptTransform.h>
 
 #include <minitscript/minitscript/MinitScript.h>
 
-#include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/utilities/Float.h>
 #include <tdme/minitscript/MinitScriptMatrix4x4.h>
 #include <tdme/minitscript/MinitScriptQuaternion.h>
 #include <tdme/minitscript/MinitScriptVector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
 
 using std::span;
 using std::string;
@@ -21,11 +21,11 @@ using minitscript::minitscript::MinitScript;
 using tdme::minitscript::MinitScriptTransform;
 
 using tdme::engine::Transform;
-using tdme::utilities::Float;
 using tdme::minitscript::MinitScriptMatrix4x4;
 using tdme::minitscript::MinitScriptQuaternion;
 using tdme::minitscript::MinitScriptVector3;
 using tdme::utilities::Console;
+using tdme::utilities::Float;
 
 const string MinitScriptTransform::TYPE_NAME = "Transform";
 

@@ -5,10 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/logics/LogicMinitScript.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
@@ -19,6 +16,12 @@
 #include <agui/gui/scripting/GUIMinitScript.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/logics/LogicMinitScript.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -37,7 +40,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -50,9 +52,6 @@ using std::string;
 using std::unique_ptr;
 using std::unordered_map;
 
-using tdme::engine::Texture;
-using tdme::engine::logics::LogicMinitScript;
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUINode;
@@ -62,6 +61,11 @@ using agui::gui::nodes::GUIScreenNode;
 using agui::gui::scripting::GUIMinitScript;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+
+using tdme::engine::logics::LogicMinitScript;
+using tdme::engine::Engine;
+using tdme::engine::Texture;
+using tdme::minitscript::EngineMinitScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -80,7 +84,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;

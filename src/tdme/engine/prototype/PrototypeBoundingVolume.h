@@ -1,6 +1,5 @@
 #pragma once
 
-#include <tdme/tdme.h>
 
 #include <memory>
 #include <string>
@@ -10,8 +9,8 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/os/threading/AtomicOperations.h>
 
 using std::string;
 using std::unique_ptr;

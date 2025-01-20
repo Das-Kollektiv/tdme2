@@ -3,8 +3,8 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -15,8 +15,8 @@ using std::string;
 
 using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Texture;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

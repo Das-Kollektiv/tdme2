@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
 
 #include <ext/vulkan/spirv/GlslangToSpv.h>
@@ -10,7 +11,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;

@@ -9,7 +9,6 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -23,6 +22,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
@@ -50,7 +50,6 @@ using tdme::utilities::Time;
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
@@ -63,6 +62,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;

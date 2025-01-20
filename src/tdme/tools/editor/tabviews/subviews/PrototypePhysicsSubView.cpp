@@ -3,6 +3,11 @@
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -18,9 +23,6 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
-#include <agui/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -37,6 +39,10 @@ using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 
 using tdme::math::Math;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::GUI;
+
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -52,9 +58,6 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using agui::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;

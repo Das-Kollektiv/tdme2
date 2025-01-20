@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -12,7 +13,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 
 using std::unique_ptr;
 

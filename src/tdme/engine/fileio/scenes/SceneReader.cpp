@@ -11,7 +11,6 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -23,6 +22,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
@@ -58,7 +58,6 @@ using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
@@ -70,6 +69,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::engine::Color4;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Transform;
 using tdme::math::Math;

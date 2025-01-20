@@ -10,8 +10,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
-using std::unordered_map;
 using std::unique_ptr;
+using std::unordered_map;
 
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 

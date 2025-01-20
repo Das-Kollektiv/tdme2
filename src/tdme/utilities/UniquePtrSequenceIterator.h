@@ -1,10 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <iterator>
 #include <cstddef>
+#include <iterator>
+#include <memory>
 
-#include <tdme/tdme.h>
 
 using std::forward_iterator_tag;
 using std::ptrdiff_t;

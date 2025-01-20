@@ -3,6 +3,10 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/Sound.h>
@@ -23,8 +27,6 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -56,6 +58,9 @@ using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+
 using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::fileio::models::ModelReader;
@@ -74,8 +79,6 @@ using tdme::engine::ModelUtilities;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::engine::Timing;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUI;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

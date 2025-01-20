@@ -2,13 +2,15 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/events/GUIContextMenuRequestListener.h>
 #include <agui/gui/events/GUIFocusListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 
 using std::string;

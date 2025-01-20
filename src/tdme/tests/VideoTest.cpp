@@ -11,7 +11,6 @@
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/PacketAudioStream.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -21,6 +20,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -52,7 +52,6 @@ using tdme::application::Application;
 using tdme::audio::Audio;
 using tdme::audio::PacketAudioStream;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -62,6 +61,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;

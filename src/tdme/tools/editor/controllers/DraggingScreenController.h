@@ -3,9 +3,11 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIMoveListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -16,6 +18,7 @@ using agui::gui::events::GUIMoveListener;
 using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
+
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::Action;
 

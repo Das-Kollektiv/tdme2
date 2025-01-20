@@ -2,27 +2,27 @@
 #include <memory>
 #include <string>
 #include <string_view>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/UniquePtrSequenceIterator.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::array;
 using std::make_unique;
 using std::string;
 using std::to_string;
-using std::vector;
 using std::unique_ptr;
 using std::unordered_map;
+using std::vector;
 
 using tdme::utilities::Console;
-using tdme::utilities::UniquePtrSequenceIterator;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 int main(int argc, char** argv)
 {

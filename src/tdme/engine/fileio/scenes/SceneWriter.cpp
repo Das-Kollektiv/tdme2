@@ -7,7 +7,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -16,6 +15,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Rotation.h>
@@ -33,7 +33,6 @@ using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneWriter;
-using tdme::engine::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
@@ -42,6 +41,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::Rotation;

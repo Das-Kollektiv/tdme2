@@ -29,13 +29,13 @@ SOFTWARE.
 #define PL_MPEG_IMPLEMENTATION
 #include <ext/pl_mpeg/pl_mpeg.h>
 
+#include <tdme/tdme.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
 #include <tdme/video/decoder/VideoDecoderException.h>
 
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>

@@ -1,15 +1,18 @@
 #pragma once
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Rotation.h>
-#include <agui/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
+using agui::gui::events::GUIInputEventHandler;
+
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
-using agui::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 

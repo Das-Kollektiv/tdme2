@@ -5,12 +5,16 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/renderer/GUIRenderer.h>
+#include <agui/gui/renderer/GUIShader.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -43,6 +47,7 @@
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Decal.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -65,11 +70,8 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/renderer/GUIRenderer.h>
-#include <agui/gui/renderer/GUIShader.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
@@ -93,11 +95,14 @@ using std::string;
 using std::to_string;
 using std::unique_ptr;
 
+using agui::gui::renderer::GUIRenderer;
+using agui::gui::renderer::GUIShader;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
+
 using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
@@ -129,6 +134,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -150,11 +156,8 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::ShaderParameter;
+using tdme::engine::Texture;
 using tdme::engine::Timing;
-using agui::gui::renderer::GUIRenderer;
-using agui::gui::renderer::GUIShader;
-using agui::gui::GUI;
-using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;

@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Model.h>
@@ -14,6 +13,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/ColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Vector3.h>
@@ -22,7 +22,6 @@ using std::string;
 using std::unique_ptr;
 using std::unordered_map;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
@@ -32,6 +31,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::subsystems::rendering::ObjectNode;
+using tdme::engine::Color4;
 using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
 using tdme::math::Vector3;

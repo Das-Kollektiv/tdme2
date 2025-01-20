@@ -18,9 +18,9 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

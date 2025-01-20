@@ -5,9 +5,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/minitscript/MinitScriptVector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/minitscript/MinitScriptVector3.h>
 
 using minitscript::minitscript::MinitScript;
 
@@ -15,9 +15,9 @@ using std::span;
 using std::string;
 
 using tdme::math::Vector3;
+using tdme::minitscript::MinitScriptVector3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::minitscript::MinitScriptVector3;
 
 const string MinitScriptVector3::TYPE_NAME = "Vector3";
 

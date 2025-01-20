@@ -6,11 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/Scene.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
@@ -20,6 +16,12 @@
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
 #include <agui/gui/nodes/GUINode_Padding.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
@@ -37,11 +39,6 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Texture;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIChangeListener;
@@ -57,6 +54,12 @@ using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUITextNode;
+
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
+using tdme::engine::Texture;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::ScreenController;

@@ -9,8 +9,8 @@
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Texture;
 
 /**
  * Lighting shader implementation

@@ -4,17 +4,17 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Texture;
 using tdme::os::threading::Mutex;
 using tdme::utilities::Console;;
 

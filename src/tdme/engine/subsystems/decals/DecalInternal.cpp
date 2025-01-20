@@ -4,22 +4,22 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalInternal;
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 
 DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps)

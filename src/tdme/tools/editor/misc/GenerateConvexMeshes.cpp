@@ -7,10 +7,17 @@
 
 #include <VHACD.h>
 
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/utilities/MutableString.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -22,12 +29,8 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/ObjectModel.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUINode.h>
-#include <agui/gui/nodes/GUINodeController.h>
-#include <agui/gui/nodes/GUIParentNode.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
@@ -39,20 +42,25 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/ModelTools.h>
-#include <agui/utilities/MutableString.h>
 
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 
 using std::make_unique;
 using std::string;
 using std::to_string;
-using std::unordered_map;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
+
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::utilities::MutableString;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -64,12 +72,8 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::Color4;
 using tdme::engine::ObjectModel;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUINode;
-using agui::gui::nodes::GUINodeController;
-using agui::gui::nodes::GUIParentNode;
-using agui::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::StandardFileSystem;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -81,7 +85,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
-using agui::utilities::MutableString;
 
 void GenerateConvexMeshes::removeConvexMeshes(Prototype* prototype)
 {

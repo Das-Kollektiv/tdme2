@@ -10,10 +10,8 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/BC7TextureWriter.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -30,6 +28,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -52,10 +52,8 @@ using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::fileio::textures::BC7TextureWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;
@@ -72,6 +70,8 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

@@ -1,4 +1,3 @@
-#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectModelInternal.h>
 
 using tdme::engine::subsystems::rendering::ObjectModelInternal;

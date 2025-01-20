@@ -10,11 +10,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/application/Application.h>
-#include <tdme/engine/Color4.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Version.h>
+#include <agui/agui.h>
 #include <agui/gui/effects/GUIColorEffect.h>
 #include <agui/gui/effects/GUIPositionEffect.h>
 #include <agui/gui/events/GUIActionListener.h>
@@ -28,6 +24,13 @@
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/application/Application.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -41,7 +44,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -64,10 +66,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::application::Application;
-using tdme::engine::Color4;
-using tdme::engine::Engine;
-using tdme::engine::Version;
 using agui::gui::effects::GUIColorEffect;
 using agui::gui::effects::GUIPositionEffect;
 using agui::gui::events::GUIActionListener;
@@ -82,6 +80,12 @@ using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::application::Application;
+using tdme::engine::Color4;
+using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -95,7 +99,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;

@@ -4,8 +4,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/LODObject.h>
 
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -13,8 +13,8 @@ using tdme::engine::prototype::PrototypeLODLevel;
 using std::string;
 using std::unique_ptr;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
+using tdme::engine::Color4;
 using tdme::engine::LODObject;
 
 PrototypeLODLevel::PrototypeLODLevel(

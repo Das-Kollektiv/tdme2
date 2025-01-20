@@ -4,17 +4,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
+using tdme::engine::Color4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 

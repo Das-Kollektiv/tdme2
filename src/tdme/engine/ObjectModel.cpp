@@ -1,4 +1,3 @@
-#include <tdme/tdme.h>
 #include <tdme/engine/ObjectModel.h>
 
 using tdme::engine::ObjectModel;

@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -23,6 +22,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
@@ -33,7 +33,6 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;
@@ -51,6 +50,7 @@ using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 

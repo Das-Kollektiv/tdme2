@@ -3,9 +3,11 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/fwd-agui.h>
 #include <agui/gui/nodes/GUIColor.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 #include <ext/tinyxml/tinyxml.h>

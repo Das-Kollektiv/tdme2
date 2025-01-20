@@ -3,13 +3,7 @@
 #include <array>
 #include <memory>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/ShaderParameter.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
@@ -18,6 +12,15 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -34,18 +37,12 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::make_unique;
 using std::unique_ptr;
 
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::Engine;
-using tdme::engine::EntityShaderParameters;
-using tdme::engine::ShaderParameter;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -53,6 +50,13 @@ using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUINodeController;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::ShaderParameter;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -70,7 +74,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, PrototypePhysicsSubView* physicsView)

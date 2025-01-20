@@ -8,7 +8,6 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -20,6 +19,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object.h>
@@ -43,7 +43,6 @@ using tdme::utilities::Time;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -54,6 +53,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object;

@@ -6,20 +6,21 @@
 
 #include <minitscript/minitscript/MinitScript.h>
 
+#include <agui/agui.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
-#include <agui/gui/scripting/GUIMinitScript.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/minitscript/MinitScriptMatrix3x3.h>
-#include <tdme/minitscript/MinitScriptMatrix4x4.h>
 #include <tdme/minitscript/MinitScriptMatrix4x4.h>
 #include <tdme/minitscript/MinitScriptQuaternion.h>
 #include <tdme/minitscript/MinitScriptTransform.h>
 #include <tdme/minitscript/MinitScriptVector2.h>
 #include <tdme/minitscript/MinitScriptVector3.h>
 #include <tdme/minitscript/MinitScriptVector4.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -32,19 +33,19 @@ using std::vector;
 
 using minitscript::minitscript::MinitScript;
 
-using tdme::engine::logics::LogicMinitScript;
 using agui::gui::scripting::GUIMinitScript;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Console;
+
+using tdme::engine::logics::LogicMinitScript;
 using tdme::minitscript::MinitScriptMatrix3x3;
-using tdme::minitscript::MinitScriptMatrix4x4;
 using tdme::minitscript::MinitScriptMatrix4x4;
 using tdme::minitscript::MinitScriptQuaternion;
 using tdme::minitscript::MinitScriptTransform;
 using tdme::minitscript::MinitScriptVector2;
 using tdme::minitscript::MinitScriptVector3;
 using tdme::minitscript::MinitScriptVector4;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 

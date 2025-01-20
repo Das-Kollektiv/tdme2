@@ -3,9 +3,7 @@
 #include <array>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/Entity.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
@@ -16,6 +14,11 @@
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -31,15 +34,12 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 
 using std::array;
 using std::string;
 
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
 
-using tdme::engine::prototype::Prototype;
-using tdme::engine::Entity;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUINode;
@@ -48,6 +48,10 @@ using agui::gui::nodes::GUINodeController;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Entity;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -63,7 +67,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 
 EnvMapEditorTabController::EnvMapEditorTabController(EnvMapEditorTabView* view)
 {

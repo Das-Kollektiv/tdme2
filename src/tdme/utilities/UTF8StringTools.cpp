@@ -7,8 +7,8 @@
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Character.h>
-#include <tdme/utilities/UTF8StringTokenizer.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
+#include <tdme/utilities/UTF8StringTokenizer.h>
 
 using std::regex;
 using std::regex_match;
@@ -20,8 +20,8 @@ using tdme::utilities::UTF8StringTools;
 
 using tdme::math::Math;
 using tdme::utilities::Character;
-using tdme::utilities::UTF8StringTokenizer;
 using tdme::utilities::UTF8CharacterIterator;
+using tdme::utilities::UTF8StringTokenizer;
 
 const string UTF8StringTools::replace(
 	const string& str,

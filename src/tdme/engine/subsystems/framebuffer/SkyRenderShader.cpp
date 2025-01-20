@@ -19,8 +19,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
-using std::string;
 using std::make_unique;
+using std::string;
 
 using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 

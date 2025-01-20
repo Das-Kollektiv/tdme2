@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -22,6 +21,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -35,7 +35,6 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -50,6 +49,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
+using tdme::engine::Color4;
 using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

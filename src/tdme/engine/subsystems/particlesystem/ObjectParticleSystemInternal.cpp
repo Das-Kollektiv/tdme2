@@ -6,13 +6,13 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 #include <tdme/engine/subsystems/rendering/ObjectInternal.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object.h>
@@ -29,7 +29,6 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal;
@@ -37,6 +36,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectInternal;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;

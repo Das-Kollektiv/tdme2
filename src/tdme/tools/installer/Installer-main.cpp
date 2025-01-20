@@ -1,6 +1,5 @@
 #include <tdme/tools/installer/Installer.h>
 
-#include <tdme/tdme.h>
 
 #include <yannet/os/network/Network.h>
 

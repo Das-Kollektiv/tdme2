@@ -3,18 +3,18 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Color4.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 

@@ -5,17 +5,17 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::string;
 
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transform;

@@ -1,16 +1,18 @@
 #include <string>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/textures/GUITexture.h>
+
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/BC7TextureReader.h>
 #include <tdme/engine/fileio/textures/BC7TextureWriter.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
-#include <agui/gui/textures/GUITexture.h>
 
 using std::string;
 using std::to_string;
@@ -18,14 +20,15 @@ using std::vector;
 
 using tdme::engine::Texture;
 
+using agui::gui::textures::GUITexture;
+
 using tdme::engine::fileio::textures::BC7TextureReader;
 using tdme::engine::fileio::textures::BC7TextureWriter;
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
-using agui::gui::textures::GUITexture;
 
 ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& textureData) {
 	// do we already have the requested rgb format?

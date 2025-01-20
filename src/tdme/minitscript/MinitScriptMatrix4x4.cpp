@@ -3,14 +3,14 @@
 
 #include <minitscript/minitscript/MinitScript.h>
 
+#include <tdme/tdme.h>
 #include <tdme/minitscript/MinitScriptMatrix4x4.h>
 
-#include <tdme/tdme.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Float.h>
 #include <tdme/minitscript/MinitScriptVector3.h>
 #include <tdme/minitscript/MinitScriptVector4.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
 
 using std::span;
 using std::string;
@@ -20,10 +20,10 @@ using minitscript::minitscript::MinitScript;
 using tdme::minitscript::MinitScriptMatrix4x4;
 
 using tdme::math::Matrix4x4;
-using tdme::utilities::Console;
-using tdme::utilities::Float;
 using tdme::minitscript::MinitScriptVector3;
 using tdme::minitscript::MinitScriptVector4;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
 
 const string MinitScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
 

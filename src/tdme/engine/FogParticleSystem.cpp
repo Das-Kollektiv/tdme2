@@ -11,11 +11,11 @@
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Partition;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 
 FogParticleSystem::FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps):

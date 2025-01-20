@@ -4,11 +4,13 @@
 #include <string>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
+#include <agui/gui/nodes/fwd-agui.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <agui/gui/events/GUIInputEventHandler.h>
-#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -16,13 +18,14 @@
 #include <tdme/tools/editor/views/View.h>
 
 using std::string;
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
-using tdme::engine::Engine;
 using agui::gui::events::GUIInputEventHandler;
 using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIScreenNode;
+
+using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;

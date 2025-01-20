@@ -3,14 +3,16 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/events/GUIFocusListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -18,16 +20,17 @@
 using std::string;
 using std::unique_ptr;
 
-using tdme::engine::Color4;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIChangeListener;
 using agui::gui::events::GUIFocusListener;
 using agui::gui::events::GUITooltipRequestListener;
-using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIScreenNode;
+
+using tdme::engine::Color4;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;

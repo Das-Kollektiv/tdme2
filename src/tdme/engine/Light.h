@@ -6,23 +6,23 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
 #include <tdme/utilities/Console.h>
 
 using std::to_string;
 
-using tdme::engine::Texture;
-using tdme::engine::Color4;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::math::Math;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
 using tdme::utilities::Console;
 
 /**

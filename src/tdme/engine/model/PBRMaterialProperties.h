@@ -3,15 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
 
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::Color4;
+using tdme::engine::Texture;
 
 /**
  * Represents specular material properties

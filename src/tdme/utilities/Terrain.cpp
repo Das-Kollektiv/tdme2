@@ -10,9 +10,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -23,7 +21,9 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix3x3.h>
@@ -47,9 +47,7 @@ using std::vector;
 
 using tdme::utilities::Terrain;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -60,7 +58,9 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
+using tdme::engine::Color4;
 using tdme::engine::Rotation;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix3x3;

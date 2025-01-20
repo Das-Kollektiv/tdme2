@@ -10,6 +10,9 @@
 
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/renderer/GUIShader.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -17,11 +20,12 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
-#include <agui/gui/renderer/GUIShader.h>
 
 using tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 
 using std::string;
+
+using agui::gui::renderer::GUIShader;
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -29,7 +33,6 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Version;
-using agui::gui::renderer::GUIShader;
 
 EngineGLES2Renderer::EngineGLES2Renderer()
 {

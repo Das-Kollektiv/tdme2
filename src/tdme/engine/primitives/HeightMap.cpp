@@ -8,8 +8,8 @@
 #include <reactphysics3d/utils/Message.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
 using std::to_string;

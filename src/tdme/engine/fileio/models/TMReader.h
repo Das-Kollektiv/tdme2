@@ -1,6 +1,5 @@
 #pragma once
 
-#include <tdme/tdme.h>
 
 #include <array>
 #include <string>
@@ -25,13 +24,13 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
+using tdme::engine::Texture;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;

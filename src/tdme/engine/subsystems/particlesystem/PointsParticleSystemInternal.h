@@ -8,7 +8,6 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
@@ -17,6 +16,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -26,15 +26,15 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-using tdme::engine::Texture;
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemInternal;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;

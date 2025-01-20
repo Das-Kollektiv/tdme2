@@ -34,15 +34,15 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/audio/Audio.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
@@ -64,10 +64,10 @@ using std::to_string;
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::audio::Audio;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;

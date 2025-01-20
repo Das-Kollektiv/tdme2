@@ -10,8 +10,8 @@
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::math::Matrix3x3;
 
 /**

@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
@@ -11,11 +11,13 @@
 #include <agui/gui/events/GUIFocusListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <agui/utilities/MutableString.h>
 
 using std::string;
 using std::unique_ptr;
@@ -31,6 +33,8 @@ using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
+using agui::utilities::MutableString;
+
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
@@ -38,7 +42,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
-using agui::utilities::MutableString;
 
 /**
  * Trigger editor tab controller

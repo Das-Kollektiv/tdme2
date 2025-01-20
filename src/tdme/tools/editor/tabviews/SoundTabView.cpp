@@ -1,14 +1,16 @@
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
 
-#include <string>
 #include <memory>
+#include <string>
+
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/engine/Engine.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/SoundTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -22,11 +24,12 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::SoundTabView;
 
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::engine::Engine;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::SoundTabController;
 using tdme::tools::editor::views::EditorView;

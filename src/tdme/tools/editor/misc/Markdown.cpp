@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/GUIParser.h>
+
+#include <tdme/tdme.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/StringTools.h>
@@ -16,6 +18,7 @@ using std::vector;
 using tdme::tools::editor::misc::Markdown;
 
 using agui::gui::GUIParser;
+
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::StringTools;

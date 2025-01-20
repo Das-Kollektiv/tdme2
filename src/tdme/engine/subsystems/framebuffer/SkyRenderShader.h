@@ -3,9 +3,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 
 using std::string;
 

@@ -8,19 +8,19 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
-#include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
+using tdme::engine::Color4;
 using tdme::os::filesystem::FileSystemException;
 
 namespace tdme {

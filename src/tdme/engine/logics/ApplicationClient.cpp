@@ -5,6 +5,10 @@
 #include <string>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
@@ -15,8 +19,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
@@ -33,6 +35,9 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::engine::logics::ApplicationClient;
@@ -43,8 +48,6 @@ using tdme::engine::logics::NetworkLogic;
 using tdme::engine::physics::World;
 using tdme::engine::Camera;
 using tdme::engine::Entity;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;

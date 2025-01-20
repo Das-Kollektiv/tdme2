@@ -17,9 +17,9 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::FrameBuffer;
+using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;

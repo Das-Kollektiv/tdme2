@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
@@ -16,6 +14,11 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
@@ -27,7 +30,6 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 
@@ -35,8 +37,6 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::prototype::Prototype;
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -45,6 +45,10 @@ using agui::gui::nodes::GUINodeController;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -57,7 +61,6 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 PrototypeScriptSubController::PrototypeScriptSubController(EditorView* editorView)

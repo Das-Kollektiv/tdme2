@@ -4,17 +4,16 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/fwd-tdme.h>
 
 using std::array;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Camera;
 using tdme::engine::Decal;

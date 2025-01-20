@@ -6,10 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/ShaderParameter.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
@@ -17,12 +14,17 @@
 #include <agui/gui/events/GUIFocusListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <agui/utilities/MutableString.h>
 
 using std::array;
 using std::string;
@@ -30,13 +32,6 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::engine::model::Node;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeLODLevel;
-using tdme::engine::ShaderParameter;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIChangeListener;
@@ -48,6 +43,15 @@ using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
+using agui::utilities::MutableString;
+
+using tdme::engine::model::AnimationSetup;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -57,7 +61,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubCon
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
-using agui::utilities::MutableString;
 
 /**
  * Model editor tab controller

@@ -5,8 +5,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
-using tdme::engine::Color4;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Color4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 

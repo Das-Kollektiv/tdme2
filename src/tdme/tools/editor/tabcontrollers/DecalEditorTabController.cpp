@@ -3,13 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeDecal.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
@@ -20,6 +14,15 @@
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -40,7 +43,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -49,11 +51,6 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
-using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
-using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::prototype::Prototype;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -62,6 +59,13 @@ using agui::gui::nodes::GUINodeController;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Texture;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -81,7 +85,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 DecalEditorTabController::DecalEditorTabController(DecalEditorTabView* view)

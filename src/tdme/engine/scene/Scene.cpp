@@ -1,13 +1,12 @@
 #include <tdme/engine/scene/Scene.h>
 
 #include <algorithm>
-#include <memory>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -18,6 +17,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Transform.h>
@@ -32,7 +32,6 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
@@ -44,6 +43,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::Transform;

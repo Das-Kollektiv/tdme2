@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
@@ -12,11 +12,13 @@
 #include <agui/gui/events/GUIFocusListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -35,10 +37,11 @@ using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
+
+using tdme::minitscript::EngineMinitScript;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
-using tdme::minitscript::EngineMinitScript;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;

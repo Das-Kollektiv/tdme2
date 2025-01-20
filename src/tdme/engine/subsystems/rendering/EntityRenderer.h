@@ -10,12 +10,12 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object.h>
 #include <tdme/math/fwd-tdme.h>
@@ -36,7 +36,6 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::RendererBackend;
@@ -45,6 +44,7 @@ using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;

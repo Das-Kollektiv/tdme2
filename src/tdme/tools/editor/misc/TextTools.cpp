@@ -2,11 +2,13 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
-#include <agui/gui/GUI.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/GUIColor.h>
 #include <agui/gui/nodes/GUIStyledTextNode.h>
 #include <agui/gui/nodes/GUIStyledTextNodeController.h>
+#include <agui/gui/GUI.h>
+
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/StringTools.h>
@@ -16,10 +18,11 @@ using std::to_string;
 
 using tdme::tools::editor::misc::TextTools;
 
-using agui::gui::GUI;
 using agui::gui::nodes::GUIColor;
 using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUIStyledTextNodeController;
+using agui::gui::GUI;
+
 using tdme::math::Math;
 using tdme::utilities::Character;
 using tdme::utilities::StringTools;

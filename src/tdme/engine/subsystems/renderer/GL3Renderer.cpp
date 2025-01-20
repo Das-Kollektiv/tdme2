@@ -23,9 +23,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -48,9 +48,9 @@ using std::vector;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
 
-using tdme::engine::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;

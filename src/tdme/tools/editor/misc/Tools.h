@@ -18,10 +18,10 @@ using std::string;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Transform;

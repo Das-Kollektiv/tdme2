@@ -7,10 +7,9 @@
 #include <reactphysics3d/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
 #include <reactphysics3d/collision/CollisionCallback.h>
-#include <reactphysics3d/collision/shapes/CollisionShape.h>
 #include <reactphysics3d/constraint/ContactPoint.h>
-#include <reactphysics3d/engine/PhysicsWorld.h>
 #include <reactphysics3d/engine/OverlappingPairs.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
 #include <reactphysics3d/mathematics/Transform.h>
 #include <reactphysics3d/memory/MemoryAllocator.h>
 

@@ -8,8 +8,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -23,7 +23,6 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
@@ -33,6 +32,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
+using tdme::engine::Texture;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;

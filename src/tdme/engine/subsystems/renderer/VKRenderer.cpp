@@ -8,6 +8,7 @@
  * 	...
  */
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
 
 #if defined(_MSC_VER)
@@ -38,9 +39,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -49,6 +48,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -68,11 +68,11 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
-using std::unique_ptr;
 using std::floor;
 using std::log2;
 using std::max;
 using std::to_string;
+using std::unique_ptr;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define ERR_EXIT(err_msg, err_class) \
@@ -111,7 +111,6 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::RendererBackend;
@@ -119,6 +118,7 @@ using tdme::engine::subsystems::renderer::VKGL3CoreShaderProgram;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
+using tdme::engine::Texture;
 using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;

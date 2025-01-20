@@ -1,6 +1,5 @@
 #include <tdme/utilities/ExceptionBase.h>
 
-#include <tdme/tdme.h>
 
 #include <string>
 

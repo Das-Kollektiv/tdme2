@@ -4,13 +4,15 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/events/fwd-agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <agui/gui/events/fwd-agui.h>
-#include <agui/gui/events/GUIActionListener.h>
-#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
@@ -21,11 +23,12 @@ using std::array;
 using std::string;
 using std::unique_ptr;
 
-using tdme::engine::model::Model;
-using tdme::engine::prototype::Prototype;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIScreenNode;
+
+using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;

@@ -4,12 +4,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeAudio.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
@@ -17,6 +12,14 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/model/AnimationSetup.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
@@ -32,7 +35,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
@@ -43,17 +45,19 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
-using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Model;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeAudio;
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
 using agui::gui::nodes::GUINodeController;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::model::AnimationSetup;
+using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -68,7 +72,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView)

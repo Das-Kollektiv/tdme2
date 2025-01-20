@@ -9,9 +9,8 @@
 #include <string>
 #include <string_view>
 
+using std::isfinite;
 using std::isinf;
-using std::isfinite;
-using std::isfinite;
 using std::isnan;
 using std::numeric_limits;
 using std::string;

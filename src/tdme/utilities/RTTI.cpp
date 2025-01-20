@@ -1,4 +1,3 @@
-#include <tdme/tdme.h>
 #include <tdme/utilities/RTTI.h>
 
 #if defined(_WIN32) && defined(_MSC_VER)

@@ -8,8 +8,8 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
 

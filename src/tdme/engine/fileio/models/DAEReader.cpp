@@ -11,7 +11,6 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -24,6 +23,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
@@ -57,7 +57,6 @@ using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;
@@ -70,6 +69,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::engine::Color4;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Texture;
 using tdme::engine::Transform;

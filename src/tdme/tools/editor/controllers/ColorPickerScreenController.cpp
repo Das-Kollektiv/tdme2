@@ -3,8 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/events/GUIFocusListener.h>
@@ -17,6 +16,10 @@
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/ColorPickerImageController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -26,7 +29,6 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Hex.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -34,7 +36,6 @@ using std::unique_ptr;
 
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIChangeListener;
@@ -48,6 +49,9 @@ using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::ColorPickerImageController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -57,7 +61,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Hex;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ColorPickerScreenController::ColorPickerScreenController(PopUps* popUps): popUps(popUps)

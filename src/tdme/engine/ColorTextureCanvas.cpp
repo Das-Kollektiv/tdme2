@@ -13,8 +13,8 @@
 
 using tdme::engine::ColorTextureCanvas;
 
-using tdme::engine::Texture;
 using tdme::engine::DynamicColorTexture;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;

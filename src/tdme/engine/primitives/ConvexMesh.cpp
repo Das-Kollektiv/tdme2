@@ -10,9 +10,9 @@
 #include <reactphysics3d/collision/shapes/ConvexMeshShape.h>
 #include <reactphysics3d/utils/Message.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/WFObjWriter.h>
 
-#include <tdme/tdme.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>

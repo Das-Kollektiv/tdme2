@@ -6,13 +6,9 @@
 #include <string>
 #include <unordered_map>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
-#include <tdme/engine/ColorTextureCanvas.h>
-#include <tdme/engine/DynamicColorTexture.h>
-#include <tdme/engine/Engine.h>
-#include <agui/gui/events/GUIMoveListener.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/events/GUIMoveListener.h>
 #include <agui/gui/nodes/GUIColor.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
@@ -23,6 +19,12 @@
 #include <agui/gui/nodes/GUIStyledTextNodeController.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/ColorTextureCanvas.h>
+#include <tdme/engine/DynamicColorTexture.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -49,12 +51,8 @@ using std::unordered_map;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
-using tdme::engine::Color4;
-using tdme::engine::ColorTextureCanvas;
-using tdme::engine::DynamicColorTexture;
-using tdme::engine::Engine;
-using agui::gui::events::GUIMoveListener;
 using agui::gui::events::GUIMouseEvent;
+using agui::gui::events::GUIMoveListener;
 using agui::gui::nodes::GUIColor;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -64,6 +62,11 @@ using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+
+using tdme::engine::Color4;
+using tdme::engine::ColorTextureCanvas;
+using tdme::engine::DynamicColorTexture;
+using tdme::engine::Engine;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;

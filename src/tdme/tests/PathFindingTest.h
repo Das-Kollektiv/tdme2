@@ -14,8 +14,8 @@
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/PathFinding.h>
 
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::physics::World;

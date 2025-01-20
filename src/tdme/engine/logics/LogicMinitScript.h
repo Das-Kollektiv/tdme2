@@ -7,14 +7,16 @@
 #include <unordered_set>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/fwd-agui.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
-#include <agui/gui/events/fwd-agui.h>
-#include <tdme/os/threading/Mutex.h>
 #include <tdme/minitscript/EngineMinitScript.h>
+#include <tdme/os/threading/Mutex.h>
 
 using std::array;
 using std::string;
@@ -23,15 +25,16 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+
 using tdme::engine::logics::Context;
 using tdme::engine::logics::MinitScriptLogic;
 using tdme::engine::physics::Body;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Transform;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using tdme::os::threading::Mutex;
 using tdme::minitscript::EngineMinitScript;
+using tdme::os::threading::Mutex;
 
 /**
  * Logic mini script

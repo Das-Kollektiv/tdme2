@@ -6,9 +6,17 @@
 #include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
 
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINodeConditions.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -19,25 +27,19 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Lines.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUINodeConditions.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/nodes/GUITextNode.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
@@ -49,9 +51,16 @@ using std::unique_ptr;
 
 using tdme::tests::RayTracingTest;
 
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINodeConditions;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
 using tdme::application::Application;
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -62,25 +71,19 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUINodeConditions;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::nodes::GUITextNode;
-using agui::gui::GUI;
-using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
-using agui::utilities::MutableString;
 using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Primitives;
 using tdme::utilities::Time;

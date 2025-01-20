@@ -4,15 +4,17 @@
 #include <string>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/scripting/GUIMinitScript.h>
+#include <agui/gui/GUIParser.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/Version.h>
-#include <agui/gui/scripting/GUIMinitScript.h>
-#include <agui/gui/GUIParser.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/Properties.h>
 
 using std::array;
@@ -20,14 +22,15 @@ using std::make_unique;
 using std::string;
 using std::vector;
 
-using tdme::engine::logics::LogicMinitScript;
-using tdme::engine::Version;
 using agui::gui::scripting::GUIMinitScript;
 using agui::gui::GUIParser;
+
+using tdme::engine::logics::LogicMinitScript;
+using tdme::engine::Version;
+using tdme::minitscript::EngineMinitScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::Properties;
 
 int main(int argc, char** argv)

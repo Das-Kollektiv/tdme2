@@ -15,19 +15,19 @@
 #include <array>
 #include <list>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
-#include <tuple>
 #include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -43,11 +43,11 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
+using tdme::engine::Texture;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;

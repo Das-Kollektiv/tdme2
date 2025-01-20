@@ -5,6 +5,20 @@
 #include <unordered_map>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -22,17 +36,6 @@
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Texture.h>
-#include <agui/gui/events/GUIActionListener.h>
-#include <agui/gui/events/GUIChangeListener.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUIImageNode.h>
-#include <agui/gui/nodes/GUINode.h>
-#include <agui/gui/nodes/GUINodeController.h>
-#include <agui/gui/nodes/GUIParentNode.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/nodes/GUITextNode.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -58,7 +61,6 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -68,6 +70,17 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
+
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
+using agui::utilities::MutableString;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -85,15 +98,6 @@ using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::Engine;
 using tdme::engine::Texture;
-using agui::gui::events::GUIActionListenerType;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUIImageNode;
-using agui::gui::nodes::GUINode;
-using agui::gui::nodes::GUINodeController;
-using agui::gui::nodes::GUIParentNode;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::nodes::GUITextNode;
-using agui::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -119,7 +123,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)

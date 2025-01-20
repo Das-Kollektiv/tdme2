@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/tools/editor/misc/Tools.h>
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Texture;
 using tdme::tools::editor::misc::Tools;
 
 using tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem;

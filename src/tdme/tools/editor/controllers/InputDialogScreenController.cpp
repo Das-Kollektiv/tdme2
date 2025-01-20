@@ -3,8 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/events/GUITooltipRequestListener.h>
@@ -15,6 +14,9 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Action.h>
@@ -27,7 +29,6 @@ using std::unique_ptr;
 
 using tdme::tools::editor::controllers::InputDialogScreenController;
 
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUITooltipRequestListener;
@@ -38,6 +39,8 @@ using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;

@@ -14,9 +14,7 @@
 #include <ext/tinygltf/tiny_gltf.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -30,6 +28,8 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -53,9 +53,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
 
-using tdme::engine::Texture;
 using tdme::engine::model::Animation;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;
@@ -69,6 +67,8 @@ using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

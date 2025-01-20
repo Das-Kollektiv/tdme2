@@ -3,10 +3,10 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -18,10 +18,10 @@ using std::to_string;
 
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 
-using tdme::engine::Color4;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;

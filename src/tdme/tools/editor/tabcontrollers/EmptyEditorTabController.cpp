@@ -1,16 +1,19 @@
 #include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/prototype/Prototype.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
@@ -25,7 +28,6 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
-#include <agui/utilities/MutableString.h>
 
 using std::make_unique;
 using std::string;
@@ -33,12 +35,14 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
-using tdme::engine::prototype::Prototype;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::prototype::Prototype;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
@@ -52,7 +56,6 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
-using agui::utilities::MutableString;
 
 EmptyEditorTabController::EmptyEditorTabController(EmptyEditorTabView* view)
 {

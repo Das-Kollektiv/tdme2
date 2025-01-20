@@ -1,11 +1,11 @@
 // @see https://jayconrod.com/posts/34/water-simulation-in-glsl
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.h>
 
 #include <array>
 #include <string>
 
-#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>

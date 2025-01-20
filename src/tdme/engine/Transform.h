@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -12,9 +12,9 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::model::RotationOrder;
 using tdme::engine::Rotation;

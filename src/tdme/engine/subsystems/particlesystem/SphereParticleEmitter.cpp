@@ -13,11 +13,11 @@
 using std::make_unique;
 using std::unique_ptr;
 
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
+using tdme::engine::Color4;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;

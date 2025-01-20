@@ -5,9 +5,20 @@
 
 #include <VHACD.h>
 
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeConditions.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIParentNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -19,16 +30,8 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUIImageNode.h>
-#include <agui/gui/nodes/GUINode.h>
-#include <agui/gui/nodes/GUINodeConditions.h>
-#include <agui/gui/nodes/GUINodeController.h>
-#include <agui/gui/nodes/GUIParentNode.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -48,7 +51,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -58,8 +60,18 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUINodeConditions;
+using agui::gui::nodes::GUINodeController;
+using agui::gui::nodes::GUIParentNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -71,16 +83,8 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
-using agui::gui::events::GUIActionListenerType;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUIImageNode;
-using agui::gui::nodes::GUINode;
-using agui::gui::nodes::GUINodeConditions;
-using agui::gui::nodes::GUINodeController;
-using agui::gui::nodes::GUIParentNode;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUIParser;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -100,7 +104,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)

@@ -4,8 +4,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-#include <string>
 #include <cstring>
+#include <string>
 #include <vector>
 
 using std::memcpy;

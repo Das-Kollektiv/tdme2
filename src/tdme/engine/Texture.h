@@ -3,20 +3,23 @@
 #include <string>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/textures/GUITexture.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Reference.h>
-#include <agui/gui/textures/GUITexture.h>
 
 using std::string;
 using std::vector;
 
+using agui::gui::textures::GUITexture;
+
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Reference;
-using agui::gui::textures::GUITexture;
 
 /**
  * Texture entity

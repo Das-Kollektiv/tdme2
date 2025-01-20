@@ -13,14 +13,14 @@
 
 #include <stdio.h>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/decoder/VorbisDecoder.h>
 
 #include <vorbis/vorbisfile.h>
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include <tdme/tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/FileSystem.h>

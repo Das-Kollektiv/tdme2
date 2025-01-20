@@ -1,8 +1,8 @@
 #include <openssl/sha.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
-#include <cstring>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/SHA256.h>

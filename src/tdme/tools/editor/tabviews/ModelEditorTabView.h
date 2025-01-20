@@ -3,12 +3,14 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIInputEventHandler.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <agui/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
@@ -21,12 +23,13 @@
 using std::string;
 using std::unique_ptr;
 
+using agui::gui::events::GUIInputEventHandler;
+
 using tdme::audio::Audio;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using agui::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;

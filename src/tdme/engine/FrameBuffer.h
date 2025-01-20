@@ -2,19 +2,22 @@
 
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/misc/GUIFrameBuffer.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/ColorTexture.h>
-#include <agui/gui/misc/GUIFrameBuffer.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
+using agui::gui::misc::GUIFrameBuffer;
+
 using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
-using agui::gui::misc::GUIFrameBuffer;
 
 /**
  * Frame buffer class

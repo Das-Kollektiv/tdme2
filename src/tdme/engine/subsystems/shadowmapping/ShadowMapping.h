@@ -12,8 +12,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::EntityRenderer;

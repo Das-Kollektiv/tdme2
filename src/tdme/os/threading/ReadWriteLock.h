@@ -1,8 +1,8 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#include <tdme/tdme.h>
 
 #include <shared_mutex>
 #include <string>

@@ -3,6 +3,14 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/Sound.h>
@@ -22,12 +30,6 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUINode.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
@@ -54,6 +56,13 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+
 using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -71,12 +80,6 @@ using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUINode;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;

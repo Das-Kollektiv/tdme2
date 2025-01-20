@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-using std::unique_ptr;
 using std::make_unique;
+using std::unique_ptr;
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>

@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -24,6 +23,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
@@ -42,7 +42,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -58,6 +57,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::SceneEntity;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;

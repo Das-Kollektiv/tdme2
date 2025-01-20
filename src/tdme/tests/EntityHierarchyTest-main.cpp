@@ -1,4 +1,3 @@
-#include <tdme/tdme.h>
 #include <tdme/tests/EntityHierarchyTest.h>
 
 int main(int argc, char** argv)

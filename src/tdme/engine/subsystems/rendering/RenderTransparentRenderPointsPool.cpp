@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -15,10 +15,10 @@
 using std::string;
 using std::vector;
 
-using tdme::engine::Color4;
 using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::engine::Color4;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;

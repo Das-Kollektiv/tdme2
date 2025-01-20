@@ -3,10 +3,12 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/FontTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -14,15 +16,16 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
-using std::unique_ptr;
-using std::string;
 using std::make_unique;
+using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::FontTabView;
 
-using tdme::engine::Engine;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
+
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::FontTabController;
 using tdme::tools::editor::views::EditorView;

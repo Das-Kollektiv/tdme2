@@ -4,22 +4,22 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transform.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectAnimation.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix3x3.h>
 
 using std::string;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ObjectAnimation;
 using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::Color4;
 using tdme::engine::ColorTexture;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Transform;

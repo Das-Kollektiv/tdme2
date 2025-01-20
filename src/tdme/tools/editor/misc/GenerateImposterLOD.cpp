@@ -7,9 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -18,10 +16,12 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -39,9 +39,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -50,10 +48,12 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

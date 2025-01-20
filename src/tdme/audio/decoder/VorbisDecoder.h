@@ -15,8 +15,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;

@@ -3,10 +3,12 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/VideoTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -20,9 +22,10 @@ using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::VideoTabView;
 
-using tdme::engine::Engine;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
+
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::VideoTabController;
 using tdme::tools::editor::views::EditorView;

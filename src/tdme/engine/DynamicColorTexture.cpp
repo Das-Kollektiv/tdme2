@@ -3,15 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::utilities::ByteBuffer;
 
 uint32_t DynamicColorTexture::counter = 0;

@@ -8,8 +8,8 @@
 
 using std::string;
 
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::Engine;
 

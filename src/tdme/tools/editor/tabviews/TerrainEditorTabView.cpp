@@ -6,10 +6,15 @@
 #include <unordered_set>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -22,11 +27,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
@@ -48,9 +50,13 @@ using std::vector;
 
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
-using tdme::engine::Texture;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
@@ -63,11 +69,8 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::ObjectRenderGroup;
 using tdme::engine::SceneConnector;
+using tdme::engine::Texture;
 using tdme::engine::Timing;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUI;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;

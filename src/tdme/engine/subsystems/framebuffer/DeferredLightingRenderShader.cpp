@@ -3,7 +3,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -11,6 +10,7 @@
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/GeometryBuffer.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -23,7 +23,6 @@ using std::to_string;
 
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -32,6 +31,7 @@ using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
 using tdme::engine::GeometryBuffer;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

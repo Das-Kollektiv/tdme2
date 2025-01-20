@@ -6,13 +6,13 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
@@ -35,13 +35,13 @@ using tdme::tests::EntityHierarchyTest;
 using tdme::utilities::Time;
 
 using tdme::application::Application;
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;

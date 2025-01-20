@@ -10,8 +10,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -46,6 +44,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -54,6 +53,7 @@
 #include <tdme/engine/Lines.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/PointsParticleSystem.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
@@ -76,8 +76,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Texture;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -112,6 +110,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -120,6 +119,7 @@ using tdme::engine::FogParticleSystem;
 using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;

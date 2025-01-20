@@ -3,6 +3,20 @@
 #include <memory>
 #include <string>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIActionListener.h>
+#include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/GUIColor.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUINode.h>
+#include <agui/gui/nodes/GUINodeController.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -22,17 +36,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <agui/gui/events/GUIActionListener.h>
-#include <agui/gui/events/GUIChangeListener.h>
-#include <agui/gui/nodes/GUIColor.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUIImageNode.h>
-#include <agui/gui/nodes/GUINode.h>
-#include <agui/gui/nodes/GUINodeController.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/nodes/GUITextNode.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -58,7 +61,6 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
@@ -66,6 +68,16 @@ using std::string;
 using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
+
+using agui::gui::events::GUIActionListenerType;
+using agui::gui::nodes::GUIColor;
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUINode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUIParser;
+using agui::utilities::MutableString;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
@@ -85,14 +97,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
-using agui::gui::events::GUIActionListenerType;
-using agui::gui::nodes::GUIColor;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUIImageNode;
-using agui::gui::nodes::GUINode;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::nodes::GUITextNode;
-using agui::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -118,7 +122,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSystemEditorTabView* view)

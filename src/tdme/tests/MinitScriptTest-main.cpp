@@ -3,11 +3,11 @@
 using std::make_unique;
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/minitscript/EngineMinitScript.h>
+#include <tdme/utilities/Console.h>
 
-using tdme::utilities::Console;
 using tdme::minitscript::EngineMinitScript;
+using tdme::utilities::Console;
 
 int main(int argc, char *argv[]) {
 	Console::printLine("MinitScriptTest");

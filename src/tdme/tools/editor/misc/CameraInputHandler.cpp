@@ -1,25 +1,28 @@
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
-#include <agui/gui/GUI.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
 #include <tdme/utilities/Character.h>
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::GUI;
+
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using agui::gui::GUI;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraInputHandler;

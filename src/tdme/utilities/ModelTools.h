@@ -14,9 +14,9 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -24,15 +24,15 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::math::Matrix4x4;
 
 /**
  * Model tools functions class

@@ -2,12 +2,7 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
@@ -19,6 +14,14 @@
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
 #include <agui/gui/GUIParserException.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -37,7 +40,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -46,10 +48,6 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
-using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::model::Model;
-using tdme::engine::model::Node;
-using tdme::engine::Engine;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -60,6 +58,12 @@ using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
 using agui::gui::GUIParserException;
+using agui::utilities::MutableString;
+
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -78,7 +82,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;

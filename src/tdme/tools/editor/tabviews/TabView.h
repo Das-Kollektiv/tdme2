@@ -6,18 +6,21 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/fwd-tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIInputEventHandler.h>
-#include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <agui/utilities/MutableString.h>
+
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/tools/editor/tabcontrollers/TabController.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::Engine;
 using agui::gui::events::GUIInputEventHandler;
-using tdme::tools::editor::tabcontrollers::TabController;
 using agui::utilities::MutableString;
+
+using tdme::engine::Engine;
+using tdme::tools::editor::tabcontrollers::TabController;
 
 /**
  * Tab view interface

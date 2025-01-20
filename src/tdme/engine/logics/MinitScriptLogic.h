@@ -6,23 +6,23 @@
 #include <unordered_map>
 
 #include <minitscript/minitscript.h>
-#include <minitscript/minitscript/MinitScript.h>
 #include <minitscript/minitscript/Library.h>
+#include <minitscript/minitscript/MinitScript.h>
+
 
 #include <tdme/tdme.h>
-
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Transform.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/Transform.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 
 using std::make_unique;
 using std::span;
@@ -30,8 +30,8 @@ using std::string;
 using std::unique_ptr;
 using std::unordered_map;
 
-using minitscript::minitscript::MinitScript;
 using minitscript::minitscript::Library;
+using minitscript::minitscript::MinitScript;
 
 using tdme::engine::logics::LogicMinitScript;
 
@@ -40,12 +40,12 @@ using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
-using tdme::engine::Transform;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
+using tdme::engine::Transform;
+using tdme::minitscript::EngineMinitScript;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
-using tdme::minitscript::EngineMinitScript;
 
 /**
  * Mini script logic

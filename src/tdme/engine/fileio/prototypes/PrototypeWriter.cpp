@@ -9,7 +9,6 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -40,6 +39,7 @@
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/prototype/PrototypeTerrainBrush.h>
 #include <tdme/engine/prototype/PrototypeTerrainBrushPrototype.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject.h>
@@ -64,7 +64,6 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::application::Application;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMWriter;
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
@@ -93,6 +92,7 @@ using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::prototype::PrototypeTerrainBrush;
 using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject;

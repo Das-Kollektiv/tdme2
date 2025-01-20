@@ -4,10 +4,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/decals/DecalInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
@@ -16,11 +16,11 @@
 
 using std::string;
 
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalInternal;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;

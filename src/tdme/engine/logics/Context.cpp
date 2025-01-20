@@ -9,6 +9,12 @@
 #include <unordered_set>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/nodes/GUIElementNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/nodes/GUITextNode.h>
+#include <agui/gui/GUI.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
@@ -24,10 +30,6 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transform.h>
-#include <agui/gui/nodes/GUIElementNode.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/nodes/GUITextNode.h>
-#include <agui/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -50,6 +52,11 @@ using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
+using agui::gui::nodes::GUIElementNode;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+using agui::gui::GUI;
+
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::engine::logics::Logic;
@@ -63,10 +70,6 @@ using tdme::engine::Engine;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transform;
-using agui::gui::nodes::GUIElementNode;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::nodes::GUITextNode;
-using agui::gui::GUI;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

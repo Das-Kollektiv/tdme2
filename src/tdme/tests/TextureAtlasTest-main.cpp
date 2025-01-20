@@ -2,8 +2,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/TextureAtlas.h>
 
@@ -11,8 +11,8 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Texture;
 using tdme::utilities::Console;
 using tdme::utilities::TextureAtlas;
 

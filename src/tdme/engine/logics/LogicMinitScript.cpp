@@ -6,29 +6,32 @@
 #include <utility>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/MinitScriptLogic.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
@@ -37,7 +40,6 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::move;
@@ -49,28 +51,30 @@ using std::vector;
 
 using tdme::engine::logics::LogicMinitScript;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+
 using tdme::audio::Audio;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::MinitScriptLogic;
-using tdme::engine::Color4;
 using tdme::engine::physics::Body;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::ParticleSystem;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::minitscript::EngineMinitScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
@@ -79,7 +83,6 @@ using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::UTF8CharacterIterator;
 
 const vector<string> LogicMinitScript::CONTEXTFUNCTIONS_ENGINE = { "initializeEngine", "updateEngine" };

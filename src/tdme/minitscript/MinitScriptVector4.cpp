@@ -5,9 +5,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/minitscript/MinitScriptVector4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/minitscript/MinitScriptVector4.h>
 
 using std::span;
 using std::string;
@@ -15,9 +15,9 @@ using std::string;
 using minitscript::minitscript::MinitScript;
 
 using tdme::math::Vector4;
+using tdme::minitscript::MinitScriptVector4;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::minitscript::MinitScriptVector4;
 
 const string MinitScriptVector4::TYPE_NAME = "Vector4";
 

@@ -7,9 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -27,6 +25,7 @@
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -35,6 +34,7 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -65,9 +65,7 @@ using tdme::tools::editor::misc::Tools;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -85,6 +83,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -93,6 +92,7 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::SimplePartition;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;

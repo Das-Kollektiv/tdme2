@@ -2,9 +2,7 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/Color4.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIKeyboardEvent.h>
 #include <agui/gui/events/GUIMouseEvent.h>
@@ -15,6 +13,10 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/math/Vector2.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Color4.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 
 using std::string;
@@ -22,8 +24,6 @@ using std::to_string;
 
 using tdme::tools::editor::controllers::ColorPickerImageController;
 
-using tdme::engine::Texture;
-using tdme::engine::Color4;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIKeyboardEvent;
 using agui::gui::events::GUIMouseEvent;
@@ -34,6 +34,9 @@ using agui::gui::nodes::GUINodeConditions;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
 using agui::math::Vector2;
+
+using tdme::engine::Color4;
+using tdme::engine::Texture;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 
 ColorPickerImageController::ColorPickerImageController(GUINode* node, ColorPickerScreenController* colorPickerScreenController)

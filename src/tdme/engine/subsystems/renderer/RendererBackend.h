@@ -15,9 +15,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -28,8 +28,8 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::EntityShaderParameters;
+using tdme::engine::Texture;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;

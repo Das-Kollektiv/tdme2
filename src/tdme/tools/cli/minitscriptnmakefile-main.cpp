@@ -4,6 +4,7 @@
 #include <minitscript/minitscript.h>
 #include <minitscript/minitscript/Generator.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Version.h>
 #include <tdme/utilities/Console.h>
 

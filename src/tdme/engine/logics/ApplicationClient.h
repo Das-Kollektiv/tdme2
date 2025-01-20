@@ -3,25 +3,28 @@
 #include <memory>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/physics/World.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
 #include <yannet/network/udpclient/UDPClient.h>
 
-using std::vector;
 using std::unique_ptr;
+using std::vector;
+
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::physics::World;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 

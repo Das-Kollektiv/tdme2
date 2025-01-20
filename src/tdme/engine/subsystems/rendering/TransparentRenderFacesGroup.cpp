@@ -3,20 +3,19 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::RendererBackend;
@@ -24,6 +23,7 @@ using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
+using tdme::engine::Color4;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 

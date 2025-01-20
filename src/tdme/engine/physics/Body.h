@@ -5,8 +5,8 @@
 #include <vector>
 
 #include <reactphysics3d/body/RigidBody.h>
-#include <reactphysics3d/collision/Collider.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/collision/Collider.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>

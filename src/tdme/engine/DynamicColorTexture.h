@@ -1,16 +1,19 @@
 #pragma once
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/ColorTexture.h>
-#include <tdme/utilities/ByteBuffer.h>
+#include <agui/agui.h>
 #include <agui/gui/misc/GUIDynamicColorTexture.h>
 
-using tdme::engine::Texture;
-using tdme::engine::ColorTexture;
-using tdme::utilities::ByteBuffer;
+#include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/ColorTexture.h>
+#include <tdme/engine/Texture.h>
+#include <tdme/utilities/ByteBuffer.h>
+
 using agui::gui::misc::GUIDynamicColorTexture;
+
+using tdme::engine::ColorTexture;
+using tdme::engine::Texture;
+using tdme::utilities::ByteBuffer;
 
 /**
  * Dynamic color texture

@@ -2,8 +2,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 

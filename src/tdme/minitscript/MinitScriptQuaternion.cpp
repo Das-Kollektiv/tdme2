@@ -3,14 +3,14 @@
 
 #include <minitscript/minitscript/MinitScript.h>
 
+#include <tdme/tdme.h>
 #include <tdme/minitscript/MinitScriptQuaternion.h>
 
-#include <tdme/tdme.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Float.h>
 #include <tdme/minitscript/MinitScriptMatrix4x4.h>
 #include <tdme/minitscript/MinitScriptVector3.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
 
 using std::span;
 using std::string;
@@ -20,10 +20,10 @@ using minitscript::minitscript::MinitScript;
 using tdme::minitscript::MinitScriptQuaternion;
 
 using tdme::math::Quaternion;
-using tdme::utilities::Console;
-using tdme::utilities::Float;
 using tdme::minitscript::MinitScriptMatrix4x4;
 using tdme::minitscript::MinitScriptVector3;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
 
 const string MinitScriptQuaternion::TYPE_NAME = "Quaternion";
 

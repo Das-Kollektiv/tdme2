@@ -64,8 +64,6 @@ void scanPath(const string& path, vector<string>& totalFiles) {
 }
 
 static int compare_includes(const string& lhs, const string& rhs) {
-	if (StringTools::startsWith(lhs, "#include <tdme/tdme.h>") == true) return true; else
-	if (StringTools::startsWith(rhs, "#include <tdme/tdme.h>") == true) return false;
 	auto charCount = Math::min((int32_t)lhs.size(), (int32_t)rhs.size());
 	for (auto i = 0; i < charCount; i++) {
 		if (lhs[i] == rhs[i]) {
@@ -95,16 +93,14 @@ void parseHpp(const string& fileName) {
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	vector<string> newFileContent;
-	string method = "";
-	auto headerFile = StringTools::endsWith(StringTools::toLowerCase(fileName), ".h");
-	auto hadTDMEHInclude = false;
-	auto firstTDMEIncludeLineIdx = -1;
-	auto secondTDMEIncludeLineIdx = -1;
+	// collect and sort includes
 	{
 		auto startLineIdx = -1;
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
 		for (const auto& line: fileContent) {
+			if (StringTools::startsWith(line, "#include <tdme/tdme.h>") == true) continue;
+			if (StringTools::startsWith(line, "#include <agui/agui.h>") == true) continue;
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "#include ") == true) {
 				if (startLineIdx == -1) {
@@ -113,26 +109,16 @@ void parseHpp(const string& fileName) {
 				} else {
 					endLineIdx = lineIdx;
 				}
-				if (hadTDMEHInclude == false) hadTDMEHInclude = StringTools::trim(line) == "#include <tdme/tdme.h>";
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
 				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, compare_includes);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
-			if (StringTools::startsWith(StringTools::trim(line), "#include <tdme/") == true) {
-				if (firstTDMEIncludeLineIdx == -1) firstTDMEIncludeLineIdx = lineIdx; else
-				if (secondTDMEIncludeLineIdx == -1) secondTDMEIncludeLineIdx = lineIdx;
-			}
 			lineIdx++;
 		}
 	}
-	if (hadTDMEHInclude == false && firstTDMEIncludeLineIdx != -1) {
-		newFileContent.insert(
-			newFileContent.begin() + (headerFile == true?firstTDMEIncludeLineIdx:(secondTDMEIncludeLineIdx != -1?secondTDMEIncludeLineIdx:firstTDMEIncludeLineIdx)),
-			"#include <tdme/tdme.h>"
-		);
-	}
+	// sort usings
 	fileContent = newFileContent;
 	newFileContent.clear();
 	{
@@ -157,6 +143,29 @@ void parseHpp(const string& fileName) {
 			lineIdx++;
 		}
 	}
+	// inject #include <tdme/tdme.h> and #include <agui/agui.h>
+	fileContent = newFileContent;
+	newFileContent.clear();
+	{
+		auto hadTDMEInclude = false;
+		auto hadAGUIInclude = false;
+		auto lineIdx = 0;
+		for (auto line: fileContent) {
+			if (lineIdx > 0) {
+				if (hadTDMEInclude == false && StringTools::startsWith(line, "#include <tdme/") == true) {
+					newFileContent.push_back("#include <tdme/tdme.h>");
+					hadTDMEInclude = true;
+				} else
+				if (hadAGUIInclude == false && StringTools::startsWith(line, "#include <agui/") == true) {
+					newFileContent.push_back("#include <agui/agui.h>");
+					hadAGUIInclude = true;
+				}
+			}
+			newFileContent.push_back(line);
+			lineIdx++;
+		}
+	}
+	// remove double lines
 	fileContent = newFileContent;
 	newFileContent.clear();
 	{
@@ -169,6 +178,18 @@ void parseHpp(const string& fileName) {
 			newFileContent.push_back(line);
 			lastLine = line;
 		}
+	}
+	// inject newlines after tdme and agui stuff
+	string lastLine;
+	for (auto i = 0; i < newFileContent.size(); i++) {
+		auto line = newFileContent[i];
+		if (StringTools::startsWith(line, "#include <tdme/") == true && StringTools::startsWith(lastLine, "#include <agui/") == true) {
+			newFileContent.insert(newFileContent.begin() + i, string());
+		}
+		if (StringTools::startsWith(line, "using tdme::") == true && StringTools::startsWith(lastLine, "using agui::") == true) {
+			newFileContent.insert(newFileContent.begin() + i, string());
+		}
+		lastLine = line;
 	}
 	FileSystem::getInstance()->setContentFromStringArray(".", fileName, newFileContent);
 }

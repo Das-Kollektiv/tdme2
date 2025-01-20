@@ -3,10 +3,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/ColorTextureCanvas.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -19,10 +19,10 @@ using std::to_string;
 using std::unique_ptr;
 
 using tdme::application::Application;
+using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::ColorTextureCanvas;
 using tdme::engine::Texture;
-using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::utilities::ByteBuffer;

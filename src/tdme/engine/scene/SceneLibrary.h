@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -14,9 +14,9 @@
 #include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::make_unique;
-using std::unordered_map;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;

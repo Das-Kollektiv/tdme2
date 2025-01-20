@@ -4,10 +4,13 @@
 #include <string>
 #include <unordered_map>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/DynamicColorTexture.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/fwd-agui.h>
 #include <agui/gui/nodes/GUIStyledTextNodeController.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/DynamicColorTexture.h>
+#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
@@ -15,7 +18,6 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -23,12 +25,14 @@ using std::to_string;
 using std::unique_ptr;
 using std::unordered_map;
 
-using tdme::engine::DynamicColorTexture;
-using tdme::engine::Engine;
 using agui::gui::events::GUIMoveListener;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUIStyledTextNodeController;
+
+using tdme::engine::DynamicColorTexture;
+using tdme::engine::Engine;
+using tdme::minitscript::EngineMinitScript;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
@@ -36,7 +40,6 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::StringTools;
 
 /**

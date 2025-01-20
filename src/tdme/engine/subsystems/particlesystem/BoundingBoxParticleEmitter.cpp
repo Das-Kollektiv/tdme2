@@ -3,10 +3,10 @@
 #include <memory>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -14,11 +14,11 @@
 using std::make_unique;
 using std::unique_ptr;
 
-using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::Particle;
+using tdme::engine::Color4;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;

@@ -1,13 +1,13 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#include <tdme/tdme.h>
 
 #include <chrono>
 #include <memory>
-#include <thread>
 #include <string>
+#include <thread>
 
 using std::string;
 using std::thread;

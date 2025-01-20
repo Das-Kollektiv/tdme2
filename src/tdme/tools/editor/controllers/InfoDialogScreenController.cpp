@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUINode.h>
@@ -12,11 +12,13 @@
 #include <agui/gui/nodes/GUITextNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -32,11 +34,12 @@ using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUI;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 InfoDialogScreenController::InfoDialogScreenController(PopUps* popUps): popUps(popUps)

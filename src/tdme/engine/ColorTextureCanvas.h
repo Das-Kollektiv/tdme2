@@ -3,15 +3,15 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 using std::vector;
 
-using tdme::engine::Texture;
 using tdme::engine::ColorTexture;
+using tdme::engine::Texture;
 using tdme::math::Vector2;
 using tdme::utilities::ByteBuffer;
 

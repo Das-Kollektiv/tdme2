@@ -2,10 +2,12 @@
 
 #include <memory>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -22,9 +24,10 @@
 using std::make_unique;
 using std::unique_ptr;
 
-using tdme::engine::Engine;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
+
+using tdme::engine::Engine;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -32,8 +35,8 @@ using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::ImportDialogScreenController;
-using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::controllers::SelectorDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;

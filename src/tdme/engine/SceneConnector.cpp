@@ -15,7 +15,6 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/BodyHierarchy.h>
@@ -57,6 +56,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -97,7 +97,6 @@ using tdme::audio::Sound;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::ProgressCallback;
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::BodyHierarchy;
@@ -138,6 +137,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
+using tdme::engine::Color4;
 using tdme::engine::Decal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;

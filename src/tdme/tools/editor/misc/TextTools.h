@@ -2,8 +2,10 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 using std::string;

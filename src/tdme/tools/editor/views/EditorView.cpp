@@ -4,11 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme/tdme.h>
-#include <tdme/audio/Audio.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/SimplePartition.h>
+#include <agui/agui.h>
 #include <agui/gui/events/GUIKeyboardEvent.h>
 #include <agui/gui/events/GUIMouseEvent.h>
 #include <agui/gui/nodes/GUIElementNode.h>
@@ -16,6 +12,12 @@
 #include <agui/gui/nodes/GUINode.h>
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
+
+#include <tdme/tdme.h>
+#include <tdme/audio/Audio.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/SimplePartition.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -44,13 +46,9 @@
 
 using std::make_unique;
 using std::string;
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
-using tdme::audio::Audio;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
-using tdme::engine::SimplePartition;
 using agui::gui::events::GUIKeyboardEvent;
 using agui::gui::events::GUIMouseEvent;
 using agui::gui::nodes::GUIElementNode;
@@ -58,6 +56,11 @@ using agui::gui::nodes::GUIImageNode;
 using agui::gui::nodes::GUINode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUI;
+
+using tdme::audio::Audio;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
+using tdme::engine::SimplePartition;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

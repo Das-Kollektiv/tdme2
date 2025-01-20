@@ -12,13 +12,19 @@
 
 #include <minitscript/minitscript/Library.h>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
+#include <agui/gui/GUI.h>
+#include <agui/gui/GUIParser.h>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/logics/ApplicationClient.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
 #include <tdme/engine/logics/MinitScriptLogic.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -27,6 +33,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -34,11 +41,6 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
-#include <agui/gui/nodes/GUIScreenNode.h>
-#include <agui/gui/GUI.h>
-#include <agui/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
@@ -64,12 +66,17 @@ using tdme::tools::editor::tabviews::SceneEditorTabView;
 
 using minitscript::minitscript::Library;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+using agui::gui::nodes::GUIScreenNode;
+using agui::gui::GUI;
+using agui::gui::GUIParser;
+
 using tdme::audio::Audio;
 using tdme::engine::logics::ApplicationClient;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::LogicMinitScript;
 using tdme::engine::logics::MinitScriptLogic;
-using tdme::engine::Color4;
 using tdme::engine::physics::World;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
@@ -78,6 +85,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
@@ -85,11 +93,6 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
-using agui::gui::nodes::GUIScreenNode;
-using agui::gui::GUI;
-using agui::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;

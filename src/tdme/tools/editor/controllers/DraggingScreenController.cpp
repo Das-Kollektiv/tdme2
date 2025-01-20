@@ -3,8 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <agui/agui.h>
 #include <agui/gui/elements/GUIMoveableController.h>
 #include <agui/gui/nodes/GUINode.h>
 #include <agui/gui/nodes/GUINode_RequestedConstraints.h>
@@ -13,21 +12,23 @@
 #include <agui/gui/nodes/GUIScreenNode.h>
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
+#include <agui/utilities/MutableString.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <agui/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::tools::editor::controllers::DraggingScreenController;
 
 using std::string;
 using std::to_string;
-using std::unordered_map;
 using std::unique_ptr;
+using std::unordered_map;
 
-using tdme::engine::Engine;
 using agui::gui::elements::GUIMoveableController;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::nodes::GUIElementNode;
@@ -37,11 +38,13 @@ using agui::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using agui::gui::nodes::GUIParentNode;
 using agui::gui::nodes::GUIScreenNode;
 using agui::gui::GUIParser;
+using agui::utilities::MutableString;
+
+using tdme::engine::Engine;
 using tdme::math::Math;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using agui::utilities::MutableString;
 using tdme::utilities::StringTools;
 
 DraggingScreenController::DraggingScreenController()

@@ -11,11 +11,11 @@
 
 using std::string;
 
-using tdme::engine::Texture;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 
 PointsParticleSystem::PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps) :

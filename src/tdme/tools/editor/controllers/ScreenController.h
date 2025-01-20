@@ -1,7 +1,9 @@
 #pragma once
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 
 using agui::gui::nodes::GUIScreenNode;

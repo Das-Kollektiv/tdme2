@@ -9,11 +9,15 @@
 #include <unordered_set>
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/fwd-agui.h>
+#include <agui/gui/nodes/fwd-agui.h>
+#include <agui/gui/renderer/fwd-agui.h>
+
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
@@ -30,12 +34,10 @@
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <agui/gui/fwd-agui.h>
-#include <agui/gui/nodes/fwd-agui.h>
-#include <agui/gui/renderer/fwd-agui.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -59,7 +61,10 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Color4;
+using agui::gui::renderer::GUIRenderer;
+using agui::gui::renderer::GUIShader;
+using agui::gui::GUI;
+
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
@@ -86,6 +91,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Decal;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Entity;
@@ -108,9 +114,6 @@ using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
-using agui::gui::renderer::GUIRenderer;
-using agui::gui::renderer::GUIShader;
-using agui::gui::GUI;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;

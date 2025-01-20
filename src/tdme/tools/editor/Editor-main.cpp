@@ -1,4 +1,3 @@
-#include <tdme/tdme.h>
 #include <tdme/tools/editor/Editor.h>
 
 int main(int argc, char** argv)

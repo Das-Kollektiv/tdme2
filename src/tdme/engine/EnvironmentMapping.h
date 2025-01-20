@@ -6,10 +6,10 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
@@ -20,11 +20,11 @@ using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
-using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transform;

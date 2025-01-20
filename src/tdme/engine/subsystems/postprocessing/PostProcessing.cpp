@@ -2,22 +2,22 @@
 #include <memory>
 #include <string>
 
-using std::map;
 using std::make_unique;
+using std::map;
 using std::string;
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 
-#include <tdme/tdme.h>
-#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/Color4.h>
 
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 
-using tdme::engine::Color4;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::Color4;
 
 PostProcessing::PostProcessing() {
 	{

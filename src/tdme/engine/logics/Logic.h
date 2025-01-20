@@ -2,22 +2,25 @@
 
 #include <vector>
 
+#include <agui/agui.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/Engine.h>
-#include <agui/gui/events/GUIKeyboardEvent.h>
-#include <agui/gui/events/GUIMouseEvent.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/utilities/Time.h>
 
 using std::vector;
 
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
+
 using tdme::engine::logics::Context;
 using tdme::engine::physics::World;
 using tdme::engine::Engine;
-using agui::gui::events::GUIKeyboardEvent;
-using agui::gui::events::GUIMouseEvent;
 using tdme::minitscript::EngineMinitScript;
 using tdme::utilities::Time;
 

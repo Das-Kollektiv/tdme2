@@ -2,16 +2,19 @@
 
 #include <string>
 
-#include <tdme/tdme.h>
+#include <agui/agui.h>
 #include <agui/gui/events/fwd-agui.h>
 #include <agui/gui/nodes/fwd-agui.h>
+
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 
-using agui::gui::nodes::GUITextNode;
 using agui::gui::nodes::GUIScreenNode;
+using agui::gui::nodes::GUITextNode;
+
 using tdme::tools::editor::controllers::ScreenController;
 
 /**

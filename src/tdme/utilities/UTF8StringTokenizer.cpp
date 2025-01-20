@@ -3,14 +3,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Character.h>
-#include <tdme/utilities/UTF8StringTokenizer.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
+#include <tdme/utilities/UTF8StringTokenizer.h>
 
 using std::string;
 
 using tdme::utilities::Character;
-using tdme::utilities::UTF8StringTokenizer;
 using tdme::utilities::UTF8CharacterIterator;
+using tdme::utilities::UTF8StringTokenizer;
 
 void UTF8StringTokenizer::tokenize(const string& str, const string& delimiters, bool emptyTokens)
 {

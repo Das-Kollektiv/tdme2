@@ -9,10 +9,10 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -33,8 +33,8 @@ using std::vector;
 
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Transform;
 using tdme::engine::Texture;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
