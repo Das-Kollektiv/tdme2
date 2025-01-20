@@ -207,8 +207,8 @@ void ColorPickerScreenController::updateColor() {
 	blueInput->getController()->setValue(MutableString((int)(color.getBlue() * 255.0f)));
 	alphaInput->getController()->setValue(MutableString((int)(color.getAlpha() * 255.0f)));
 	brightnessSlider->getController()->setValue(MutableString((color.getRed() + color.getGreen() + color.getBlue()) / 3.0f));
-	colorOld->setEffectColorMul(initialColor.toGUIColor());
-	colorNew->setEffectColorMul(color.toGUIColor());
+	colorOld->setEffectColorMul(initialColor.getArray());
+	colorNew->setEffectColorMul(color.getArray());
 }
 
 void ColorPickerScreenController::updateColorHex() {

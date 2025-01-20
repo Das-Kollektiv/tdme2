@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	guiMinitScript->registerMethods();
 
 	//
-	array<EngineMinitScript*, 3> miniScriptFlavours = { baseMinitScript.get(), logicMinitScript.get(), guiMinitScript.get() };
+	array<MinitScript*, 3> miniScriptFlavours = { baseMinitScript.get(), logicMinitScript.get(), guiMinitScript.get() };
 	for (const auto miniScriptFlavour: miniScriptFlavours) {
 		// methods
 		auto scriptMethods = miniScriptFlavour->getMethods();

@@ -9,6 +9,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <agui/gui/events/GUIActionListener.h>
 #include <agui/gui/events/GUIChangeListener.h>
+#include <agui/gui/nodes/fwd-agui.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -24,6 +25,7 @@ using tdme::engine::Engine;
 using agui::gui::events::GUIActionListener;
 using agui::gui::events::GUIActionListenerType;
 using agui::gui::events::GUIChangeListener;
+using agui::gui::nodes::GUIElementNode;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::PopUps;

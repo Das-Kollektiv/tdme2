@@ -691,7 +691,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				auto color4 = sceneEditorTabController->popUps->getColorPickerScreenController()->getColor();
 				shaderParameters.setShaderParameter(shaderParameterName, color4);
 				try {
-					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("sky.shader." + shaderParameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
+					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("sky.shader." + shaderParameterName + "_color"))->setEffectColorMul(color4.getArray());
 				} catch (Exception& exception) {
 					Console::printLine("SceneEditorTabController::onAction(): An error occurred: " + string(exception.what()));
 					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -734,7 +734,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				auto color4 = sceneEditorTabController->popUps->getColorPickerScreenController()->getColor();
 				shaderParameters.setShaderParameter(parameterName, color4);
 				try {
-					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
+					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4.getArray());
 				} catch (Exception& exception) {
 					Console::printLine("SceneEditorTabController::onAction(): An error occurred: " + string(exception.what()));
 					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -1054,7 +1054,7 @@ void SceneEditorTabController::setSkyShaderDetails() {
 				case ShaderParameter::TYPE_COLOR4:
 					{
 						auto color4 = parameter.getColor4Value();
-						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_color"))->setEffectColorMul(color4.getArray());
 					}
 					break;
 				default:
@@ -1229,7 +1229,7 @@ void SceneEditorTabController::setPostProcessingDetails() {
 					case ShaderParameter::TYPE_COLOR4:
 						{
 							auto color4 = parameter.getColor4Value();
-							required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
+							required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4.getArray());
 						}
 						break;
 					default:
@@ -1529,19 +1529,19 @@ void SceneEditorTabController::updateLightDetails(int lightIdx) {
 
 	try {
 		//
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_ambient"))->setEffectColorMul(Color4(light->getAmbient()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_specular"))->setEffectColorMul(Color4(light->getSpecular()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_ambient"))->setEffectColorMul(Color4(light->getAmbient()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_specular"))->setEffectColorMul(Color4(light->getSpecular()).getArray());
 
 		//
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_ambient"))->setEffectColorMul(Color4(light->getAmbient()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_specular"))->setEffectColorMul(Color4(light->getSpecular()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_ambient"))->setEffectColorMul(Color4(light->getAmbient()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_specular"))->setEffectColorMul(Color4(light->getSpecular()).getArray());
 
 		//
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_ambient"))->setEffectColorMul(Color4(light->getAmbient()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_specular"))->setEffectColorMul(Color4(light->getSpecular()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_ambient"))->setEffectColorMul(Color4(light->getAmbient()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_specular"))->setEffectColorMul(Color4(light->getSpecular()).getArray());
 	} catch (Exception& exception) {
 		Console::printLine("SceneEditorTabController::updateLightDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));

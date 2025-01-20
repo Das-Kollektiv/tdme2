@@ -295,7 +295,7 @@ void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype
 				case ShaderParameter::TYPE_COLOR4:
 					{
 						auto color4 = parameter.getColor4Value();
-						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4.toGUIColor());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4.getArray());
 					}
 					break;
 				default:
@@ -442,7 +442,7 @@ bool PrototypeDisplaySubController::onAction(GUIActionListenerType type, GUIElem
 				auto color4 = prototypeDisplaySubController->popUps->getColorPickerScreenController()->getColor();
 				shaderParameters.setShaderParameter(parameterName, color4);
 				try {
-					required_dynamic_cast<GUIImageNode*>(prototypeDisplaySubController->screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+					required_dynamic_cast<GUIImageNode*>(prototypeDisplaySubController->screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4.getArray());
 				} catch (Exception& exception) {
 					Console::printLine("PrototypeDisplaySubController::onAction(): An error occurred: " + string(exception.what()));
 					prototypeDisplaySubController->showInfoPopUp("Warning", string(exception.what()));

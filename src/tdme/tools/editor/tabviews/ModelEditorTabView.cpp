@@ -50,6 +50,7 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;
@@ -100,6 +101,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ModelTools;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype)
 {

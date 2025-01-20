@@ -18,7 +18,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <agui/utilities/fwd-agui.h>
 
 using std::array;
 using std::make_unique;

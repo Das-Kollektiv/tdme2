@@ -2,14 +2,11 @@
 
 #include <array>
 
-#include <agui/gui/nodes/GUIColor.h>
-
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 
 using std::array;
-using agui::gui::nodes::GUIColor;
 
 using tdme::math::Math;
 
@@ -466,10 +463,4 @@ public:
 		return this->equals(color) == false;
 	}
 
-	/**
-	 * @returns GUI color
-	 */
-	inline GUIColor toGUIColor() const {
-		return GUIColor(data);
-	}
 };

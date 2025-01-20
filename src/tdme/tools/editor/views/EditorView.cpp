@@ -9,6 +9,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/SimplePartition.h>
+#include <agui/gui/events/GUIKeyboardEvent.h>
+#include <agui/gui/events/GUIMouseEvent.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
 #include <agui/gui/nodes/GUINode.h>
@@ -38,6 +40,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;
@@ -48,6 +51,8 @@ using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::SimplePartition;
+using agui::gui::events::GUIKeyboardEvent;
+using agui::gui::events::GUIMouseEvent;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
 using agui::gui::nodes::GUINode;
@@ -79,6 +84,7 @@ using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 EditorView::EditorView(PopUps* popUps)
 {
@@ -329,7 +335,7 @@ void EditorView::display()
 			reshaped = true;
 		}
 		if (tabView->getTabView()->getEngine() != nullptr) {
-			tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer());
+			tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer()->toGUIFrameBuffer());
 		}
 		tabView->getTabView()->display();
 		if (reshaped == true) {

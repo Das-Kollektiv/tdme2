@@ -5,10 +5,12 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/ColorTexture.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <agui/gui/misc/GUIDynamicColorTexture.h>
 
 using tdme::engine::Texture;
 using tdme::engine::ColorTexture;
 using tdme::utilities::ByteBuffer;
+using agui::gui::misc::GUIDynamicColorTexture;
 
 /**
  * Dynamic color texture
@@ -90,6 +92,15 @@ public:
 		return colorBufferTextureId;
 	}
 
+	/**
+	 * @returns GUI dynamic color texture
+	 */
+	GUIDynamicColorTexture* toGUIDynamicColorTexture() {
+		// TODO: implement me!
+		//	fixme
+		//	xxx
+		return nullptr;
+	}
 private:
 	STATIC_DLL_IMPEXT static uint32_t counter;
 

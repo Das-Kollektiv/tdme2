@@ -713,15 +713,15 @@ void SceneEditorTabView::selectEntityInternal(Entity* entity)
 		if (decalObbEntity != nullptr) decalObbEntity->setEnabled(true);
 	}
 	const auto& red = entityColors["red"];
-	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f).toGUIColor());
-	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f).toGUIColor());
+	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f));
+	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f));
 }
 
 void SceneEditorTabView::unselectEntityInternal(Entity* entity)
 {
 	const auto& color = entityColors["none"];
-	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f).toGUIColor());
-	entity->setEffectColorMul(Color4(color.colorMulR, color.colorMulG, color.colorMulB, 1.0f).toGUIColor());
+	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f));
+	entity->setEffectColorMul(Color4(color.colorMulR, color.colorMulG, color.colorMulB, 1.0f));
 	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	auto colorProperty = sceneEntity->getProperty("object.color");
@@ -1524,8 +1524,9 @@ void SceneEditorTabView::runScene() {
 				Tools::getFileName(scene->getGUIFileName()),
 				{},
 				scriptLibrary,
-				MinitScript::Variable(),
-				applicationClient->getContext()
+				MinitScript::Variable()
+				// TODO: fixme, implement me, xxx
+				// applicationClient->getContext()
 			);
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 			engine->getGUI()->addRenderScreen(screenNode->getId());

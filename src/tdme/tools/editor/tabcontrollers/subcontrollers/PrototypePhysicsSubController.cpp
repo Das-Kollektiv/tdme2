@@ -437,7 +437,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 						thumbnailTexture = PNGTextureReader::read("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					}
 				}
-				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
+				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture->toGUITexture());
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTooltip(thumbnailTooltip);
 				if (thumbnailTexture != nullptr) thumbnailTexture->releaseReference();
 			} else {

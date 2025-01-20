@@ -6,6 +6,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/ColorTexture.h>
+#include <agui/gui/misc/GUIFrameBuffer.h>
 
 using std::string;
 
@@ -13,6 +14,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
 using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
+using agui::gui::misc::GUIFrameBuffer;
 
 /**
  * Frame buffer class
@@ -194,6 +196,14 @@ public:
 	// overridden methods
 	inline int32_t getColorTextureId() override {
 		return colorBufferTextureId;
+	}
+
+	/**
+	 * @returns GUI frame buffer
+	 */
+	GUIFrameBuffer* toGUIFrameBuffer() {
+		// TODO: implement me, fixme, xxx
+		return nullptr;
 	}
 
 };

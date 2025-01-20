@@ -12,6 +12,7 @@
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <agui/gui/events/GUIMoveListener.h>
+#include <agui/gui/events/GUIMouseEvent.h>
 #include <agui/gui/nodes/GUIColor.h>
 #include <agui/gui/nodes/GUIElementNode.h>
 #include <agui/gui/nodes/GUIImageNode.h>
@@ -35,6 +36,7 @@
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Character.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
@@ -52,6 +54,7 @@ using tdme::engine::ColorTextureCanvas;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using agui::gui::events::GUIMoveListener;
+using agui::gui::events::GUIMouseEvent;
 using agui::gui::nodes::GUIColor;
 using agui::gui::nodes::GUIElementNode;
 using agui::gui::nodes::GUIImageNode;
@@ -73,6 +76,7 @@ using tdme::tools::editor::misc::TextTools;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Character;
+using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
@@ -102,7 +106,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		//
 		linesTexture = make_unique<DynamicColorTexture>(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture.get());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture.get()->toGUIDynamicColorTexture());
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
@@ -412,7 +416,7 @@ void TextEditorTabView::display()
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
 			auto visualizationTextureNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"));
-			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture.get());
+			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture.get()->toGUIDynamicColorTexture());
 			createConnectionsPasses = 3;
 		}
 		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
@@ -2245,7 +2249,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 
 	//
 	unordered_set<string> nodeIds;
-	screenNode->determineNodesByCoordinate(Vector2(mouseX, mouseY), nodeIds);
+	screenNode->determineNodesByCoordinate(Vector2(mouseX, mouseY).getArray(), nodeIds);
 	for (const auto& nodeId: nodeIds) {
 		// return value as argument
 		if (nodeId.find("_r_") != string::npos) {

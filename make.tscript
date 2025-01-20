@@ -65,14 +65,16 @@ function: main()
 		$tdmeIncludes = ""
 		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext -lagui"
 		$tdmeDefinitions = ""
+		$tdmeRendererIncludes = "-Isrc -Iext/a-gui/src"
 		$tdmeRendererDefinitions = ""
 		$tdmeRendererLdFlags = "-Llib -ltdme"
-		$tdmeVulkanRendererIncludes = ""
+		$tdmeVulkanRendererIncludes = "-I."
 		$tdmeVulkanRendererPlatformFiles = []
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
+		$executableIncludes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src"
 		$executableDefinitions = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
-		$executableLdFlags = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
+		$executableLdFlags = "-Llib -ltdme -lagui -ltdme-ext -lyannet -lminitscript -pthread"
 		$buildLibrary = "buildLibraryUnix"
 		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
@@ -481,6 +483,8 @@ function: main()
 			$buildLibrary,
 			"libagui",
 			[
+				"glew",
+				"gl",
 				"glfw3",
 				"openal",
 				"freetype2",
@@ -997,7 +1001,7 @@ function: main()
 				"glfw3"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
-			"-Isrc",
+			$tdmeRendererIncludes,
 			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp",
@@ -1015,7 +1019,7 @@ function: main()
 				"glfw3"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
-			"-Isrc",
+			$tdmeRendererIncludes,
 			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp",
@@ -1033,7 +1037,7 @@ function: main()
 				"glfw3"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
-			"-Isrc",
+			$tdmeRendererIncludes,
 			$tdmeRendererLdFlags,
 			[
 				"src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp",
@@ -1050,7 +1054,7 @@ function: main()
 				"vulkan"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
-			"-Isrc -I." + " " + $tdmeVulkanRendererIncludes,
+			$tdmeRendererIncludes + " " + $tdmeVulkanRendererIncludes,
 			$tdmeRendererLdFlags,
 			[
 				"ext/vulkan/spirv/GlslangToSpv.cpp",
@@ -1113,7 +1117,7 @@ function: main()
 				"libcrypto"
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $executableDefinitions,
-			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src",
+			$executableIncludes,
 			$executableLdFlags,
 			[
 				"src/tdme/tests/AudioTest-main.cpp",

@@ -893,14 +893,14 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()).getArray());
 
 		if (pbrMaterialProperties != nullptr) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()).toGUIColor());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()).toGUIColor());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()).getArray());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()).getArray());
 		}
 	} catch (Exception& exception) {
 		Console::printLine("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: " + string(exception.what()));
@@ -2227,8 +2227,8 @@ void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
 	if (prototypeLODLevel == nullptr) return;
 
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()).toGUIColor());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()).toGUIColor());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()).getArray());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()).getArray());
 	} catch (Exception& exception) {
 		Console::printLine("ModelEditorTabController::updateLODColorDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));

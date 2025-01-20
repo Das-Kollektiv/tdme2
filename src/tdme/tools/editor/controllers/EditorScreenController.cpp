@@ -43,6 +43,7 @@
 #include <agui/gui/GUI.h>
 #include <agui/gui/GUIParser.h>
 #include <tdme/math/Matrix3x3.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -133,6 +134,7 @@ using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUITextNode;
 using agui::gui::GUIParser;
 using tdme::math::Matrix3x3;
+using tdme::math::Vector2;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -2200,7 +2202,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		// TODO: move me into GUIFrameBufferNode
 		if (Engine::getInstance()->getGraphicsRendererBackendType() != RendererBackend::RENDERERTYPE_VULKAN) {
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
-			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)));
+			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)).getArray());
 		}
 		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView.release(), required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabViewVector.push_back(&tabViews[tabId]);
@@ -2435,7 +2437,7 @@ bool EditorScreenController::isDropOnNode(int dropX, int dropY, const string& no
 		Vector2(
 			gui->getScaledX(screenNode, dropX),
 			gui->getScaledY(screenNode, dropY)
-		)
+		).getArray()
 	);
 }
 
