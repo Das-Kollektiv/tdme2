@@ -64,6 +64,14 @@ public:
 	static constexpr int EXITCODE_FAILURE { EXIT_FAILURE };
 
 	static constexpr int64_t JOYSTICK_BUTTON_TIME_REPEAT { 150LL };
+
+	/**
+	 * @returns GLFW Window handle
+	 */
+	inline static GLFWwindow* getGLFWWindow() {
+		 return glfwWindow;
+	}
+
 	/**
 	 * @return renderer backend
 	 */
