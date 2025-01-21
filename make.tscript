@@ -24,7 +24,7 @@ function: clean()
 end
 
 function: printUsage()
-	console.printLine("Usage: minitscript [clean] [libraries] [executables]")
+	console.printLine("Usage: minitscript [clean] [libraries] [tests] [executables]")
 end
 
 function: main()
@@ -54,7 +54,9 @@ function: main()
 		clean()
 	end
 	
-	if (application.getArguments()->contains("libraries") == true || application.getArguments()->contains("executables") == true)
+	if (application.getArguments()->contains("libraries") == true || 
+		application.getArguments()->contains("executables") == true ||
+		application.getArguments()->contains("tests") == true)
 		$minitScriptLdFlags = ""
 		$minitScriptDefinitions = ""
 		$yannetLdFlags = ""
@@ -75,7 +77,8 @@ function: main()
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
 		$executableDefinitions = ""
-		$executableLdFlags = "-Llib -pthread -lminitscript -lyannet -ltdme-ext -lagui -ltdme -ltdme-editor -ltdme-tests"
+		$executableLdFlags = "-Llib -pthread -lminitscript -lyannet -ltdme-ext -lagui -ltdme -ltdme-tools"
+		$executableTestLdFlags = "-Llib -pthread -lminitscript -lyannet -ltdme-ext -lagui -ltdme -ltdme-tests"
 		$buildLibrary = "buildLibraryUnix"
 		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
@@ -182,6 +185,15 @@ function: main()
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-tools.lib\""
+			$executableTestLdFlags = ""
+			$executableTestLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme.lib\""
+			$executableTestLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-tests.lib\""
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [
 				"ext/yannet/src/yannet/os/network/platform/fallback/KernelEventMechanism.cpp"
@@ -912,7 +924,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			"libtdme-editor",
+			"libtdme-tools",
 			[
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeExtraLibsDefinitions,
@@ -1138,9 +1150,58 @@ function: main()
 		)
 	end
 
+	if (application.getArguments()->contains("tests") == true)
+		script.call(
+			$buildExecutables,
+			"tests",
+			[
+				"glfw3",
+				"openal",
+				"freetype2",
+				"libssl",
+				"libcrypto"
+			],
+			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $executableDefinitions,
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src",
+			$executableTestLdFlags,
+			[
+				"src/tdme/tests/AudioTest-main.cpp",
+				"src/tdme/tests/ContainerTest-main.cpp",
+				"src/tdme/tests/CrashTest-main.cpp",
+				"src/tdme/tests/EngineTest-main.cpp",
+				"src/tdme/tests/EntityHierarchyTest-main.cpp",
+				"src/tdme/tests/HTTPClientTest-main.cpp",
+				"src/tdme/tests/HTTPDownloadClientTest-main.cpp",
+				"src/tdme/tests/LODTest-main.cpp",
+				"src/tdme/tests/FlowMapTest-main.cpp",
+				"src/tdme/tests/FlowMapTest2-main.cpp",
+				"src/tdme/tests/FoliageTest-main.cpp",
+				"src/tdme/tests/MathOperatorTest-main.cpp",
+				"src/tdme/tests/MinitScriptTest-main.cpp",
+				"src/tdme/tests/PathFindingTest-main.cpp",
+				"src/tdme/tests/PhysicsTest1-main.cpp",
+				"src/tdme/tests/PhysicsTest2-main.cpp",
+				"src/tdme/tests/PhysicsTest3-main.cpp",
+				"src/tdme/tests/PhysicsTest4-main.cpp",
+				"src/tdme/tests/PhysicsTest5-main.cpp",
+				"src/tdme/tests/RayTracingTest-main.cpp",
+				"src/tdme/tests/SkinningTest-main.cpp",
+				"src/tdme/tests/SplineTest-main.cpp",
+				"src/tdme/tests/TextureAtlasTest-main.cpp",
+				"src/tdme/tests/ThreadingTest-main.cpp",
+				"src/tdme/tests/TreeTest-main.cpp",
+				"src/tdme/tests/UDPClientTest-main.cpp",
+				"src/tdme/tests/UDPServerTest-main.cpp",
+				"src/tdme/tests/VideoTest-main.cpp",
+				"src/tdme/tests/WaterTest-main.cpp"
+			],
+			false
+		)
+	end
 
 	if (application.getArguments()->contains("executables") == true)
 		script.call(
+			"executables",
 			$buildExecutables,
 			[
 				"glfw3",

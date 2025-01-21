@@ -435,8 +435,8 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 	console.printLine()
 end
 
-function: buildExecutablesMSC($libraries, $definitions, $includes, $ldFlags, $files, $optional)
-	console.printLine("Building executables")
+function: buildExecutablesMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building executables: " + $name)
 	console.printLine()
 
 	$librariesIncludes = ""
