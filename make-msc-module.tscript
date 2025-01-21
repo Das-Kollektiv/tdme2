@@ -162,8 +162,8 @@ function: generateRCMSC($template, $fileName)
 	)
 end
 
-function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
-	console.printLine("Building library: " + $name)
+function: buildLibraryMSC($idx, $name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building library: " + $name + "(" + $idx + ")")
 	console.printLine()
 
 	$librariesIncludes = ""
@@ -219,7 +219,7 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				$fileObjectPaths->set($fileObjectPathCandidate, $fileObjectPaths->getSize())
 			end
 			$fileObjectPath = 
-				$name + 
+				$idx + 
 				"/" +
 				$fileObjectPaths->get($fileObjectPathCandidate)
 			
@@ -270,9 +270,7 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				" " +
 				$includes +
 				" " +
-				$file + 
-				" " + 
-				"1>nul"
+				$file 
 			#
 			if ($command == null)
 				continue
@@ -385,13 +383,10 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				end
 			end
 
-			# link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme.def /DEBUG /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme-ext.lib /OUT:$(MSCBIN)\libtdme.dll
-
-			# link
-			$command =
-				"chcp 65001 > nul && " +
-				"link" +
-				" " +
+			# response file
+			filesystem.setContentFromString(
+				".",
+				"link.response",
 				$librariesLdFlags +
 				" " +
 				$ldFlags +
@@ -410,7 +405,15 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				" " +
 				$libraryDLLRESFile + 
 				" " +
-				"/OUT:" + $libraryDLLFile 
+				"/OUT:" + $libraryDLLFile
+			) 
+
+			# link
+			$command =
+				"chcp 65001 > nul && " +
+				"link" +
+				" " +
+				"@link.response" 
 
 			console.printLine($command)
 
@@ -426,7 +429,12 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 					application.exit($$.application::EXITCODE_FAILURE)
 				end
 			end
-			
+
+			# remove response file
+			filesystem.removeFile(
+				".",
+				"link.response"
+			) 
 		end
 	catch ($exception)
 		console.printLine("An error occurred: " + $exception)
@@ -564,9 +572,7 @@ function: buildExecutablesMSC($name, $libraries, $definitions, $includes, $ldFla
 				" " +
 				$librariesLdFlags +
 				" " +
-				$ldFlags +
-				" " # +
-				# "> nul"
+				$ldFlags
 			console.printLine($command)
 
 			# execute

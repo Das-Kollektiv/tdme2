@@ -165,7 +165,7 @@ private:
 		string whitespaces = " \t";
 	} propertiesLanguage;
 
-	STATIC_DLL_IMPEXT static TextFormatter* instance;
+	TDMETOOLS_STATIC_DLL_IMPEXT static TextFormatter* instance;
 
 	/**
 	 * Returns immediate children tags by tag name

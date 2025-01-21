@@ -29,7 +29,7 @@ using tdme::tools::editor::views::View;
 class tdme::tools::editor::Editor final: public Application
 {
 private:
-	STATIC_DLL_IMPEXT static Editor* instance;
+	TDMETOOLS_STATIC_DLL_IMPEXT static Editor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool viewInitialized;
