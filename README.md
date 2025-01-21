@@ -160,7 +160,7 @@
 - Video
     - decoder
       - mpeg1 decoder
-- GUI system
+- GUI system, provided by our [A-GUI](https://github.com/andreasdr/a-gui) - C++ based graphical user interface for games 
     - borrows some ideas from Nifty-GUI regarding XML and layouting
     - borrows some ideas from AngularJS like
         - all nodes are in the GUI node tree and can be made visible or unvisible depending on conditions
@@ -211,8 +211,46 @@
         - to implement GUI application flow(WIP)
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
-- our Mini transpilable C++ scripting language [MinitScript](https://github.com/andreasdr/minitscript)
-- our [Yannet](https://github.com/andreasdr/yannet) network library
+- [MinitScript](https://github.com/andreasdr/minitscript), our mini C++ transpileable scripting language
+  - very small implementation of a scripting language
+  - runs on every CPU, OS, ... due to its simplicity, so its highly portable
+  - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
+  - built-in data types: null, boolean, integer, float, string, byte array, array, map and set, ...
+  - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
+  - supports operators by operator to method mapping by a preprocessor run
+  - supports loops, conditions and switch/case/default blocks
+  - supports functions/stacklets and recursion
+  - supports lamda functions and inline stacklets
+  - supports exceptions
+  - supports programming with classes style programming
+    - for built-in datatypes: string, byte array, array, map and set, ...
+    - for script classes/objects
+    - for custom data types
+  - supports event like programming
+  - supports modules
+  - unicode support via UTF8
+  - can be transpiled to C++
+- our C++ network library for games [Yannet](https://github.com/andreasdr/yannet)
+  - UDP server
+    - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
+    - supports safe messages with acknowledgment and automatic resending
+    - supports fast messages
+    - can be used in a heavy multithreaded environment (the networking module is thread safe)
+    - IPV6 ready
+  - UDP client
+    - has single thread with a simple threadsafe API
+    - supports all features required by UDP server
+    - IPV6 ready
+  - Simple HTTP client
+    - uses a blocking TCP socket, thus it has a simple blocking API
+    - Ready for REST providing all methods, setting content type and body
+    - be able to set GET and POST parameters via unordered map 
+    - supports basic authentification
+    - IPV6 ready
+  - HTTP download client
+    - supports basic authentification
+    - uses a separate thread to download to file
+    - IPV6 ready
 - Operating system abstraction layer
     - file system
         - standard file system
