@@ -175,6 +175,7 @@ function: main()
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libtdme.lib\""
 		elseif ($$.application::OS == "Windows-MINGW")
 			$yannetPlatformFiles = [

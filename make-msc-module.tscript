@@ -199,29 +199,35 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 	$libraryExtension = ".dll"
 
 	try
-		try
-			filesystem.removePath($objectPath, true)
-		catch ($exception)
-		end
-
 		# create paths
 		createPathRecusively($objectPath)
 		createPathRecusively($libraryPath)
 
 		# compile each compilation units
-		$compilationUnitIdx = 0
+		$fileObjectPaths = {}
 		$commands = []
 		$compilationUnits = ""
 		forEach($file in $files)
 			#
-			# $fileObjectPath = filesystem.getPathName($file)
-			$fileObjectPath = ""
+			$fileObjectPathCandidate = 
+				$name + 
+				"/" +
+				filesystem.getFileName(filesystem.getPathName(filesystem.getPathName($file))) + 
+				"/" + 
+				filesystem.getFileName(filesystem.getPathName($file))
+			if ($fileObjectPaths->contains($fileObjectPathCandidate) == false)
+				$fileObjectPaths->set($fileObjectPathCandidate, $fileObjectPaths->getSize())
+			end
+			$fileObjectPath = 
+				$name + 
+				"/" +
+				$fileObjectPaths->get($fileObjectPathCandidate)
 			
 			# create file object path
 			createPathRecusively($objectPath + "/" + $fileObjectPath)
 
 			#
-			$compilationUnit = $objectPath + "/" + ($compilationUnitIdx++) + ".obj"
+			$compilationUnit = $objectPath + "/" + $fileObjectPath + "/" + filesystem.removeFileExtension(filesystem.getFileName($file)) + ".obj"
 			if ($compilationUnits->isEmpty() == false)
 				$compilationUnits = $compilationUnits + " "
 			end
@@ -266,7 +272,7 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 				" " +
 				$file + 
 				" " + 
-				"1 > nul"
+				"1>nul"
 			#
 			if ($command == null)
 				continue
