@@ -14,6 +14,8 @@
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Version.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -40,6 +42,8 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::SimplePartition;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Version;
 using tdme::minitscript::EngineMinitScript;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -53,7 +57,7 @@ Editor* Editor::instance = nullptr;
 
 Editor::Editor()
 {
-	Tools::loadSettings(this);
+	FileSystemTools::loadSettings(this);
 	Editor::instance = this;
 	engine = Engine::getInstance();
 	engine->setPartition(new SimplePartition());
@@ -141,7 +145,7 @@ void Editor::dispose()
 	}
 	popUps->dispose();
 	engine->dispose();
-	Tools::oseDispose();
+	ThumbnailTool::oseDispose();
 }
 
 void Editor::initialize()
@@ -152,7 +156,7 @@ void Editor::initialize()
 	Application::setLimitFPS(true);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	setEventHandler(engine->getGUI());
-	Tools::oseInit();
+	ThumbnailTool::oseInit();
 	popUps->initialize();
 	setView((editorView = make_unique<EditorView>(popUps.get())).get());
 }

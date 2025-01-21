@@ -31,7 +31,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -73,7 +73,7 @@ using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::views::EditorView;
@@ -276,8 +276,8 @@ void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "screen") == true) {
-			if (Tools::hasFileExtension(fileName, {{ "xml" }}) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "xml" }}));
+			if (FileSystemTools::hasFileExtension(fileName, {{ "xml" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions({{ "xml" }}));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
@@ -285,12 +285,12 @@ void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "projectedui_prototype") == true) {
-			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
 			} else {
 				setPrototype(
-					Tools::getPathName(fileName),
-					Tools::getFileName(fileName),
+					FileSystemTools::getPathName(fileName),
+					FileSystemTools::getFileName(fileName),
 					prototypeMeshNode,
 					prototypeMeshAnimation
 				);
@@ -613,8 +613,8 @@ void UIEditorTabController::onLoadScreen() {
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
 	if (screenIdx < 0 || screenIdx >= view->getUIScreenNodes().size()) return;
 	auto screenNode = view->getUIScreenNodes()[screenIdx].screenNode;
-	auto pathName = screenNode != nullptr?Tools::getPathName(view->getUIScreenNodes()[screenIdx].fileName):string();
-	auto fileName = screenNode != nullptr?Tools::getFileName(view->getUIScreenNodes()[screenIdx].fileName):string();
+	auto pathName = screenNode != nullptr?FileSystemTools::getPathName(view->getUIScreenNodes()[screenIdx].fileName):string();
+	auto fileName = screenNode != nullptr?FileSystemTools::getFileName(view->getUIScreenNodes()[screenIdx].fileName):string();
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load screen from: ",
@@ -687,8 +687,8 @@ void UIEditorTabController::onLoadPrototype() {
 	};
 
 	//
-	auto pathName = screenNode != nullptr?Tools::getPathName(prototypeFileName):string();
-	auto fileName = screenNode != nullptr?Tools::getFileName(prototypeFileName):string();
+	auto pathName = screenNode != nullptr?FileSystemTools::getPathName(prototypeFileName):string();
+	auto fileName = screenNode != nullptr?FileSystemTools::getFileName(prototypeFileName):string();
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load prototype from: ",
@@ -780,7 +780,7 @@ void UIEditorTabController::save() {
 
 			// get new path and file name
 			auto pathName = uiEditorTabController->popUps->getFileDialogScreenController()->getPathName();
-			auto fileName = Tools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
+			auto fileName = FileSystemTools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
 			uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName = pathName + "/" + fileName;
 
 			// save
@@ -811,12 +811,12 @@ void UIEditorTabController::save() {
 
 			// issue SAVE AS for next screen
 			if (screenIdx >= 0 && screenIdx < uiEditorTabController->view->getUIScreenNodes().size()) {
-				auto fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
+				auto fileName = FileSystemTools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
 				uiEditorTabController->popUps->getFileDialogScreenController()->show(
-					Tools::getPathName(fileName),
+					FileSystemTools::getPathName(fileName),
 					"Save to: ",
 					{ { "xml" } },
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnUISave(uiEditorTabController, screenIdx)
 				);
@@ -853,8 +853,8 @@ void UIEditorTabController::save() {
 		const auto& uiScreenNode = uiScreenNodes[screenIdx];
 		try {
 			FileSystem::getInstance()->setContentFromString(
-				Tools::getPathName(uiScreenNode.fileName),
-				Tools::getFileName(uiScreenNode.fileName),
+				FileSystemTools::getPathName(uiScreenNode.fileName),
+				FileSystemTools::getFileName(uiScreenNode.fileName),
 				uiScreenNode.xml
 			);
 		} catch (Exception& exception) {
@@ -867,12 +867,12 @@ void UIEditorTabController::save() {
 	if (emptyFileNameIdx != -1) {
 		const auto& uiScreenNode = uiScreenNodes[emptyFileNameIdx];
 		//
-		auto fileName = Tools::getPathName(view->getFileName()) + "/Untitled.xml";
+		auto fileName = FileSystemTools::getPathName(view->getFileName()) + "/Untitled.xml";
 		popUps->getFileDialogScreenController()->show(
-			Tools::getPathName(fileName),
+			FileSystemTools::getPathName(fileName),
 			"Save to: ",
 			{ { "xml" } },
-			Tools::getFileName(fileName),
+			FileSystemTools::getFileName(fileName),
 			false,
 			new OnUISave(this, emptyFileNameIdx)
 		);
@@ -903,7 +903,7 @@ void UIEditorTabController::saveAs() {
 
 			// get new path and file name
 			auto pathName = uiEditorTabController->popUps->getFileDialogScreenController()->getPathName();
-			auto fileName = Tools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
+			auto fileName = FileSystemTools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
 			uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName = pathName + "/" + fileName;
 
 			// save
@@ -933,12 +933,12 @@ void UIEditorTabController::saveAs() {
 			// issue SAVE AS for next screen
 			if (screenIdx >= 0 && screenIdx < uiEditorTabController->view->getUIScreenNodes().size()) {
 				auto fileName = uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName;
-				if (fileName.empty() == true) fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
+				if (fileName.empty() == true) fileName = FileSystemTools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
 				uiEditorTabController->popUps->getFileDialogScreenController()->show(
-					Tools::getPathName(fileName),
+					FileSystemTools::getPathName(fileName),
 					"Save to: ",
 					{ { "xml" } },
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnUISaveAs(uiEditorTabController, screenIdx)
 				);
@@ -960,12 +960,12 @@ void UIEditorTabController::saveAs() {
 
 		//
 		auto fileName = uiScreenNodes[screenIdx].fileName;
-		if (fileName.empty() == true) fileName = Tools::getPathName(view->getFileName()) + "/Untitled.xml";
+		if (fileName.empty() == true) fileName = FileSystemTools::getPathName(view->getFileName()) + "/Untitled.xml";
 		popUps->getFileDialogScreenController()->show(
-			Tools::getPathName(fileName),
+			FileSystemTools::getPathName(fileName),
 			"Save to: ",
 			{ { "xml" } },
-			Tools::getFileName(fileName),
+			FileSystemTools::getFileName(fileName),
 			false,
 			new OnUISaveAs(this, screenIdx)
 		);

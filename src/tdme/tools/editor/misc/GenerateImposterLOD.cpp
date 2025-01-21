@@ -25,7 +25,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -57,7 +58,8 @@ using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
@@ -89,7 +91,7 @@ void GenerateImposterLOD::generate(
 	light->setEnabled(true);
 	// do a feasible scale
 	auto boundingBox = model->getBoundingBox();
-	float maxAxisDimension = Tools::computeMaxAxisDimension(boundingBox);
+	float maxAxisDimension = ThumbnailTool::computeMaxAxisDimension(boundingBox);
 	if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 1.0f;
 
 	//
@@ -116,9 +118,9 @@ void GenerateImposterLOD::generate(
 		//
 		osEngine->display();
 		//
-		auto modelId = Tools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg";
+		auto modelId = FileSystemTools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg";
 		auto modelFileName = modelId + ".tm";
-		auto textureFileName = Tools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg.png";
+		auto textureFileName = FileSystemTools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg.png";
 		osEngine->makeScreenshot(pathName, textureFileName, false);
 
 		//

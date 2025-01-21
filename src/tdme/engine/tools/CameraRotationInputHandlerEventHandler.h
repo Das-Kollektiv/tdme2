@@ -1,13 +1,13 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/engine/tools/fwd-tdme.h>
 
 /**
  * Camera Rotation Input Handler Event Handler
  * @author Andreas Drewke
  */
-struct tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler
+struct tdme::engine::tools::CameraRotationInputHandlerEventHandler
 {
 	/**
 	 * Destructor

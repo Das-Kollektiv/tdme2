@@ -9,7 +9,7 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/Gizmo.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -28,8 +28,8 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::ParticleSystem;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
-using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::Gizmo;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;

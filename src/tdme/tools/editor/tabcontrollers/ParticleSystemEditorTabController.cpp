@@ -46,7 +46,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
@@ -107,7 +107,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
@@ -162,8 +162,8 @@ void ParticleSystemEditorTabController::onCommand(TabControllerCommand command)
 				try {
 					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 					view->saveFile(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+						FileSystemTools::getPathName(fileName),
+						FileSystemTools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
 					showInfoPopUp("Warning", string(exception.what()));
@@ -194,10 +194,10 @@ void ParticleSystemEditorTabController::onCommand(TabControllerCommand command)
 
 				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 				popUps->getFileDialogScreenController()->show(
-					fileName.empty() == false?Tools::getPathName(fileName):string(),
+					fileName.empty() == false?FileSystemTools::getPathName(fileName):string(),
 					"Save to: ",
 					{{ "tparticle" }},
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnParticleSave(this)
 				);
@@ -218,8 +218,8 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
@@ -227,8 +227,8 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_transparency") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
@@ -236,8 +236,8 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
@@ -245,8 +245,8 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_transparency") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
@@ -254,8 +254,8 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_object") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(ModelReader::getModelExtensions()));
 			} else {
 				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
@@ -873,10 +873,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					};
 
 					popUps->getFileDialogScreenController()->show(
-						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
+						pps->getTextureFileName().empty() == false?FileSystemTools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						TextureReader::getTextureExtensions(),
-						Tools::getFileName(pps->getTextureFileName()),
+						FileSystemTools::getFileName(pps->getTextureFileName()),
 						true,
 						new OnPointParticleSystemLoadTexture(this, particleSystemIdx)
 					);
@@ -944,10 +944,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					};
 
 					popUps->getFileDialogScreenController()->show(
-						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
+						pps->getTextureFileName().empty() == false?FileSystemTools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						TextureReader::getTextureExtensions(),
-						Tools::getFileName(pps->getTextureFileName()),
+						FileSystemTools::getFileName(pps->getTextureFileName()),
 						true,
 						new OnPointParticleSystemLoadTransparencyTexture(this, particleSystemIdx)
 					);
@@ -1015,10 +1015,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					};
 
 					popUps->getFileDialogScreenController()->show(
-						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
+						fps->getTextureFileName().empty() == false?FileSystemTools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						TextureReader::getTextureExtensions(),
-						Tools::getFileName(fps->getTextureFileName()),
+						FileSystemTools::getFileName(fps->getTextureFileName()),
 						true,
 						new OnFogParticleSystemLoadTexture(this, particleSystemIdx)
 					);
@@ -1086,10 +1086,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					};
 
 					popUps->getFileDialogScreenController()->show(
-						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
+						fps->getTextureFileName().empty() == false?FileSystemTools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						TextureReader::getTextureExtensions(),
-						Tools::getFileName(fps->getTextureFileName()),
+						FileSystemTools::getFileName(fps->getTextureFileName()),
 						true,
 						new OnFogParticleSystemLoadTransparencyTexture(this, particleSystemIdx)
 					);
@@ -1160,7 +1160,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 
 					//
 					popUps->getFileDialogScreenController()->show(
-						ops->getModelFileName().empty() == false?Tools::getPathName(ops->getModelFileName()):string(),
+						ops->getModelFileName().empty() == false?FileSystemTools::getPathName(ops->getModelFileName()):string(),
 						"Load object particle system model from: ",
 						ModelReader::getModelExtensions(),
 						string(),

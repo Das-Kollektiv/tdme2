@@ -42,7 +42,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/GenerateConvexMeshes.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -95,7 +95,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::views::EditorView;
@@ -432,7 +432,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 					if (// extern
 						(boundingVolume->hasConvexMeshData() == false &&
 						StringTools::endsWith(StringTools::toLowerCase(boundingVolume->getConvexMeshFile()), ".tm") == true &&
-						FileSystem::getInstance()->getThumbnailAttachment(Tools::getPathName(boundingVolume->getConvexMeshFile()), Tools::getFileName(boundingVolume->getConvexMeshFile()), thumbnailPNGData) == true) ||
+						FileSystem::getInstance()->getThumbnailAttachment(FileSystemTools::getPathName(boundingVolume->getConvexMeshFile()), FileSystemTools::getFileName(boundingVolume->getConvexMeshFile()), thumbnailPNGData) == true) ||
 						// embedded
 						(boundingVolume->hasConvexMeshData() == true &&
 						FileSystem::getInstance()->getThumbnailAttachment(boundingVolume->getConvexMeshData(), thumbnailPNGData) == true)
@@ -658,10 +658,10 @@ bool PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 				if (boundingVolume != nullptr) {
 					auto fileName = boundingVolume->getConvexMeshFile();
 					popUps->getFileDialogScreenController()->show(
-						fileName.empty() == false?Tools::getPathName(fileName):string(),
+						fileName.empty() == false?FileSystemTools::getPathName(fileName):string(),
 						"Load convex mesh from: ",
 						ModelReader::getModelExtensions(),
-						Tools::getFileName(fileName),
+						FileSystemTools::getFileName(fileName),
 						false,
 						new OnConvexMeshFileOpen(this, prototype, boundingVolumeIdxActivated)
 					);
@@ -923,8 +923,8 @@ void PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(const str
 				prototype,
 				GenerateConvexMeshes::MODE_IMPORT,
 				popUps,
-				Tools::getPathName(fileName),
-				Tools::getFileName(fileName),
+				FileSystemTools::getPathName(fileName),
+				FileSystemTools::getFileName(fileName),
 				convexMeshTMsData
 			) == true) {
 			GenerateConvexMeshes::removeConvexMeshes(prototype);
@@ -969,8 +969,8 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 				prototype,
 				GenerateConvexMeshes::MODE_GENERATE,
 				popUps,
-				Tools::getPathName(fileName),
-				Tools::getFileName(fileName),
+				FileSystemTools::getPathName(fileName),
+				FileSystemTools::getFileName(fileName),
 				convexMeshTMsData,
 				parameters
 			) == true) {
@@ -1006,24 +1006,24 @@ bool PrototypePhysicsSubController::onDrop(const string& payload, int mouseX, in
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "boundingvolume_convexmesh_file") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(ModelReader::getModelExtensions()));
 			} else {
 				setBoundingVolumeConvexMeshFile(boundingVolumeIdxActivated, fileName, prototype);
 			}
 			return true;
 		} else
 		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "importconvexmesh_file") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(ModelReader::getModelExtensions()));
 			} else {
 				importBoundingVolumeConvexMeshFile(fileName, prototype);
 			}
 			return true;
 		} else
 		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "generateconvexmesh_file") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(ModelReader::getModelExtensions()));
 			} else {
 				generateBoundingVolumeConvexMeshFiles(fileName, prototype);
 			}

@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
 
 #include <agui/agui.h>
 #include <agui/gui/events/GUIKeyboardEvent.h>
@@ -14,7 +14,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/engine/tools/fwd-tdme.h>
+#include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/utilities/Character.h>
 
 using agui::gui::events::GUIKeyboardEvent;
@@ -27,8 +28,8 @@ using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
-using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::utilities::Character;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler)

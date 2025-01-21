@@ -44,6 +44,8 @@
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/ShaderParameter.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -97,6 +99,8 @@ using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject;
 using tdme::engine::ShaderParameter;
+using tdme::engine::tools::ThumbnailTool;
+using tdme::engine::tools::FileSystemTools;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -132,8 +136,8 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
 	if (lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) {
 		//
-		auto modelPathName = Tools::getPathName(lodLevel->getFileName());
-		auto modelFileName = Tools::removeFileExtension(Tools::getFileName(lodLevel->getFileName())) + ".tm";
+		auto modelPathName = FileSystemTools::getPathName(lodLevel->getFileName());
+		auto modelFileName = FileSystemTools::removeFileExtension(FileSystemTools::getFileName(lodLevel->getFileName())) + ".tm";
 		TMWriter::write(
 			lodLevel->getModel(),
 			modelPathName,
@@ -157,8 +161,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 {
 	auto& jAllocator = jDocument.GetAllocator();
 	if (prototype->getType() == Prototype_Type::MODEL && prototype->getModelFileName().length() > 0) {
-		auto modelPathName = Tools::getPathName(prototype->getModelFileName());
-		auto modelFileName = Tools::removeFileExtension(Tools::getFileName(prototype->getModelFileName())) + ".tm";
+		auto modelPathName = FileSystemTools::getPathName(prototype->getModelFileName());
+		auto modelFileName = FileSystemTools::removeFileExtension(FileSystemTools::getFileName(prototype->getModelFileName())) + ".tm";
 		TMWriter::write(
 			prototype->getModel(),
 			modelPathName,
@@ -170,7 +174,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		if (Application::hasApplication() == true) {
 			vector<uint8_t> pngData;
 			string base64PNGData;
-			Tools::oseThumbnail(prototype, pngData);
+			ThumbnailTool::oseThumbnail(prototype, pngData);
 			Base64::encode(pngData, base64PNGData);
 			jPrototypeRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
@@ -263,8 +267,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					Value jObjectParticleSystem;
 					jObjectParticleSystem.SetObject();
 					if (particleSystem->getObjectParticleSystem()->getModelFileName().length() > 0) {
-						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFileName());
-						auto modelFileName = Tools::removeFileExtension(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
+						auto modelPathName = FileSystemTools::getPathName(particleSystem->getObjectParticleSystem()->getModelFileName());
+						auto modelFileName = FileSystemTools::removeFileExtension(FileSystemTools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,
@@ -574,13 +578,13 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
 					auto convexMeshModel =
 						TMReader::read(
-							Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
-							Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+							FileSystemTools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+							FileSystemTools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
 						);
 					TMWriter::write(
 						convexMeshModel,
-						Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
-						Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+						FileSystemTools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+						FileSystemTools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
 					);
 				}
 			}

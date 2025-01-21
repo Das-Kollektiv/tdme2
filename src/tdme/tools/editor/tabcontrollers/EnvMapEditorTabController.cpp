@@ -24,7 +24,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -57,7 +57,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::views::EditorView;
@@ -95,8 +95,8 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 				try {
 					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 					view->saveFile(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+						FileSystemTools::getPathName(fileName),
+						FileSystemTools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
 					showInfoPopUp("Warning", string(exception.what()));
@@ -130,10 +130,10 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 					"tenvmap"
 				};
 				popUps->getFileDialogScreenController()->show(
-					fileName.empty() == false?Tools::getPathName(fileName):string(),
+					fileName.empty() == false?FileSystemTools::getPathName(fileName):string(),
 					"Save to: ",
 					extensions,
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnEnvMapSave(this)
 				);

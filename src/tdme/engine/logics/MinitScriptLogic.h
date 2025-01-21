@@ -21,7 +21,7 @@
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/minitscript/EngineMinitScript.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 
 using std::make_unique;
@@ -44,7 +44,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transform;
 using tdme::minitscript::EngineMinitScript;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 
 /**
@@ -277,8 +277,8 @@ public:
 						// load from library as generic MinitScript
 						auto libraryMinitScript = unique_ptr<MinitScript>(
 							miniScript->getLibrary()->loadScript(
-								Tools::getPathName(scriptURI),
-								Tools::getFileName(scriptURI),
+								FileSystemTools::getPathName(scriptURI),
+								FileSystemTools::getFileName(scriptURI),
 								context->getApplicationRootPathName()
 							)
 						);
@@ -299,8 +299,8 @@ public:
 						// nope, just parse script into LogicMinitScript
 						logicMinitScript = make_unique<LogicMinitScript>();
 						logicMinitScript->parseScript(
-							Tools::getPathName(prototype->getScript()),
-							Tools::getFileName(prototype->getScript())
+							FileSystemTools::getPathName(prototype->getScript()),
+							FileSystemTools::getFileName(prototype->getScript())
 						);
 					}
 					// add logic if valid

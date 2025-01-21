@@ -40,7 +40,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -91,7 +91,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Base64;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -124,8 +124,8 @@ const vector<string> PrototypeReader::getModelExtensions() {
 
 bool PrototypeReader::readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData) {
 	//
-	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
-		Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) return false;
+	if (FileSystemTools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
+		FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) return false;
 	//
 	try {
 		auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
@@ -148,13 +148,13 @@ bool PrototypeReader::readThumbnail(const string& pathName, const string& fileNa
 Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
 {
 	//
-	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
-		Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) {
+	if (FileSystemTools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
+		FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) {
 		return make_unique<Prototype>(
 			Prototype::ID_NONE,
 			Prototype_Type::MODEL,
-			Tools::removeFileExtension(fileName),
-			Tools::removeFileExtension(fileName),
+			FileSystemTools::removeFileExtension(fileName),
+			FileSystemTools::removeFileExtension(fileName),
 			pathName + "/" + fileName,
 			pathName + "/" + fileName,
 			string(),
@@ -502,9 +502,9 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
-	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
-	auto resourceRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, resourceFile);
-	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(resourceRelativeFileName);
+	auto applicationRoot = FileSystemTools::getApplicationRootPathName(pathName);
+	auto resourceRelativeFileName = FileSystemTools::getRelativeResourcesFileName(applicationRoot, resourceFile);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + FileSystemTools::getPathName(resourceRelativeFileName);
 	return resourcePathName;
 }
 
@@ -595,7 +595,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(Prototype* prototy
 				string fileName = jBv["file"].GetString();
 				prototypeBoundingVolume->setupConvexMesh(
 					getResourcePathName(pathName, fileName),
-					Tools::getFileName(fileName)
+					FileSystemTools::getFileName(fileName)
 				);
 			}
 		} catch (Exception& exception) {
@@ -721,7 +721,7 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());
 				auto particleModelPath = getResourcePathName(pathName, particleModelFile);
 				objectParticleSystem->setModelFile(
-					particleModelPath + "/" + Tools::getFileName(particleModelFile),
+					particleModelPath + "/" + FileSystemTools::getFileName(particleModelFile),
 					useBC7TextureCompression
 				);
 			} catch (Exception& exception) {
@@ -741,8 +741,8 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 					auto particleTransparencyTextureFileName = string(jPointParticleSystem.FindMember("tt") != jPointParticleSystem.MemberEnd()?jPointParticleSystem["tt"].GetString():"");
 					auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
 					pointParticleSystem->setTextureFileName(
-						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
-						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
+						particleTexturePathName + "/" + FileSystemTools::getFileName(particleTextureFileName),
+						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + FileSystemTools::getFileName(particleTransparencyTextureFileName)
 					);
 					if (jPointParticleSystem.FindMember("ths") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureHorizontalSprites(jPointParticleSystem["ths"].GetInt());
 					if (jPointParticleSystem.FindMember("tvs") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureVerticalSprites(jPointParticleSystem["tvs"].GetInt());
@@ -766,8 +766,8 @@ PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& path
 					auto particleTransparencyTextureFileName = jFogParticleSystem.FindMember("tt") != jFogParticleSystem.MemberEnd()?string():jFogParticleSystem["tt"].GetString();
 					auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
 					fogParticleSystem->setTextureFileName(
-						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
-						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
+						particleTexturePathName + "/" + FileSystemTools::getFileName(particleTextureFileName),
+						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + FileSystemTools::getFileName(particleTransparencyTextureFileName)
 					);
 					if (jFogParticleSystem.FindMember("ths") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureHorizontalSprites(jFogParticleSystem["ths"].GetInt());
 					if (jFogParticleSystem.FindMember("tvs") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureVerticalSprites(jFogParticleSystem["tvs"].GetInt());

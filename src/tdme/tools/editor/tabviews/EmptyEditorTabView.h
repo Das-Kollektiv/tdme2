@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/tools/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
@@ -21,7 +22,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;

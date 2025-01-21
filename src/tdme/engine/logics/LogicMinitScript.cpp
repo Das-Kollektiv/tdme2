@@ -11,6 +11,7 @@
 #include <agui/gui/events/GUIMouseEvent.h>
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/logics/Context.h>
@@ -35,8 +36,6 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -54,6 +53,7 @@ using tdme::engine::logics::LogicMinitScript;
 using agui::gui::events::GUIKeyboardEvent;
 using agui::gui::events::GUIMouseEvent;
 
+using tdme::application::Application;
 using tdme::audio::Audio;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::logics::Context;
@@ -78,8 +78,6 @@ using tdme::minitscript::EngineMinitScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
-using tdme::tools::editor::misc::Tools;
-using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -170,7 +168,7 @@ void LogicMinitScript::registerMethods() {
 				return "application.isFullScreen";
 			}
 			void executeMethod(span<Variable>& arguments, Variable& returnValue, const SubStatement& subStatement) override {
-				minitScript->setValue(returnValue, Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
+				minitScript->setValue(returnValue, Application::getApplication() != nullptr?Application::getApplication()->isFullScreen():false);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;

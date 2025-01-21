@@ -24,7 +24,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeScriptSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
@@ -54,7 +54,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabviews::subviews::PrototypeScriptSubView;
 using tdme::tools::editor::views::EditorView;
@@ -185,8 +185,8 @@ void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
 	};
 
 	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-	auto pathName = prototype->getScript().empty() == true?Tools::getPathName(screenNode->getFileName()):string();
-	auto fileName = prototype->getScript().empty() == true?Tools::getFileName(screenNode->getFileName()):string();
+	auto pathName = prototype->getScript().empty() == true?FileSystemTools::getPathName(screenNode->getFileName()):string();
+	auto fileName = prototype->getScript().empty() == true?FileSystemTools::getFileName(screenNode->getFileName()):string();
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load script from: ",
@@ -226,8 +226,8 @@ bool PrototypeScriptSubController::onDrop(const string& payload, int mouseX, int
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "script") == true) {
-			if (Tools::hasFileExtension(fileName, {{ "tscript" }}) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tscript" }}));
+			if (FileSystemTools::hasFileExtension(fileName, {{ "tscript" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions({{ "tscript" }}));
 			} else {
 				setScript(fileName, prototype);
 			}

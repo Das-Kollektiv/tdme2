@@ -24,7 +24,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -56,7 +57,8 @@ using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
@@ -67,7 +69,7 @@ Model* GenerateBillboardLOD::generate(
 	const string& pathName,
 	const string& fileName
 ) {
-	auto textureFileName = Tools::removeFileExtension(fileName) + ".png";
+	auto textureFileName = FileSystemTools::removeFileExtension(fileName) + ".png";
 	auto boundingBox = model->getBoundingBox();
 	//
 	{
@@ -88,7 +90,7 @@ Model* GenerateBillboardLOD::generate(
 		light->setSpotCutOff(180.0f);
 		light->setEnabled(true);
 		// do a feasible scale
-		float maxAxisDimension = Tools::computeMaxAxisDimension(boundingBox);
+		float maxAxisDimension = ThumbnailTool::computeMaxAxisDimension(boundingBox);
 		if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 1.0f;
 		//
 		auto camera = osEngine->getCamera();
@@ -173,7 +175,7 @@ Model* GenerateBillboardLOD::generate(
 	auto top = boundingBox->getMin().getY();
 	auto bottom = boundingBox->getMax().getY();
 	auto depth = boundingBox->getCenter().getZ();
-	auto modelId = Tools::removeFileExtension(textureFileName) + ".tm";
+	auto modelId = FileSystemTools::removeFileExtension(textureFileName) + ".tm";
 	auto billboard = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	//
 	auto billboardMaterial = make_unique<Material>("billboard");

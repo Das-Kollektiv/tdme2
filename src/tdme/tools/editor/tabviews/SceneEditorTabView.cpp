@@ -41,6 +41,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
@@ -93,6 +95,8 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
@@ -133,7 +137,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->snappingEnabled = false;
 	this->gridEnabled = false;
 	this->gridY = 0.0f;
-	this->gridModel = unique_ptr<Model>(Tools::createGridModel());
+	this->gridModel = unique_ptr<Model>(ThumbnailTool::createGridModel());
 
 	//
 	setEngine(engine.get());
@@ -1523,8 +1527,8 @@ void SceneEditorTabView::runScene() {
 	if (scene->getGUIFileName().empty() == false) {
 		try {
 			auto screenNode = GUIParser::parse(
-				Tools::getPathName(scene->getGUIFileName()),
-				Tools::getFileName(scene->getGUIFileName()),
+				FileSystemTools::getPathName(scene->getGUIFileName()),
+				FileSystemTools::getFileName(scene->getGUIFileName()),
 				{},
 				scriptLibrary,
 				MinitScript::Variable()
@@ -1553,8 +1557,8 @@ void SceneEditorTabView::runScene() {
 				// load from library as generic MinitScript
 				auto libraryMinitScript = unique_ptr<MinitScript>(
 					scriptLibrary->loadScript(
-						Tools::getPathName(scriptURI),
-						Tools::getFileName(scriptURI),
+						FileSystemTools::getPathName(scriptURI),
+						FileSystemTools::getFileName(scriptURI),
 						applicationClient->getContext()->getApplicationRootPathName()
 					)
 				);
@@ -1574,16 +1578,16 @@ void SceneEditorTabView::runScene() {
 				// nope, just parse script into LogicMinitScript
 				logicMinitScript = make_unique<LogicMinitScript>();
 				logicMinitScript->parseScript(
-					Tools::getPathName(entity->getPrototype()->getScript()),
-					Tools::getFileName(entity->getPrototype()->getScript())
+					FileSystemTools::getPathName(entity->getPrototype()->getScript()),
+					FileSystemTools::getFileName(entity->getPrototype()->getScript())
 				);
 			}
 			//
 			if (logicMinitScript->isValid() == false) {
 				//
 				invalidScripts+=
-					Tools::getRelativeResourcesFileName(
-						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
+					FileSystemTools::getRelativeResourcesFileName(
+						editorView->getScreenController()->getProjectPath(), FileSystemTools::getPathName(entity->getPrototype()->getScript()) + "/" + FileSystemTools::getFileName(entity->getPrototype()->getScript())
 					);
 				//
 				if (logicMinitScript->getParseErrors().empty() == true) {

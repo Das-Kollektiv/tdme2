@@ -8,11 +8,12 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -28,9 +29,10 @@ using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
@@ -49,7 +51,7 @@ EmptyEditorTabView::EmptyEditorTabView(EditorView* editorView, const string& tab
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	Vector3 objectScale;
 	cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get());
-	Tools::setupPrototype(prototype, engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
+	ThumbnailTool::setupPrototype(prototype, engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 

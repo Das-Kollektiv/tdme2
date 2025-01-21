@@ -7,20 +7,20 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/engine/tools/fwd-tdme.h>
 
 using agui::gui::events::GUIInputEventHandler;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
-using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 
 /**
  * Camera Rotation Input Handler
  * @author Andreas Drewke
  */
-class tdme::tools::editor::misc::CameraRotationInputHandler final
+class tdme::engine::tools::CameraRotationInputHandler final
 	: public GUIInputEventHandler
 {
 private:

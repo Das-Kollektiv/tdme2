@@ -77,7 +77,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
@@ -158,7 +158,7 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
@@ -1318,10 +1318,10 @@ void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string&
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
 				string pathName = PrototypeReader::getResourcePathName(
-					Tools::getPathName(prototype->getFileName()),
+					FileSystemTools::getPathName(prototype->getFileName()),
 					soundDefinition->getFileName()
 				);
-				string fileName = Tools::getFileName(soundDefinition->getFileName());
+				string fileName = FileSystemTools::getFileName(soundDefinition->getFileName());
 				auto sound = new Sound(
 					id + "." + soundDefinition->getId() + (poolSize > 1?"." + to_string(poolIdx):""),
 					pathName,

@@ -30,7 +30,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -77,7 +77,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -109,7 +109,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	auto progressCallbackUniquePtr = unique_ptr<ProgressCallback>(progressCallback);
 	auto scene = make_unique<Scene>(fileName, "");
 	//
-	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
+	scene->setApplicationRootPathName(FileSystemTools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
@@ -553,8 +553,8 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 					auto newPrototype = make_unique<Prototype>(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
-						Tools::removeFileExtension(fileName),
-						Tools::removeFileExtension(fileName),
+						FileSystemTools::removeFileExtension(fileName),
+						FileSystemTools::removeFileExtension(fileName),
 						modelPathName + "/" + modelFileName,
 						"resources/engine/models/empty.tm",
 						string(),
@@ -609,7 +609,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		// export to tscene
 		SceneWriter::write(
 			pathName,
-			Tools::removeFileExtension(fileName) + ".tscene",
+			FileSystemTools::removeFileExtension(fileName) + ".tscene",
 			scene.get()
 		);
 	} catch (Exception& exception) {

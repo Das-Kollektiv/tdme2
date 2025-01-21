@@ -46,7 +46,7 @@
 #include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
 #include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
@@ -108,7 +108,7 @@ using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::GenerateBillboardLOD;
 using tdme::tools::editor::misc::GenerateImposterLOD;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
@@ -162,8 +162,8 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 				try {
 					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 					view->saveFile(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+						FileSystemTools::getPathName(fileName),
+						FileSystemTools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
 					showInfoPopUp("Warning", string(exception.what()));
@@ -202,17 +202,17 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 				if (fileName.length() == 0) {
 					fileName = view->getFileName();
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
-						fileName = Tools::removeFileExtension(fileName) + ".tmodel";
+						fileName = FileSystemTools::removeFileExtension(fileName) + ".tmodel";
 					}
 				}
 				vector<string> extensions = {
 					"tmodel"
 				};
 				popUps->getFileDialogScreenController()->show(
-					Tools::getPathName(fileName),
+					FileSystemTools::getPathName(fileName),
 					"Save to: ",
 					extensions,
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnModelSave(this)
 				);
@@ -233,64 +233,64 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_diffuse_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialDiffuseTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_transparency_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialDiffuseTransparencyTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_normal_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialNormalTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_specular_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialSpecularTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_basecolor_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialPBRBaseColorTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_metallic_roughness_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialPBRMetallicRoughnessTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_normal_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialPBRNormalTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_emissive_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setMaterialPBREmissiveTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "animationpreview_attachment1_model") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(ModelReader::getModelExtensions()));
 			} else {
 				setPreviewAnimationsAttachment1Model(fileName);
 			}
@@ -1247,8 +1247,8 @@ void ModelEditorTabController::setMaterialDiffuseTexture(const string& fileName)
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName),
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName),
 		specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
 		specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 	);
@@ -1352,8 +1352,8 @@ void ModelEditorTabController::setMaterialDiffuseTransparencyTexture(const strin
 	specularMaterialProperties->setDiffuseTexture(
 		specularMaterialProperties->getDiffuseTexturePathName(),
 		specularMaterialProperties->getDiffuseTextureFileName(),
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1460,8 +1460,8 @@ void ModelEditorTabController::setMaterialNormalTexture(const string& fileName) 
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setNormalTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1559,8 +1559,8 @@ void ModelEditorTabController::setMaterialSpecularTexture(const string& fileName
 	//
 	view->reloadPrototype();
 	specularMaterialProperties->setSpecularTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1656,8 +1656,8 @@ void ModelEditorTabController::setMaterialPBRBaseColorTexture(const string& file
 	//
 	view->reloadPrototype();
 	pbrMaterialProperties->setBaseColorTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1749,8 +1749,8 @@ void ModelEditorTabController::setMaterialPBRMetallicRoughnessTexture(const stri
 	//
 	view->reloadPrototype();
 	pbrMaterialProperties->setMetallicRoughnessTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1842,8 +1842,8 @@ void ModelEditorTabController::setMaterialPBRNormalTexture(const string& fileNam
 	//
 	view->reloadPrototype();
 	pbrMaterialProperties->setNormalTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -1935,8 +1935,8 @@ void ModelEditorTabController::setMaterialPBREmissiveTexture(const string& fileN
 	//
 	view->reloadPrototype();
 	pbrMaterialProperties->setEmissiveTexture(
-		Tools::getPathName(fileName),
-		Tools::getFileName(fileName)
+		FileSystemTools::getPathName(fileName),
+		FileSystemTools::getFileName(fileName)
 	);
 	updateMaterialDetails();
 }
@@ -2133,8 +2133,8 @@ void ModelEditorTabController::createLOD() {
 				lodLevel->setModel(
 						lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL?
 						ModelReader::read(
-							Tools::getPathName(lodLevel->getFileName()),
-							Tools::getFileName(lodLevel->getFileName())
+							FileSystemTools::getPathName(lodLevel->getFileName()),
+							FileSystemTools::getFileName(lodLevel->getFileName())
 						):
 						nullptr
 				);
@@ -2492,8 +2492,8 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 								throw ExceptionBase("All 3 LOD levels are in use");
 							}
 							if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-							auto billboardModelPathName = Tools::getPathName(fileName);
-							auto billboardModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+							auto billboardModelPathName = FileSystemTools::getPathName(fileName);
+							auto billboardModelFileName = FileSystemTools::removeFileExtension(FileSystemTools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
 							auto billboardLODModel = GenerateBillboardLOD::generate(
 								model,
 								billboardModelPathName,
@@ -2542,8 +2542,8 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						auto fileName = prototype->getModelFileName();
 						try {
 							if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-							auto imposterModelPathName = Tools::getPathName(fileName);
-							auto imposterModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+							auto imposterModelPathName = FileSystemTools::getPathName(fileName);
+							auto imposterModelFileName = FileSystemTools::removeFileExtension(FileSystemTools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
 							vector<Model*> imposterLODModels;
 							vector<string> imposterLODFileNames;
 							GenerateImposterLOD::generate(

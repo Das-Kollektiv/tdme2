@@ -65,6 +65,8 @@ function: main()
 		$tdmeIncludes = ""
 		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext -lagui"
 		$tdmeDefinitions = ""
+		$tdmeExtraLibsLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext -lagui -ltdme"
+		$tdmeExtraLibsDefinitions = ""
 		$tdmeRendererIncludes = "-Isrc -Iext/a-gui/src"
 		$tdmeRendererDefinitions = ""
 		$tdmeRendererLdFlags = "-Llib -ltdme"
@@ -72,9 +74,8 @@ function: main()
 		$tdmeVulkanRendererPlatformFiles = []
 		$glfwDefinitions = ""
 		$rapidJSONDefinitions = "-D RAPIDJSON_HAS_STDSTRING"
-		$executableIncludes = "-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src"
-		$executableDefinitions = "-Llib -ltdme -ltdme-ext -lyannet -lminitscript -pthread"
-		$executableLdFlags = "-Llib -ltdme -lagui -ltdme-ext -lyannet -lminitscript -pthread"
+		$executableDefinitions = ""
+		$executableLdFlags = "-Llib -pthread -lminitscript -lyannet -ltdme-ext -lagui -ltdme -ltdme-editor -ltdme-tests"
 		$buildLibrary = "buildLibraryUnix"
 		$buildExecutables = "buildExecutablesUnix"
 		if ($$.application::OS == "FreeBSD")
@@ -88,6 +89,7 @@ function: main()
 			$yannetLdFlags = "-L/usr/lib -ldl -lexecinfo"
 			$aguiLdFlags = $aguiLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "-L/usr/lib -ldl -lexecinfo"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "Haiku")
 			$yannetPlatformFiles = [
@@ -129,6 +131,7 @@ function: main()
 			$yannetLdFlags = "-L/usr/lib -lexecinfo"
 			$aguiLdFlags = $aguiLdFlags + " " + "-L/usr/lib -lexecinfo"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-L/usr/lib -lexecinfo"
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "-L/usr/lib -lexecinfo"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Unix/ossource.cpp"
 		elseif ($$.application::OS == "OpenBSD")
 			$yannetPlatformFiles = [
@@ -156,6 +159,7 @@ function: main()
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
+			$tdmeExtraLibsLdFlags = "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/OpenGL32.Lib\""
 			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
@@ -168,6 +172,7 @@ function: main()
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
 			$aguiDefinitions = "/D MINITSCRIPT_DLL_IMPORT"
 			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_EXPORT"
+			$tdmeExtraLibsDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
 			$glfwDefinitions = "/D GLFW_DLL"
 			$executableDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
 			$executableLdFlags = ""
@@ -188,6 +193,7 @@ function: main()
 			$yannetLdFlags = "-lws2_32"
 			$aguiLdFlags = $aguiLdFlags + " " + "-lopengl32 -luser32 -dbghelp"
 			$tdmeLdFlags = $tdmeLdFlags + " " + "-luser32 -dbghelp"
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "-luser32 -dbghelp"
 			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "-lopengl32 -luser32 -dbghelp"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 		end
@@ -863,6 +869,9 @@ function: main()
 				"src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp",
 				"src/tdme/engine/subsystems/skinning/SkinningShader.cpp",
 				"src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp",
+				"src/tdme/engine/tools/CameraRotationInputHandler.cpp",
+				"src/tdme/engine/tools/FileSystemTools.cpp",
+				"src/tdme/engine/tools/ThumbnailTool.cpp",
 				"src/tdme/minitscript/EngineMinitScript.cpp",
 				"src/tdme/minitscript/MinitScriptMatrix3x3.cpp",
 				"src/tdme/minitscript/MinitScriptMatrix4x4.cpp",
@@ -876,29 +885,40 @@ function: main()
 				"src/tdme/os/filesystem/FileSystemException.cpp",
 				"src/tdme/os/filesystem/StandardFileSystem.cpp",
 				"src/tdme/os/threading/Barrier.cpp",
-				"src/tdme/tests/EngineTest.cpp",
-				"src/tdme/tests/EntityHierarchyTest.cpp",
-				"src/tdme/tests/LODTest.cpp",
-				"src/tdme/tests/FlowMapTest.cpp",
-				"src/tdme/tests/FlowMapTest2.cpp",
-				"src/tdme/tests/FoliageTest.cpp",
-				"src/tdme/tests/MathOperatorTest.cpp",
-				"src/tdme/tests/PathFindingTest.cpp",
-				"src/tdme/tests/PhysicsTest1.cpp",
-				"src/tdme/tests/PhysicsTest2.cpp",
-				"src/tdme/tests/PhysicsTest3.cpp",
-				"src/tdme/tests/PhysicsTest4.cpp",
-				"src/tdme/tests/PhysicsTest5.cpp",
-				"src/tdme/tests/RayTracingTest.cpp",
-				"src/tdme/tests/ThreadingTest_ConsumerThread.cpp",
-				"src/tdme/tests/ThreadingTest_ProducerThread.cpp",
-				"src/tdme/tests/ThreadingTest_TestThread.cpp",
-				"src/tdme/tests/UDPServerTest_UDPServer.cpp",
-				"src/tdme/tests/UDPServerTest_UDPServerClient.cpp",
-				"src/tdme/tests/SkinningTest.cpp",
-				"src/tdme/tests/TreeTest.cpp",
-				"src/tdme/tests/VideoTest.cpp",
-				"src/tdme/tests/WaterTest.cpp",
+				"src/tdme/utilities/Base64.cpp",
+				"src/tdme/utilities/Console.cpp",
+				"src/tdme/utilities/ExceptionBase.cpp",
+				"src/tdme/utilities/Float.cpp",
+				"src/tdme/utilities/Hex.cpp",
+				"src/tdme/utilities/Integer.cpp",
+				"src/tdme/utilities/ModelTools.cpp",
+				"src/tdme/utilities/PathFinding.cpp",
+				"src/tdme/utilities/Primitives.cpp",
+				"src/tdme/utilities/Properties.cpp",
+				"src/tdme/utilities/RTTI.cpp",
+				"src/tdme/utilities/SimpleTextureAtlas.cpp",
+				"src/tdme/utilities/SHA256.cpp",
+				"src/tdme/utilities/StringTools.cpp",
+				"src/tdme/utilities/StringTokenizer.cpp",
+				"src/tdme/utilities/Terrain.cpp",
+				"src/tdme/utilities/TextureAtlas.cpp",
+				"src/tdme/utilities/UTF8StringTokenizer.cpp",
+				"src/tdme/utilities/UTF8StringTools.cpp",
+				"src/tdme/video/decoder/MPEG1Decoder.cpp",
+				"src/tdme/video/decoder/VideoDecoderException.cpp"
+			] + $tdmePlatformFiles,
+			false
+		)
+
+		script.call(
+			$buildLibrary,
+			"libtdme-editor",
+			[
+			],
+			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeExtraLibsDefinitions,
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src",
+			$tdmeExtraLibsLdFlags,
+			[
 				"src/tdme/tools/editor/Editor.cpp",
 				"src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp",
 				"src/tdme/tools/editor/controllers/ColorPickerImageController.cpp",
@@ -915,7 +935,6 @@ function: main()
 				"src/tdme/tools/editor/controllers/SelectorDialogScreenController.cpp",
 				"src/tdme/tools/editor/controllers/TooltipScreenController.cpp",
 				"src/tdme/tools/editor/misc/CameraInputHandler.cpp",
-				"src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp",
 				"src/tdme/tools/editor/misc/GenerateBillboardLOD.cpp",
 				"src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp",
 				"src/tdme/tools/editor/misc/GenerateImposterLOD.cpp",
@@ -967,29 +986,44 @@ function: main()
 				"src/tdme/tools/editor/tabviews/subviews/PrototypeScriptSubView.cpp",
 				"src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp",
 				"src/tdme/tools/editor/views/EditorView.cpp",
-				"src/tdme/tools/installer/Installer.cpp",
-				"src/tdme/utilities/Base64.cpp",
-				"src/tdme/utilities/Console.cpp",
-				"src/tdme/utilities/ExceptionBase.cpp",
-				"src/tdme/utilities/Float.cpp",
-				"src/tdme/utilities/Hex.cpp",
-				"src/tdme/utilities/Integer.cpp",
-				"src/tdme/utilities/ModelTools.cpp",
-				"src/tdme/utilities/PathFinding.cpp",
-				"src/tdme/utilities/Primitives.cpp",
-				"src/tdme/utilities/Properties.cpp",
-				"src/tdme/utilities/RTTI.cpp",
-				"src/tdme/utilities/SimpleTextureAtlas.cpp",
-				"src/tdme/utilities/SHA256.cpp",
-				"src/tdme/utilities/StringTools.cpp",
-				"src/tdme/utilities/StringTokenizer.cpp",
-				"src/tdme/utilities/Terrain.cpp",
-				"src/tdme/utilities/TextureAtlas.cpp",
-				"src/tdme/utilities/UTF8StringTokenizer.cpp",
-				"src/tdme/utilities/UTF8StringTools.cpp",
-				"src/tdme/video/decoder/MPEG1Decoder.cpp",
-				"src/tdme/video/decoder/VideoDecoderException.cpp"
-			] + $tdmePlatformFiles,
+				"src/tdme/tools/installer/Installer.cpp"
+			],
+			false
+		)
+
+		script.call(
+			$buildLibrary,
+			"libtdme-tests",
+			[
+			],
+			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeExtraLibsDefinitions,
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src" + " " + $tdmeIncludes,
+			$tdmeExtraLibsLdFlags,
+			[
+				"src/tdme/tests/EngineTest.cpp",
+				"src/tdme/tests/EntityHierarchyTest.cpp",
+				"src/tdme/tests/LODTest.cpp",
+				"src/tdme/tests/FlowMapTest.cpp",
+				"src/tdme/tests/FlowMapTest2.cpp",
+				"src/tdme/tests/FoliageTest.cpp",
+				"src/tdme/tests/MathOperatorTest.cpp",
+				"src/tdme/tests/PathFindingTest.cpp",
+				"src/tdme/tests/PhysicsTest1.cpp",
+				"src/tdme/tests/PhysicsTest2.cpp",
+				"src/tdme/tests/PhysicsTest3.cpp",
+				"src/tdme/tests/PhysicsTest4.cpp",
+				"src/tdme/tests/PhysicsTest5.cpp",
+				"src/tdme/tests/RayTracingTest.cpp",
+				"src/tdme/tests/ThreadingTest_ConsumerThread.cpp",
+				"src/tdme/tests/ThreadingTest_ProducerThread.cpp",
+				"src/tdme/tests/ThreadingTest_TestThread.cpp",
+				"src/tdme/tests/UDPServerTest_UDPServer.cpp",
+				"src/tdme/tests/UDPServerTest_UDPServerClient.cpp",
+				"src/tdme/tests/SkinningTest.cpp",
+				"src/tdme/tests/TreeTest.cpp",
+				"src/tdme/tests/VideoTest.cpp",
+				"src/tdme/tests/WaterTest.cpp"
+			],
 			false
 		)
 
@@ -1116,7 +1150,7 @@ function: main()
 				"libcrypto"
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $executableDefinitions,
-			$executableIncludes,
+			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src",
 			$executableLdFlags,
 			[
 				"src/tdme/tests/AudioTest-main.cpp",

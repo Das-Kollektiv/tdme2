@@ -64,7 +64,7 @@
 #include <tdme/tools/editor/misc/Markdown.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
@@ -157,7 +157,7 @@ using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::Markdown;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
@@ -484,21 +484,21 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 								string duplicateFileName = editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText();
 								string extension;
 								if (FileSystem::getInstance()->isPath(absoluteFileName) == false) {
-									extension = Tools::getFileExtension(absoluteFileName);
+									extension = FileSystemTools::getFileExtension(absoluteFileName);
 								}
 								// read file
 								vector<uint8_t> fileContent;
 								FileSystem::getInstance()->getContent(
-									Tools::getPathName(absoluteFileName),
-									Tools::getFileName(absoluteFileName),
+									FileSystemTools::getPathName(absoluteFileName),
+									FileSystemTools::getFileName(absoluteFileName),
 									fileContent
 								);
 								// write file
 								FileSystem::getInstance()->setContent(
-									Tools::getPathName(absoluteFileName),
+									FileSystemTools::getPathName(absoluteFileName),
 									(extension.empty() == true?
 										duplicateFileName:
-										Tools::ensureFileExtension(duplicateFileName, extension)
+										FileSystemTools::ensureFileExtension(duplicateFileName, extension)
 									),
 									fileContent
 								);
@@ -516,7 +516,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 					//
 					editorScreenController->view->getPopUps()->getInputDialogScreenController()->show(
 						"Duplicate",
-						Tools::removeFileExtension(Tools::getFileName(absoluteFileName)),
+						FileSystemTools::removeFileExtension(FileSystemTools::getFileName(absoluteFileName)),
 						new DuplicateFileAction(editorScreenController, absoluteFileName)
 					);
 				}
@@ -547,15 +547,15 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 								string renameFileName = editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText();
 								string extension;
 								if (FileSystem::getInstance()->isPath(absoluteFileName) == false) {
-									extension = Tools::getFileExtension(absoluteFileName);
+									extension = FileSystemTools::getFileExtension(absoluteFileName);
 								}
 								// rename file
 								FileSystem::getInstance()->rename(
 									absoluteFileName,
-									Tools::getPathName(absoluteFileName) + "/" +
+									FileSystemTools::getPathName(absoluteFileName) + "/" +
 										(extension.empty() == true?
 											renameFileName:
-											Tools::ensureFileExtension(renameFileName, extension)
+											FileSystemTools::ensureFileExtension(renameFileName, extension)
 										)
 								);
 								// reload file view
@@ -572,7 +572,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 					//
 					editorScreenController->view->getPopUps()->getInputDialogScreenController()->show(
 						"Rename",
-						Tools::removeFileExtension(Tools::getFileName(absoluteFileName)),
+						FileSystemTools::removeFileExtension(FileSystemTools::getFileName(absoluteFileName)),
 						new RenameFileAction(editorScreenController, absoluteFileName)
 					);
 				}
@@ -607,7 +607,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 								// move file
 								FileSystem::getInstance()->rename(
 									absoluteFileName,
-									moveToPath + "/" + Tools::getFileName(absoluteFileName)
+									moveToPath + "/" + FileSystemTools::getFileName(absoluteFileName)
 								);
 								// reload file view
 								editorScreenController->reload();
@@ -650,7 +650,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 						if (FileSystem::getInstance()->isPath(absoluteFileName) == true) {
 							FileSystem::getInstance()->removePath(absoluteFileName, true);
 						} else {
-							FileSystem::getInstance()->removeFile(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
+							FileSystem::getInstance()->removeFile(FileSystemTools::getPathName(absoluteFileName), FileSystemTools::getFileName(absoluteFileName));
 						}
 						//
 						editorScreenController->reload();
@@ -687,8 +687,8 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 									try {
 										// load prototype
 										auto prototype = PrototypeReader::read(
-											Tools::getPathName(absoluteFileName),
-											Tools::getFileName(absoluteFileName)
+											FileSystemTools::getPathName(absoluteFileName),
+											FileSystemTools::getFileName(absoluteFileName)
 										);
 										// mark as non embedded
 										prototype->setEmbedded(false);
@@ -728,7 +728,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 						if (FileSystem::getInstance()->isPath(absoluteFileName) == true) {
 							Application::getApplication()->openBrowser(absoluteFileName);
 						} else {
-							Application::getApplication()->openBrowser(Tools::getPathName(absoluteFileName));
+							Application::getApplication()->openBrowser(FileSystemTools::getPathName(absoluteFileName));
 						}
 					} catch (Exception& exception) {
 						Console::printLine("OnShowInFileBrowserAction::performAction(): An error occurred: " + string(exception.what()));
@@ -1051,9 +1051,9 @@ void EditorScreenController::reload() {
 void EditorScreenController::browseTo(const string& fileName) {
 	stopScanFiles();
 	resetScanFiles();
-	auto newRelativeProjectPath = Tools::getPathName(fileName);
+	auto newRelativeProjectPath = FileSystemTools::getPathName(fileName);
 	if (StringTools::startsWith(newRelativeProjectPath, projectPath) == true) newRelativeProjectPath = StringTools::substring(newRelativeProjectPath, projectPath.size() + 1);
-	browseToFileName = projectPath + "/" + newRelativeProjectPath + "/" + Tools::getFileName(fileName);
+	browseToFileName = projectPath + "/" + newRelativeProjectPath + "/" + FileSystemTools::getFileName(fileName);
 	setRelativeProjectPath(newRelativeProjectPath);
 	startScanFiles();
 }
@@ -1171,7 +1171,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = make_unique<FileEntity>();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(FileSystemTools::getFileName(fileName), '.', '_'));
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
@@ -1200,7 +1200,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = make_unique<FileEntity>();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(FileSystemTools::getFileName(fileName), '.', '_'));
 
 			//
 			string buttonOnInitialize;
@@ -1277,7 +1277,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 				//
 				auto fileEntity = make_unique<FileEntity>();
-				fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+				fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(FileSystemTools::getFileName(fileName), '.', '_'));
 
 				//
 				string buttonOnInitialize;
@@ -1327,7 +1327,7 @@ void EditorScreenController::onAddFile(const string& type) {
 				editorScreenController->projectPath + "/" + editorScreenController->relativeProjectPath,
 				(extension.empty() == true?
 					editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText():
-					Tools::ensureFileExtension(editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText(), extension)),
+					FileSystemTools::ensureFileExtension(editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText(), extension)),
 				type
 			);
 			editorScreenController->view->getPopUps()->getInputDialogScreenController()->close();
@@ -1372,7 +1372,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				StringTools::replace(
 					FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"),
 					"{$screen-id}",
-					Tools::removeFileExtension(fileName)
+					FileSystemTools::removeFileExtension(fileName)
 				)
 			);
 			browseTo(pathName + "/" + fileName);
@@ -1414,8 +1414,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::EMPTY,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
@@ -1430,8 +1430,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::TRIGGER,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1448,8 +1448,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::ENVIRONMENTMAPPING,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1466,8 +1466,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::DECAL,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1480,8 +1480,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::MODEL,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
@@ -1492,8 +1492,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::TERRAIN,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1504,8 +1504,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::PARTICLESYSTEM,
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1514,8 +1514,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		} else
 		if (type == "scene") {
 			scene = make_unique<Scene>(
-				Tools::removeFileExtension(fileName),
-				Tools::removeFileExtension(fileName)
+				FileSystemTools::removeFileExtension(fileName),
+				FileSystemTools::removeFileExtension(fileName)
 			);
 		}
 		if (prototype != nullptr) {
@@ -1551,13 +1551,13 @@ void EditorScreenController::FileOpenThread::run() {
 		switch (fileType) {
 			case FILETYPE_MODEL:
 				{
-					auto model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
+					auto model = ModelReader::read(FileSystemTools::getPathName(absoluteFileName), FileSystemTools::getFileName(absoluteFileName));
 					prototype = make_unique<Prototype>(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
-						Tools::removeFileExtension(fileName),
-						Tools::removeFileExtension(fileName),
-						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileExtension(fileName) + ".tmodel",
+						FileSystemTools::removeFileExtension(fileName),
+						FileSystemTools::removeFileExtension(fileName),
+						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + FileSystemTools::removeFileExtension(fileName) + ".tmodel",
 						absoluteFileName,
 						string(),
 						model
@@ -2207,7 +2207,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
 			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)).getArray());
 		}
-		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView.release(), required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, FileSystemTools::getFileName(absoluteFileName), tabType, tabView.release(), required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabViewVector.push_back(&tabViews[tabId]);
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {

@@ -32,15 +32,16 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/misc/TextTools.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -82,6 +83,8 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -476,8 +479,8 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 	try {
 		// parse XML
 		xml = FileSystem::getInstance()->getContentAsString(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
+			FileSystemTools::getPathName(fileName),
+			FileSystemTools::getFileName(fileName)
 		);
 	} catch (Exception& exception) {
 		Console::printLine("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
@@ -555,8 +558,8 @@ void UIEditorTabView::reAddScreens() {
 				screenNode = GUIParser::parse(
 					uiScreenNodes[i].xml,
 					{},
-					Tools::getPathName(uiScreenNodes[i].fileName),
-					Tools::getFileName(uiScreenNodes[i].fileName)
+					FileSystemTools::getPathName(uiScreenNodes[i].fileName),
+					FileSystemTools::getFileName(uiScreenNodes[i].fileName)
 				);
 			} catch (Exception& exception) {
 				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
@@ -602,8 +605,8 @@ void UIEditorTabView::reAddScreens() {
 					"	</layout>'>\n" +
 					"</screen>>\n",
 					templateAttributes,
-					Tools::getPathName(uiScreenNodes[i].fileName),
-					Tools::getFileName(uiScreenNodes[i].fileName)
+					FileSystemTools::getPathName(uiScreenNodes[i].fileName),
+					FileSystemTools::getFileName(uiScreenNodes[i].fileName)
 				);
 			} catch (Exception& exception) {
 				Console::printLine("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
@@ -678,7 +681,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 		projectedUi = true;
 	}
 	Vector3 objectScale;
-	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get(), 1.5f, projectedUiLast == true);
+	ThumbnailTool::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get(), 1.5f, projectedUiLast == true);
 
 	// scale model, ground * 2
 	auto modelEntity = engine->getEntity("model");

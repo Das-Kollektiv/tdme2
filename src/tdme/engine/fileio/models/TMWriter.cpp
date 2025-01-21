@@ -35,7 +35,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -77,7 +77,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -377,7 +377,7 @@ void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	);
 	vector<uint8_t> pngData;
 	string base64PNGData;
-	Tools::oseThumbnail(prototype.get(), pngData);
+	ThumbnailTool::oseThumbnail(prototype.get(), pngData);
 	prototype->unsetModel();
 
 	// write as attachment

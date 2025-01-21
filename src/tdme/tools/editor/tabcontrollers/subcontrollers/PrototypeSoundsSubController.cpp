@@ -25,7 +25,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -63,7 +63,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
@@ -117,10 +117,10 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 	auto fileName = sound->getFileName();
 
 	view->getPopUps()->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):string(),
+		fileName.empty() == false?FileSystemTools::getPathName(fileName):string(),
 		"Load audio from: ",
 		{{"ogg"}},
-		fileName.empty() == false?Tools::getFileName(fileName):"",
+		fileName.empty() == false?FileSystemTools::getFileName(fileName):"",
 		true,
 		new LoadSoundAction(this, prototype, soundId)
 	);
@@ -508,8 +508,8 @@ bool PrototypeSoundsSubController::onDrop(const string& payload, int mouseX, int
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "sound") == true) {
-			if (Tools::hasFileExtension(fileName, {{ "ogg"}}) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "ogg" }}));
+			if (FileSystemTools::hasFileExtension(fileName, {{ "ogg"}}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions({{ "ogg" }}));
 			} else {
 				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());

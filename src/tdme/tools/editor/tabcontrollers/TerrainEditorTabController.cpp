@@ -35,7 +35,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/TerrainEditorTabView.h>
@@ -86,7 +86,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
@@ -112,7 +112,7 @@ TerrainEditorTabController::TerrainEditorTabController(TerrainEditorTabView* vie
 	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "terrain");
 	this->popUps = view->getPopUps();
 	this->currentTerrainBrushTextureFileName = "resources/engine/textures/terrain_brush_soft.png";
-	this->currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(currentTerrainBrushTextureFileName), Tools::getFileName(currentTerrainBrushTextureFileName), false, false);
+	this->currentTerrainBrushTexture = TextureReader::read(FileSystemTools::getPathName(currentTerrainBrushTextureFileName), FileSystemTools::getFileName(currentTerrainBrushTextureFileName), false, false);
 	this->rampTerrainBrushTexture = TextureReader::read("./resources/engine/textures", "terrain_ramp.png", false, false);
 }
 
@@ -143,8 +143,8 @@ void TerrainEditorTabController::onCommand(TabControllerCommand command)
 				try {
 					if (prototype->getFileName().empty() == true) throw ExceptionBase("Could not save file. No filename known");
 					view->saveFile(
-						Tools::getPathName(prototype->getFileName()),
-						Tools::getFileName(prototype->getFileName())
+						FileSystemTools::getPathName(prototype->getFileName()),
+						FileSystemTools::getFileName(prototype->getFileName())
 					);
 				} catch (Exception& exception) {
 					showInfoPopUp("Warning", string(exception.what()));
@@ -185,10 +185,10 @@ void TerrainEditorTabController::onCommand(TabControllerCommand command)
 
 				//
 				popUps->getFileDialogScreenController()->show(
-					prototype->getFileName().empty() == false?Tools::getPathName(prototype->getFileName()):string(),
+					prototype->getFileName().empty() == false?FileSystemTools::getPathName(prototype->getFileName()):string(),
 					"Save to: ",
 					{{ "tterrain" }},
-					Tools::getFileName(prototype->getFileName()),
+					FileSystemTools::getFileName(prototype->getFileName()),
 					false,
 					new OnModelSave(this)
 				);
@@ -206,22 +206,22 @@ void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int m
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "terrainbrush_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setTerrainBrushTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_texture") == true) {
-			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
 			} else {
 				setFoliageBrushTexture(fileName);
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_prototype_file") == true) {
-			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
+			if (FileSystemTools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
 			} else {
 				setFoliageBrushPrototype(fileName);
 			}
@@ -549,10 +549,10 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
 			view->getPopUps()->getFileDialogScreenController()->show(
-				brush->getFileName().empty() == false?Tools::getPathName(brush->getFileName()):string(),
+				brush->getFileName().empty() == false?FileSystemTools::getPathName(brush->getFileName()):string(),
 				"Load foliage brush texture from: ",
 				extensions,
-				Tools::getFileName(brush->getFileName()),
+				FileSystemTools::getFileName(brush->getFileName()),
 				true,
 				new OnFoliageBrushFileOpenAction(this)
 			);
@@ -625,10 +625,10 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			if (brushPrototype == nullptr) return;
 
 			view->getPopUps()->getFileDialogScreenController()->show(
-				brushPrototype->getFileName().empty() == false?Tools::getPathName(brushPrototype->getFileName()):string(),
+				brushPrototype->getFileName().empty() == false?FileSystemTools::getPathName(brushPrototype->getFileName()):string(),
 				"Load terrain brush texture from: ",
 				PrototypeReader::getPrototypeExtensions(),
-				Tools::getFileName(brushPrototype->getFileName()),
+				FileSystemTools::getFileName(brushPrototype->getFileName()),
 				true,
 				new OnTerrainBrushPrototypeFileOpenAction(this)
 			);
@@ -701,10 +701,10 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
 			view->getPopUps()->getFileDialogScreenController()->show(
-				currentTerrainBrushTextureFileName.empty() == false?Tools::getPathName(currentTerrainBrushTextureFileName):string(),
+				currentTerrainBrushTextureFileName.empty() == false?FileSystemTools::getPathName(currentTerrainBrushTextureFileName):string(),
 				"Load terrain brush texture from: ",
 				extensions,
-				Tools::getFileName(currentTerrainBrushTextureFileName),
+				FileSystemTools::getFileName(currentTerrainBrushTextureFileName),
 				true,
 				new OnTerrainBrushFileOpenAction(this)
 			);
@@ -829,7 +829,7 @@ void TerrainEditorTabController::setOutlinerContent() {
 		auto i = 0;
 		for (auto prototypeIdx: foliagePrototypeIndices) {
 			auto foliagePrototype = terrain->getFoliagePrototype(prototypeIdx);
-			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escape(Tools::removeFileExtension(Tools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escape("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
+			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escape(FileSystemTools::removeFileExtension(FileSystemTools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escape("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
 			i++;
 		}
 		xml+= "</selectbox-parent-option>\n";
@@ -1398,7 +1398,7 @@ void TerrainEditorTabController::setFoliageBrush() {
 	if (brush == nullptr) return;
 
 	// texture
-	auto foliageBrushTexture = TextureReader::read(Tools::getPathName(brush->getFileName()), Tools::getFileName(brush->getFileName()), false, false);
+	auto foliageBrushTexture = TextureReader::read(FileSystemTools::getPathName(brush->getFileName()), FileSystemTools::getFileName(brush->getFileName()), false, false);
 	if (foliageBrushTexture == nullptr) return;
 
 	//
@@ -1429,7 +1429,7 @@ void TerrainEditorTabController::updateFoliageBrush() {
 	if (foliageBrush.brushTexture != nullptr) foliageBrush.brushTexture->releaseReference();
 
 	//
-	foliageBrush.brushTexture = TextureReader::read(Tools::getPathName(brush->getFileName()), Tools::getFileName(brush->getFileName()), false, false);
+	foliageBrush.brushTexture = TextureReader::read(FileSystemTools::getPathName(brush->getFileName()), FileSystemTools::getFileName(brush->getFileName()), false, false);
 	foliageBrush.brushScale = brush->getSize();
 	foliageBrush.brushDensity = brush->getDensity();
 	if (foliageBrush.brushTexture != nullptr) foliageBrush.brushTexture->acquireReference();
@@ -1441,8 +1441,8 @@ void TerrainEditorTabController::updateFoliageBrush() {
 		if (foliageBrushPrototype->getFileName().empty() == false) {
 			try {
 				foliagePrototype = PrototypeReader::read(
-					PrototypeReader::getResourcePathName(Tools::getPathName(foliageBrushPrototype->getFileName()), foliageBrushPrototype->getFileName()),
-					Tools::getFileName(foliageBrushPrototype->getFileName())
+					PrototypeReader::getResourcePathName(FileSystemTools::getPathName(foliageBrushPrototype->getFileName()), foliageBrushPrototype->getFileName()),
+					FileSystemTools::getFileName(foliageBrushPrototype->getFileName())
 				);
 			} catch (Exception& exception) {
 				Console::printLine("TerrainEditorTabController::updateFoliageBrush(): failed to load prototype: " + foliageBrushPrototype->getFileName());
@@ -1600,8 +1600,8 @@ void TerrainEditorTabController::setTerrainBrushTexture(const string& fileName) 
 	currentTerrainBrushTextureFileName = fileName;
 	currentTerrainBrushTexture =
 		TextureReader::read(
-			Tools::getPathName(currentTerrainBrushTextureFileName),
-			Tools::getFileName(currentTerrainBrushTextureFileName),
+			FileSystemTools::getPathName(currentTerrainBrushTextureFileName),
+			FileSystemTools::getFileName(currentTerrainBrushTextureFileName),
 			false,
 			false
 		);

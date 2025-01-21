@@ -31,7 +31,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -75,7 +75,7 @@ using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 using tdme::tools::editor::views::EditorView;
@@ -144,8 +144,8 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 				try {
 					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 					view->saveFile(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+						FileSystemTools::getPathName(fileName),
+						FileSystemTools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
 					showInfoPopUp("Warning", string(exception.what()));
@@ -185,10 +185,10 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 					view->getExtension()
 				};
 				popUps->getFileDialogScreenController()->show(
-					Tools::getPathName(fileName),
+					FileSystemTools::getPathName(fileName),
 					"Save to: ",
 					extensions,
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnTextSave(this)
 				);
@@ -432,7 +432,7 @@ void TextEditorTabController::updateMinitScriptSyntaxTree(int minitScriptScriptI
 	// we need to detect EngineMinitScript variant
 	vector<string> scriptAsStringArray;
 	try {
-		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName), scriptAsStringArray);
+		FileSystem::getInstance()->getContentAsStringArray(FileSystemTools::getPathName(scriptFileName), FileSystemTools::getFileName(scriptFileName), scriptAsStringArray);
 	} catch (Exception& exception) {
 		minitScriptSyntaxTrees.clear();
 		view->setMinitScriptMethodOperatorMap({});
@@ -444,7 +444,7 @@ void TextEditorTabController::updateMinitScriptSyntaxTree(int minitScriptScriptI
 	}
 
 	// load specific EngineMinitScript
-	scriptInstance = unique_ptr<MinitScript>(EngineMinitScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	scriptInstance = unique_ptr<MinitScript>(EngineMinitScript::loadScript(FileSystemTools::getPathName(scriptFileName), FileSystemTools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {

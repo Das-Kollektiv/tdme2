@@ -34,9 +34,10 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
@@ -86,9 +87,10 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
@@ -175,7 +177,7 @@ void ModelEditorTabView::initModel(bool resetup)
 	attachment1Model = nullptr;
 	attachment1Bone.clear();
 	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
-	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler.get(), 1.5f, resetup);
+	ThumbnailTool::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler.get(), 1.5f, resetup);
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 	auto currentModelObject = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
@@ -474,7 +476,7 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 			unique_ptr<Model>(
 				attachmentModelFile.empty() == true?
 					nullptr:
-					ModelReader::read(Tools::getPathName(attachmentModelFile), Tools::getFileName(attachmentModelFile))
+					ModelReader::read(FileSystemTools::getPathName(attachmentModelFile), FileSystemTools::getFileName(attachmentModelFile))
 			);
 	} catch (Exception& exception) {
 		Console::printLine("ModelEditorTabView::addAttachment1(): An error occurred: " + string(exception.what()));
@@ -502,10 +504,10 @@ void ModelEditorTabView::playSound(const string& soundId) {
 	///
 	if (object != nullptr && soundDefinition->getAnimation().empty() == false) object->setAnimation(soundDefinition->getAnimation());
 	auto pathName = PrototypeReader::getResourcePathName(
-		Tools::getPathName(prototype->getFileName()),
+		FileSystemTools::getPathName(prototype->getFileName()),
 		soundDefinition->getFileName()
 	);
-	auto fileName = Tools::getFileName(soundDefinition->getFileName());
+	auto fileName = FileSystemTools::getFileName(soundDefinition->getFileName());
 	auto sound = new Sound(
 		"sound",
 		pathName,

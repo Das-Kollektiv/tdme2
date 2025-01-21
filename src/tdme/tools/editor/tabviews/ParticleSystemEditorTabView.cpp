@@ -31,9 +31,10 @@
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
@@ -81,9 +82,10 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::misc::CameraRotationInputHandler;
-using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
@@ -301,10 +303,10 @@ void ParticleSystemEditorTabView::playSound(const string& soundId) {
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		auto pathName = PrototypeReader::getResourcePathName(
-			Tools::getPathName(prototype->getFileName()),
+			FileSystemTools::getPathName(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
-		auto fileName = Tools::getFileName(soundDefinition->getFileName());
+		auto fileName = FileSystemTools::getFileName(soundDefinition->getFileName());
 		auto sound = new Sound(
 			"sound",
 			pathName,
@@ -330,7 +332,7 @@ void ParticleSystemEditorTabView::stopSound() {
 }
 
 void ParticleSystemEditorTabView::initParticleSystem() {
-	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
+	ThumbnailTool::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 

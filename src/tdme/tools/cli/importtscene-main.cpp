@@ -9,7 +9,7 @@
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -23,7 +23,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 		Console::printLine("Saving scene: " + sceneModelFileName);
 		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(sceneModelFileName),
-			Tools::ensureFileExtension(FileSystem::getInstance()->getFileName(sceneModelFileName), "tscene"),
+			FileSystemTools::ensureFileExtension(FileSystem::getInstance()->getFileName(sceneModelFileName), "tscene"),
 			scene
 		);
 	} catch (Exception& exception) {

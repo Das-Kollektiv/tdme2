@@ -5,13 +5,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 
 using std::string;
 
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::Texture;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 
 using tdme::engine::prototype::PrototypeDecal;
 
@@ -26,16 +26,16 @@ void PrototypeDecal::setTextureFileName(const string& textureFileName, const str
 	this->transparencyTextureFileName = transparencyTextureFileName;
 	if (this->transparencyTextureFileName.empty() == false && this->textureFileName.empty() == false) {
 		texture = TextureReader::read2(
-			Tools::getPathName(this->textureFileName),
-			Tools::getFileName(this->textureFileName),
-			Tools::getPathName(this->transparencyTextureFileName),
-			Tools::getFileName(this->transparencyTextureFileName)
+			FileSystemTools::getPathName(this->textureFileName),
+			FileSystemTools::getFileName(this->textureFileName),
+			FileSystemTools::getPathName(this->transparencyTextureFileName),
+			FileSystemTools::getFileName(this->transparencyTextureFileName)
 		);
 	} else
 	if (this->textureFileName.empty() == false) {
 		texture = TextureReader::read(
-			Tools::getPathName(this->textureFileName),
-			Tools::getFileName(this->textureFileName)
+			FileSystemTools::getPathName(this->textureFileName),
+			FileSystemTools::getFileName(this->textureFileName)
 		);
 	}
 }

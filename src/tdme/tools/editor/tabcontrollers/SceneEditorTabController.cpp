@@ -36,7 +36,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
-#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
@@ -85,7 +85,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::misc::Tools;
+using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
@@ -131,7 +131,7 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 				if (scene == nullptr) return;
 
 				//
-				save(Tools::getPathName(scene->getFileName()), Tools::getFileName(scene->getFileName()));
+				save(FileSystemTools::getPathName(scene->getFileName()), FileSystemTools::getFileName(scene->getFileName()));
 			}
 			break;
 		case COMMAND_SAVEAS:
@@ -162,10 +162,10 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 					"tscene"
 				};
 				popUps->getFileDialogScreenController()->show(
-					Tools::getPathName(fileName),
+					FileSystemTools::getPathName(fileName),
 					"Save Scene to: ",
 					extensions,
-					Tools::getFileName(fileName),
+					FileSystemTools::getFileName(fileName),
 					false,
 					new OnSceneSave(this)
 				);
@@ -184,14 +184,14 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 		auto fileName = StringTools::substring(payload, string("file:").size());
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "gui") == true) {
 			vector<string> guiExtensions = {{ "xml" }};
-			if (Tools::hasFileExtension(fileName, guiExtensions) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(guiExtensions));
+			if (FileSystemTools::hasFileExtension(fileName, guiExtensions) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(guiExtensions));
 			} else {
 				setGUIFileName(fileName);
 			}
 		} else
-		if (Tools::hasFileExtension(fileName, PrototypeReader::getPrototypeExtensions()) == false) {
-			showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getPrototypeExtensions()));
+		if (FileSystemTools::hasFileExtension(fileName, PrototypeReader::getPrototypeExtensions()) == false) {
+			showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + FileSystemTools::enumerateFileExtensions(PrototypeReader::getPrototypeExtensions()));
 		} else {
 			auto xScale = static_cast<float>(Engine::getInstance()->getWidth()) / static_cast<float>(screenNode->getScreenWidth());
 			auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
@@ -207,8 +207,8 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 						// load prototype and mark as non embedded
 						auto prototype = unique_ptr<Prototype>(
 							PrototypeReader::read(
-								Tools::getPathName(fileName),
-								Tools::getFileName(fileName)
+								FileSystemTools::getPathName(fileName),
+								FileSystemTools::getFileName(fileName)
 							)
 						);
 						prototype->setEmbedded(false);
