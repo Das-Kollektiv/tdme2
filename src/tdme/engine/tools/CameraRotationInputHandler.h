@@ -6,15 +6,15 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/Transform.h>
 #include <tdme/engine/tools/fwd-tdme.h>
+#include <tdme/engine/Transform.h>
 
 using agui::gui::events::GUIInputEventHandler;
 
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
-using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 
 /**
  * Camera Rotation Input Handler

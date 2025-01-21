@@ -28,10 +28,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -84,10 +84,10 @@ using agui::gui::GUIParser;
 using agui::utilities::MutableString;
 
 using tdme::application::Application;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Version;
-using tdme::engine::tools::FileSystemTools;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

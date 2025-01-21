@@ -32,6 +32,8 @@
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
@@ -41,8 +43,6 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/tools/FileSystemTools.h>
-#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
@@ -86,6 +86,8 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Camera;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
@@ -95,8 +97,6 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
-using tdme::engine::tools::FileSystemTools;
-using tdme::engine::tools::ThumbnailTool;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;

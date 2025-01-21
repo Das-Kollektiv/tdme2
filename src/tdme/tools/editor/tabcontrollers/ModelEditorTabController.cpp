@@ -34,6 +34,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/math/Vector3.h>
@@ -46,7 +47,6 @@
 #include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
 #include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
@@ -96,6 +96,7 @@ using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::engine::Texture;
 using tdme::math::Vector3;
@@ -108,7 +109,6 @@ using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::GenerateBillboardLOD;
 using tdme::tools::editor::misc::GenerateImposterLOD;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;

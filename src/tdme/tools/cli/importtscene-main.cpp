@@ -6,10 +6,10 @@
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -20,10 +20,10 @@ using tdme::application::Application;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::scene::Scene;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 

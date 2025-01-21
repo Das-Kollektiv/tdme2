@@ -33,6 +33,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
@@ -46,7 +47,6 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
@@ -94,6 +94,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
@@ -107,7 +108,6 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;

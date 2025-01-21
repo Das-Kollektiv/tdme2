@@ -6,13 +6,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/tools/CameraRotationInputHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
-#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/DecalEditorTabController.h>
@@ -30,13 +30,13 @@ using std::unique_ptr;
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::ThumbnailTool;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;

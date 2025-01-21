@@ -6,8 +6,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -17,8 +17,8 @@ using std::unique_ptr;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
-using tdme::math::Vector3;
 using tdme::engine::tools::FileSystemTools;
+using tdme::math::Vector3;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::StringTools;
 

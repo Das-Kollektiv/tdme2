@@ -43,6 +43,7 @@
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix3x3.h>
@@ -64,7 +65,6 @@
 #include <tdme/tools/editor/misc/Markdown.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
@@ -134,6 +134,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::RendererBackend;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Texture;
@@ -157,7 +158,6 @@ using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::Markdown;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;

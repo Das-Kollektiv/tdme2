@@ -21,6 +21,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -31,7 +32,6 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -63,6 +63,7 @@ using agui::utilities::MutableString;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -73,7 +74,6 @@ using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::views::EditorView;

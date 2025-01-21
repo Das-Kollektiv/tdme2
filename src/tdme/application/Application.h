@@ -21,9 +21,9 @@
 #include <vector>
 
 #include <agui/agui.h>
+#include <agui/gui/renderer/GUIRendererBackend.h>
 #include <agui/gui/GUIApplication.h>
 #include <agui/gui/GUIEventHandler.h>
-#include <agui/gui/renderer/GUIRendererBackend.h>
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
@@ -37,9 +37,9 @@ using std::unordered_set;
 using std::vector;
 
 // namespaces
+using agui::gui::renderer::GUIRendererBackend;
 using agui::gui::GUIApplication;
 using agui::gui::GUIEventHandler;
-using agui::gui::renderer::GUIRendererBackend;
 
 using tdme::engine::subsystems::renderer::RendererBackend;
 

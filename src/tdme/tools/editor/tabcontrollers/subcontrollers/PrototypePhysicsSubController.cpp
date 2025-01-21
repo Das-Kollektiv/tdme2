@@ -30,6 +30,7 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
@@ -42,7 +43,6 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/GenerateConvexMeshes.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -83,6 +83,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
@@ -95,7 +96,6 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::views::EditorView;

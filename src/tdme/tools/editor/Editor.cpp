@@ -11,11 +11,11 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/SimplePartition.h>
-#include <tdme/engine/tools/FileSystemTools.h>
-#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Version.h>
 #include <tdme/minitscript/EngineMinitScript.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -39,11 +39,11 @@ using agui::gui::GUI;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::SimplePartition;
-using tdme::engine::tools::FileSystemTools;
-using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Version;
 using tdme::minitscript::EngineMinitScript;
 using tdme::tools::editor::controllers::EditorScreenController;

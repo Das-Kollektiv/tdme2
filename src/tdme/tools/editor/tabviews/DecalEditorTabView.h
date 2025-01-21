@@ -21,10 +21,10 @@ using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;

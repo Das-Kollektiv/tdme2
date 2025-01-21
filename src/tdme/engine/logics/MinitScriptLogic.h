@@ -16,12 +16,12 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/minitscript/EngineMinitScript.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 
 using std::make_unique;
@@ -39,12 +39,12 @@ using tdme::engine::logics::Logic;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transform;
 using tdme::minitscript::EngineMinitScript;
-using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 
 /**

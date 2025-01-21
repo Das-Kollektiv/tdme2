@@ -4,14 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/Texture.h>
 
 using std::string;
 
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Texture;
 using tdme::engine::tools::FileSystemTools;
+using tdme::engine::Texture;
 
 using tdme::engine::prototype::PrototypeDecal;
 

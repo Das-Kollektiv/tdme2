@@ -17,7 +17,6 @@ using tdme::engine::tools::FileSystemTools;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::utilities::StringTools;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;

@@ -11,9 +11,9 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
@@ -29,11 +29,11 @@ using agui::gui::events::GUIInputEventHandler;
 using tdme::audio::Audio;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::math::Vector3;
-using tdme::engine::tools::CameraRotationInputHandler;
-using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;

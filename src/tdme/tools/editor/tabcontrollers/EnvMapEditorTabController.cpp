@@ -18,13 +18,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -51,13 +51,13 @@ using agui::gui::GUIParser;
 using agui::utilities::MutableString;
 
 using tdme::engine::prototype::Prototype;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Entity;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::views::EditorView;

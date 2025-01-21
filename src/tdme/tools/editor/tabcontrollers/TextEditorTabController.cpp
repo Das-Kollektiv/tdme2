@@ -19,6 +19,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMinitScript.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/minitscript/EngineMinitScript.h>
@@ -31,7 +32,6 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -63,6 +63,7 @@ using agui::gui::GUI;
 using agui::gui::GUIParser;
 
 using tdme::engine::logics::LogicMinitScript;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Engine;
 using tdme::engine::Texture;
 using tdme::minitscript::EngineMinitScript;
@@ -75,7 +76,6 @@ using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::engine::tools::FileSystemTools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 using tdme::tools::editor::views::EditorView;

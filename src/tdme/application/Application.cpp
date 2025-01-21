@@ -34,16 +34,17 @@
 #include <memory>
 #include <string>
 
-#include <agui/gui/GUIEventHandler.h>
+#include <agui/agui.h>
 #include <agui/gui/renderer/ApplicationGL3Renderer.h>
 #include <agui/gui/renderer/GUIRendererBackend.h>
+#include <agui/gui/GUIEventHandler.h>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/audio/Audio.h>
-#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/RendererBackend.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
@@ -59,20 +60,20 @@
 
 using std::array;
 using std::make_unique;
-using std::unique_ptr;
 using std::shared_ptr;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
-using agui::gui::GUIEventHandler;
 using agui::gui::renderer::ApplicationGL3Renderer;
 using agui::gui::renderer::GUIRendererBackend;
+using agui::gui::GUIEventHandler;
 
 using tdme::application::Application;
 using tdme::audio::Audio;
-using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::RendererBackend;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;

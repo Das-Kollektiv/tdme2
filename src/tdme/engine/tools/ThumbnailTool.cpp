@@ -2,9 +2,9 @@
 #include <memory>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/tools/ThumbnailTool.h>
 
-#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -22,6 +22,7 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/tools/CameraRotationInputHandler.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
@@ -41,7 +42,6 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/tools/CameraRotationInputHandler.h>
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
@@ -69,6 +69,7 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::engine::Camera;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
@@ -88,7 +89,6 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::utilities::ModelTools;
 
 Engine* ThumbnailTool::osEngine = nullptr;

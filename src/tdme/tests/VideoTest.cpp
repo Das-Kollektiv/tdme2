@@ -37,7 +37,6 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
-#include <tdme/utilities/Time.h>
 
 using std::make_unique;
 using std::string;

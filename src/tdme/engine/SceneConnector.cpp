@@ -56,6 +56,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
@@ -77,7 +78,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
@@ -137,6 +137,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Color4;
 using tdme::engine::Decal;
 using tdme::engine::Engine;
@@ -158,7 +159,6 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;

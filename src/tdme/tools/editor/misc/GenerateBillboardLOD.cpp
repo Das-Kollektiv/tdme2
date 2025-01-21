@@ -15,6 +15,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/tools/FileSystemTools.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/LODObject.h>
@@ -24,8 +26,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/tools/FileSystemTools.h>
-#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -48,6 +48,8 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
+using tdme::engine::tools::FileSystemTools;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::LODObject;
@@ -57,8 +59,6 @@ using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::engine::tools::FileSystemTools;
-using tdme::engine::tools::ThumbnailTool;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

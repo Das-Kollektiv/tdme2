@@ -12,8 +12,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/engine/tools/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -33,11 +33,11 @@ using agui::gui::nodes::GUIStyledTextNode;
 using agui::gui::nodes::GUIStyledTextNodeController;
 
 using tdme::engine::prototype::Prototype;
+using tdme::engine::tools::CameraRotationInputHandler;
+using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix4x4;
-using tdme::engine::tools::CameraRotationInputHandler;
-using tdme::engine::tools::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TabController;

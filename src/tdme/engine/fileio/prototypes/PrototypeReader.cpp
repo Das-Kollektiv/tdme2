@@ -31,6 +31,7 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject.h>
@@ -40,7 +41,6 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -82,6 +82,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Color4;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject;
@@ -91,7 +92,6 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Base64;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

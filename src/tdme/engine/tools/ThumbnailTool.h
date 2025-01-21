@@ -9,8 +9,8 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/tools/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 
 using std::array;
 using std::string;
@@ -19,10 +19,10 @@ using std::vector;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::tools::CameraRotationInputHandler;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
-using tdme::engine::tools::CameraRotationInputHandler;
 
 /**
  * Thumbnail tools

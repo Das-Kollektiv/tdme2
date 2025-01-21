@@ -28,6 +28,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix4x4.h>
@@ -35,7 +36,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/tools/ThumbnailTool.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -70,6 +70,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::tools::ThumbnailTool;
 using tdme::engine::Color4;
 using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
@@ -77,7 +78,6 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::tools::ThumbnailTool;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 

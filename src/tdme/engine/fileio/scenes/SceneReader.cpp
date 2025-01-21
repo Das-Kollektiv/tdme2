@@ -22,6 +22,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Transform.h>
@@ -30,7 +31,6 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/tools/FileSystemTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -69,6 +69,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::engine::tools::FileSystemTools;
 using tdme::engine::Color4;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Transform;
@@ -77,7 +78,6 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::tools::FileSystemTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
