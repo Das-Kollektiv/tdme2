@@ -185,8 +185,9 @@ function: main()
 			]
 			$minitScriptLdFlags = "-lws2_32"
 			$yannetLdFlags = "-lws2_32"
-			$aguiLdFlags = $aguiLdFlags + " " + "-lws2_32 -lopengl32 -luser32 -dbghelp"
-			$tdmeLdFlags = "-lws2_32"
+			$aguiLdFlags = $aguiLdFlags + " " + "-lopengl32 -luser32 -dbghelp"
+			$tdmeLdFlags = $tdmeLdFlags + " " + "-luser32 -dbghelp"
+			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "-lopengl32 -luser32 -dbghelp"
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 		end
 
@@ -484,7 +485,6 @@ function: main()
 			"libagui",
 			[
 				"glew",
-				"gl",
 				"glfw3",
 				"openal",
 				"freetype2",
@@ -997,7 +997,6 @@ function: main()
 			"libopengl2renderer",
 			[
 				"glew",
-				"gl",
 				"glfw3"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
@@ -1015,7 +1014,6 @@ function: main()
 			"libopengl3corerenderer",
 			[
 				"glew",
-				"gl",
 				"glfw3"
 			],
 			$glfwDefinitions + " " + $tdmeRendererDefinitions,
