@@ -617,7 +617,7 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 			return EXITCODE_FAILURE;
 		}
 		//
-		rendererBackend = (RendererBackend*)rendererBackendCreateInstance();
+		rendererBackend = unique_ptr<RendererBackend>((RendererBackend*)rendererBackendCreateInstance());
 		if (rendererBackend == nullptr) {
 			Console::printLine("Application::run(): Could not create renderer backend");
 			glfwTerminate();
