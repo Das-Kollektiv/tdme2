@@ -29,8 +29,8 @@ jobs:
           mingw-w64-x86_64-glew
           mingw-w64-x86_64-dlfcn
           mingw-w64-x86_64-freetype
-          mingw-w64-x86_64-vulkan-headers
-          mingw-w64-x86_64-vulkan-loader
+          mingw-w64-x86_64-pkgconf
+          unzip
     - uses: actions/checkout@v2
-    - name: make mains
-      run: make mains VULKAN=YES
+    - name: build
+      run: cd ext/minitscript && cd ./ext/windows-msc && unzip tools.zip && cd ../.. && make mains && cp ./lib/*.dll ./bin/minitscript/tools/ && ./bin/minitscript/tools/minitscript --working-directory=../.. ../../make.tscript --arguments clean libraries executables && cd ../..
