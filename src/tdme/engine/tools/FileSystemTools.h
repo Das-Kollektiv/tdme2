@@ -13,7 +13,7 @@ using std::vector;
 using tdme::application::Application;
 
 /**
- * Editor tools
+ * Additional file system tools
  * @author Andreas Drewke
  */
 class tdme::engine::tools::FileSystemTools final

@@ -25,7 +25,7 @@ using tdme::math::Vector3;
 using tdme::engine::tools::CameraRotationInputHandler;
 
 /**
- * Editor tools
+ * Thumbnail tools
  * @author Andreas Drewke
  */
 class tdme::engine::tools::ThumbnailTool final
