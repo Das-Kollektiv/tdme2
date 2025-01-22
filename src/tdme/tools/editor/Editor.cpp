@@ -7,8 +7,13 @@
 
 #include <agui/agui.h>
 #include <agui/gui/GUI.h>
+#include <agui/gui/fileio/PNGTextureReader.h>
+#include <agui/gui/nodes/GUIImageNode.h>
+#include <agui/gui/nodes/GUIScreenNode.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/tools/FileSystemTools.h>
@@ -18,12 +23,15 @@
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Version.h>
 #include <tdme/minitscript/EngineMinitScript.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
 
 using std::make_unique;
@@ -36,7 +44,12 @@ using tdme::tools::editor::Editor;
 using tdme::utilities::Time;
 
 using agui::gui::GUI;
+using agui::gui::fileio::PNGTextureReader;
+using agui::gui::nodes::GUIImageNode;
+using agui::gui::nodes::GUIScreenNode;
 
+using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::tools::FileSystemTools;
@@ -46,12 +59,16 @@ using tdme::engine::Engine;
 using tdme::engine::SimplePartition;
 using tdme::engine::Version;
 using tdme::minitscript::EngineMinitScript;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::View;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Time;
 
 Editor* Editor::instance = nullptr;
 
@@ -79,6 +96,106 @@ int Editor::main(int argc, char** argv)
 	Console::printLine();
 	//
 	EngineMinitScript::initialize();
+	// source handlers
+	{
+		//	tm files
+		class TMSourceHandler: public GUIImageNode::SourceHandler {
+			bool setSource(GUIImageNode* imageNode, const string& source) {
+				if (StringTools::endsWith(StringTools::toLowerCase(source), ".tm") == false) return false;
+				//
+				try {
+					vector<uint8_t> thumbnailPNGData;
+					if (FileSystem::getInstance()->getThumbnailAttachment(
+							FileSystem::getInstance()->getPathName(source),
+							FileSystem::getInstance()->getFileName(source),
+							thumbnailPNGData
+						) == true) {
+						//
+						auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(GUIImageNode::allocateThumbnailTextureIdx()), thumbnailPNGData, true);
+						if (thumbnailTexture != nullptr) {
+							imageNode->assignTexture(thumbnailTexture, true);
+						} else {
+							imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/mesh_big.png"), false);
+						}
+					} else {
+						imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/mesh_big.png"), false);
+					}
+				} catch (Exception& exception) {
+					Console::printLine("TMSourceHandler::setSource(): " + string(exception.what()));
+				}
+				//
+				return true;
+			}
+		};
+		GUIImageNode::addSourceHandler(new TMSourceHandler());
+	}
+	{
+		//	tm files
+		class TModelSourceHandler: public GUIImageNode::SourceHandler {
+			bool setSource(GUIImageNode* imageNode, const string& source) {
+				if (StringTools::endsWith(StringTools::toLowerCase(source), ".tmodel") == false) return false;
+				//
+				try {
+					vector<uint8_t> thumbnailPNGData;
+					if (PrototypeReader::readThumbnail(
+							FileSystem::getInstance()->getPathName(source),
+							FileSystem::getInstance()->getFileName(source),
+							thumbnailPNGData
+						) == true) {
+						//
+						auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(GUIImageNode::allocateThumbnailTextureIdx()), thumbnailPNGData, true);
+						if (thumbnailTexture != nullptr) {
+							imageNode->assignTexture(thumbnailTexture, true);
+						} else {
+							imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/tdme_big.png"), false);
+						}
+					} else {
+						imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/tdme_big.png"), false);
+					}
+				} catch (Exception& exception) {
+					Console::printLine("TModelSourceHandler::setSource(): " + string(exception.what()));
+				}
+				//
+				return true;
+			}
+		};
+		GUIImageNode::addSourceHandler(new TModelSourceHandler());
+	}
+	{
+		//	tm files
+		class XMLSourceHandler: public GUIImageNode::SourceHandler {
+			bool setSource(GUIImageNode* imageNode, const string& source) {
+				if (StringTools::endsWith(StringTools::toLowerCase(source), ".xml") == false) return false;
+				//
+				try {
+					imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/gui_big.png"), false);
+				} catch (Exception& exception) {
+					Console::printLine("XMLSourceHandler::setSource(): " + string(exception.what()));
+				}
+				//
+				return true;
+			}
+		};
+		GUIImageNode::addSourceHandler(new XMLSourceHandler());
+	}
+	{
+		//	other files
+		class OtherSourceHandler: public GUIImageNode::SourceHandler {
+			bool setSource(GUIImageNode* imageNode, const string& source) {
+				// other model without thumbnail
+				for (const auto& extension: ModelReader::getModelExtensions()) {
+					if (StringTools::endsWith(StringTools::toLowerCase(source), "." + extension) == true) {
+						imageNode->assignTexture(imageNode->getScreenNode()->getImage("resources/engine/images/mesh_big.png"), false);
+						// done
+						return true;
+					}
+				}
+				//
+				return false;
+			}
+		};
+		GUIImageNode::addSourceHandler(new OtherSourceHandler());
+	}
 	//
 	auto tdmeEditor = new Editor();
 	return tdmeEditor->run(argc, argv, "Editor", nullptr, Application::WINDOW_HINT_MAXIMIZED);

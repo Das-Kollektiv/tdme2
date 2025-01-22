@@ -54,6 +54,7 @@ using agui::utilities::Exception;
 using agui::utilities::StringTools;
 
 int GUIImageNode::thumbnailTextureIdx = 0;
+vector<unique_ptr<GUIImageNode::SourceHandler>> GUIImageNode::sourceHandlers;
 
 GUIImageNode::GUIImageNode(
 	GUIScreenNode* screenNode,
@@ -115,6 +116,20 @@ GUIImageNode::GUIImageNode(
 	if (Math::abs(rotation) > Math::EPSILON) rotate(rotation);
 }
 
+void GUIImageNode::clearSourceHandlers() {
+	sourceHandlers.clear();
+}
+
+void GUIImageNode::addSourceHandler(SourceHandler* sourceHandler) {
+	sourceHandlers.push_back(unique_ptr<SourceHandler>(sourceHandler));
+}
+
+void GUIImageNode::assignTexture(GUITexture* texture, bool releaseTextureReference) {
+
+	this->texture = texture;
+	this->releaseTextureReference = texture != nullptr?releaseTextureReference:false;
+}
+
 void GUIImageNode::disposeTexture() {
 	if (texture != nullptr) {
 		GUI::getTextureManager()->removeTexture(texture->getId());
@@ -144,12 +159,18 @@ const string& GUIImageNode::getSource() {
 
 void GUIImageNode::setSource(const string& source) {
 	disposeTexture();
+	// use source handlers
+	for (const auto& sourceHandler: sourceHandlers) {
+		if (sourceHandler->setSource(this, source) == true) {
+			// we handled the source with success
+			break;
+		}
+	}
 	this->source = source;
 	if (source.empty() == false) {
 		// load it
 		if (this->texture == nullptr) {
-			this->texture = source.empty() == true?nullptr:screenNode->getImage(source);
-			this->releaseTextureReference = false;
+			assignTexture(source.empty() == true?nullptr:screenNode->getImage(source), false);
 		}
 	}
 	this->textureId = texture == nullptr?0:GUI::getTextureManager()->addTexture(texture, 0);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <memory>
+#include <vector>
 
 #include <agui/agui.h>
 #include <agui/gui/fileio/fwd-agui.h>
@@ -14,6 +16,8 @@
 #include <agui/gui/renderer/fwd-agui.h>
 
 using std::string;
+using std::unique_ptr;
+using std::vector;
 
 // namespaces
 namespace agui {
@@ -34,12 +38,32 @@ class agui::gui::nodes::GUIImageNode final
 	: public GUITextureBaseNode
 {
 	friend class agui::gui::GUIParser;
+public:
+	/**
+	 * Source handler
+	 */
+	struct SourceHandler {
+		/**
+		 * Destructor
+		 */
+		virtual ~SourceHandler() {
+		}
+
+		/**
+		 * Set image source
+		 * @param imageNode image node
+		 * @param source source
+		 * @returns success
+		 */
+		virtual bool setSource(GUIImageNode* imageNode, const string& source) = 0;
+	};
 
 private:
 	bool releaseTextureReference { false };
 	string source;
 	GUITexture* texture { nullptr };
 	AGUI_STATIC_DLL_IMPEXT static int thumbnailTextureIdx;
+	AGUI_STATIC_DLL_IMPEXT static vector<unique_ptr<SourceHandler>> sourceHandlers;
 
 	/**
 	 * Release texture
@@ -117,9 +141,33 @@ protected:
 	const string getNodeType() override;
 
 public:
+	/**
+	 * Clear source handlers
+	 */
+	static void clearSourceHandlers();
+
+	/**
+	 * Add source handler
+	 * @param sourceHandler source handler
+	 */
+	static void addSourceHandler(SourceHandler* sourceHandler);
+
+	/**
+	 * Allocate thumbnail texture index
+	 */
+	inline static int allocateThumbnailTextureIdx() {
+		return thumbnailTextureIdx++;
+	}
+
+	/**
+	 * Assign texture
+	 * @param texture texture
+	 * @param releaseTextureReference release texture reference on dispose
+	 */
+	void assignTexture(GUITexture* texture, bool releaseTextureReference);
+
 	// overridden methods
 	void dispose() override;
-
 
 	/**
 	 * @returns texture
