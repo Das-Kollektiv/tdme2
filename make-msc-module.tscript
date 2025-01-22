@@ -162,8 +162,8 @@ function: generateRCMSC($template, $fileName)
 	)
 end
 
-function: buildLibraryMSC($idx, $name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
-	console.printLine("Building library: " + $name + "(" + $idx + ")")
+function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+	console.printLine("Building library: " + $name)
 	console.printLine()
 
 	$librariesIncludes = ""
@@ -204,34 +204,23 @@ function: buildLibraryMSC($idx, $name, $libraries, $definitions, $includes, $ldF
 		createPathRecusively($libraryPath)
 
 		# compile each compilation units
-		$fileObjectPaths = {}
 		$commands = []
 		$compilationUnits = ""
+		$compilationUnitsArray = []
 		forEach($file in $files)
 			#
-			$fileObjectPathCandidate = 
-				$name + 
-				"/" +
-				filesystem.getFileName(filesystem.getPathName(filesystem.getPathName($file))) + 
-				"/" + 
-				filesystem.getFileName(filesystem.getPathName($file))
-			if ($fileObjectPaths->contains($fileObjectPathCandidate) == false)
-				$fileObjectPaths->set($fileObjectPathCandidate, $fileObjectPaths->getSize())
-			end
-			$fileObjectPath = 
-				$idx + 
-				"/" +
-				$fileObjectPaths->get($fileObjectPathCandidate)
+			$fileObjectPath = filesystem.getPathName($file)
 			
 			# create file object path
 			createPathRecusively($objectPath + "/" + $fileObjectPath)
 
 			#
-			$compilationUnit = $objectPath + "/" + $fileObjectPath + "/" + filesystem.removeFileExtension(filesystem.getFileName($file)) + ".obj"
+			$compilationUnit = $objectPath + "/" + filesystem.removeFileExtension($file) + ".obj"
 			if ($compilationUnits->isEmpty() == false)
 				$compilationUnits = $compilationUnits + " "
 			end
 			$compilationUnits = $compilationUnits + $compilationUnit
+			$compilationUnitsArray[] = $compilationUnit
 
 			#
 			$timeStampFile = 0
@@ -295,52 +284,61 @@ function: buildLibraryMSC($idx, $name, $libraries, $definitions, $includes, $ldF
 			$linkerSymbolsFile = $libraryPath + "/" + $name + ".symbols"
 			$linkerDefFile = $libraryPath + "/" + $name + ".def"
 
-			# link #1
-			$command =
-				"chcp 65001 > nul && " +
-				"lib" +
-				" " +
-				"/OUT:" +
-				$libraryPath + "/" + $name + ".lib" +
-				" " +
-				$compilationUnits
-			console.printLine($command)
+			#
+			filesystem.setContentFromString(
+				filesystem.getPathName($linkerSymbolsFile),
+				filesystem.getFileName($linkerSymbolsFile),
+				""
+			)
 
-			# execute
-			$exitCode = $$.application::EXITCODE_SUCCESS
-			$error = null
-			$result = application.execute($command, $exitCode, $error)
+			#
+			forEach($compilationUnit in $compilationUnitsArray)
+				# link #1
+				$command =
+					"chcp 65001 > nul && " +
+					"lib" +
+					" " +
+					"/OUT:" +
+					$libraryFile +
+					" " +
+					$compilationUnit
 
-			if ($exitCode != $$.application::EXITCODE_SUCCESS)
-				console.printLine("lib exited with exit code " + $exitCode + ", see error: " + $error)
-				if ($optional == false)
-					console.printLine()
-					application.exit($$.application::EXITCODE_FAILURE)
+				# execute
+				$exitCode = $$.application::EXITCODE_SUCCESS
+				$error = null
+				$result = application.execute($command, $exitCode, $error)
+
+				if ($exitCode != $$.application::EXITCODE_SUCCESS)
+					console.printLine("lib exited with exit code " + $exitCode + ", see error: " + $error)
+					if ($optional == false)
+						console.printLine()
+						application.exit($$.application::EXITCODE_FAILURE)
+					end
 				end
-			end
 
-			# dump bin
-			$command =
-				"chcp 65001 > nul && " +
-				"dumpbin" +
-				" " +
-				"/LINKERMEMBER" +
-				" " +
-				$libraryFile +
-				" " +
-				"> " + 
-				$linkerSymbolsFile
+				# dump bin
+				$command =
+					"chcp 65001 > nul && " +
+					"dumpbin" +
+					" " +
+					"/LINKERMEMBER" +
+					" " +
+					$libraryFile +
+					" " +
+					">> " +
+					$linkerSymbolsFile
 
-			# execute
-			$exitCode = $$.application::EXITCODE_SUCCESS
-			$error = null
-			$result = application.execute($command, $exitCode, $error)
+				# execute
+				$exitCode = $$.application::EXITCODE_SUCCESS
+				$error = null
+				$result = application.execute($command, $exitCode, $error)
 
-			if ($exitCode != $$.application::EXITCODE_SUCCESS)
-				console.printLine("dumpbin exited with exit code " + $exitCode + ", see error: " + $error)
-				if ($optional == false)
-					console.printLine()
-					application.exit($$.application::EXITCODE_FAILURE)
+				if ($exitCode != $$.application::EXITCODE_SUCCESS)
+					console.printLine("dumpbin exited with exit code " + $exitCode + ", see error: " + $error)
+					if ($optional == false)
+						console.printLine()
+						application.exit($$.application::EXITCODE_FAILURE)
+					end
 				end
 			end
 

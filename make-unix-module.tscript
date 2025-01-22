@@ -79,7 +79,7 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 	return(true)
 end
 
-function: buildLibraryUnix($idx, $name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 
@@ -120,7 +120,6 @@ function: buildLibraryUnix($idx, $name, $libraries, $definitions, $includes, $ld
 	end
 
 	try
-
 		# create paths
 		createPathRecusively($objectPath)
 		createPathRecusively($libraryPath)
