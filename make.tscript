@@ -162,11 +162,17 @@ function: main()
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
 			$tdmeLdFlags = $tdmeLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
-			$tdmeExtraLibsLdFlags = "/LIBPATH \"lib/libtdme.lib\""
+			$tdmeExtraLibsLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "/LIBPATH \"lib/libyannet.lib\""
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "/LIBPATH \"lib/libtdme-ext.lib\""
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "/LIBPATH \"lib/libagui.lib\""
+			$tdmeExtraLibsLdFlags = $tdmeExtraLibsLdFlags + " " + "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = "/LIBPATH \"lib/libtdme.lib\""
 			$tdmeRendererLdFlags = $tdmeRendererLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/OpenGL32.Lib\""
 			$tdmeRendererDefinitions = "/D TDME2_DLL_IMPORT"
 			$tdmeVulkanRendererIncludes = "/I \"ext/windows-msc/vulkan-sdk/include\"",
+			$tdmeVulkanRendererIncludes = $tdmeVulkanRendererIncludes + " " + "/I.",
 			$tdmeVulkanRendererPlatformFiles[] = "ext/vulkan/glslang/OSDependent/Windows/ossource.cpp"
 			$buildLibrary = "buildLibraryMSC"
 			$buildExecutables = "buildExecutablesMSC"
@@ -175,9 +181,9 @@ function: main()
 			$yannetDefinitions = "/D YANNET_DLL_EXPORT"
 			$aguiDefinitions = "/D MINITSCRIPT_DLL_IMPORT"
 			$tdmeDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_EXPORT"
-			$tdmeExtraLibsDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
+			$tdmeExtraLibsDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT /D TDMETOOLS_DLL_EXPORT"
 			$glfwDefinitions = "/D GLFW_DLL"
-			$executableDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT"
+			$executableDefinitions = "/D MINITSCRIPT_DLL_IMPORT /D YANNET_DLL_IMPORT /D TDME2_DLL_IMPORT /D TDMETOOLS_DLL_IMPORT"
 			$executableLdFlags = ""
 			$executableLdFlags = "/LIBPATH \"ext/fbx/win64/lib/libfbxsdk.lib\""
 			$executableLdFlags = $executableLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
@@ -212,6 +218,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			0,
 			"libminitscript",
 			[
 				"libssl", 
@@ -280,6 +287,7 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
+			1,
 			"libyannet",
 			[
 				"libssl", 
@@ -329,6 +337,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			2,
 			"libtdme-ext",
 			[],
 			$rapidJSONDefinitions,
@@ -501,6 +510,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			3,
 			"libagui",
 			[
 				"glew",
@@ -666,6 +676,7 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
+			4,
 			"libtdme",
 			[
 				"glfw3",
@@ -924,8 +935,14 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			5,
 			"libtdme-tools",
 			[
+				"glfw3",
+				"openal",
+				"freetype2",
+				"libssl",
+				"libcrypto"
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeExtraLibsDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src",
@@ -1005,8 +1022,14 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			6,
 			"libtdme-tests",
 			[
+				"glfw3",
+				"openal",
+				"freetype2",
+				"libssl",
+				"libcrypto"
 			],
 			$rapidJSONDefinitions + " " + $glfwDefinitions + " " + $tdmeExtraLibsDefinitions,
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src" + " " + $tdmeIncludes,
@@ -1041,6 +1064,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			7,
 			"libopengl2renderer",
 			[
 				"glew",
@@ -1058,6 +1082,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			8,
 			"libopengl3corerenderer",
 			[
 				"glew",
@@ -1075,6 +1100,7 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
+			9,
 			"libopengles2renderer",
 			[
 				"glesv2",
@@ -1093,6 +1119,7 @@ function: main()
 
 		script.call(
 			$buildLibrary,
+			10,
 			"libvulkanrenderer",
 			[
 				"glfw3",

@@ -17,12 +17,12 @@ using tdme::engine::model::Model;
 class tdme::tools::editor::misc::Tools final
 {
 private:
-	STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoAll;
-	STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoTranslationScale;
-	STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoTranslation;
-	STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoScale;
-	STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoRotations;
-	STATIC_DLL_IMPEXT static unique_ptr<Model> defaultOBB;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoAll;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoTranslationScale;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoTranslation;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoScale;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> gizmoRotations;
+	TDMETOOLS_STATIC_DLL_IMPEXT static unique_ptr<Model> defaultOBB;
 
 public:
 	/**

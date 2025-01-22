@@ -79,7 +79,7 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 	return(true)
 end
 
-function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
+function: buildLibraryUnix($idx, $name, $libraries, $definitions, $includes, $ldFlags, $files, $optional)
 	console.printLine("Building library: " + $name)
 	console.printLine()
 

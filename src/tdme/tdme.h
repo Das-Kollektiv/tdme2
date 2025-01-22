@@ -14,3 +14,11 @@
 #else
 	#define STATIC_DLL_IMPEXT
 #endif
+
+#if defined(TDMETOOLS_DLL_EXPORT)
+	#define TDMETOOLS_STATIC_DLL_IMPEXT __declspec(dllexport)
+#elif defined(TDMETOOLS_DLL_IMPORT)
+	#define TDMETOOLS_STATIC_DLL_IMPEXT __declspec(dllimport)
+#else
+	#define TDMETOOLS_STATIC_DLL_IMPEXT
+#endif

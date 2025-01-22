@@ -16,4 +16,4 @@ jobs:
         run: sudo apt update && sudo apt-get install pkgconf libglew-dev libopenal-dev libglfw3-dev libfreetype-dev libxml2-dev libvulkan-dev
       - uses: actions/checkout@v2
       - name: build
-        run: cd ext/minitscript/ && make mains && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib && ./bin/minitscript/tools/minitscript --working-directory=../.. ../../make.tscript --arguments clean libraries executables && cd ../..
+        run: cd ext/minitscript/ && make mains && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib && ./bin/minitscript/tools/minitscript --working-directory=../.. ../../make.tscript --arguments clean libraries tests executables && cd ../..
