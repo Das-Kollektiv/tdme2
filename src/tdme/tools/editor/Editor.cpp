@@ -130,7 +130,7 @@ int Editor::main(int argc, char** argv)
 		GUIImageNode::addSourceHandler(new TMSourceHandler());
 	}
 	{
-		//	tm files
+		//	tmodel files
 		class TModelSourceHandler: public GUIImageNode::SourceHandler {
 			bool setSource(GUIImageNode* imageNode, const string& source) {
 				if (StringTools::endsWith(StringTools::toLowerCase(source), ".tmodel") == false) return false;
@@ -162,7 +162,7 @@ int Editor::main(int argc, char** argv)
 		GUIImageNode::addSourceHandler(new TModelSourceHandler());
 	}
 	{
-		//	tm files
+		//	xml files
 		class XMLSourceHandler: public GUIImageNode::SourceHandler {
 			bool setSource(GUIImageNode* imageNode, const string& source) {
 				if (StringTools::endsWith(StringTools::toLowerCase(source), ".xml") == false) return false;
