@@ -218,7 +218,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			0,
 			"libminitscript",
 			[
 				"libssl", 
@@ -287,7 +286,6 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
-			1,
 			"libyannet",
 			[
 				"libssl", 
@@ -337,7 +335,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			2,
 			"libtdme-ext",
 			[],
 			$rapidJSONDefinitions,
@@ -510,7 +507,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			3,
 			"libagui",
 			[
 				"glew",
@@ -676,7 +672,6 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
-			4,
 			"libtdme",
 			[
 				"glfw3",
@@ -935,7 +930,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			5,
 			"libtdme-tools",
 			[
 				"glfw3",
@@ -1022,7 +1016,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			6,
 			"libtdme-tests",
 			[
 				"glfw3",
@@ -1064,7 +1057,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			7,
 			"libopengl2renderer",
 			[
 				"glew",
@@ -1082,7 +1074,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			8,
 			"libopengl3corerenderer",
 			[
 				"glew",
@@ -1100,7 +1091,6 @@ function: main()
 	
 		script.call(
 			$buildLibrary,
-			9,
 			"libopengles2renderer",
 			[
 				"glesv2",
@@ -1119,7 +1109,6 @@ function: main()
 
 		script.call(
 			$buildLibrary,
-			10,
 			"libvulkanrenderer",
 			[
 				"glfw3",
@@ -1241,35 +1230,6 @@ function: main()
 			"-Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/yannet/src -Iext/minitscript/src -Iext/a-gui/src",
 			$executableLdFlags,
 			[
-				"src/tdme/tests/AudioTest-main.cpp",
-				"src/tdme/tests/ContainerTest-main.cpp",
-				"src/tdme/tests/CrashTest-main.cpp",
-				"src/tdme/tests/EngineTest-main.cpp",
-				"src/tdme/tests/EntityHierarchyTest-main.cpp",
-				"src/tdme/tests/HTTPClientTest-main.cpp",
-				"src/tdme/tests/HTTPDownloadClientTest-main.cpp",
-				"src/tdme/tests/LODTest-main.cpp",
-				"src/tdme/tests/FlowMapTest-main.cpp",
-				"src/tdme/tests/FlowMapTest2-main.cpp",
-				"src/tdme/tests/FoliageTest-main.cpp",
-				"src/tdme/tests/MathOperatorTest-main.cpp",
-				"src/tdme/tests/MinitScriptTest-main.cpp",
-				"src/tdme/tests/PathFindingTest-main.cpp",
-				"src/tdme/tests/PhysicsTest1-main.cpp",
-				"src/tdme/tests/PhysicsTest2-main.cpp",
-				"src/tdme/tests/PhysicsTest3-main.cpp",
-				"src/tdme/tests/PhysicsTest4-main.cpp",
-				"src/tdme/tests/PhysicsTest5-main.cpp",
-				"src/tdme/tests/RayTracingTest-main.cpp",
-				"src/tdme/tests/SkinningTest-main.cpp",
-				"src/tdme/tests/SplineTest-main.cpp",
-				"src/tdme/tests/TextureAtlasTest-main.cpp",
-				"src/tdme/tests/ThreadingTest-main.cpp",
-				"src/tdme/tests/TreeTest-main.cpp",
-				"src/tdme/tests/UDPClientTest-main.cpp",
-				"src/tdme/tests/UDPServerTest-main.cpp",
-				"src/tdme/tests/VideoTest-main.cpp",
-				"src/tdme/tests/WaterTest-main.cpp",
 				"src/tdme/tools/editor/Editor-main.cpp",
 				"src/tdme/tools/installer/Installer-main.cpp",
 				"src/tdme/tools/cli/archive-main.cpp",
