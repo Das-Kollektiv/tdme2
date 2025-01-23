@@ -97,6 +97,9 @@ void ApplicationMethods::registerConstants(MinitScript* minitScript) {
 const string ApplicationMethods::execute(const string& command, int* exitCode, string* error) {
 	string result;
 	auto _command = command;
+	#if defined(_MSC_VER)
+		_command = "chcp 65001 > nul && " + _command
+	#endif
 	auto _exitCode = EXIT_FAILURE;
 	// error stream
 	string errorFile;

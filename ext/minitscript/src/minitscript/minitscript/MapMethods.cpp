@@ -407,4 +407,47 @@ void MapMethods::registerMethods(MinitScript* minitScript) {
 		};
 		minitScript->registerMethod(new MethodMapForEach(minitScript));
 	}
+	{
+		//
+		class MethodMapConcatenate: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			MethodMapConcatenate(MinitScript* minitScript):
+				MinitScript::Method(
+					{
+						{ .type = MinitScript::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_STRING, .name = "assignmentSeparator", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_STRING, .name = "separator", .optional = false, .reference = false, .nullable = false },
+					},
+					MinitScript::TYPE_STRING
+				),
+				minitScript(minitScript) {}
+			const string getMethodName() override {
+				return "Map::concatenate";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				string assignmentSeparator;
+				string separator;
+				if ((arguments.size() == 3) &&
+					arguments[0].getType() == MinitScript::TYPE_MAP &&
+					MinitScript::getStringValue(arguments, 1, assignmentSeparator) == true &&
+					MinitScript::getStringValue(arguments, 2, separator) == true) {
+					//
+					string result;
+					auto mapPtr = arguments[0].getMapPointer();
+					if (mapPtr != nullptr) {
+						for (const auto& [mapKey, mapValue]: *mapPtr) {
+							if (result.empty() == false) result+= separator;
+							result+= mapKey + assignmentSeparator + mapValue->getValueAsString();
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new MethodMapConcatenate(minitScript));
+	}
 }

@@ -742,4 +742,43 @@ void ArrayMethods::registerMethods(MinitScript* minitScript) {
 		};
 		minitScript->registerMethod(new MethodArrayContains(minitScript));
 	}
+	{
+		//
+		class MethodArrayConcatenate: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			MethodArrayConcatenate(MinitScript* minitScript):
+				MinitScript::Method(
+					{
+						{ .type = MinitScript::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_STRING, .name = "separator", .optional = false, .reference = false, .nullable = false },
+					},
+					MinitScript::TYPE_STRING
+				),
+				minitScript(minitScript) {}
+			const string getMethodName() override {
+				return "Array::concatenate";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				string separator;
+				if ((arguments.size() == 2) &&
+					arguments[0].getType() == MinitScript::TYPE_ARRAY &&
+					MinitScript::getStringValue(arguments, 1, separator) == true) {
+					//
+					string result;
+					const auto& array = arguments[0];
+					for (auto i = 0; i < array.getArraySize(); i++) {
+						auto arrayValue = array.getArrayEntry(i);
+						if (result.empty() == false) result+= separator;
+						result+= arrayValue.getValueAsString();
+					}
+					returnValue.setValue(result);
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new MethodArrayConcatenate(minitScript));
+	}
 }

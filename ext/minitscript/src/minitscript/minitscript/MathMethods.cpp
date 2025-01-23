@@ -1034,13 +1034,51 @@ void MathMethods::add(const span<MinitScript::Variable>& arguments, MinitScript:
 	if (arguments[0].getType() == MinitScript::TYPE_ARRAY &&
 		arguments[1].getType() == MinitScript::TYPE_ARRAY) {
 		returnValue.setType(MinitScript::TYPE_ARRAY);
-		auto arrayPtr0 = arguments[0].getArrayPointer();
-		if (arrayPtr0 != nullptr) {
-			for (auto arrayEntry: *arrayPtr0) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+		{
+			auto arrayPtr = arguments[0].getArrayPointer();
+			if (arrayPtr != nullptr) {
+				for (auto arrayEntry: *arrayPtr) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+			}
 		}
-		auto arrayPtr1 = arguments[1].getArrayPointer();
-		if (arrayPtr1 != nullptr) {
-			for (auto arrayEntry: *arrayPtr1) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+		{
+			auto arrayPtr = arguments[1].getArrayPointer();
+			if (arrayPtr != nullptr) {
+				for (auto arrayEntry: *arrayPtr) returnValue.pushArrayEntry(MinitScript::Variable::createNonReferenceVariable(arrayEntry));
+			}
+		}
+	} else
+	// map
+	if (arguments[0].getType() == MinitScript::TYPE_MAP &&
+		arguments[1].getType() == MinitScript::TYPE_MAP) {
+		returnValue.setType(MinitScript::TYPE_MAP);
+		{
+			auto mapPtr = arguments[0].getMapPointer();
+			if (mapPtr != nullptr) {
+				for (const auto& [mapKey, mapValue]: *mapPtr) returnValue.setMapEntry(mapKey, MinitScript::Variable::createNonReferenceVariable(mapValue));
+			}
+		}
+		{
+			auto mapPtr = arguments[1].getMapPointer();
+			if (mapPtr != nullptr) {
+				for (const auto& [mapKey, mapValue]: *mapPtr) returnValue.setMapEntry(mapKey, MinitScript::Variable::createNonReferenceVariable(mapValue));
+			}
+		}
+	} else
+	// set
+	if (arguments[0].getType() == MinitScript::TYPE_SET &&
+		arguments[1].getType() == MinitScript::TYPE_SET) {
+		returnValue.setType(MinitScript::TYPE_SET);
+		{
+			auto setPtr = arguments[0].getSetPointer();
+			if (setPtr != nullptr) {
+				for (auto setKey: *setPtr) returnValue.insertSetKey(setKey);
+			}
+		}
+		{
+			auto setPtr = arguments[1].getSetPointer();
+			if (setPtr != nullptr) {
+				for (auto setKey: *setPtr) returnValue.insertSetKey(setKey);
+			}
 		}
 	} else
 	// float

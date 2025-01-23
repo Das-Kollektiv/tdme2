@@ -307,4 +307,44 @@ void SetMethods::registerMethods(MinitScript* minitScript) {
 		};
 		minitScript->registerMethod(new MethodSetForEach(minitScript));
 	}
+	{
+		//
+		class MethodSetConcatenate: public MinitScript::Method {
+		private:
+			MinitScript* minitScript { nullptr };
+		public:
+			MethodSetConcatenate(MinitScript* minitScript):
+				MinitScript::Method(
+					{
+						{ .type = MinitScript::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
+						{ .type = MinitScript::TYPE_STRING, .name = "separator", .optional = false, .reference = false, .nullable = false },
+					},
+					MinitScript::TYPE_STRING
+				),
+				minitScript(minitScript) {}
+			const string getMethodName() override {
+				return "Set::concatenate";
+			}
+			void executeMethod(span<MinitScript::Variable>& arguments, MinitScript::Variable& returnValue, const MinitScript::SubStatement& subStatement) override {
+				string separator;
+				if ((arguments.size() == 2) &&
+					arguments[0].getType() == MinitScript::TYPE_SET &&
+					MinitScript::getStringValue(arguments, 1, separator) == true) {
+					//
+					string result;
+					auto setPtr = arguments[0].getSetPointer();
+					if (setPtr != nullptr) {
+						for (auto setKey: *setPtr) {
+							if (result.empty() == false) result+= separator;
+							result+= setKey;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					MINITSCRIPT_METHODUSAGE_COMPLAIN(getMethodName());
+				}
+			}
+		};
+		minitScript->registerMethod(new MethodSetConcatenate(minitScript));
+	}
 }
