@@ -2,7 +2,7 @@ module
 
 use: make-module.tscript
 
-function: createCommandUnix($command)
+function: createPkgConfCommandUnix($command)
 	$commandPrefix = ""
 	$commandSuffix = ""
 	if ($$.application::OS == "Windows-MINGW")
@@ -18,7 +18,7 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 	$librariesLdFlagsArray = []
 	forEach($library in $libraries)
 		# includes
-		$command = createCommandUnix("pkgconf --cflags " + $library)
+		$command = createPkgConfCommandUnix("pkgconf --cflags " + $library)
 		# execute
 		$exitCode = $$.application::EXITCODE_SUCCESS
 		$error = null
@@ -37,11 +37,11 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 			if ($librariesIncludesArray->contains($libraryInclude) == true)
 				continue
 			end
-			$librariesIncludesArray[] = $libraryInclude
+			$librariesIncludesArray[] = $libraryInclude->trim()
 		end
 
 		# ld flags
-		$command = createCommandUnix("pkgconf --libs " + $library)
+		$command = createPkgConfCommandUnix("pkgconf --libs " + $library)
 		# execute
 		$exitCode = $$.application::EXITCODE_SUCCESS
 		$error = null
@@ -60,20 +60,14 @@ function: determineLibraryFlagsUnix($libraries, &$librariesIncludes, &$libraries
 			if ($librariesLdFlagsArray->contains($libraryLdFlag) == true)
 				continue
 			end
-			$librariesLdFlagsArray[] = $libraryLdFlag
+			$librariesLdFlagsArray[] = $libraryLdFlag->trim()
 		end
 	end
 
-	$librariesIncludes = ""
-	forEach($librariesInclude in $librariesIncludesArray)
-		$librariesIncludes = $librariesIncludes + " " + $librariesInclude
-	end
+	$librariesIncludes = $librariesIncludesArray->concatenate(" ")
 	$librariesIncludes = $librariesIncludes->trim()
 
-	$librariesLdFlags = ""
-	forEach($libraryLdFlag in $librariesLdFlagsArray)
-		$librariesLdFlags = $librariesLdFlags + " " + $libraryLdFlag
-	end
+	$librariesLdFlags = $librariesLdFlagsArray->concatenate(" ")
 	$librariesLdFlags = $librariesLdFlags->trim()
 
 	return(true)
@@ -166,38 +160,34 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 			$command = null
 			if ($file->endsWith(".c") == true)
 				$command =
-					createCommandUnix(
-						$cxx +
-						" " +
-						"-x c" +
-						" " +
-						$cFlags +
-						" " +
-						$librariesIncludes +
-						" " +
-						$includes +
-						" " +
-						" -c -o " +
-						$compilationUnit +
-						" " +
-						$file
-					)
+					$cxx +
+					" " +
+					"-x c" +
+					" " +
+					$cFlags +
+					" " +
+					$librariesIncludes +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
 			elseif ($file->endsWith(".cpp") == true)
 				$command =
-					createCommandUnix(
-						$cxx +
-						" " +
-						$cxxFlags +
-						" " +
-						$librariesIncludes +
-						" " +
-						$includes +
-						" " +
-						" -c -o " +
-						$compilationUnit +
-						" " +
-						$file
-					)
+					$cxx +
+					" " +
+					$cxxFlags +
+					" " +
+					$librariesIncludes +
+					" " +
+					$includes +
+					" " +
+					" -c -o " +
+					$compilationUnit +
+					" " +
+					$file
 			else
 				console.printLine("Dont know how to build: " + $file)
 			end
@@ -227,22 +217,21 @@ function: buildLibraryUnix($name, $libraries, $definitions, $includes, $ldFlags,
 
 			# link
 			$command =
-				createCommandUnix(
-					$cxx +
-					" " +
-					"-shared" +
-					" " +
-					$compilationUnits +
-					" " +
-					"-o " +
-					$libraryPath + "/" + $name + $libraryExtension +
-					" " +
-					$librariesLdFlags +
-					" " +
-					$ldFlags +
-					" " +
-					$mingwLinkSuffix
-				)
+				$cxx +
+				" " +
+				"-shared" +
+				" " +
+				$compilationUnits +
+				" " +
+				"-o " +
+				$libraryPath + "/" + $name + $libraryExtension +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags +
+				" " +
+				$mingwLinkSuffix
+
 			console.printLine($command)
 
 			# execute
@@ -343,24 +332,22 @@ function: buildExecutablesUnix($name, $libraries, $definitions, $includes, $ldFl
 
 			# compile and link
 			$command =
-				createCommandUnix(
-					$cxx +
-					" " +
-					$cxxFlags +
-					" " +
-					$librariesIncludes +
-					" " +
-					$includes +
-					" " +
-					"-o " +
-					$executableFile +
-					" " +
-					$sourceFile +
-					" " +
-					$librariesLdFlags +
-					" " +
-					$ldFlags
-				)
+				$cxx +
+				" " +
+				$cxxFlags +
+				" " +
+				$librariesIncludes +
+				" " +
+				$includes +
+				" " +
+				"-o " +
+				$executableFile +
+				" " +
+				$sourceFile +
+				" " +
+				$librariesLdFlags +
+				" " +
+				$ldFlags
 
 			#
 			$commands[] = $command

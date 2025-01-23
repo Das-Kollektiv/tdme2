@@ -245,7 +245,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 			
 			# command
 			$command =
-				"chcp 65001 > nul && " +
 				$cxx +
 				" " +
 				"/c" +
@@ -295,7 +294,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 			forEach($compilationUnit in $compilationUnitsArray)
 				# link #1
 				$command =
-					"chcp 65001 > nul && " +
 					"lib" +
 					" " +
 					"/OUT:" +
@@ -318,7 +316,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 
 				# dump bin
 				$command =
-					"chcp 65001 > nul && " +
 					"dumpbin" +
 					" " +
 					"/LINKERMEMBER" +
@@ -362,7 +359,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 
 			# rc
 			$command =
-				"chcp 65001 > nul && " +
 				"rc" +
 				" " +
 				$libraryDLLFile + ".rc"
@@ -408,7 +404,6 @@ function: buildLibraryMSC($name, $libraries, $definitions, $includes, $ldFlags, 
 
 			# link
 			$command =
-				"chcp 65001 > nul && " +
 				"link" +
 				" " +
 				"@link.response" 
